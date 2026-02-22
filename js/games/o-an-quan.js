@@ -84,47 +84,45 @@
     ], { duration: 380, easing: 'ease-out' }).finished;
   }
 
-  // ── Animate a single seed flying from one pit to another ─────────────────
-  async function animateSeedFly(fromIdx, toIdx) {
-    const fromEl = document.querySelector(`[data-pit="${fromIdx}"]`);
-    const toEl   = document.querySelector(`[data-pit="${toIdx}"]`);
-    if (!fromEl || !toEl) return;
-
-    const fr = fromEl.getBoundingClientRect();
-    const tr = toEl.getBoundingClientRect();
-    const startX = fr.left + fr.width  / 2;
-    const startY = fr.top  + fr.height / 2;
-    const dx = (tr.left + tr.width  / 2) - startX;
-    const dy = (tr.top  + tr.height / 2) - startY;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    const arc  = Math.min(Math.max(28, dist * 0.45), 90);
-
-    const dot = document.createElement('span');
-    dot.className = 'oaq-seed oaq-seed--c3 oaq-seed-flying';
-    dot.style.cssText = `left:${startX - 7}px;top:${startY - 7}px;`;
-    document.body.appendChild(dot);
-
-    await dot.animate([
-      { transform: 'translate(0px,0px) scale(1.4)',                                    opacity: '1'   },
-      { transform: `translate(${dx*.5}px,${dy*.5 - arc}px) scale(1.7)`, offset: 0.42, opacity: '1'   },
-      { transform: `translate(${dx}px,${dy}px) scale(0.75)`,                           opacity: '0.9' },
-    ], { duration: 480, easing: 'ease-in-out', fill: 'forwards' }).finished;
-
-    dot.remove();
-
-    // Landing squish on target pit
-    const landEl = document.querySelector(`[data-pit="${toIdx}"]`);
-    if (landEl) {
-      landEl.animate([
-        { transform: 'scale(1)' },
-        { transform: 'scale(1.14) rotate(-2deg)' },
-        { transform: 'scale(0.93) rotate(1deg)' },
-        { transform: 'scale(1)' },
-      ], { duration: 280, easing: 'ease-out' });
+  // ── Set content of a flying seed cluster ─────────────────────────────────
+  function setClusterContent(el, count) {
+    if (count <= 0) { el.innerHTML = ''; return; }
+    const show = Math.min(count, 7);
+    let dots = '';
+    for (let i = 0; i < show; i++) {
+      dots += `<span class="oaq-seed oaq-seed--c${(i % 4) + 1}"></span>`;
     }
+    el.innerHTML = `<div class="oaq-fly-seeds">${dots}</div><span class="oaq-fly-label">\xd7${count}</span>`;
   }
 
-  // ── Core sow loop: pick up from startIdx, drop one seed at a time CCW ────
+  // ── Arc the cluster element from its current position to a target pit ─────
+  async function flyClusterTo(cluster, curX, curY, toIdx, duration) {
+    const toEl = document.querySelector(`[data-pit="${toIdx}"]`);
+    if (!toEl) return { x: curX, y: curY };
+    const tr      = toEl.getBoundingClientRect();
+    const targetX = tr.left + tr.width  / 2;
+    const targetY = tr.top  + tr.height / 2;
+    const dx   = targetX - curX;
+    const dy   = targetY - curY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const arc  = Math.min(Math.max(36, dist * 0.52), 110);
+
+    const anim = cluster.animate([
+      { transform: 'translate(-50%,-50%) scale(1.05)' },
+      { transform: `translate(calc(-50% + ${dx * 0.5}px), calc(-50% + ${dy * 0.5 - arc}px)) scale(1.2)`,
+        offset: 0.42 },
+      { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(1)` },
+    ], { duration, easing: 'ease-in-out', fill: 'both' });
+
+    await anim.finished;
+    // Commit new position into CSS so cancel() doesn't snap back
+    cluster.style.left = `${targetX}px`;
+    cluster.style.top  = `${targetY}px`;
+    anim.cancel();
+    return { x: targetX, y: targetY };
+  }
+
+  // ── Core sow loop: pick up from startIdx, carry cluster CCW pit by pit ───
   async function sowSeeds(startIdx) {
     let remaining = state.board[startIdx];
 
@@ -132,24 +130,41 @@
     state.board[startIdx] = 0;
     renderBoard();
 
-    let cur      = startIdx;
-    let flyFrom  = startIdx; // seed flies FROM the previous landing spot
+    // Spawn cluster centred on the source pit
+    const srcEl   = document.querySelector(`[data-pit="${startIdx}"]`);
+    const srcRect = srcEl ? srcEl.getBoundingClientRect() : { left: 0, top: 0, width: 0, height: 0 };
+    let curX = srcRect.left + srcRect.width  / 2;
+    let curY = srcRect.top  + srcRect.height / 2;
+
+    const cluster = document.createElement('div');
+    cluster.className = 'oaq-fly-cluster';
+    cluster.style.cssText =
+      `position:fixed;left:${curX}px;top:${curY}px;` +
+      `transform:translate(-50%,-50%);pointer-events:none;z-index:9999;`;
+    setClusterContent(cluster, remaining);
+    document.body.appendChild(cluster);
+
+    let cur = startIdx;
 
     while (remaining > 0) {
       const next = nextIdx(cur);
-      if (next === startIdx) { cur = next; continue; } // skip origin on full laps
+      if (next === startIdx) { cur = next; continue; }
 
-      await animateSeedFly(flyFrom, next);
+      const pos = await flyClusterTo(cluster, curX, curY, next, 680);
+      curX = pos.x;
+      curY = pos.y;
+
       state.board[next]++;
       remaining--;
       renderBoard();
 
-      flyFrom = next;
-      cur     = next;
-      if (remaining > 0) await sleep(60);
+      setClusterContent(cluster, remaining);
+      cur = next;
+      if (remaining > 0) await sleep(90);
     }
 
-    return cur; // last pit the final seed landed in
+    cluster.remove();
+    return cur;
   }
 
   // ── Entry point: sow, handle continuation loop, then capture / end turn ──
@@ -189,13 +204,29 @@
 
     if (isSmallPit && state.board[captureIdx] > 0) {
       const captured = state.board[captureIdx];
-      // Fly seeds from captured pit to quan
-      await animateSeedFly(captureIdx, myQ);
+
+      // Fly a cluster from the captured pit to the player's quan
+      const srcEl = document.querySelector(`[data-pit="${captureIdx}"]`);
+      if (srcEl) {
+        const sr   = srcEl.getBoundingClientRect();
+        const curX = sr.left + sr.width  / 2;
+        const curY = sr.top  + sr.height / 2;
+        const cluster = document.createElement('div');
+        cluster.className = 'oaq-fly-cluster';
+        cluster.style.cssText =
+          `position:fixed;left:${curX}px;top:${curY}px;` +
+          `transform:translate(-50%,-50%);pointer-events:none;z-index:9999;`;
+        setClusterContent(cluster, captured);
+        document.body.appendChild(cluster);
+        await flyClusterTo(cluster, curX, curY, myQ, 600);
+        cluster.remove();
+      }
+
       state.board[captureIdx] = 0;
       state.board[myQ] += captured;
       renderBoard();
       addLog(state.currentPlayer, `P${state.currentPlayer} captured ${captured} seeds!`);
-      await sleep(250);
+      await sleep(200);
     }
   }
 

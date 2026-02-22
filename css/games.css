@@ -873,17 +873,43 @@
   line-height: 1.5;
 }
 
-/* Flying seed — absolute-positioned, rides above everything */
-.oaq-seed-flying {
-  position: fixed;
-  width: 16px;
-  height: 16px;
+/* ── Flying seed cluster — carries all seeds in hand above everything ── */
+.oaq-fly-cluster {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
   pointer-events: none;
-  z-index: 9999;
-  animation: none !important;  /* override the pop-in; WAAPI handles motion */
+}
+
+.oaq-fly-seeds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+  max-width: 68px;
+  background: rgba(20, 10, 4, 0.82);
+  border: 1.5px solid rgba(200, 155, 60, 0.65);
+  border-radius: 16px;
+  padding: 8px 7px 6px;
   box-shadow:
-    0 4px 12px rgba(0,0,0,0.65),
-    0 0 10px rgba(220,180,80,0.6);
+    0 6px 22px rgba(0,0,0,0.75),
+    0 0 14px rgba(200,155,60,0.3);
+}
+
+/* Seeds inside the cluster: no pop animation, no hex-offset */
+.oaq-fly-cluster .oaq-seed {
+  animation: none;
+  margin-top: 0;
+}
+
+.oaq-fly-label {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: var(--weight-bold);
+  color: var(--color-accent-gold);
+  text-shadow: 0 1px 5px rgba(0,0,0,0.9);
+  line-height: 1;
 }
 
 /* Sowing animation highlight */
