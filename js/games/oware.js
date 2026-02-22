@@ -399,7 +399,11 @@
 
     // Show up to 12 seeds as dots; larger counts show number only
     const showDots = Math.min(count, 12);
-    const dots = Array(showDots).fill('<span class="ow-seed"></span>').join('');
+    const dots = Array(showDots).fill(null).map((_, i) => {
+      // Only the freshly-landed seed gets the pop-in animation
+      const isNew = lit && i === showDots - 1;
+      return `<span class="ow-seed${isNew ? ' ow-seed--new' : ''}" style="--i:${i}"></span>`;
+    }).join('');
 
     return `<div class="${cls}" data-pit="${pit}">
   <div class="ow-pit__seeds">${dots}</div>

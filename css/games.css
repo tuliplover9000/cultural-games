@@ -1696,20 +1696,33 @@
 .ow-pit__seeds {
   display: flex;
   flex-wrap: wrap;
-  gap: 2px;
+  gap: 3px;
   justify-content: center;
   align-items: center;
-  max-width: 52px;
-  min-height: 26px;
+  max-width: 54px;
+  min-height: 28px;
 }
 
 .ow-seed {
-  width: 9px;
-  height: 9px;
+  width: 5px;
+  height: 10px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #e8a030, #9a5010);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.55);
+  /* Warm dark-brown gradient — looks like a dried Ayo seed */
+  background: linear-gradient(160deg, #c07818 0%, #7a3e08 45%, #4a2208 100%);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,200,90,0.18);
   flex-shrink: 0;
+  /* Each seed sits at a different angle based on its index */
+  transform: rotate(calc(var(--i, 0) * 43deg));
+}
+
+/* The seed that just landed pops in */
+.ow-seed--new {
+  animation: ow-seed-in 200ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes ow-seed-in {
+  from { transform: rotate(calc(var(--i, 0) * 43deg)) scale(0); opacity: 0; }
+  to   { transform: rotate(calc(var(--i, 0) * 43deg)) scale(1); opacity: 1; }
 }
 
 .ow-pit__count {
@@ -1900,7 +1913,7 @@
 /* ── Responsive ── */
 @media (max-width: 560px) {
   .ow-pit { width: 46px; height: 50px; }
-  .ow-seed { width: 7px; height: 7px; }
+  .ow-seed { width: 4px; height: 8px; }
   .ow-pit__seeds { max-width: 36px; min-height: 20px; gap: 2px; }
   .ow-pit__count { font-size: 10px; }
   .ow-row { gap: 5px; }
