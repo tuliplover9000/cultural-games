@@ -303,6 +303,21 @@
     `;
   }
 
+  // ── Seed dot renderer ────────────────────────────────────────────────────
+  function seedDotsHTML(count, max) {
+    if (count === 0) return '<span class="oaq-seed-none"></span>';
+    const show = Math.min(count, max);
+    // Cycle through 4 earthy color variants for visual texture
+    let dots = '';
+    for (let i = 0; i < show; i++) {
+      dots += `<span class="oaq-seed oaq-seed--c${(i % 4) + 1}"></span>`;
+    }
+    const overflow = count > max
+      ? `<span class="oaq-seed-overflow">+${count - max}</span>`
+      : '';
+    return `<div class="oaq-seeds">${dots}${overflow}</div>`;
+  }
+
   function buildBoardHTML() {
     const { board, currentPlayer, phase } = state;
     const isSelecting = phase === 'select';
@@ -338,8 +353,7 @@
           ${canClick ? '' : 'disabled'}
           aria-label="${label}: ${count} ${seedWord}"
         >
-          <span class="oaq-pit__count">${count}</span>
-          <span class="oaq-pit__seeds">${seedWord}</span>
+          ${seedDotsHTML(count, 10)}
         </button>`;
     }
 
@@ -347,16 +361,16 @@
     const q2 = `
       <div class="oaq-quan oaq-quan--p2" style="grid-column:1;grid-row:1/3;" aria-label="Player 2 quan: ${board[Q2]} seeds">
         <span class="oaq-quan__label">P2 Quan</span>
+        ${seedDotsHTML(board[Q2], 14)}
         <span class="oaq-quan__count">${board[Q2]}</span>
-        <span class="oaq-quan__seeds-label">seeds</span>
       </div>`;
 
     // Q1: column 7, rows 1-2
     const q1 = `
       <div class="oaq-quan oaq-quan--p1" style="grid-column:7;grid-row:1/3;" aria-label="Player 1 quan: ${board[Q1]} seeds">
         <span class="oaq-quan__label">P1 Quan</span>
+        ${seedDotsHTML(board[Q1], 14)}
         <span class="oaq-quan__count">${board[Q1]}</span>
-        <span class="oaq-quan__seeds-label">seeds</span>
       </div>`;
 
     // Top pits: indices 10,9,8,7,6 → columns 2,3,4,5,6
