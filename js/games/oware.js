@@ -28,19 +28,21 @@
 
   /* ── State ── */
   let state = {};
+  let difficulty = 'hard'; // 'easy' | 'hard' — persists across games
 
   function newGame() {
     state = {
       pits:     Array(12).fill(4),
       scores:   [0, 0],
       current:  PLAYER,
-      phase:    'idle',       // idle | sowing | ai-thinking | gameover
-      sowFrom:  -1,
-      sowHand:  0,
-      sowPos:   -1,
-      sowLap:   false,
-      lastSown: -1,
-      winner:   -1,           // -1 none, 0 player, 1 AI, 2 draw
+      phase:          'idle',  // idle | sowing | ai-selecting | ai-thinking | gameover
+      sowFrom:        -1,
+      sowHand:        0,
+      sowPos:         -1,
+      sowLap:         false,
+      lastSown:       -1,
+      aiSelectedPit:  -1,     // pit the AI chose; shown briefly before sowing
+      winner:         -1,     // -1 none, 0 player, 1 AI, 2 draw
       log:      [],
     };
     render();
@@ -158,6 +160,12 @@
     const moves = validMoves(snap, AI);
     if (!moves.length) return -1;
 
+    if (difficulty === 'easy') {
+      // Easy: pick a random valid move — no lookahead
+      return moves[Math.floor(Math.random() * moves.length)];
+    }
+
+    // Hard: minimax depth 5
     let best = moves[0], bestVal = -Infinity;
     for (const m of moves) {
       const val = minimax(applyMove(snap, m, AI), 5, -Infinity, Infinity, PLAYER);
@@ -264,12 +272,18 @@
     const snap  = { pits: [...state.pits], scores: [...state.scores], phase: state.phase };
     const moves = validMoves(snap, AI);
     if (!moves.length) {
-      // AI has no moves — game ends
       checkEndState();
       render();
       return;
     }
-    doSow(findBestAIMove());
+
+    const best = findBestAIMove();
+
+    // Show the chosen pit highlighted before sowing begins
+    state.phase         = 'ai-selecting';
+    state.aiSelectedPit = best;
+    render();
+    setTimeout(() => doSow(best), 1000);
   }
 
   function checkEndState() {
@@ -316,11 +330,15 @@
     const snap    = { pits: [...state.pits], scores: [...state.scores], phase: state.phase };
     const isIdle  = state.phase === 'idle' && state.current === PLAYER;
     const moves   = isIdle ? validMoves(snap, PLAYER) : [];
-    const busy    = state.phase === 'ai-thinking' || (state.phase === 'sowing' && state.current === AI);
+    const aiSel   = state.phase === 'ai-selecting' ? state.aiSelectedPit : -1;
 
     let statusMsg;
-    if (busy) {
+    if (state.phase === 'ai-thinking') {
       statusMsg = `Opponent is thinking <span class="ow-dots"><span></span><span></span><span></span></span>`;
+    } else if (state.phase === 'ai-selecting') {
+      statusMsg = 'Opponent chose a pit…';
+    } else if (state.phase === 'sowing' && state.current === AI) {
+      statusMsg = 'Opponent sowing…';
     } else if (state.phase === 'sowing' && state.current === PLAYER) {
       statusMsg = 'Sowing…';
     } else {
@@ -329,12 +347,12 @@
 
     // AI row: display pits 11 → 6 (left to right from player's perspective)
     const topRow = [11, 10, 9, 8, 7, 6]
-      .map(p => pitHTML(p, false, p === state.lastSown))
+      .map(p => pitHTML(p, false, p === state.lastSown, p === aiSel))
       .join('');
 
     // Player row: pits 0 → 5
     const botRow = [0, 1, 2, 3, 4, 5]
-      .map(p => pitHTML(p, moves.includes(p), p === state.lastSown))
+      .map(p => pitHTML(p, moves.includes(p), p === state.lastSown, false))
       .join('');
 
     return `<div class="ow-game">
@@ -360,17 +378,23 @@
   </div>
   ${buildLog()}
   <div class="ow-actions">
+    <div class="ow-difficulty">
+      <span class="ow-difficulty__label">Difficulty:</span>
+      <button class="ow-diff-btn${difficulty === 'easy' ? ' active' : ''}" id="ow-easy">Easy</button>
+      <button class="ow-diff-btn${difficulty === 'hard' ? ' active' : ''}" id="ow-hard">Hard</button>
+    </div>
     <button class="ow-btn" id="ow-new">New Game</button>
   </div>
 </div>`;
   }
 
-  function pitHTML(pit, clickable, lit) {
+  function pitHTML(pit, clickable, lit, aiSelected) {
     const count = state.pits[pit];
     const cls = [
       'ow-pit',
-      clickable ? 'ow-pit--clickable' : '',
-      lit       ? 'ow-pit--lit'       : '',
+      clickable  ? 'ow-pit--clickable'  : '',
+      lit        ? 'ow-pit--lit'        : '',
+      aiSelected ? 'ow-pit--ai-select'  : '',
     ].filter(Boolean).join(' ');
 
     // Show up to 12 seeds as dots; larger counts show number only
@@ -423,6 +447,15 @@
     });
 
     el.querySelector('#ow-new')?.addEventListener('click', newGame);
+
+    el.querySelector('#ow-easy')?.addEventListener('click', () => {
+      difficulty = 'easy';
+      render();
+    });
+    el.querySelector('#ow-hard')?.addEventListener('click', () => {
+      difficulty = 'hard';
+      render();
+    });
   }
 
   /* ── Init ── */
