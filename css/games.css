@@ -873,6 +873,19 @@
   line-height: 1.5;
 }
 
+/* Flying seed — absolute-positioned, rides above everything */
+.oaq-seed-flying {
+  position: fixed;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+  z-index: 9999;
+  animation: none !important;  /* override the pop-in; WAAPI handles motion */
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.65),
+    0 0 10px rgba(220,180,80,0.6);
+}
+
 /* Sowing animation highlight */
 .oaq-pit.sow-flash {
   animation: oaq-sow 250ms ease;

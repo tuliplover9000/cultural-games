@@ -72,7 +72,87 @@
     return p1Empty || p2Empty;
   }
 
-  // ── Sow seeds from a pit, then handle continuation / capture ─────────────
+  // ── Pickup burst animation on the source pit ─────────────────────────────
+  async function animatePickup(idx) {
+    const el = document.querySelector(`[data-pit="${idx}"]`);
+    if (!el) return;
+    await el.animate([
+      { transform: 'scale(1)',    boxShadow: '0 0 0 0px rgba(200,155,60,0)',   filter: 'brightness(1)' },
+      { transform: 'scale(1.18)', boxShadow: '0 0 0 8px rgba(200,155,60,0.5)', filter: 'brightness(1.6)' },
+      { transform: 'scale(0.92)', boxShadow: '0 0 0 0px rgba(200,155,60,0)',   filter: 'brightness(0.85)' },
+      { transform: 'scale(1)',    boxShadow: '0 0 0 0px rgba(200,155,60,0)',   filter: 'brightness(1)' },
+    ], { duration: 380, easing: 'ease-out' }).finished;
+  }
+
+  // ── Animate a single seed flying from one pit to another ─────────────────
+  async function animateSeedFly(fromIdx, toIdx) {
+    const fromEl = document.querySelector(`[data-pit="${fromIdx}"]`);
+    const toEl   = document.querySelector(`[data-pit="${toIdx}"]`);
+    if (!fromEl || !toEl) return;
+
+    const fr = fromEl.getBoundingClientRect();
+    const tr = toEl.getBoundingClientRect();
+    const startX = fr.left + fr.width  / 2;
+    const startY = fr.top  + fr.height / 2;
+    const dx = (tr.left + tr.width  / 2) - startX;
+    const dy = (tr.top  + tr.height / 2) - startY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const arc  = Math.min(Math.max(28, dist * 0.45), 90);
+
+    const dot = document.createElement('span');
+    dot.className = 'oaq-seed oaq-seed--c3 oaq-seed-flying';
+    dot.style.cssText = `left:${startX - 7}px;top:${startY - 7}px;`;
+    document.body.appendChild(dot);
+
+    await dot.animate([
+      { transform: 'translate(0px,0px) scale(1.4)',                                    opacity: '1'   },
+      { transform: `translate(${dx*.5}px,${dy*.5 - arc}px) scale(1.7)`, offset: 0.42, opacity: '1'   },
+      { transform: `translate(${dx}px,${dy}px) scale(0.75)`,                           opacity: '0.9' },
+    ], { duration: 480, easing: 'ease-in-out', fill: 'forwards' }).finished;
+
+    dot.remove();
+
+    // Landing squish on target pit
+    const landEl = document.querySelector(`[data-pit="${toIdx}"]`);
+    if (landEl) {
+      landEl.animate([
+        { transform: 'scale(1)' },
+        { transform: 'scale(1.14) rotate(-2deg)' },
+        { transform: 'scale(0.93) rotate(1deg)' },
+        { transform: 'scale(1)' },
+      ], { duration: 280, easing: 'ease-out' });
+    }
+  }
+
+  // ── Core sow loop: pick up from startIdx, drop one seed at a time CCW ────
+  async function sowSeeds(startIdx) {
+    let remaining = state.board[startIdx];
+
+    await animatePickup(startIdx);
+    state.board[startIdx] = 0;
+    renderBoard();
+
+    let cur      = startIdx;
+    let flyFrom  = startIdx; // seed flies FROM the previous landing spot
+
+    while (remaining > 0) {
+      const next = nextIdx(cur);
+      if (next === startIdx) { cur = next; continue; } // skip origin on full laps
+
+      await animateSeedFly(flyFrom, next);
+      state.board[next]++;
+      remaining--;
+      renderBoard();
+
+      flyFrom = next;
+      cur     = next;
+      if (remaining > 0) await sleep(60);
+    }
+
+    return cur; // last pit the final seed landed in
+  }
+
+  // ── Entry point: sow, handle continuation loop, then capture / end turn ──
   async function sow(startIdx) {
     if (state.phase !== 'select') return;
     if (state.board[startIdx] === 0) return;
@@ -80,85 +160,43 @@
     state.phase = 'sowing';
     refresh();
 
-    let hand = state.board[startIdx];
-    state.board[startIdx] = 0;
-    flashPit(startIdx, 'active');
+    const pName = state.currentPlayer === 1 ? 'P1' : 'P2';
+    addLog(state.currentPlayer, `${pName} picked up ${state.board[startIdx]} seeds from ${pitName(startIdx)}`);
 
-    const playerName = state.currentPlayer === 1 ? 'P1' : 'P2';
-    const pitLabel = pitName(startIdx);
-    addLog(state.currentPlayer, `${playerName} sowed from ${pitLabel} (${hand} seeds)`);
+    let lastPit = await sowSeeds(startIdx);
+    let isSmall = P1_PITS.includes(lastPit) || P2_PITS.includes(lastPit);
 
-    await sleep(350);
-
-    // ── Sowing loop ──
-    let cur = startIdx;
-    while (hand > 0) {
-      cur = nextIdx(cur);
-      if (cur === startIdx) continue; // skip the origin pit on full loops
-
-      state.board[cur]++;
-      hand--;
-      flashPit(cur, 'sow-flash');
-      renderBoard();
-      await sleep(220);
+    // Continuation: last seed landed in a non-empty small pit → pick up & keep going
+    while (isSmall && state.board[lastPit] > 1) {
+      addLog(state.currentPlayer, `Continuing from ${pitName(lastPit)}…`);
+      await sleep(120);
+      lastPit = await sowSeeds(lastPit);
+      isSmall = P1_PITS.includes(lastPit) || P2_PITS.includes(lastPit);
     }
 
-    // ── After sowing: continuation or capture ──
-    await handleLanding(cur, startIdx);
-  }
-
-  async function handleLanding(landIdx, originIdx) {
-    const board = state.board;
-
-    // If landed on a non-empty small pit (not a quan), continue sowing
-    const isSmall = P1_PITS.includes(landIdx) || P2_PITS.includes(landIdx);
-    if (isSmall && board[landIdx] > 0) {
-      // Pick up and keep going
-      let hand = board[landIdx];
-      board[landIdx] = 0;
-      flashPit(landIdx, 'active');
-      renderBoard();
-      await sleep(350);
-
-      let cur = landIdx;
-      while (hand > 0) {
-        cur = nextIdx(cur);
-        if (cur === landIdx) continue;
-        board[cur]++;
-        hand--;
-        flashPit(cur, 'sow-flash');
-        renderBoard();
-        await sleep(220);
-      }
-      await handleLanding(cur, landIdx);
-      return;
+    // Capture: last seed landed in an empty small pit
+    if (isSmall && state.board[lastPit] === 1) {
+      await attemptCapture(lastPit);
     }
-
-    // If landed on an empty small pit → attempt capture
-    if (isSmall && board[landIdx] === 0) {
-      await attemptCapture(landIdx);
-    }
-    // If landed on a quan, turn just ends (no continuation, no capture)
 
     endTurn();
   }
 
   async function attemptCapture(emptyIdx) {
-    // Check the immediately next pit CCW from the empty landing pit
     const captureIdx = nextIdx(emptyIdx);
-    const myQ = myQuan(state.currentPlayer);
+    const myQ        = myQuan(state.currentPlayer);
     const isSmallPit = P1_PITS.includes(captureIdx) || P2_PITS.includes(captureIdx);
 
     if (isSmallPit && state.board[captureIdx] > 0) {
       const captured = state.board[captureIdx];
+      // Fly seeds from captured pit to quan
+      await animateSeedFly(captureIdx, myQ);
       state.board[captureIdx] = 0;
       state.board[myQ] += captured;
-      flashPit(captureIdx, 'sow-flash');
       renderBoard();
       addLog(state.currentPlayer, `P${state.currentPlayer} captured ${captured} seeds!`);
-      await sleep(300);
+      await sleep(250);
     }
-    // If neighbor is empty or is a quan, turn simply ends (no capture)
   }
 
   function endTurn() {
@@ -357,17 +395,17 @@
         </button>`;
     }
 
-    // Q2: column 1, rows 1-2
+    // Q2: column 1, rows 1-2  (data-pit="11" lets animateSeedFly target it)
     const q2 = `
-      <div class="oaq-quan oaq-quan--p2" style="grid-column:1;grid-row:1/3;" aria-label="Player 2 quan: ${board[Q2]} seeds">
+      <div class="oaq-quan oaq-quan--p2" data-pit="11" style="grid-column:1;grid-row:1/3;" aria-label="Player 2 quan: ${board[Q2]} seeds">
         <span class="oaq-quan__label">P2 Quan</span>
         ${seedDotsHTML(board[Q2], 14)}
         <span class="oaq-quan__count">${board[Q2]}</span>
       </div>`;
 
-    // Q1: column 7, rows 1-2
+    // Q1: column 7, rows 1-2  (data-pit="5")
     const q1 = `
-      <div class="oaq-quan oaq-quan--p1" style="grid-column:7;grid-row:1/3;" aria-label="Player 1 quan: ${board[Q1]} seeds">
+      <div class="oaq-quan oaq-quan--p1" data-pit="5" style="grid-column:7;grid-row:1/3;" aria-label="Player 1 quan: ${board[Q1]} seeds">
         <span class="oaq-quan__label">P1 Quan</span>
         ${seedDotsHTML(board[Q1], 14)}
         <span class="oaq-quan__count">${board[Q1]}</span>
