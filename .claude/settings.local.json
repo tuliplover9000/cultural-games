@@ -8,7 +8,8 @@
       "Bash(powershell.exe -Command \"\n  $base = ''C:\\\\Users\\\\zhrui\\\\OneDrive\\\\Desktop\\\\cultural-games''\n  $dirs = @\\(''css'',''js\\\\games'',''js\\\\utils'',''pages\\\\games'',''assets\\\\images'',''assets\\\\icons''\\)\n  foreach \\($d in $dirs\\) {\n    $path = Join-Path $base $d\n    if \\(-not \\(Test-Path $path\\)\\) { New-Item -ItemType Directory -Path $path -Force | Out-Null }\n  }\n  Get-ChildItem -Path $base -Recurse -Directory | Select-Object -ExpandProperty FullName\n\")",
       "Bash(powershell.exe -Command:*)",
       "Bash(cmd.exe /c \"dir /B /S C:\\\\Users\\\\zhrui\\\\OneDrive\\\\Desktop\\\\cultural-games | findstr /V \".claude\"\")",
-      "Bash(cmd.exe /c \"dir /B /S C:\\\\Users\\\\zhrui\\\\OneDrive\\\\Desktop\\\\cultural-games\")"
+      "Bash(cmd.exe /c \"dir /B /S C:\\\\Users\\\\zhrui\\\\OneDrive\\\\Desktop\\\\cultural-games\")",
+      "WebFetch(domain:magical-hummingbird-0dbd07.netlify.app)"
     ]
   }
 }

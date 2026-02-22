@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Cultural Games — Play traditional games from cultures around the world, preserved and brought to life in your browser." />
-  <title>Cultural Games</title>
+  <meta name="description" content="Cultural Games — Play traditional games from Vietnam, West Africa, and Mesoamerica, preserved and brought to life in your browser." />
+  <title>Cultural Games — Play Traditional Games from Around the World</title>
 
-  <!-- Google Fonts: Playfair Display (headings) + Inter (body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -19,77 +18,193 @@
 </head>
 <body>
 
-  <!-- ═══════════════════════════════════════════════════════════
+  <!-- ════════════════════════════════════════════════════════
        NAVIGATION
-  ════════════════════════════════════════════════════════════ -->
+  ════════════════════════════════════════════════════════ -->
   <nav class="site-nav" role="navigation" aria-label="Main navigation">
     <div class="container nav-inner">
-      <!-- Logo -->
       <a href="index.html" class="nav-logo" aria-label="Cultural Games — Home">
         <span class="nav-logo-icon" aria-hidden="true">🎲</span>
         <span class="nav-logo-text">Cultural Games</span>
       </a>
 
-      <!-- Desktop links -->
       <ul class="nav-links" id="nav-links" role="list">
         <li><a href="pages/browse.html" class="nav-link">Browse Games</a></li>
         <li><a href="pages/about.html"  class="nav-link">About</a></li>
       </ul>
 
-      <!-- Mobile hamburger -->
       <button
         class="nav-hamburger"
         aria-label="Toggle navigation menu"
         aria-expanded="false"
         aria-controls="nav-links"
       >
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span>
       </button>
     </div>
   </nav>
 
-  <!-- ═══════════════════════════════════════════════════════════
-       MAIN — Phase 0 placeholder (full homepage built in Phase 1)
-  ════════════════════════════════════════════════════════════ -->
   <main>
-    <div class="page-placeholder">
-      <span class="badge badge--phase">Phase 0 — Foundation</span>
 
-      <h1>Cultural <span>Games</span></h1>
+    <!-- ════════════════════════════════════════════════════════
+         HERO
+    ════════════════════════════════════════════════════════ -->
+    <section class="hero" aria-label="Hero">
+      <div class="hero__bg" aria-hidden="true">🦐 ⚫ 🃏 🟤 🌿</div>
+      <div class="container hero__inner">
+        <span class="hero__eyebrow">5 Games &middot; 3 Cultures &middot; Free to Play</span>
 
-      <p>
-        Discover and play traditional games from cultures around the world —
-        preserved and brought to life in your browser.
-        Full homepage coming in Phase&nbsp;1.
-      </p>
+        <h1 class="hero__title">
+          Play the games
+          <span class="hero__title-accent">that carry culture.</span>
+        </h1>
 
-      <div class="page-placeholder__actions">
-        <a href="pages/browse.html" class="btn btn-primary btn-lg">Browse Games</a>
-        <a href="pages/about.html"  class="btn btn-secondary btn-lg">About</a>
+        <p class="hero__tagline">
+          Discover and play traditional games from Vietnam, West Africa,
+          and Mesoamerica — preserved and brought to life in your browser.
+        </p>
+
+        <div class="hero__actions">
+          <a href="pages/browse.html" class="btn btn-primary btn-lg">Browse All Games</a>
+          <a href="pages/about.html"  class="btn btn-secondary btn-lg">Our Story</a>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════
+         MISSION
+    ════════════════════════════════════════════════════════ -->
+    <section class="mission" aria-label="Our mission">
+      <div class="container mission__inner">
+
+        <div class="mission__content">
+          <p class="mission__label">Why we built this</p>
+          <h2 class="mission__heading">Games are living history.</h2>
+          <p class="mission__text">
+            Too many traditional games that defined childhoods, bonded families,
+            and carried cultural wisdom have no home online. Cultural Games exists
+            to change that — one game at a time.
+          </p>
+          <p class="mission__text">
+            Every game here is playable in your browser, free, with no account required.
+            We write the rules and the history so you understand not just how to play,
+            but why the game matters.
+          </p>
+          <a href="pages/about.html" class="btn btn-ghost" style="margin-top: 0.5rem;">
+            Read our full story →
+          </a>
+        </div>
+
+        <div class="mission__stats" role="list" aria-label="Site stats">
+          <div class="stat" role="listitem">
+            <div class="stat__number">5</div>
+            <div class="stat__label">Traditional Games</div>
+          </div>
+          <div class="stat" role="listitem">
+            <div class="stat__number">3</div>
+            <div class="stat__label">Cultures</div>
+          </div>
+          <div class="stat" role="listitem">
+            <div class="stat__number">100%</div>
+            <div class="stat__label">Free to Play</div>
+          </div>
+          <div class="stat" role="listitem">
+            <div class="stat__number">∞</div>
+            <div class="stat__label">Heritage Preserved</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════
+         FEATURED GAMES
+    ════════════════════════════════════════════════════════ -->
+    <section class="featured" aria-label="Featured games">
+      <div class="container">
+
+        <div class="featured__header">
+          <h2 class="featured__title">Featured Games</h2>
+          <a href="pages/browse.html" class="featured__link">View all 5 games →</a>
+        </div>
+
+        <div class="featured__grid">
+
+          <!-- Bầu Cua -->
+          <article class="game-card">
+            <div class="game-card__banner game-card__banner--red" aria-hidden="true">
+              <span style="font-size:3.5rem; line-height:140px; display:block; text-align:center;">🦐</span>
+            </div>
+            <div class="game-card__body">
+              <p class="game-card__origin">Vietnam</p>
+              <h3 class="game-card__name">Bầu Cua Tôm Cá</h3>
+              <p class="game-card__description">
+                Bet on six symbols as three dice determine your fate in this Tết classic.
+              </p>
+            </div>
+            <div class="game-card__footer">
+              <span class="badge badge--dice">Dice</span>
+              <a href="pages/games/bau-cua.html" class="btn btn-primary btn-sm">Play</a>
+            </div>
+          </article>
+
+          <!-- Ô Ăn Quan -->
+          <article class="game-card">
+            <div class="game-card__banner game-card__banner--teal" aria-hidden="true">
+              <span style="font-size:3.5rem; line-height:140px; display:block; text-align:center;">⚫</span>
+            </div>
+            <div class="game-card__body">
+              <p class="game-card__origin">Vietnam</p>
+              <h3 class="game-card__name">Ô Ăn Quan</h3>
+              <p class="game-card__description">
+                Sow seeds across the board and capture your opponent's pits in this mancala classic.
+              </p>
+            </div>
+            <div class="game-card__footer">
+              <span class="badge badge--board">Board</span>
+              <a href="pages/games/o-an-quan.html" class="btn btn-primary btn-sm">Play</a>
+            </div>
+          </article>
+
+          <!-- Oware -->
+          <article class="game-card">
+            <div class="game-card__banner game-card__banner--warm" aria-hidden="true">
+              <span style="font-size:3.5rem; line-height:140px; display:block; text-align:center;">🟤</span>
+            </div>
+            <div class="game-card__body">
+              <p class="game-card__origin">West Africa</p>
+              <h3 class="game-card__name">Oware</h3>
+              <p class="game-card__description">
+                The ancient Akan strategy game of sowing, capturing, and counting.
+              </p>
+            </div>
+            <div class="game-card__footer">
+              <span class="badge badge--board">Board</span>
+              <a href="pages/games/oware.html" class="btn btn-primary btn-sm">Play</a>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
   </main>
 
-  <!-- ═══════════════════════════════════════════════════════════
+  <!-- ════════════════════════════════════════════════════════
        FOOTER
-  ════════════════════════════════════════════════════════════ -->
+  ════════════════════════════════════════════════════════ -->
   <footer class="site-footer" role="contentinfo">
     <div class="container footer-inner">
       <span class="footer-brand">Cultural Games</span>
-
       <p class="footer-mission">
         Preserving cultural heritage through play — one game at a time.
       </p>
-
       <nav aria-label="Footer navigation">
         <ul class="footer-links" role="list">
           <li><a href="pages/browse.html" class="footer-link">Browse Games</a></li>
           <li><a href="pages/about.html"  class="footer-link">About</a></li>
         </ul>
       </nav>
-
       <div class="footer-divider"></div>
       <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
     </div>

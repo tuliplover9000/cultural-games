@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Play Oware — the ancient West African mancala board game of strategy and capture." />
+  <meta name="description" content="Play Oware — the ancient West African mancala board game of strategy and capture. Free, in your browser." />
   <title>Oware — Cultural Games</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -19,53 +19,39 @@
 </head>
 <body>
 
-  <!-- ═══════════════════════════════════════════════════════════
-       NAVIGATION
-  ════════════════════════════════════════════════════════════ -->
+  <!-- NAVIGATION -->
   <nav class="site-nav" role="navigation" aria-label="Main navigation">
     <div class="container nav-inner">
       <a href="../../index.html" class="nav-logo" aria-label="Cultural Games — Home">
         <span class="nav-logo-icon" aria-hidden="true">🎲</span>
         <span class="nav-logo-text">Cultural Games</span>
       </a>
-
       <ul class="nav-links" id="nav-links" role="list">
         <li><a href="../browse.html" class="nav-link">Browse Games</a></li>
         <li><a href="../about.html"  class="nav-link">About</a></li>
       </ul>
-
-      <button
-        class="nav-hamburger"
-        aria-label="Toggle navigation menu"
-        aria-expanded="false"
-        aria-controls="nav-links"
-      >
-        <span></span>
-        <span></span>
-        <span></span>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
       </button>
     </div>
   </nav>
 
-  <!-- ═══════════════════════════════════════════════════════════
-       MAIN
-  ════════════════════════════════════════════════════════════ -->
   <main class="game-page">
     <div class="container">
 
-      <!-- Breadcrumb -->
       <div class="game-nav-bar">
         <a href="../browse.html" class="back-link">Back to Browse</a>
       </div>
 
-      <!-- Game Header -->
       <header class="game-header">
         <div class="game-header__icon" aria-hidden="true">🟤</div>
         <h1 class="game-header__title">Oware</h1>
-        <p class="game-header__origin">West Africa &mdash; <span class="badge badge--board" style="display:inline-flex; vertical-align:middle;">Board</span></p>
+        <p class="game-header__origin">
+          West Africa (Akan) &nbsp;&middot;&nbsp;
+          <span class="badge badge--board" style="display:inline-flex; vertical-align:middle; margin-left:4px;">Board</span>
+        </p>
       </header>
 
-      <!-- How to Play -->
       <details class="accordion" open>
         <summary class="accordion__trigger">
           <span class="accordion__title">How to Play</span>
@@ -73,19 +59,21 @@
         </summary>
         <div class="accordion__body">
           <p>
-            Oware is played on a board with 2 rows of 6 pits and a score pit on each end. Each pit starts with 4 seeds (48 total).
+            Oware is played on a board with <strong>2 rows of 6 pits</strong> and a
+            score pit on each end. Each small pit starts with <strong>4 seeds</strong>
+            (48 total). You control the row closest to you.
           </p>
           <ol>
-            <li>Click one of your 6 pits to sow. Seeds are picked up and distributed one per pit, counterclockwise.</li>
-            <li><strong>Capture:</strong> if the last seed lands in an opponent's pit bringing it to exactly 2 or 3 seeds, you capture those seeds. Continue capturing backwards as long as pits have exactly 2 or 3 seeds.</li>
+            <li>Click one of your 6 pits to sow. All seeds are picked up and distributed one per pit, moving counterclockwise.</li>
+            <li><strong>Lapping rule:</strong> if a pit has more than 12 seeds, skip the starting pit on full loops.</li>
+            <li><strong>Capture:</strong> if the last seed lands in an <em>opponent's</em> pit and brings it to exactly <strong>2 or 3 seeds</strong>, capture those seeds into your score pit. Continue capturing backwards through consecutive pits that also have exactly 2 or 3.</li>
             <li><strong>Starvation rule:</strong> you may not make a move that leaves your opponent with zero seeds — unless it is your only possible move.</li>
-            <li>The game ends when one player has 25+ seeds captured, or fewer than 12 seeds remain on the board.</li>
-            <li>The player who captured the most seeds wins.</li>
+            <li>The game ends when one player has <strong>25+ seeds captured</strong>, or fewer than 12 seeds remain on the board.</li>
+            <li>The player with the most captured seeds wins.</li>
           </ol>
         </div>
       </details>
 
-      <!-- Cultural Context -->
       <details class="accordion">
         <summary class="accordion__trigger">
           <span class="accordion__title">Cultural Context</span>
@@ -93,44 +81,50 @@
         </summary>
         <div class="accordion__body">
           <p>
-            Oware — also spelled Owarè — is one of the oldest known board games in the world, originating among the Akan people of present-day Ghana and Côte d'Ivoire. Archaeological evidence suggests mancala-family games have been played in Africa for over 7,000 years.
+            Oware is one of the oldest known board games in the world, originating among
+            the Akan people of present-day Ghana and Côte d'Ivoire. Archaeological evidence
+            suggests mancala-family games have been played in Africa for over 7,000 years,
+            making Oware one of humanity's oldest surviving games.
           </p>
           <p>
-            The game's name comes from the Twi language and is often translated as "he/she marries." It is deeply embedded in Akan culture, where it is played at social gatherings, during festivals, and as a rite of passage for young people. Oware boards — beautifully carved from hardwood — are cherished family heirlooms. The game spread throughout the African diaspora via the transatlantic slave trade, with variants now found across the Caribbean and parts of South America.
+            The game's name comes from the Twi language and is often translated as
+            "he/she marries." It is deeply embedded in Akan culture, played at social
+            gatherings, during festivals, and as a rite of passage for young people.
+            Oware boards — beautifully carved from hardwood, sometimes inlaid with
+            brass or ivory — are cherished family heirlooms passed down through generations.
+          </p>
+          <p>
+            The starvation rule — the requirement that you must not leave your opponent
+            without seeds unless it is your only move — is a fascinating window into Akan
+            values. It reflects a philosophy that competition should not mean destruction:
+            a game without an opponent is no game at all. Oware spread throughout the
+            African diaspora via the transatlantic slave trade, with variants now found
+            across the Caribbean and South America under names like Wari, Awari, and Ayo.
           </p>
         </div>
       </details>
 
-      <!-- Game Container -->
       <div class="game-container" id="game-container" aria-label="Game area">
         <div class="game-placeholder">
           <div class="game-placeholder__icon" aria-hidden="true">🟤</div>
-          <h3 style="font-family: var(--font-display); margin-bottom: 0.5rem;">Coming in Phase 5</h3>
-          <p>The full Oware board — sowing, capture, starvation rules, and valid move highlighting — will be built here.</p>
+          <h3>Coming in Phase 5</h3>
+          <p>The full Oware board — sowing, capture, starvation rule enforcement, and valid move highlighting — will appear here.</p>
         </div>
       </div>
 
     </div>
   </main>
 
-  <!-- ═══════════════════════════════════════════════════════════
-       FOOTER
-  ════════════════════════════════════════════════════════════ -->
   <footer class="site-footer" role="contentinfo">
     <div class="container footer-inner">
       <span class="footer-brand">Cultural Games</span>
-
-      <p class="footer-mission">
-        Preserving cultural heritage through play — one game at a time.
-      </p>
-
+      <p class="footer-mission">Preserving cultural heritage through play — one game at a time.</p>
       <nav aria-label="Footer navigation">
         <ul class="footer-links" role="list">
           <li><a href="../browse.html" class="footer-link">Browse Games</a></li>
           <li><a href="../about.html"  class="footer-link">About</a></li>
         </ul>
       </nav>
-
       <div class="footer-divider"></div>
       <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
     </div>

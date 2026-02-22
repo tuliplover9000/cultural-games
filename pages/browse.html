@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Browse the full library of traditional cultural games — Dice, Board, and Card games from cultures around the world." />
+  <meta name="description" content="Browse the full library of traditional cultural games — Dice, Board, and Card games from Vietnam, West Africa, and Mesoamerica." />
   <title>Browse Games — Cultural Games</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -18,9 +18,9 @@
 </head>
 <body>
 
-  <!-- ═══════════════════════════════════════════════════════════
+  <!-- ════════════════════════════════════════════════════════
        NAVIGATION
-  ════════════════════════════════════════════════════════════ -->
+  ════════════════════════════════════════════════════════ -->
   <nav class="site-nav" role="navigation" aria-label="Main navigation">
     <div class="container nav-inner">
       <a href="../index.html" class="nav-logo" aria-label="Cultural Games — Home">
@@ -39,60 +39,218 @@
         aria-expanded="false"
         aria-controls="nav-links"
       >
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span>
       </button>
     </div>
   </nav>
 
-  <!-- ═══════════════════════════════════════════════════════════
-       MAIN — Phase 0 placeholder (full browse page built in Phase 1)
-  ════════════════════════════════════════════════════════════ -->
   <main>
-    <div class="page-placeholder">
-      <span class="badge badge--phase">Phase 0 — Foundation</span>
 
-      <h1>Browse <span>Games</span></h1>
+    <!-- ════════════════════════════════════════════════════════
+         PAGE HEADER
+    ════════════════════════════════════════════════════════ -->
+    <header class="browse-hero">
+      <div class="container">
+        <p class="browse-hero__label">Game Library</p>
+        <h1 class="browse-hero__title">Browse All Games</h1>
+        <p class="browse-hero__desc">
+          Five traditional games from three cultures — playable in your browser, free, no account required.
+        </p>
+      </div>
+    </header>
 
-      <p>
-        The full game library with filtering, cards, and descriptions
-        is coming in Phase&nbsp;1. For now, navigate directly to a game below.
-      </p>
+    <!-- ════════════════════════════════════════════════════════
+         FILTER + GAME GRID
+    ════════════════════════════════════════════════════════ -->
+    <div class="browse-body">
+      <div class="container">
 
-      <div class="page-placeholder__actions">
-        <a href="games/bau-cua.html"   class="btn btn-ghost">🎲 Bầu Cua Tôm Cá</a>
-        <a href="games/o-an-quan.html" class="btn btn-ghost">⚫ Ô Ăn Quan</a>
-        <a href="games/tien-len.html"  class="btn btn-ghost">🃏 Tiến Lên</a>
-        <a href="games/oware.html"     class="btn btn-ghost">🟤 Oware</a>
-        <a href="games/patolli.html"   class="btn btn-ghost">🌿 Patolli</a>
+        <!-- Filter bar -->
+        <div class="filter-bar" role="group" aria-label="Filter games by type">
+          <span class="filter-bar__label">Filter:</span>
+          <button class="filter-btn active" data-filter="all"   aria-pressed="true">All Games</button>
+          <button class="filter-btn"        data-filter="dice"  aria-pressed="false">🎲 Dice</button>
+          <button class="filter-btn"        data-filter="board" aria-pressed="false">⚫ Board</button>
+          <button class="filter-btn"        data-filter="card"  aria-pressed="false">🃏 Card</button>
+        </div>
+
+        <!-- Game grid -->
+        <div class="games-grid" id="games-grid">
+
+          <!-- Bầu Cua Tôm Cá -->
+          <div class="game-card-wrapper" data-category="dice">
+            <article class="game-card">
+              <div class="game-card__banner game-card__banner--red" aria-hidden="true">
+                <span style="font-size:3.5rem; line-height:140px; display:block; text-align:center;">🦐</span>
+              </div>
+              <div class="game-card__body">
+                <p class="game-card__origin">Vietnam</p>
+                <h2 class="game-card__name">Bầu Cua Tôm Cá</h2>
+                <p class="game-card__description">
+                  Bet on six symbols as three dice determine your fate in this Tết classic.
+                </p>
+              </div>
+              <div class="game-card__footer">
+                <span class="badge badge--dice">Dice</span>
+                <a href="games/bau-cua.html" class="btn btn-primary btn-sm">Play</a>
+              </div>
+            </article>
+          </div>
+
+          <!-- Ô Ăn Quan -->
+          <div class="game-card-wrapper" data-category="board">
+            <article class="game-card">
+              <div class="game-card__banner game-card__banner--teal" aria-hidden="true">
+                <span style="font-size:3.5rem; line-height:140px; display:block; text-align:center;">⚫</span>
+              </div>
+              <div class="game-card__body">
+                <p class="game-card__origin">Vietnam</p>
+                <h2 class="game-card__name">Ô Ăn Quan</h2>
+                <p class="game-card__description">
+                  Sow seeds across the board and capture your opponent's pits in this Vietnamese mancala.
+                </p>
+              </div>
+              <div class="game-card__footer">
+                <span class="badge badge--board">Board</span>
+                <a href="games/o-an-quan.html" class="btn btn-primary btn-sm">Play</a>
+              </div>
+            </article>
+          </div>
+
+          <!-- Tiến Lên -->
+          <div class="game-card-wrapper" data-category="card">
+            <article class="game-card">
+              <div class="game-card__banner game-card__banner--gold" aria-hidden="true">
+                <span style="font-size:3.5rem; line-height:140px; display:block; text-align:center;">🃏</span>
+              </div>
+              <div class="game-card__body">
+                <p class="game-card__origin">Vietnam</p>
+                <h2 class="game-card__name">Tiến Lên</h2>
+                <p class="game-card__description">
+                  Race to empty your hand before your opponents in Vietnam's most beloved card game.
+                </p>
+              </div>
+              <div class="game-card__footer">
+                <span class="badge badge--card">Card</span>
+                <a href="games/tien-len.html" class="btn btn-primary btn-sm">Play</a>
+              </div>
+            </article>
+          </div>
+
+          <!-- Oware -->
+          <div class="game-card-wrapper" data-category="board">
+            <article class="game-card">
+              <div class="game-card__banner game-card__banner--warm" aria-hidden="true">
+                <span style="font-size:3.5rem; line-height:140px; display:block; text-align:center;">🟤</span>
+              </div>
+              <div class="game-card__body">
+                <p class="game-card__origin">West Africa</p>
+                <h2 class="game-card__name">Oware</h2>
+                <p class="game-card__description">
+                  The ancient Akan strategy game of sowing, capturing, and counting — played for 7,000 years.
+                </p>
+              </div>
+              <div class="game-card__footer">
+                <span class="badge badge--board">Board</span>
+                <a href="games/oware.html" class="btn btn-primary btn-sm">Play</a>
+              </div>
+            </article>
+          </div>
+
+          <!-- Patolli -->
+          <div class="game-card-wrapper" data-category="dice">
+            <article class="game-card">
+              <div class="game-card__banner game-card__banner--green" aria-hidden="true">
+                <span style="font-size:3.5rem; line-height:140px; display:block; text-align:center;">🌿</span>
+              </div>
+              <div class="game-card__body">
+                <p class="game-card__origin">Aztec Mesoamerica</p>
+                <h2 class="game-card__name">Patolli</h2>
+                <p class="game-card__description">
+                  Race your pieces around a sacred cross-shaped board using bean dice in this ancient Aztec game.
+                </p>
+              </div>
+              <div class="game-card__footer">
+                <span class="badge badge--dice">Dice</span>
+                <a href="games/patolli.html" class="btn btn-primary btn-sm">Play</a>
+              </div>
+            </article>
+          </div>
+
+        </div><!-- /.games-grid -->
+
+        <!-- Empty state (shown when filter has no results) -->
+        <p
+          id="no-results"
+          hidden
+          style="text-align:center; color:var(--color-text-muted); padding: var(--space-8) 0; font-size: var(--text-lg);"
+          role="status"
+          aria-live="polite"
+        >
+          No games found for this filter.
+        </p>
+
       </div>
     </div>
+
   </main>
 
-  <!-- ═══════════════════════════════════════════════════════════
+  <!-- ════════════════════════════════════════════════════════
        FOOTER
-  ════════════════════════════════════════════════════════════ -->
+  ════════════════════════════════════════════════════════ -->
   <footer class="site-footer" role="contentinfo">
     <div class="container footer-inner">
       <span class="footer-brand">Cultural Games</span>
-
       <p class="footer-mission">
         Preserving cultural heritage through play — one game at a time.
       </p>
-
       <nav aria-label="Footer navigation">
         <ul class="footer-links" role="list">
-          <li><a href="browse.html"     class="footer-link">Browse Games</a></li>
-          <li><a href="about.html"      class="footer-link">About</a></li>
+          <li><a href="browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="about.html"  class="footer-link">About</a></li>
         </ul>
       </nav>
-
       <div class="footer-divider"></div>
       <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
     </div>
   </footer>
 
   <script src="../js/utils/navigation.js"></script>
+  <script>
+    // ── Filter logic ─────────────────────────────────────────
+    (function () {
+      var filterBtns = document.querySelectorAll('.filter-btn');
+      var cards      = document.querySelectorAll('.game-card-wrapper');
+      var noResults  = document.getElementById('no-results');
+
+      filterBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var filter = btn.dataset.filter;
+
+          // Update button states
+          filterBtns.forEach(function (b) {
+            b.classList.remove('active');
+            b.setAttribute('aria-pressed', 'false');
+          });
+          btn.classList.add('active');
+          btn.setAttribute('aria-pressed', 'true');
+
+          // Show / hide cards
+          var visible = 0;
+          cards.forEach(function (card) {
+            if (filter === 'all' || card.dataset.category === filter) {
+              card.hidden = false;
+              visible++;
+            } else {
+              card.hidden = true;
+            }
+          });
+
+          // Show empty state if no cards visible
+          noResults.hidden = visible > 0;
+        });
+      });
+    }());
+  </script>
 </body>
 </html>

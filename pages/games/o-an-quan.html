@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Play Ô Ăn Quan — the traditional Vietnamese mancala-style board game." />
+  <meta name="description" content="Play Ô Ăn Quan — the traditional Vietnamese mancala-style board game. Free, in your browser." />
   <title>Ô Ăn Quan — Cultural Games</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -19,53 +19,39 @@
 </head>
 <body>
 
-  <!-- ═══════════════════════════════════════════════════════════
-       NAVIGATION
-  ════════════════════════════════════════════════════════════ -->
+  <!-- NAVIGATION -->
   <nav class="site-nav" role="navigation" aria-label="Main navigation">
     <div class="container nav-inner">
       <a href="../../index.html" class="nav-logo" aria-label="Cultural Games — Home">
         <span class="nav-logo-icon" aria-hidden="true">🎲</span>
         <span class="nav-logo-text">Cultural Games</span>
       </a>
-
       <ul class="nav-links" id="nav-links" role="list">
         <li><a href="../browse.html" class="nav-link">Browse Games</a></li>
         <li><a href="../about.html"  class="nav-link">About</a></li>
       </ul>
-
-      <button
-        class="nav-hamburger"
-        aria-label="Toggle navigation menu"
-        aria-expanded="false"
-        aria-controls="nav-links"
-      >
-        <span></span>
-        <span></span>
-        <span></span>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
       </button>
     </div>
   </nav>
 
-  <!-- ═══════════════════════════════════════════════════════════
-       MAIN
-  ════════════════════════════════════════════════════════════ -->
   <main class="game-page">
     <div class="container">
 
-      <!-- Breadcrumb -->
       <div class="game-nav-bar">
         <a href="../browse.html" class="back-link">Back to Browse</a>
       </div>
 
-      <!-- Game Header -->
       <header class="game-header">
         <div class="game-header__icon" aria-hidden="true">⚫</div>
         <h1 class="game-header__title">Ô Ăn Quan</h1>
-        <p class="game-header__origin">Vietnam &mdash; <span class="badge badge--board" style="display:inline-flex; vertical-align:middle;">Board</span></p>
+        <p class="game-header__origin">
+          Vietnam &nbsp;&middot;&nbsp;
+          <span class="badge badge--board" style="display:inline-flex; vertical-align:middle; margin-left:4px;">Board</span>
+        </p>
       </header>
 
-      <!-- How to Play -->
       <details class="accordion" open>
         <summary class="accordion__trigger">
           <span class="accordion__title">How to Play</span>
@@ -73,19 +59,21 @@
         </summary>
         <div class="accordion__body">
           <p>
-            Ô Ăn Quan is a two-player mancala-style game played on a board with 10 small pits and 2 large "quan" pits, one on each end.
+            Ô Ăn Quan is played on a board with <strong>10 small pits</strong> and
+            <strong>2 large quan pits</strong> (one on each end). Each small pit starts
+            with 5 seeds. Player 1 controls the bottom row; Player 2 the top.
           </p>
           <ol>
-            <li>Each small pit starts with 5 seeds. Players take turns — Player 1 controls the bottom row, Player 2 the top.</li>
-            <li>Click any of your pits to pick up all seeds and distribute them one by one counterclockwise.</li>
-            <li><strong>Continue sowing:</strong> if the last seed lands in a non-empty pit, pick up those seeds and keep going.</li>
-            <li><strong>Capture:</strong> if the last seed lands in an empty pit and the pit next to it has seeds, capture those seeds into your quan.</li>
-            <li>The game ends when all pits on one player's side are empty. The player with the most seeds in their quan wins.</li>
+            <li>Click any of your pits to pick up all seeds from that pit.</li>
+            <li>Seeds are distributed <strong>one by one counterclockwise</strong> into subsequent pits.</li>
+            <li><strong>Continue sowing:</strong> if the last seed lands in a non-empty pit, pick up all seeds there and keep going.</li>
+            <li><strong>Capture:</strong> if the last seed lands in an empty pit and the pit immediately next to it has seeds, capture those seeds into your quan pit.</li>
+            <li>If the empty pit's neighbor is also empty, your turn ends.</li>
+            <li>The game ends when all 10 small pits on one side are empty. Each player claims seeds remaining on their side. Most seeds in quan wins.</li>
           </ol>
         </div>
       </details>
 
-      <!-- Cultural Context -->
       <details class="accordion">
         <summary class="accordion__trigger">
           <span class="accordion__title">Cultural Context</span>
@@ -93,44 +81,49 @@
         </summary>
         <div class="accordion__body">
           <p>
-            Ô Ăn Quan — literally "mandarin's squares" — is one of Vietnam's most beloved traditional children's games, played across the country for centuries. The game is typically drawn directly on the ground or on a flat stone, using pebbles or seeds as pieces.
+            Ô Ăn Quan — literally "mandarin's squares" — is one of Vietnam's most beloved
+            traditional children's games, played across the country for centuries.
+            The game is typically drawn directly on the ground or on a flat stone,
+            using pebbles or seeds as pieces.
           </p>
           <p>
-            The game develops strategic thinking, counting skills, and spatial reasoning, which is why it has long been used as both entertainment and informal education for children. It belongs to the global mancala family of games, found across Africa, Southeast Asia, and the Middle East — a testament to shared human ingenuity across cultures.
+            It belongs to the global mancala family of games, found across Africa,
+            Southeast Asia, and the Middle East — a testament to shared human ingenuity
+            across cultures that never had contact with each other.
+            The game develops strategic thinking, counting skills, and spatial reasoning,
+            which is why it has long been used as both entertainment and informal
+            education for Vietnamese children.
+          </p>
+          <p>
+            For many who grew up in Vietnam, the image of children crouched around a
+            chalk board on the schoolyard playing Ô Ăn Quan is one of the most
+            enduring memories of childhood. The game is simple enough for young children
+            to grasp but deep enough for adults to play seriously for decades.
           </p>
         </div>
       </details>
 
-      <!-- Game Container -->
       <div class="game-container" id="game-container" aria-label="Game area">
         <div class="game-placeholder">
           <div class="game-placeholder__icon" aria-hidden="true">⚫</div>
-          <h3 style="font-family: var(--font-display); margin-bottom: 0.5rem;">Coming in Phase 3</h3>
-          <p>The full Ô Ăn Quan board — pits, seeds, sowing and capture logic — will be built here.</p>
+          <h3>Coming in Phase 3</h3>
+          <p>The full Ô Ăn Quan board — pits, seeds, sowing, continuation, and capture logic — will appear here.</p>
         </div>
       </div>
 
     </div>
   </main>
 
-  <!-- ═══════════════════════════════════════════════════════════
-       FOOTER
-  ════════════════════════════════════════════════════════════ -->
   <footer class="site-footer" role="contentinfo">
     <div class="container footer-inner">
       <span class="footer-brand">Cultural Games</span>
-
-      <p class="footer-mission">
-        Preserving cultural heritage through play — one game at a time.
-      </p>
-
+      <p class="footer-mission">Preserving cultural heritage through play — one game at a time.</p>
       <nav aria-label="Footer navigation">
         <ul class="footer-links" role="list">
           <li><a href="../browse.html" class="footer-link">Browse Games</a></li>
           <li><a href="../about.html"  class="footer-link">About</a></li>
         </ul>
       </nav>
-
       <div class="footer-divider"></div>
       <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
     </div>

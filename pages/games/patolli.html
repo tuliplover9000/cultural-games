@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Play Patolli — the ancient Aztec race board game using bean dice." />
+  <meta name="description" content="Play Patolli — the ancient Aztec race board game using bean dice, free in your browser." />
   <title>Patolli — Cultural Games</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -19,53 +19,39 @@
 </head>
 <body>
 
-  <!-- ═══════════════════════════════════════════════════════════
-       NAVIGATION
-  ════════════════════════════════════════════════════════════ -->
+  <!-- NAVIGATION -->
   <nav class="site-nav" role="navigation" aria-label="Main navigation">
     <div class="container nav-inner">
       <a href="../../index.html" class="nav-logo" aria-label="Cultural Games — Home">
         <span class="nav-logo-icon" aria-hidden="true">🎲</span>
         <span class="nav-logo-text">Cultural Games</span>
       </a>
-
       <ul class="nav-links" id="nav-links" role="list">
         <li><a href="../browse.html" class="nav-link">Browse Games</a></li>
         <li><a href="../about.html"  class="nav-link">About</a></li>
       </ul>
-
-      <button
-        class="nav-hamburger"
-        aria-label="Toggle navigation menu"
-        aria-expanded="false"
-        aria-controls="nav-links"
-      >
-        <span></span>
-        <span></span>
-        <span></span>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
       </button>
     </div>
   </nav>
 
-  <!-- ═══════════════════════════════════════════════════════════
-       MAIN
-  ════════════════════════════════════════════════════════════ -->
   <main class="game-page">
     <div class="container">
 
-      <!-- Breadcrumb -->
       <div class="game-nav-bar">
         <a href="../browse.html" class="back-link">Back to Browse</a>
       </div>
 
-      <!-- Game Header -->
       <header class="game-header">
         <div class="game-header__icon" aria-hidden="true">🌿</div>
         <h1 class="game-header__title">Patolli</h1>
-        <p class="game-header__origin">Aztec Mesoamerica &mdash; <span class="badge badge--dice" style="display:inline-flex; vertical-align:middle;">Dice</span></p>
+        <p class="game-header__origin">
+          Aztec Mesoamerica &nbsp;&middot;&nbsp;
+          <span class="badge badge--dice" style="display:inline-flex; vertical-align:middle; margin-left:4px;">Dice</span>
+        </p>
       </header>
 
-      <!-- How to Play -->
       <details class="accordion" open>
         <summary class="accordion__trigger">
           <span class="accordion__title">How to Play</span>
@@ -73,20 +59,22 @@
         </summary>
         <div class="accordion__body">
           <p>
-            Patolli is an ancient race game played on a cross-shaped board with 52 spaces. Each player races 6 pieces around the full circuit.
+            Patolli is an ancient race game played on a <strong>cross-shaped board
+            with 52 spaces</strong>. Each player races 6 pieces around the full circuit
+            to win.
           </p>
           <ol>
-            <li><strong>Bean Dice:</strong> throw 5 marked beans. Count how many land marked-side up — that's your move distance. <em>All 5 unmarked = move 10</em>. <em>All 5 marked = move 5 AND take another turn</em>.</li>
-            <li>After rolling, choose which of your pieces to move. Only pieces with legal moves are selectable.</li>
-            <li><strong>Capture:</strong> landing on an opponent's piece sends it back to start. <strong>Safe zones</strong> protect pieces — they cannot be captured there.</li>
-            <li>You cannot move a piece to a space your own piece already occupies.</li>
-            <li>Race all 6 of your pieces around the full circuit and off the board to win.</li>
-            <li>A virtual tribute (coin) system tracks captures and earnings throughout the game.</li>
+            <li><strong>Bean Dice:</strong> throw 5 marked beans. Count how many land marked-side up — that's your move. <em>All 5 unmarked = move 10 spaces</em>. <em>All 5 marked = move 5 spaces AND take another turn</em>.</li>
+            <li>After rolling, choose which of your pieces to move. Only pieces with legal moves may be selected.</li>
+            <li><strong>Capture:</strong> landing on an opponent's piece sends it back to start. <strong>Safe zones</strong> protect pieces — pieces on safe spaces cannot be captured.</li>
+            <li>You cannot move a piece onto a space already occupied by your own piece.</li>
+            <li>Pieces must travel the full circuit around the cross-shaped track before exiting the board.</li>
+            <li><strong>Win condition:</strong> first player to move all 6 pieces around the full track and off the board wins.</li>
+            <li>A <strong>virtual tribute system</strong> (coins) tracks captures and awards throughout the game.</li>
           </ol>
         </div>
       </details>
 
-      <!-- Cultural Context -->
       <details class="accordion">
         <summary class="accordion__trigger">
           <span class="accordion__title">Cultural Context</span>
@@ -94,24 +82,40 @@
         </summary>
         <div class="accordion__body">
           <p>
-            Patolli is one of the oldest games in the Americas, played by the Aztec (Mexica) people and their predecessors for at least 2,000 years. Spanish conquistadors documented it in the 16th century with astonishment — noting that Aztec nobles and commoners alike played it with intense enthusiasm, wagering precious stones, blankets, and even their own freedom.
+            Patolli is one of the oldest games in the Americas, played by the Aztec
+            (Mexica) people and their predecessors for at least 2,000 years.
+            When Spanish conquistadors arrived in the 16th century, they documented
+            Patolli with astonishment — noting that Aztec nobles and commoners alike
+            played it with intense enthusiasm, wagering precious stones, blankets,
+            and sometimes even their own freedom.
           </p>
           <p>
-            The board's cross shape carries deep cosmological significance: the four arms represent the four cardinal directions and the four seasons, aligning the game with the Aztec 52-year calendar cycle — the same number as spaces on the board. The game was also associated with the god Macuilxochitl, patron of games and pleasure. Spanish colonizers eventually banned Patolli as pagan, nearly erasing it from history. Digital preservation efforts like this one help ensure it is not forgotten.
+            The board's cross shape carries deep cosmological significance: the four
+            arms represent the four cardinal directions and the four seasons, aligning
+            the game with the Aztec 52-year calendar cycle — the same number as spaces
+            on the board. The game was also associated with <em>Macuilxochitl</em>,
+            the Aztec god of games, pleasure, and excess, and was often played
+            during religious festivals as an act of devotion.
+          </p>
+          <p>
+            Spanish colonizers banned Patolli as pagan gambling, and the game was
+            nearly erased from history. Its survival today is largely due to the
+            detailed accounts written by Spanish missionaries who documented it
+            precisely in order to condemn it. Digital preservation efforts like this
+            one help ensure the game reaches future generations — not as a curiosity,
+            but as living culture.
           </p>
         </div>
       </details>
 
-      <!-- Game Container -->
       <div class="game-container" id="game-container" aria-label="Game area">
         <div class="game-placeholder">
           <div class="game-placeholder__icon" aria-hidden="true">🌿</div>
-          <h3 style="font-family: var(--font-display); margin-bottom: 0.5rem;">Coming in Phase 6</h3>
-          <p>The full Patolli board — cross shape, bean dice, piece movement, and tribute system — will be built here.</p>
+          <h3>Coming in Phase 6</h3>
+          <p>The full Patolli board — cross shape, bean dice, piece movement, safe zones, and tribute system — will appear here.</p>
         </div>
       </div>
 
-      <!-- Disclaimer -->
       <div class="game-disclaimer" role="note">
         🪙 This game uses <strong>virtual tribute coins only</strong>. No real money is involved.
       </div>
@@ -119,24 +123,16 @@
     </div>
   </main>
 
-  <!-- ═══════════════════════════════════════════════════════════
-       FOOTER
-  ════════════════════════════════════════════════════════════ -->
   <footer class="site-footer" role="contentinfo">
     <div class="container footer-inner">
       <span class="footer-brand">Cultural Games</span>
-
-      <p class="footer-mission">
-        Preserving cultural heritage through play — one game at a time.
-      </p>
-
+      <p class="footer-mission">Preserving cultural heritage through play — one game at a time.</p>
       <nav aria-label="Footer navigation">
         <ul class="footer-links" role="list">
           <li><a href="../browse.html" class="footer-link">Browse Games</a></li>
           <li><a href="../about.html"  class="footer-link">About</a></li>
         </ul>
       </nav>
-
       <div class="footer-divider"></div>
       <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
     </div>
