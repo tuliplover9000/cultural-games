@@ -21,8 +21,8 @@
   /* ── Constants ── */
   const RANKS = ['3','4','5','6','7','8','9','10','J','Q','K','A','2'];
   const SUITS = ['♠','♣','♦','♥'];
-  const SUIT_CLR  = { '♠':'black', '♣':'black', '♦':'red', '♥':'red' };
-  const AI_NAMES  = ['', 'Lan', 'Minh', 'Hoa'];   // index 0 = human player
+  const SUIT_CLR   = { '♠':'black', '♣':'black', '♦':'red', '♥':'red' };
+  const SEAT_NAMES = ['You', 'Left', 'Across', 'Right'];
   const TYPE_LABEL = {
     single:'Single', pair:'Pair', triple:'Triple',
     quad:'Four of a Kind', seq:'Sequence', seqpair:'Seq. of Pairs',
@@ -250,7 +250,7 @@
   function scheduleAITurn() {
     state.aiThinking = true;
     render();
-    const delay = 550 + cryptoRandInt(500); // 550–1050 ms
+    const delay = 300 + cryptoRandInt(300); // 300–600 ms
     setTimeout(runAI, delay);
   }
 
@@ -340,9 +340,8 @@
 
   /* ── Helpers ── */
   function pName(idx) {
-    if (idx < 0)        return '—';
-    if (idx === PLAYER) return 'You';
-    return AI_NAMES[idx];
+    if (idx < 0) return '—';
+    return SEAT_NAMES[idx] || '?';
   }
 
   function cardsStr(cards) {
@@ -423,7 +422,7 @@
     const show   = Math.min(n, 11);
     const backs  = Array(show).fill('<div class="tl-card-back tl-card-back--sm"></div>').join('');
     return `<div class="tl-zone tl-zone--top">
-  <div class="tl-zone__name${active ? ' active' : ''}">Minh${active ? ' ●' : ''}</div>
+  <div class="tl-zone__name${active ? ' active' : ''}">Across${active ? ' ●' : ''}</div>
   <div class="tl-opp-cards--top">${backs}</div>
   <div class="tl-zone__count">${n} card${n !== 1 ? 's' : ''}</div>
 </div>`;
@@ -432,7 +431,7 @@
   function zoneSide(idx, side) {
     const n      = state.hands[idx].length;
     const active = state.current === idx;
-    const name   = AI_NAMES[idx];
+    const name   = SEAT_NAMES[idx];
     const show   = Math.min(n, 6);
     const backs  = Array(show).fill('<div class="tl-card-back tl-card-back--xs"></div>').join('');
     return `<div class="tl-zone tl-zone--${side}">
@@ -442,10 +441,33 @@
 </div>`;
   }
 
+  /* ── Pile animation helpers ── */
+  function fromDir(playerIdx) {
+    // Returns CSS translate offsets representing where cards fly FROM
+    switch (playerIdx) {
+      case 1:  return { x: '-260px', y:  '20px' };   // Left
+      case 2:  return { x:    '0px', y: '-160px' };  // Across / Top
+      case 3:  return { x:  '260px', y:  '20px' };   // Right
+      default: return { x:    '0px', y:  '160px' };  // You / Bottom
+    }
+  }
+
+  function pileRot(card, i) {
+    // Deterministic rotation in [-5, +5] degrees — looks like cards thrown on a table
+    return ((cardVal(card) + i * 7) % 11) - 5;
+  }
+
   function centerArea(justChanged) {
     const hasPile = state.pile.length > 0;
     const pileHTML = hasPile
-      ? state.pile.map((c, i) => faceCard(c, justChanged ? 'played-in' : '', justChanged ? `--play-i:${i}` : '')).join('')
+      ? state.pile.map((c, i) => {
+          const rot = pileRot(c, i);
+          const dir = justChanged ? fromDir(state.pileOwner) : null;
+          const sty = dir
+            ? `--play-i:${i};--from-x:${dir.x};--from-y:${dir.y};--rot:${rot}deg`
+            : `--rot:${rot}deg`;
+          return faceCard(c, justChanged ? 'played-in' : '', sty);
+        }).join('')
       : `<span class="tl-play-area-empty">Play area</span>`;
 
     const info = hasPile && state.pileType

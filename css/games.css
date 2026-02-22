@@ -1265,8 +1265,13 @@
   pointer-events: none;
 }
 
-/* Play-area cards: slightly smaller */
-.tl-play-area .tl-card { width: 44px; height: 62px; }
+/* Play-area cards: slightly smaller, rotated like a card stack */
+.tl-play-area .tl-card {
+  width: 44px;
+  height: 62px;
+  transform: rotate(var(--rot, 0deg));
+  transition: none;
+}
 .tl-play-area .tl-card__rank   { font-size: 12px; }
 .tl-play-area .tl-card__center { font-size: 19px; }
 
@@ -1303,8 +1308,8 @@
 }
 
 @keyframes tl-play-in {
-  from { opacity: 0; transform: translateY(-20px) scale(0.8); }
-  to   { opacity: 1; transform: none; }
+  from { opacity: 0; transform: translate(var(--from-x, 0px), var(--from-y, -40px)) scale(0.65); }
+  to   { opacity: 1; transform: rotate(var(--rot, 0deg)); }
 }
 
 /* ── Player hand ── */
