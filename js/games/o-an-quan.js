@@ -27,6 +27,17 @@
   // ── State ──────────────────────────────────────────────────────────────────
   let state = null;
 
+  // ── Skip-animation flag ───────────────────────────────────────────────────
+  // When the player clicks Skip, skipSowing is set to true and skipResolve()
+  // is called so the current in-flight Promise.race resolves immediately.
+  let skipSowing  = false;
+  let skipResolve = null;
+
+  function requestSkip() {
+    skipSowing = true;
+    if (skipResolve) { skipResolve(); skipResolve = null; }
+  }
+
   function initState() {
     const board = new Array(TOTAL_PITS).fill(0);
     // Fill small pits with seeds
@@ -74,14 +85,18 @@
 
   // ── Pickup burst animation on the source pit ─────────────────────────────
   async function animatePickup(idx) {
+    if (skipSowing) return;
     const el = document.querySelector(`[data-pit="${idx}"]`);
     if (!el) return;
-    await el.animate([
+    const skip = new Promise(res => { skipResolve = res; });
+    const anim = el.animate([
       { transform: 'scale(1)',    boxShadow: '0 0 0 0px rgba(200,155,60,0)',   filter: 'brightness(1)' },
       { transform: 'scale(1.18)', boxShadow: '0 0 0 8px rgba(200,155,60,0.5)', filter: 'brightness(1.6)' },
       { transform: 'scale(0.92)', boxShadow: '0 0 0 0px rgba(200,155,60,0)',   filter: 'brightness(0.85)' },
       { transform: 'scale(1)',    boxShadow: '0 0 0 0px rgba(200,155,60,0)',   filter: 'brightness(1)' },
-    ], { duration: 380, easing: 'ease-out' }).finished;
+    ], { duration: 380, easing: 'ease-out' });
+    await Promise.race([anim.finished, skip]);
+    anim.cancel();
   }
 
   // ── Set content of a flying seed cluster ─────────────────────────────────
@@ -102,23 +117,27 @@
     const tr      = toEl.getBoundingClientRect();
     const targetX = tr.left + tr.width  / 2;
     const targetY = tr.top  + tr.height / 2;
-    const dx   = targetX - curX;
-    const dy   = targetY - curY;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    const arc  = Math.min(Math.max(36, dist * 0.52), 110);
 
-    const anim = cluster.animate([
-      { transform: 'translate(-50%,-50%) scale(1.05)' },
-      { transform: `translate(calc(-50% + ${dx * 0.5}px), calc(-50% + ${dy * 0.5 - arc}px)) scale(1.2)`,
-        offset: 0.42 },
-      { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(1)` },
-    ], { duration, easing: 'ease-in-out', fill: 'both' });
+    if (!skipSowing) {
+      const dx   = targetX - curX;
+      const dy   = targetY - curY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const arc  = Math.min(Math.max(36, dist * 0.52), 110);
 
-    await anim.finished;
-    // Commit new position into CSS so cancel() doesn't snap back
+      const skip = new Promise(res => { skipResolve = res; });
+      const anim = cluster.animate([
+        { transform: 'translate(-50%,-50%) scale(1.05)' },
+        { transform: `translate(calc(-50% + ${dx * 0.5}px), calc(-50% + ${dy * 0.5 - arc}px)) scale(1.2)`,
+          offset: 0.42 },
+        { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(1)` },
+      ], { duration, easing: 'ease-in-out', fill: 'both' });
+
+      await Promise.race([anim.finished, skip]);
+      anim.cancel();
+    }
+
     cluster.style.left = `${targetX}px`;
     cluster.style.top  = `${targetY}px`;
-    anim.cancel();
     return { x: targetX, y: targetY };
   }
 
@@ -171,6 +190,9 @@
   async function sow(startIdx) {
     if (state.phase !== 'select') return;
     if (state.board[startIdx] === 0) return;
+
+    skipSowing  = false;
+    skipResolve = null;
 
     state.phase = 'sowing';
     refresh();
@@ -280,8 +302,9 @@
     return `P2-pit${P2_PITS.indexOf(idx) + 1}`;
   }
 
-  // ── Sleep ─────────────────────────────────────────────────────────────────
+  // ── Sleep (resolves immediately when skip is active) ──────────────────────
   function sleep(ms) {
+    if (skipSowing) return Promise.resolve();
     return new Promise(r => setTimeout(r, ms));
   }
 
@@ -308,6 +331,10 @@
       const idx = parseInt(el.dataset.pit, 10);
       el.addEventListener('click', () => sow(idx));
     });
+
+    // Skip animation button (only present during sowing phase)
+    const skipBtn = container.querySelector('#oaq-skip');
+    if (skipBtn) skipBtn.addEventListener('click', requestSkip);
 
     // Restart button
     const restartBtn = container.querySelector('#oaq-restart');
@@ -365,6 +392,7 @@
       ${logHTML}
 
       <div class="oaq-actions">
+        ${phase === 'sowing' ? '<button class="btn btn--outline" id="oaq-skip">Skip Animation</button>' : ''}
         <button class="btn btn--outline" id="oaq-restart">Restart Game</button>
       </div>
 
