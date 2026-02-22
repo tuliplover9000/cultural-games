@@ -307,10 +307,10 @@
   function seedDotsHTML(count, max) {
     if (count === 0) return '<span class="oaq-seed-none"></span>';
     const show = Math.min(count, max);
-    // Cycle through 4 earthy color variants for visual texture
     let dots = '';
     for (let i = 0; i < show; i++) {
-      dots += `<span class="oaq-seed oaq-seed--c${(i % 4) + 1}"></span>`;
+      // --i drives the staggered spring animation delay in CSS
+      dots += `<span class="oaq-seed oaq-seed--c${(i % 4) + 1}" style="--i:${i};"></span>`;
     }
     const overflow = count > max
       ? `<span class="oaq-seed-overflow">+${count - max}</span>`
