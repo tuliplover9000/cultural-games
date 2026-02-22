@@ -1,0 +1,20 @@
+# Netlify configuration for Cultural Games
+# Static HTML/CSS/JS site — no build step required.
+
+[build]
+  publish = "."
+
+# Custom 404 page (optional — uncomment once pages/404.html is created in a later phase)
+# [[redirects]]
+#   from   = "/*"
+#   to     = "/index.html"
+#   status = 404
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options        = "DENY"
+    X-XSS-Protection       = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy        = "strict-origin-when-cross-origin"

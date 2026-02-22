@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Play Bầu Cua Tôm Cá — the Vietnamese dice betting game traditionally played during Tết." />
+  <title>Bầu Cua Tôm Cá — Cultural Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/components.css" />
+  <link rel="stylesheet" href="../../css/games.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       NAVIGATION
+  ════════════════════════════════════════════════════════════ -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../../index.html" class="nav-logo" aria-label="Cultural Games — Home">
+        <span class="nav-logo-icon" aria-hidden="true">🎲</span>
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="../browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="../about.html"  class="nav-link">About</a></li>
+      </ul>
+
+      <button
+        class="nav-hamburger"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false"
+        aria-controls="nav-links"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       MAIN
+  ════════════════════════════════════════════════════════════ -->
+  <main class="game-page">
+    <div class="container">
+
+      <!-- Breadcrumb -->
+      <div class="game-nav-bar">
+        <a href="../browse.html" class="back-link">Back to Browse</a>
+      </div>
+
+      <!-- Game Header -->
+      <header class="game-header">
+        <div class="game-header__icon" aria-hidden="true">🦐</div>
+        <h1 class="game-header__title">Bầu Cua Tôm Cá</h1>
+        <p class="game-header__origin">Vietnam &mdash; <span class="badge badge--dice" style="display:inline-flex; vertical-align:middle;">Dice</span></p>
+      </header>
+
+      <!-- How to Play -->
+      <details class="accordion" open>
+        <summary class="accordion__trigger">
+          <span class="accordion__title">How to Play</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Bầu Cua Tôm Cá (Gourd Crab Shrimp Fish) is a Vietnamese dice betting game traditionally played during Tết, the Lunar New Year.
+          </p>
+          <ol>
+            <li>Place bets on one or more of the 6 symbols on the mat: Gourd (Bầu), Crab (Cua), Shrimp (Tôm), Fish (Cá), Deer (Nai), Rooster (Gà).</li>
+            <li>Click <strong>Roll Dice</strong> to roll 3 dice. Each die shows one of the 6 symbols.</li>
+            <li>For each symbol you bet on, count how many dice show that symbol.</li>
+            <li><strong>0 matches</strong> — you lose your bet. <strong>1 match</strong> — win 1× your bet. <strong>2 matches</strong> — win 2×. <strong>3 matches</strong> — win 3×.</li>
+            <li>The game ends when your coin wallet reaches 0.</li>
+          </ol>
+        </div>
+      </details>
+
+      <!-- Cultural Context -->
+      <details class="accordion">
+        <summary class="accordion__trigger">
+          <span class="accordion__title">Cultural Context</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Bầu Cua Tôm Cá has been a beloved part of Vietnamese New Year celebrations for generations. The game is traditionally played with a cloth or paper mat painted with six animals and three large wooden dice carved with matching symbols.
+          </p>
+          <p>
+            During Tết, families and friends gather around the mat, placing small bets for fun rather than profit. The game is as much a social ritual as it is entertainment — a moment of communal excitement that bridges generations. The six symbols — gourd, crab, shrimp, fish, deer, and rooster — each carry symbolic meaning in Vietnamese folk culture.
+          </p>
+        </div>
+      </details>
+
+      <!-- Game Container -->
+      <div class="game-container" id="game-container" aria-label="Game area">
+        <div class="game-placeholder">
+          <div class="game-placeholder__icon" aria-hidden="true">🦐</div>
+          <h3 style="font-family: var(--font-display); margin-bottom: 0.5rem;">Coming in Phase 2</h3>
+          <p>The full Bầu Cua Tôm Cá game — betting mat, dice, and payout logic — will be built here.</p>
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="game-disclaimer" role="note">
+        🪙 This game uses <strong>virtual coins only</strong>. No real money is involved.
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FOOTER
+  ════════════════════════════════════════════════════════════ -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <span class="footer-brand">Cultural Games</span>
+
+      <p class="footer-mission">
+        Preserving cultural heritage through play — one game at a time.
+      </p>
+
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links" role="list">
+          <li><a href="../browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="../about.html"  class="footer-link">About</a></li>
+        </ul>
+      </nav>
+
+      <div class="footer-divider"></div>
+      <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
+    </div>
+  </footer>
+
+  <script src="../../js/utils/helpers.js"></script>
+  <script src="../../js/utils/navigation.js"></script>
+  <script src="../../js/games/bau-cua.js"></script>
+</body>
+</html>
