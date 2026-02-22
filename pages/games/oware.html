@@ -52,6 +52,21 @@
         </p>
       </header>
 
+      <!-- Game Container -->
+      <div class="game-container" id="game-container" aria-label="Game area">
+        <div class="game-placeholder">
+          <div class="game-placeholder__icon" aria-hidden="true">🟤</div>
+          <h3>Loading…</h3>
+          <p>The full Oware board is loading.</p>
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="game-disclaimer" role="note">
+        🪙 This game uses <strong>virtual seeds only</strong>. No real money is involved.
+      </div>
+
+      <!-- How to Play -->
       <details class="accordion" open>
         <summary class="accordion__trigger">
           <span class="accordion__title">How to Play</span>
@@ -60,20 +75,21 @@
         <div class="accordion__body">
           <p>
             Oware is played on a board with <strong>2 rows of 6 pits</strong> and a
-            score pit on each end. Each small pit starts with <strong>4 seeds</strong>
-            (48 total). You control the row closest to you.
+            score store on each side. Each small pit starts with <strong>4 seeds</strong>
+            (48 total). You control the bottom row.
           </p>
           <ol>
-            <li>Click one of your 6 pits to sow. All seeds are picked up and distributed one per pit, moving counterclockwise.</li>
-            <li><strong>Lapping rule:</strong> if a pit has more than 12 seeds, skip the starting pit on full loops.</li>
-            <li><strong>Capture:</strong> if the last seed lands in an <em>opponent's</em> pit and brings it to exactly <strong>2 or 3 seeds</strong>, capture those seeds into your score pit. Continue capturing backwards through consecutive pits that also have exactly 2 or 3.</li>
-            <li><strong>Starvation rule:</strong> you may not make a move that leaves your opponent with zero seeds — unless it is your only possible move.</li>
-            <li>The game ends when one player has <strong>25+ seeds captured</strong>, or fewer than 12 seeds remain on the board.</li>
+            <li>Click one of your 6 pits to sow. All seeds are picked up and distributed <strong>one per pit, counterclockwise</strong>.</li>
+            <li><strong>Lapping rule:</strong> if a pit has 12 or more seeds, skip the starting pit on every full revolution.</li>
+            <li><strong>Capture:</strong> if the last seed lands in an <em>opponent's</em> pit and brings it to exactly <strong>2 or 3 seeds</strong>, capture those seeds into your score. Continue capturing backwards through consecutive opponent pits that also have exactly 2 or 3.</li>
+            <li><strong>Starvation rule:</strong> you may not make a move that leaves your opponent with zero seeds — unless it is your only possible move. Valid pits are highlighted.</li>
+            <li>The game ends when one player has captured <strong>25 or more seeds</strong>, or fewer than 12 seeds remain on the board. Each player then claims the seeds on their own side.</li>
             <li>The player with the most captured seeds wins.</li>
           </ol>
         </div>
       </details>
 
+      <!-- Cultural Context -->
       <details class="accordion">
         <summary class="accordion__trigger">
           <span class="accordion__title">Cultural Context</span>
@@ -103,14 +119,6 @@
           </p>
         </div>
       </details>
-
-      <div class="game-container" id="game-container" aria-label="Game area">
-        <div class="game-placeholder">
-          <div class="game-placeholder__icon" aria-hidden="true">🟤</div>
-          <h3>Coming in Phase 5</h3>
-          <p>The full Oware board — sowing, capture, starvation rule enforcement, and valid move highlighting — will appear here.</p>
-        </div>
-      </div>
 
     </div>
   </main>

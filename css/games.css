@@ -1550,8 +1550,310 @@
 }
 
 /* =============================================================================
-   Oware — Phase 5 (styles reserved, empty for now)
+   Oware — Phase 5
 ============================================================================= */
+
+.ow-game {
+  background: radial-gradient(ellipse at 50% 30%, #3d1f0a 0%, #1a0b04 100%);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 480px;
+  color: #e8c898;
+  font-family: var(--font-body);
+}
+
+/* ── Status bar ── */
+.ow-status {
+  text-align: center;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #e8c898;
+  background: rgba(0,0,0,0.3);
+  border-radius: var(--radius-full);
+  padding: 8px var(--space-4);
+}
+
+/* ── AI thinking dots ── */
+.ow-dots span {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #c8871a;
+  margin: 0 2px;
+  vertical-align: middle;
+  animation: ow-dot 1.2s infinite;
+}
+.ow-dots span:nth-child(2) { animation-delay: 0.2s; }
+.ow-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes ow-dot {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+  40%           { opacity: 1;   transform: scale(1.3); }
+}
+
+/* ── Board layout ── */
+.ow-board-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.ow-board {
+  background: #3a1e0a;
+  border-radius: 20px;
+  padding: var(--space-2) var(--space-3);
+  box-shadow:
+    0 8px 28px rgba(0,0,0,0.65),
+    inset 0 1px 0 rgba(255,200,100,0.08),
+    inset 0 -2px 10px rgba(0,0,0,0.5);
+  border: 2px solid #5c3015;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ow-row {
+  display: flex;
+  gap: 8px;
+}
+
+.ow-row-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(232,200,152,0.35);
+  text-align: center;
+}
+
+.ow-divider {
+  height: 2px;
+  margin: 2px 0;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(180,100,30,0.45) 20%,
+    rgba(180,100,30,0.45) 80%,
+    transparent
+  );
+}
+
+/* ── Score stores ── */
+.ow-store {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 60px;
+}
+
+.ow-store__label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(232,200,152,0.5);
+}
+
+.ow-store__val {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #ffd580;
+  line-height: 1;
+  text-shadow: 0 0 14px rgba(255,200,80,0.4);
+}
+
+.ow-store__sub {
+  font-size: 9px;
+  color: rgba(232,200,152,0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── Pits ── */
+.ow-pit {
+  width: 68px;
+  height: 72px;
+  background: #1e0e04;
+  border-radius: 50%;
+  border: 2px solid #5c3015;
+  box-shadow:
+    inset 0 4px 14px rgba(0,0,0,0.75),
+    0 2px 4px rgba(0,0,0,0.45);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.ow-pit__seeds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  justify-content: center;
+  align-items: center;
+  max-width: 52px;
+  min-height: 26px;
+}
+
+.ow-seed {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #e8a030, #9a5010);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.55);
+  flex-shrink: 0;
+}
+
+.ow-pit__count {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(232,200,152,0.55);
+  line-height: 1;
+}
+
+/* Clickable pits (valid player moves) */
+.ow-pit--clickable {
+  cursor: pointer;
+  border-color: #8b5020;
+}
+.ow-pit--clickable:hover {
+  border-color: #c8871a;
+  box-shadow:
+    inset 0 4px 14px rgba(0,0,0,0.5),
+    0 0 18px rgba(200,135,26,0.45),
+    0 2px 4px rgba(0,0,0,0.45);
+}
+.ow-pit--clickable .ow-pit__count { color: rgba(232,200,152,0.85); }
+
+/* Last-sown pit — glows amber */
+.ow-pit--lit {
+  border-color: #e8a030;
+  box-shadow:
+    inset 0 4px 14px rgba(0,0,0,0.4),
+    0 0 22px rgba(232,160,48,0.65),
+    0 2px 4px rgba(0,0,0,0.45);
+  animation: ow-receive 200ms ease-out;
+}
+
+@keyframes ow-receive {
+  0%   { transform: scale(1.08); }
+  100% { transform: scale(1);    }
+}
+
+/* ── Actions ── */
+.ow-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.ow-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 22px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 2px solid rgba(200,135,26,0.38);
+  background: rgba(200,135,26,0.1);
+  color: #e8c898;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+.ow-btn:hover {
+  background: rgba(200,135,26,0.22);
+  border-color: rgba(200,135,26,0.7);
+}
+
+.ow-btn--primary {
+  background: #7a3e10;
+  border-color: #c8871a;
+  color: #ffe8b0;
+}
+.ow-btn--primary:hover {
+  background: #994e18;
+  border-color: #e8a030;
+  transform: translateY(-2px);
+}
+
+/* ── Game log ── */
+.ow-log {
+  background: rgba(0,0,0,0.22);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+}
+.ow-log ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 80px;
+  overflow-y: auto;
+}
+.ow-log li {
+  font-size: 11px;
+  color: rgba(232,200,152,0.55);
+  padding-bottom: 3px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.ow-log li:first-child { color: rgba(232,200,152,0.9); }
+
+/* ── Game over ── */
+.ow-gameover {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-height: 360px;
+  text-align: center;
+}
+
+.ow-gameover__icon {
+  font-size: 4.5rem;
+  animation: ow-pop 420ms cubic-bezier(0.34, 1.56, 0.64, 1) 200ms both;
+}
+
+@keyframes ow-pop {
+  from { transform: scale(0.1); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.ow-gameover h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  color: #ffd580;
+  margin: 0;
+}
+
+.ow-gameover p {
+  font-size: var(--text-sm);
+  color: rgba(232,200,152,0.65);
+  margin: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 560px) {
+  .ow-pit { width: 46px; height: 50px; }
+  .ow-seed { width: 7px; height: 7px; }
+  .ow-pit__seeds { max-width: 36px; min-height: 20px; gap: 2px; }
+  .ow-pit__count { font-size: 10px; }
+  .ow-row { gap: 5px; }
+  .ow-board { padding: var(--space-2) var(--space-2); }
+  .ow-store { min-width: 44px; }
+  .ow-store__val { font-size: 1.7rem; }
+}
 
 /* =============================================================================
    Patolli — Phase 6 (styles reserved, empty for now)
