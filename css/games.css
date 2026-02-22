@@ -627,8 +627,333 @@
 }
 
 /* =============================================================================
-   Ô Ăn Quan — Phase 3 (styles reserved, empty for now)
+   Ô Ăn Quan — Phase 3
 ============================================================================= */
+
+.oaq-game {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  font-family: var(--font-body);
+}
+
+/* ── Turn banner ── */
+.oaq-turn-banner {
+  text-align: center;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-sm);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: background-color 300ms, color 300ms;
+}
+
+.oaq-turn-banner.p1 {
+  background: rgba(44, 120, 115, 0.15);
+  color: var(--color-accent-teal);
+  border: 1px solid rgba(44, 120, 115, 0.3);
+}
+
+.oaq-turn-banner.p2 {
+  background: rgba(184, 50, 50, 0.12);
+  color: var(--color-accent-red);
+  border: 1px solid rgba(184, 50, 50, 0.3);
+}
+
+.oaq-turn-banner.gameover {
+  background: rgba(200, 155, 60, 0.15);
+  color: var(--color-accent-gold);
+  border: 1px solid rgba(200, 155, 60, 0.4);
+}
+
+/* ── Score bar ── */
+.oaq-score-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.oaq-score-player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.oaq-score-player__label {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+}
+
+.oaq-score-player__num {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  line-height: 1;
+}
+
+.oaq-score-player.p1 .oaq-score-player__num { color: var(--color-accent-teal); }
+.oaq-score-player.p2 .oaq-score-player__num { color: var(--color-accent-red); }
+
+.oaq-score-divider {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  color: var(--color-text-muted);
+  opacity: 0.4;
+}
+
+/* ── Board ── */
+.oaq-board {
+  display: grid;
+  /* 7 columns: quan-left | 5 small pits | quan-right */
+  grid-template-columns: 100px repeat(5, 1fr) 100px;
+  grid-template-rows: 1fr 1fr;
+  gap: 8px;
+  background: #3a2010;
+  padding: var(--space-3);
+  border-radius: var(--radius-xl);
+  border: 4px solid #241508;
+  box-shadow: inset 0 4px 14px rgba(0,0,0,0.6), var(--shadow-lg);
+}
+
+/* ── Quan pits (left & right, span 2 rows) ── */
+.oaq-quan {
+  grid-row: 1 / 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #5a3218;
+  border: 3px solid #8b6040;
+  border-radius: var(--radius-xl);
+  padding: var(--space-2);
+  min-height: 140px;
+}
+
+.oaq-quan--p2 { grid-column: 1; }
+.oaq-quan--p1 { grid-column: 7; }
+
+.oaq-quan__label {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+  color: #e8c990;
+}
+
+.oaq-quan__count {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-accent-gold);
+  line-height: 1;
+}
+
+.oaq-quan__seeds-label {
+  font-size: 10px;
+  color: rgba(232,201,144,0.6);
+}
+
+/* ── Small pits (top and bottom rows) ── */
+.oaq-pit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: #7a5030;
+  border: 2px solid #a07050;
+  border-radius: var(--radius-lg);
+  padding: var(--space-2) var(--space-1);
+  min-height: 64px;
+  cursor: default;
+  transition: background-color 150ms, border-color 150ms, transform 120ms;
+  position: relative;
+}
+
+/* Top row: Player 2's pits */
+.oaq-pit--top { grid-row: 1; }
+
+/* Bottom row: Player 1's pits */
+.oaq-pit--bottom { grid-row: 2; }
+
+/* Clickable state */
+.oaq-pit.clickable {
+  cursor: pointer;
+  border-color: var(--color-accent-gold);
+  background: #9a6840;
+}
+
+.oaq-pit.clickable:hover {
+  background: #b08060;
+  transform: scale(1.04);
+  box-shadow: 0 0 14px rgba(200,155,60,0.4);
+}
+
+.oaq-pit.active {
+  border-color: #fff;
+  background: #c08848;
+  box-shadow: 0 0 18px rgba(255,255,255,0.25);
+}
+
+.oaq-pit__count {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: #f0ddb0;
+  line-height: 1;
+}
+
+.oaq-pit__seeds {
+  font-size: 10px;
+  color: rgba(240,221,176,0.55);
+  letter-spacing: 0.04em;
+}
+
+/* Empty pit */
+.oaq-pit.empty .oaq-pit__count { color: rgba(240,221,176,0.25); }
+
+/* Sowing animation highlight */
+.oaq-pit.sow-flash {
+  animation: oaq-sow 250ms ease;
+}
+
+@keyframes oaq-sow {
+  0%   { background: #d4a060; transform: scale(1.08); }
+  100% { background: #7a5030; transform: scale(1); }
+}
+
+/* ── Status message ── */
+.oaq-status {
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-style: italic;
+  min-height: 1.4em;
+}
+
+/* ── Move log ── */
+.oaq-log {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2) var(--space-3);
+}
+
+.oaq-log__title {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-1);
+  font-weight: var(--weight-semibold);
+}
+
+.oaq-log__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.oaq-log__entry {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  padding: 2px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.oaq-log__entry:last-child { border-bottom: none; }
+.oaq-log__entry.p1 { color: var(--color-accent-teal); }
+.oaq-log__entry.p2 { color: var(--color-accent-red); }
+
+/* ── Actions ── */
+.oaq-actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ── Game over ── */
+.oaq-gameover {
+  text-align: center;
+  padding: var(--space-5) var(--space-4);
+  display: none;
+  animation: oaq-fadein 0.35s ease;
+}
+
+.oaq-gameover.visible { display: block; }
+
+@keyframes oaq-fadein {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.oaq-gameover__icon { font-size: 3.5rem; line-height: 1; margin-bottom: var(--space-2); }
+
+.oaq-gameover h2 {
+  font-size: var(--text-3xl);
+  font-family: var(--font-display);
+  color: var(--color-accent-gold);
+  margin-bottom: var(--space-1);
+}
+
+.oaq-gameover p { color: var(--color-text-muted); margin-bottom: var(--space-4); }
+
+.oaq-final-scores {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-6);
+  margin-bottom: var(--space-4);
+}
+
+.oaq-final-score {
+  text-align: center;
+}
+
+.oaq-final-score__num {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  line-height: 1;
+}
+
+.oaq-final-score.p1 .oaq-final-score__num { color: var(--color-accent-teal); }
+.oaq-final-score.p2 .oaq-final-score__num { color: var(--color-accent-red); }
+.oaq-final-score__label { font-size: var(--text-xs); color: var(--color-text-muted); margin-top: 4px; }
+
+/* ── Responsive ── */
+@media (max-width: 560px) {
+  .oaq-board {
+    grid-template-columns: 64px repeat(5, 1fr) 64px;
+    gap: 5px;
+    padding: var(--space-2);
+  }
+
+  .oaq-quan {
+    min-height: 110px;
+  }
+
+  .oaq-quan__count {
+    font-size: var(--text-2xl);
+  }
+
+  .oaq-pit {
+    min-height: 52px;
+    padding: var(--space-1);
+  }
+
+  .oaq-pit__count {
+    font-size: var(--text-lg);
+  }
+}
 
 /* =============================================================================
    Tiến Lên — Phase 4 (styles reserved, empty for now)
