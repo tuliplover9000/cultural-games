@@ -1360,14 +1360,90 @@
 /* ── Actions ── */
 .tl-actions {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: var(--space-2);
-  justify-content: center;
-  flex-wrap: wrap;
 }
 
+.tl-actions__main {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.tl-actions__secondary {
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* ── Game-specific buttons (visible on dark felt) ── */
+.tl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 20px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1;
+  border-radius: var(--radius-md);
+  border: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  transition: background-color 120ms ease, border-color 120ms ease,
+              color 120ms ease, transform 120ms ease, opacity 120ms ease;
+}
+
+.tl-btn:active { transform: translateY(1px); }
+
+.tl-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Play — solid green */
+.tl-btn--play {
+  background: #2a7a3a;
+  color: #fff;
+  border-color: #3caa52;
+}
+.tl-btn--play:not(:disabled):hover {
+  background: #32914a;
+  border-color: #5ccb70;
+  transform: translateY(-2px);
+}
+
+/* Pass — outlined white */
+.tl-btn--pass {
+  background: transparent;
+  color: rgba(220, 240, 210, 0.9);
+  border-color: rgba(200, 230, 190, 0.45);
+}
+.tl-btn--pass:not(:disabled):hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(200, 230, 190, 0.8);
+  transform: translateY(-2px);
+}
+
+/* Ghost — subtle, clearly boxed */
+.tl-btn--ghost {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(210, 230, 200, 0.75);
+  border-color: rgba(200, 220, 190, 0.3);
+  font-size: 12px;
+  padding: 7px 14px;
+}
+.tl-btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.11);
+  border-color: rgba(200, 220, 190, 0.6);
+  color: rgba(220, 240, 210, 0.95);
+}
+
+/* 2× Speed — active/on state */
 .tl-speed-btn.active {
-  background: rgba(255, 210, 50, 0.18);
-  border-color: rgba(255, 210, 50, 0.5);
+  background: rgba(255, 210, 50, 0.15);
+  border-color: rgba(255, 210, 50, 0.55);
   color: #ffd232;
 }
 

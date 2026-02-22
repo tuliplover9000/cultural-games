@@ -502,10 +502,14 @@
   <div class="tl-zone__name${isYT ? ' active' : ''}">You${isYT ? ' ●' : ''} · ${hand.length} cards</div>
   <div class="tl-hand">${cards}</div>
   <div class="tl-actions">
-    <button class="btn btn--primary" id="tl-play" ${canPlay ? '' : 'disabled'}>Play</button>
-    <button class="btn btn--outline" id="tl-pass" ${canPass ? '' : 'disabled'}>Pass</button>
-    <button class="btn btn--ghost"   id="tl-new">New Game</button>
-    <button class="btn btn--ghost tl-speed-btn${gameSpeed === 2 ? ' active' : ''}" id="tl-speed">⚡ 2× Speed</button>
+    <div class="tl-actions__main">
+      <button class="tl-btn tl-btn--play" id="tl-play" ${canPlay ? '' : 'disabled'}>Play</button>
+      <button class="tl-btn tl-btn--pass" id="tl-pass" ${canPass ? '' : 'disabled'}>Pass</button>
+    </div>
+    <div class="tl-actions__secondary">
+      <button class="tl-btn tl-btn--ghost" id="tl-new">New Game</button>
+      <button class="tl-btn tl-btn--ghost tl-speed-btn${gameSpeed === 2 ? ' active' : ''}" id="tl-speed">2× Speed</button>
+    </div>
   </div>
 </div>`;
   }
@@ -542,7 +546,7 @@
     <div class="tl-gameover__icon">${isP ? '🏆' : '🃏'}</div>
     <h2>${isP ? 'Tiến Lên!' : `${pName(w)} Wins!`}</h2>
     <p>${isP ? 'You emptied your hand first. Go forward!' : `${pName(w)} played all their cards first.`}</p>
-    <button class="btn btn--primary" id="tl-new">Play Again</button>
+    <button class="tl-btn tl-btn--play" id="tl-new">Play Again</button>
   </div>
 </div>`;
     el.querySelector('#tl-new').addEventListener('click', newGame);
