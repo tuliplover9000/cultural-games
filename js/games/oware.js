@@ -388,6 +388,28 @@
 </div>`;
   }
 
+  /** Deterministic but varied rotation per seed — avoids obvious patterns */
+  function seedRot(pit, i) {
+    const h = ((pit + 1) * 31 + i * 79 + (pit + 1) * (i + 1) * 13) % 160;
+    return h - 80; // -80 … +79 degrees
+  }
+
+  /** Render seeds arranged in a circle within the pit */
+  function circleSeeds(count, pit, lit) {
+    const show = Math.min(count, 12);
+    if (!show) return '';
+    // Radius grows gently with seed count so seeds spread to fill the pit
+    const r = show === 1 ? 0 : 8 + show * 0.9;
+    return Array.from({ length: show }, (_, i) => {
+      const angle = (2 * Math.PI * i / show) - Math.PI / 2; // start from top
+      const x = show === 1 ? 0 : +(r * Math.cos(angle)).toFixed(1);
+      const y = show === 1 ? 0 : +(r * Math.sin(angle)).toFixed(1);
+      const rot = seedRot(pit, i);
+      const isNew = lit && i === show - 1;
+      return `<span class="ow-seed${isNew ? ' ow-seed--new' : ''}" style="--x:${x}px;--y:${y}px;--rot:${rot}deg"></span>`;
+    }).join('');
+  }
+
   function pitHTML(pit, clickable, lit, aiSelected) {
     const count = state.pits[pit];
     const cls = [
@@ -397,16 +419,8 @@
       aiSelected ? 'ow-pit--ai-select'  : '',
     ].filter(Boolean).join(' ');
 
-    // Show up to 12 seeds as dots; larger counts show number only
-    const showDots = Math.min(count, 12);
-    const dots = Array(showDots).fill(null).map((_, i) => {
-      // Only the freshly-landed seed gets the pop-in animation
-      const isNew = lit && i === showDots - 1;
-      return `<span class="ow-seed${isNew ? ' ow-seed--new' : ''}" style="--i:${i}"></span>`;
-    }).join('');
-
     return `<div class="${cls}" data-pit="${pit}">
-  <div class="ow-pit__seeds">${dots}</div>
+  <div class="ow-pit__seeds">${circleSeeds(count, pit, lit)}</div>
   <div class="ow-pit__count">${count}</div>
 </div>`;
   }

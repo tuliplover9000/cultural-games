@@ -1685,34 +1685,28 @@
   box-shadow:
     inset 0 4px 14px rgba(0,0,0,0.75),
     0 2px 4px rgba(0,0,0,0.45);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
+  position: relative;
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
+/* Seeds container fills the pit; seeds are placed absolutely within it */
 .ow-pit__seeds {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 3px;
-  justify-content: center;
-  align-items: center;
-  max-width: 54px;
-  min-height: 28px;
+  position: absolute;
+  inset: 0;
 }
 
 .ow-seed {
+  position: absolute;
   width: 5px;
   height: 10px;
   border-radius: 50%;
-  /* Warm dark-brown gradient — looks like a dried Ayo seed */
+  /* Offset from pit centre using --x / --y; rotate via --rot */
+  left: calc(50% + var(--x, 0px) - 2.5px);
+  top:  calc(50% + var(--y, 0px) - 5px);
+  transform: rotate(var(--rot, 0deg));
+  /* Warm dark-brown gradient — dried Ayo seed */
   background: linear-gradient(160deg, #c07818 0%, #7a3e08 45%, #4a2208 100%);
   box-shadow: 0 1px 3px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,200,90,0.18);
-  flex-shrink: 0;
-  /* Each seed sits at a different angle based on its index */
-  transform: rotate(calc(var(--i, 0) * 43deg));
 }
 
 /* The seed that just landed pops in */
@@ -1721,15 +1715,21 @@
 }
 
 @keyframes ow-seed-in {
-  from { transform: rotate(calc(var(--i, 0) * 43deg)) scale(0); opacity: 0; }
-  to   { transform: rotate(calc(var(--i, 0) * 43deg)) scale(1); opacity: 1; }
+  from { transform: rotate(var(--rot, 0deg)) scale(0); opacity: 0; }
+  to   { transform: rotate(var(--rot, 0deg)) scale(1); opacity: 1; }
 }
 
+/* Count badge at the bottom of the pit */
 .ow-pit__count {
+  position: absolute;
+  bottom: 7px;
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 11px;
   font-weight: 700;
   color: rgba(232,200,152,0.55);
   line-height: 1;
+  pointer-events: none;
 }
 
 /* Clickable pits (valid player moves) */
@@ -1913,8 +1913,7 @@
 /* ── Responsive ── */
 @media (max-width: 560px) {
   .ow-pit { width: 46px; height: 50px; }
-  .ow-seed { width: 4px; height: 8px; }
-  .ow-pit__seeds { max-width: 36px; min-height: 20px; gap: 2px; }
+  .ow-seed { width: 4px; height: 8px; left: calc(50% + var(--x, 0px) - 2px); top: calc(50% + var(--y, 0px) - 4px); }
   .ow-pit__count { font-size: 10px; }
   .ow-row { gap: 5px; }
   .ow-board { padding: var(--space-2) var(--space-2); }
