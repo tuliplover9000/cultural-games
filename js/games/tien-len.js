@@ -49,6 +49,7 @@
   let state = {};
   let selected = new Set();   // indices into player's hand
   let gameRenderCount = 0;    // tracks first render for deal animation
+  let gameSpeed = 1;          // 1 = normal, 2 = fast (persists across games)
 
   function newGame() {
     const deck  = shuffle(buildDeck());
@@ -250,7 +251,9 @@
   function scheduleAITurn() {
     state.aiThinking = true;
     render();
-    const delay = 300 + cryptoRandInt(300); // 300–600 ms
+    const delay = gameSpeed === 2
+      ? 300 + cryptoRandInt(300)   // fast: 300–600 ms
+      : 800 + cryptoRandInt(700);  // normal: 800–1500 ms
     setTimeout(runAI, delay);
   }
 
@@ -402,7 +405,7 @@
       else         { hintText = '✗ Not a valid hand';            hintCls = 'invalid'; }
     }
 
-    return `<div class="tl-game">
+    return `<div class="tl-game${gameSpeed === 2 ? ' tl-fast' : ''}">
   <div class="tl-status-bar ${statusCls}">${statusInner}</div>
   <div class="tl-table">
     ${zoneTop()}
@@ -502,6 +505,7 @@
     <button class="btn btn--primary" id="tl-play" ${canPlay ? '' : 'disabled'}>Play</button>
     <button class="btn btn--outline" id="tl-pass" ${canPass ? '' : 'disabled'}>Pass</button>
     <button class="btn btn--ghost"   id="tl-new">New Game</button>
+    <button class="btn btn--ghost tl-speed-btn${gameSpeed === 2 ? ' active' : ''}" id="tl-speed">⚡ 2× Speed</button>
   </div>
 </div>`;
   }
@@ -588,6 +592,12 @@
 
     // New game
     el.querySelector('#tl-new')?.addEventListener('click', newGame);
+
+    // Speed toggle
+    el.querySelector('#tl-speed')?.addEventListener('click', () => {
+      gameSpeed = gameSpeed === 2 ? 1 : 2;
+      render();
+    });
   }
 
   /* ── Init ── */
