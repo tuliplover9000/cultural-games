@@ -1045,8 +1045,357 @@
 }
 
 /* =============================================================================
-   Tiến Lên — Phase 4 (styles reserved, empty for now)
+   Tiến Lên — Phase 4
 ============================================================================= */
+
+.tl-game {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  font-family: var(--font-body);
+  background: #1a3a1a;
+  min-height: 600px;
+}
+
+/* ── Status banner ── */
+.tl-status-bar {
+  text-align: center;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-sm);
+  letter-spacing: 0.04em;
+  background: rgba(0,0,0,0.35);
+  color: #d4f0a0;
+  border: 1px solid rgba(100,200,80,0.25);
+  min-height: 2.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tl-status-bar.your-turn {
+  background: rgba(44,120,44,0.3);
+  color: #90ee60;
+  border-color: rgba(100,220,80,0.45);
+}
+
+.tl-status-bar.ai-turn {
+  background: rgba(0,0,0,0.3);
+  color: rgba(200,220,180,0.7);
+}
+
+.tl-status-bar.gameover {
+  background: rgba(200,155,60,0.18);
+  color: var(--color-accent-gold);
+  border-color: rgba(200,155,60,0.4);
+  font-size: var(--text-base);
+}
+
+/* ── Table area — opponents + center ── */
+.tl-table {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: auto auto;
+  gap: var(--space-2);
+  align-items: start;
+}
+
+/* ── Opponent hand zones ── */
+.tl-opponent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.tl-opponent--top {
+  grid-column: 1 / 4;
+  grid-row: 1;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.tl-opponent--left  { grid-column: 1; grid-row: 2; }
+.tl-opponent--right { grid-column: 3; grid-row: 2; }
+
+.tl-opponent__name {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(200,230,170,0.65);
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+}
+
+.tl-opponent__name.active {
+  color: #90ee60;
+}
+
+.tl-opponent__cards {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Face-down card for opponents */
+.tl-card-back {
+  width: 22px;
+  height: 32px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #1a5c1a 0%, #0d3d0d 100%);
+  border: 1.5px solid rgba(100,200,80,0.35);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  flex-shrink: 0;
+}
+
+/* Left/right opponents show vertical cards */
+.tl-opponent--left  .tl-card-back,
+.tl-opponent--right .tl-card-back {
+  width: 18px;
+  height: 26px;
+}
+
+.tl-opponent__count {
+  font-size: var(--text-xs);
+  color: rgba(200,220,170,0.55);
+}
+
+/* ── Center play area ── */
+.tl-center {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 120px;
+}
+
+.tl-play-area {
+  width: 100%;
+  min-height: 80px;
+  background: rgba(0,0,0,0.3);
+  border: 2px dashed rgba(100,200,80,0.2);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: var(--space-2);
+}
+
+.tl-play-area-label {
+  font-size: var(--text-xs);
+  color: rgba(200,220,170,0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.tl-last-player {
+  font-size: var(--text-xs);
+  color: rgba(200,220,170,0.5);
+  text-align: center;
+}
+
+/* ── Cards (face-up) ── */
+.tl-card {
+  width: 42px;
+  height: 60px;
+  border-radius: 6px;
+  background: #fff;
+  border: 2px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-weight: var(--weight-bold);
+  font-size: 13px;
+  line-height: 1.1;
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  transition: transform 100ms ease, box-shadow 100ms ease, border-color 100ms ease;
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* Play area cards: slightly smaller */
+.tl-play-area .tl-card {
+  width: 38px;
+  height: 54px;
+  font-size: 12px;
+  cursor: default;
+}
+
+.tl-card--red  { color: #cc1111; }
+.tl-card--black { color: #111; }
+
+.tl-card__rank { font-size: 14px; line-height: 1; }
+.tl-card__suit { font-size: 12px; line-height: 1; }
+
+/* Selected state (player's hand) */
+.tl-card.selected {
+  border-color: #90ee60;
+  box-shadow: 0 0 14px rgba(100,220,60,0.55);
+  transform: translateY(-8px);
+}
+
+/* Clickable hover */
+.tl-card.clickable {
+  cursor: pointer;
+}
+
+.tl-card.clickable:hover:not(.selected) {
+  transform: translateY(-4px);
+  border-color: #aad080;
+  box-shadow: 0 4px 12px rgba(100,220,60,0.3);
+}
+
+/* ── Player hand ── */
+.tl-player-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.tl-player-label {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(200,230,170,0.65);
+  font-weight: var(--weight-semibold);
+}
+
+.tl-player-label.active {
+  color: #90ee60;
+}
+
+.tl-hand {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+  padding: var(--space-2);
+  background: rgba(0,0,0,0.2);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(100,200,80,0.15);
+  width: 100%;
+  min-height: 80px;
+  align-items: flex-end;
+}
+
+/* ── Action buttons ── */
+.tl-actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ── Game log ── */
+.tl-log {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(100,200,80,0.15);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2) var(--space-3);
+  max-height: 110px;
+  overflow-y: auto;
+}
+
+.tl-log__title {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(200,220,170,0.5);
+  margin-bottom: 4px;
+  font-weight: var(--weight-semibold);
+}
+
+.tl-log__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tl-log__entry {
+  font-size: var(--text-xs);
+  color: rgba(180,210,150,0.65);
+  padding: 1px 0;
+  border-bottom: 1px solid rgba(100,200,80,0.08);
+}
+
+.tl-log__entry:last-child { border-bottom: none; }
+.tl-log__entry.you  { color: #90ee60; }
+.tl-log__entry.win  { color: var(--color-accent-gold); font-weight: var(--weight-bold); }
+
+/* ── Game over overlay inside container ── */
+.tl-gameover {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-8) var(--space-4);
+  animation: tl-fadein 0.35s ease;
+}
+
+.tl-gameover.visible { display: flex; }
+
+@keyframes tl-fadein {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.tl-gameover__icon { font-size: 3.5rem; line-height: 1; margin-bottom: var(--space-2); }
+
+.tl-gameover h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  color: var(--color-accent-gold);
+  margin-bottom: var(--space-1);
+}
+
+.tl-gameover p {
+  color: rgba(200,220,170,0.7);
+  margin-bottom: var(--space-4);
+  font-size: var(--text-sm);
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .tl-table {
+    grid-template-columns: 1fr 3fr 1fr;
+  }
+
+  .tl-card {
+    width: 34px;
+    height: 50px;
+    font-size: 11px;
+  }
+
+  .tl-card__rank { font-size: 12px; }
+  .tl-card__suit { font-size: 10px; }
+
+  .tl-card-back {
+    width: 18px;
+    height: 26px;
+  }
+
+  .tl-opponent--left .tl-card-back,
+  .tl-opponent--right .tl-card-back {
+    width: 14px;
+    height: 20px;
+  }
+}
 
 /* =============================================================================
    Oware — Phase 5 (styles reserved, empty for now)

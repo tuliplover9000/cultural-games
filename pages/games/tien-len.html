@@ -52,6 +52,21 @@
         </p>
       </header>
 
+      <!-- Game Container -->
+      <div class="game-container" id="game-container" aria-label="Game area">
+        <div class="game-placeholder">
+          <div class="game-placeholder__icon" aria-hidden="true">🃏</div>
+          <h3>Loading…</h3>
+          <p>The full Tiến Lên card game is loading.</p>
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="game-disclaimer" role="note">
+        🃏 This game uses <strong>virtual cards only</strong>. No real money is involved.
+      </div>
+
+      <!-- How to Play -->
       <details class="accordion" open>
         <summary class="accordion__trigger">
           <span class="accordion__title">How to Play</span>
@@ -63,17 +78,19 @@
             Be the first to play all your cards to win.
           </p>
           <ol>
-            <li><strong>Card ranking (low to high):</strong> 3 · 4 · 5 · 6 · 7 · 8 · 9 · 10 · J · Q · K · A · 2. The 2 is the highest card.</li>
+            <li><strong>Card ranking (low to high):</strong> 3 · 4 · 5 · 6 · 7 · 8 · 9 · 10 · J · Q · K · A · 2. The 2 is the highest single card.</li>
             <li><strong>Suit ranking (low to high):</strong> Spades · Clubs · Diamonds · Hearts.</li>
-            <li>Each player is dealt 13 cards. The player with the <strong>3 of Spades</strong> goes first.</li>
-            <li>Players take turns playing a valid hand that <strong>beats</strong> the last played hand. The hand type must match (single beats single, pair beats pair, etc.) but be higher in value.</li>
-            <li>Valid hand types: single, pair, triple, four-of-a-kind, sequence (3+ consecutive), sequence of pairs (2+ consecutive pairs).</li>
+            <li>Each player is dealt 13 cards. The player with the <strong>3 of Spades</strong> goes first and must include it in their opening play.</li>
+            <li>Players take turns playing a valid hand that <strong>beats</strong> the last played hand. The hand type must match (single beats single, pair beats pair, etc.) and be higher in value.</li>
+            <li>Valid hand types: <strong>single</strong>, <strong>pair</strong>, <strong>triple</strong>, <strong>four-of-a-kind</strong>, <strong>sequence</strong> (3+ consecutive ranks), <strong>sequence of pairs</strong> (2+ consecutive pairs).</li>
             <li>If you can't or don't want to beat the current hand, <strong>pass</strong>. Once all other players pass, the last player to play leads the next round with any hand type.</li>
-            <li><strong>Special rule:</strong> a 2 can only be beaten by four-of-a-kind or a sequence of 3+ pairs.</li>
+            <li><strong>Special rule:</strong> a single 2 can only be beaten by a four-of-a-kind or a sequence of 3+ pairs.</li>
+            <li>Select cards by clicking them, then click <strong>Play</strong>. Click <strong>Pass</strong> to skip your turn.</li>
           </ol>
         </div>
       </details>
 
+      <!-- Cultural Context -->
       <details class="accordion">
         <summary class="accordion__trigger">
           <span class="accordion__title">Cultural Context</span>
@@ -102,14 +119,6 @@
           </p>
         </div>
       </details>
-
-      <div class="game-container" id="game-container" aria-label="Game area">
-        <div class="game-placeholder">
-          <div class="game-placeholder__icon" aria-hidden="true">🃏</div>
-          <h3>Coming in Phase 4</h3>
-          <p>The full Tiến Lên card game — deck, hand display, 3 AI opponents, and round logic — will appear here.</p>
-        </div>
-      </div>
 
     </div>
   </main>
