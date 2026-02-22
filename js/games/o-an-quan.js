@@ -378,8 +378,7 @@
     const show = Math.min(count, max);
     let dots = '';
     for (let i = 0; i < show; i++) {
-      // --i drives the staggered spring animation delay in CSS
-      dots += `<span class="oaq-seed oaq-seed--c${(i % 4) + 1}" style="--i:${i};"></span>`;
+      dots += `<span class="oaq-seed oaq-seed--c${(i % 4) + 1}"></span>`;
     }
     const overflow = count > max
       ? `<span class="oaq-seed-overflow">+${count - max}</span>`
