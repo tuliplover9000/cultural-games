@@ -1,251 +1,209 @@
 /**
  * tien-len.js — Tiến Lên (Vietnamese shedding card game)
- * Phase 4 implementation.
+ * Phase 4 — crypto shuffle, proper card design, animations, AI thinking.
  *
  * Rules:
  *  - 4 players, 52-card deck, 13 cards each
- *  - Rank order (low→high): 3 4 5 6 7 8 9 10 J Q K A 2
- *  - Suit order (low→high): Spades Clubs Diamonds Hearts
- *  - Valid hands: single, pair, triple, four-of-a-kind,
- *                 sequence (3+ consecutive ranks), sequence of pairs (2+ consecutive pairs)
- *  - Beat same hand type with higher value
- *  - 2 beaten only by four-of-a-kind or sequence of 3+ pairs
- *  - Player with 3♠ goes first; must include 3♠ in first play
- *  - Pass if can't/won't beat; all others pass → last player leads freely
+ *  - Rank (low→high): 3 4 5 6 7 8 9 10 J Q K A 2
+ *  - Suit (low→high): Spades Clubs Diamonds Hearts
+ *  - Hands: single, pair, triple, four-of-a-kind,
+ *           sequence (3+ consecutive, no 2s),
+ *           sequence of pairs (2+ consecutive pairs, no 2s)
+ *  - Beat same type + same length (for seq/seqpair) with higher value
+ *  - Single 2 beaten only by four-of-a-kind or 3+ consecutive pairs
+ *  - Player with 3♠ goes first and must include it in opening play
+ *  - Pass: all others pass → pile owner leads new round freely
  *  - First to empty hand wins
  */
 (function () {
   'use strict';
 
   /* ── Constants ── */
-  const RANKS       = ['3','4','5','6','7','8','9','10','J','Q','K','A','2'];
-  const SUITS       = ['♠','♣','♦','♥'];  // low → high
-  const SUIT_COLORS = { '♠': 'black', '♣': 'black', '♦': 'red', '♥': 'red' };
+  const RANKS = ['3','4','5','6','7','8','9','10','J','Q','K','A','2'];
+  const SUITS = ['♠','♣','♦','♥'];
+  const SUIT_CLR  = { '♠':'black', '♣':'black', '♦':'red', '♥':'red' };
+  const AI_NAMES  = ['', 'Lan', 'Minh', 'Hoa'];   // index 0 = human player
+  const TYPE_LABEL = {
+    single:'Single', pair:'Pair', triple:'Triple',
+    quad:'Four of a Kind', seq:'Sequence', seqpair:'Seq. of Pairs',
+  };
+  const PLAYER = 0;
 
-  const PLAYER = 0;  // index of human player
-  const AI     = [1, 2, 3];
+  /* ── Crypto-quality shuffle ── */
+  function cryptoRandInt(max) {
+    const buf = new Uint32Array(1);
+    crypto.getRandomValues(buf);
+    return buf[0] % max;
+  }
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = cryptoRandInt(i + 1);
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
 
   /* ── State ── */
   let state = {};
+  let selected = new Set();   // indices into player's hand
+  let gameRenderCount = 0;    // tracks first render for deal animation
 
   function newGame() {
-    const deck   = buildDeck();
-    const hands  = dealDeck(deck);
-    const first  = hands.findIndex(h => h.some(c => c.rank === '3' && c.suit === '♠'));
+    const deck  = shuffle(buildDeck());
+    const hands = dealDeck(deck);
+    const first = hands.findIndex(h => h.some(c => c.rank === '3' && c.suit === '♠'));
 
     state = {
-      hands,                // hands[0..3]
-      current:    first,    // whose turn
-      leader:     first,    // who leads this round (won last)
-      pile:       [],       // last played cards (face-up center)
-      pileOwner:  -1,       // who played pile
-      pileType:   null,     // classified hand type of pile
-      passes:     0,        // consecutive passes since last play
-      log:        [],
-      phase:      'playing',// 'playing' | 'gameover'
-      firstTurn:  true,     // must include 3♠ on very first play
-      winner:     -1,
-      scores:     [0,0,0,0],
+      hands,
+      current:         first,
+      leader:          first,
+      pile:            [],
+      pileOwner:       -1,
+      pileType:        null,
+      passes:          0,
+      log:             [],
+      phase:           'playing',
+      firstTurn:       true,
+      winner:          -1,
+      pileJustChanged: false,
+      aiThinking:      false,
     };
 
+    selected.clear();
+    gameRenderCount = 0;
     render();
+
     if (state.current !== PLAYER) {
-      setTimeout(aiTurn, 600);
+      scheduleAITurn();
     }
   }
 
   /* ── Deck ── */
   function buildDeck() {
     const deck = [];
-    for (const suit of SUITS) {
-      for (const rank of RANKS) {
+    for (const suit of SUITS)
+      for (const rank of RANKS)
         deck.push({ rank, suit });
-      }
-    }
-    // Fisher-Yates shuffle
-    for (let i = deck.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [deck[i], deck[j]] = [deck[j], deck[i]];
-    }
     return deck;
   }
 
   function dealDeck(deck) {
     const hands = [[], [], [], []];
-    deck.forEach((card, i) => hands[i % 4].push(card));
-    hands.forEach(h => sortHand(h));
+    deck.forEach((c, i) => hands[i % 4].push(c));
+    hands.forEach(h => h.sort(cardCmp));
     return hands;
   }
 
   /* ── Card utilities ── */
-  function rankVal(rank) { return RANKS.indexOf(rank); }
-  function suitVal(suit) { return SUITS.indexOf(suit); }
-
-  function cardVal(card) {
-    // Combined value for comparison: rank is primary, suit is tiebreaker
-    return rankVal(card.rank) * 4 + suitVal(card.suit);
-  }
-
+  const rankVal = r => RANKS.indexOf(r);
+  const suitVal = s => SUITS.indexOf(s);
+  const cardVal = c => rankVal(c.rank) * 4 + suitVal(c.suit);
   function cardCmp(a, b) { return cardVal(a) - cardVal(b); }
-
-  function sortHand(hand) {
-    hand.sort(cardCmp);
-  }
-
-  function cardsEqual(a, b) {
-    return a.rank === b.rank && a.suit === b.suit;
-  }
+  function cardsEq(a, b) { return a.rank === b.rank && a.suit === b.suit; }
 
   /* ── Hand classification ── */
-  // Returns { type, value } or null if invalid
-  // type: 'single' | 'pair' | 'triple' | 'quad' | 'seq' | 'seqpair'
-  // value: number for comparison (higher = beats lower of same type/length)
-
-  function classifyHand(cards) {
+  function classify(cards) {
     const n = cards.length;
-    if (n === 0) return null;
-    const sorted = [...cards].sort(cardCmp);
+    if (!n) return null;
+    const s = [...cards].sort(cardCmp);
 
-    if (n === 1) {
-      return { type: 'single', len: 1, value: cardVal(sorted[0]) };
-    }
+    if (n === 1) return { type:'single', len:1, value:cardVal(s[0]) };
 
     if (n === 2) {
-      if (sorted[0].rank === sorted[1].rank) {
-        return { type: 'pair', len: 2, value: cardVal(sorted[1]) };
-      }
-      return null;
+      return s[0].rank === s[1].rank
+        ? { type:'pair', len:2, value:cardVal(s[1]) }
+        : null;
     }
 
     if (n === 3) {
-      if (sorted[0].rank === sorted[1].rank && sorted[1].rank === sorted[2].rank) {
-        return { type: 'triple', len: 3, value: cardVal(sorted[2]) };
-      }
-      // 3-card sequence?
-      if (isSeq(sorted)) {
-        return { type: 'seq', len: 3, value: cardVal(sorted[n-1]) };
-      }
+      if (s[0].rank === s[1].rank && s[1].rank === s[2].rank)
+        return { type:'triple', len:3, value:cardVal(s[2]) };
+      if (isSeq(s)) return { type:'seq', len:3, value:cardVal(s[2]) };
       return null;
     }
 
     if (n === 4) {
-      // Four-of-a-kind?
-      if (sorted.every(c => c.rank === sorted[0].rank)) {
-        return { type: 'quad', len: 4, value: cardVal(sorted[3]) };
-      }
-      // 4-card sequence?
-      if (isSeq(sorted)) {
-        return { type: 'seq', len: 4, value: cardVal(sorted[n-1]) };
-      }
-      // 2 consecutive pairs?
-      if (n === 4 && sorted[0].rank === sorted[1].rank && sorted[2].rank === sorted[3].rank) {
-        if (rankVal(sorted[2].rank) === rankVal(sorted[0].rank) + 1) {
-          return { type: 'seqpair', len: 4, value: cardVal(sorted[3]), pairCount: 2 };
-        }
-      }
-      return null;
+      if (s.every(c => c.rank === s[0].rank))
+        return { type:'quad', len:4, value:cardVal(s[3]) };
+      if (isSeq(s))
+        return { type:'seq', len:4, value:cardVal(s[3]) };
     }
 
-    // n >= 5
-    // Sequence of pairs?
     if (n % 2 === 0) {
-      const sp = trySeqPair(sorted);
+      const sp = trySeqPair(s);
       if (sp) return sp;
     }
 
-    // Plain sequence (3+)?
-    if (isSeq(sorted) && !sorted.some(c => c.rank === '2')) {
-      return { type: 'seq', len: n, value: cardVal(sorted[n-1]) };
-    }
+    if (n >= 3 && isSeq(s))
+      return { type:'seq', len:n, value:cardVal(s[n-1]) };
 
     return null;
   }
 
-  function isSeq(sorted) {
-    // All consecutive ranks, no 2s allowed in sequences
-    if (sorted.some(c => c.rank === '2')) return false;
-    for (let i = 1; i < sorted.length; i++) {
-      if (rankVal(sorted[i].rank) !== rankVal(sorted[i-1].rank) + 1) return false;
-    }
+  function isSeq(s) {
+    if (s.some(c => c.rank === '2')) return false;
+    for (let i = 1; i < s.length; i++)
+      if (rankVal(s[i].rank) !== rankVal(s[i-1].rank) + 1) return false;
     return true;
   }
 
-  function trySeqPair(sorted) {
-    const n = sorted.length;
-    if (n < 4 || n % 2 !== 0) return null;
-    // Group into pairs
-    for (let i = 0; i < n; i += 2) {
-      if (sorted[i].rank !== sorted[i+1].rank) return null;
-    }
-    // Check ranks are consecutive
-    for (let i = 2; i < n; i += 2) {
-      if (rankVal(sorted[i].rank) !== rankVal(sorted[i-2].rank) + 1) return null;
-    }
-    // No 2s (except seqpair can beat a single 2 if 3+ pairs — handled in beats())
-    // Actually 2s can't be in a seqpair sequence
-    if (sorted.some(c => c.rank === '2')) return null;
-    const pairCount = n / 2;
-    return { type: 'seqpair', len: n, value: cardVal(sorted[n-1]), pairCount };
+  function trySeqPair(s) {
+    const n = s.length;
+    if (n < 4 || n % 2) return null;
+    if (s.some(c => c.rank === '2')) return null;
+    for (let i = 0; i < n; i += 2)
+      if (s[i].rank !== s[i+1].rank) return null;
+    for (let i = 2; i < n; i += 2)
+      if (rankVal(s[i].rank) !== rankVal(s[i-2].rank) + 1) return null;
+    return { type:'seqpair', len:n, value:cardVal(s[n-1]), pairCount:n/2 };
   }
 
   /* ── Beat logic ── */
-  function beats(challenger, pile) {
-    if (!pile) return true;  // leading freely
+  function beats(me, pile) {
+    if (!pile) return true;
+    const { type:mt, value:mv, len:ml, pairCount:mp } = me;
+    const { type:pt, value:pv, len:pl } = pile;
 
-    const ct = challenger.type;
-    const pt = pile.type;
+    // Special: single 2 beaten only by quad or 3+ seqpair
+    if (pt === 'single' && pv >= rankVal('2') * 4)
+      return mt === 'quad' || (mt === 'seqpair' && mp >= 3);
 
-    // Special: beating a single 2
-    if (pt === 'single' && pile.value >= rankVal('2') * 4) {
-      // Only quad or seqpair with 3+ pairs can beat a 2
-      return (ct === 'quad') ||
-             (ct === 'seqpair' && challenger.pairCount >= 3);
-    }
-
-    // Types must match (and same length for seqs)
-    if (ct !== pt) return false;
-    if (ct === 'seq' || ct === 'seqpair') {
-      if (challenger.len !== pile.len) return false;
-    }
-
-    return challenger.value > pile.value;
+    if (mt !== pt) return false;
+    if ((mt === 'seq' || mt === 'seqpair') && ml !== pl) return false;
+    return mv > pv;
   }
 
-  /* ── Turn management ── */
-  function nextPlayer(p) { return (p + 1) % 4; }
-
+  /* ── Turn mechanics ── */
   function playCards(playerIdx, cards) {
-    const hand  = state.hands[playerIdx];
-    const info  = classifyHand(cards);
-    if (!info) return false;
-    if (!beats(info, state.pileType)) return false;
+    const hand = state.hands[playerIdx];
+    const info = classify(cards);
+    if (!info || !beats(info, state.pileType)) return false;
 
-    // First turn: must include 3♠
-    if (state.firstTurn && playerIdx === state.leader) {
-      const has3S = cards.some(c => c.rank === '3' && c.suit === '♠');
-      if (!has3S) return false;
-    }
+    // First play of the game must include 3♠
+    if (state.firstTurn && playerIdx === state.leader)
+      if (!cards.some(c => c.rank === '3' && c.suit === '♠')) return false;
 
-    // Remove cards from hand
     for (const c of cards) {
-      const idx = hand.findIndex(h => cardsEqual(h, c));
-      if (idx === -1) return false;
-      hand.splice(idx, 1);
+      const i = hand.findIndex(h => cardsEq(h, c));
+      if (i === -1) return false;
+      hand.splice(i, 1);
     }
 
-    state.pile      = cards.sort(cardCmp);
-    state.pileOwner = playerIdx;
-    state.pileType  = info;
-    state.passes    = 0;
-    state.firstTurn = false;
+    state.pile            = [...cards].sort(cardCmp);
+    state.pileOwner       = playerIdx;
+    state.pileType        = info;
+    state.passes          = 0;
+    state.firstTurn       = false;
+    state.aiThinking      = false;
+    state.pileJustChanged = true;
 
-    addLog(playerIdx, describePlay(playerIdx, cards, info));
+    addLog(playerIdx, `${pName(playerIdx)} played ${cardsStr(cards)} (${TYPE_LABEL[info.type]})`);
 
-    // Check win
-    if (hand.length === 0) {
+    if (!hand.length) {
       state.phase  = 'gameover';
       state.winner = playerIdx;
-      state.scores[playerIdx]++;
       render();
       return true;
     }
@@ -254,23 +212,24 @@
     return true;
   }
 
-  function pass(playerIdx) {
+  function doPass(playerIdx) {
     state.passes++;
-    addLog(playerIdx, playerName(playerIdx) + ' passes.');
+    state.aiThinking = false;
+    addLog(playerIdx, `${pName(playerIdx)} passes.`);
 
-    // How many active players remain (not the pile owner)?
-    const others = 3; // always 3 others
-    if (state.passes >= others) {
-      // All others passed — pile owner leads new round
-      state.pile     = [];
-      state.pileType = null;
-      state.passes   = 0;
-      state.current  = state.pileOwner;
-      state.leader   = state.pileOwner;
-      addLog(-1, '— New round — ' + playerName(state.pileOwner) + ' leads.');
-      render();
+    if (state.passes >= 3) {
+      // All others passed — pile owner leads a new round
+      state.pile            = [];
+      state.pileType        = null;
+      state.passes          = 0;
+      state.current         = state.pileOwner;
+      state.leader          = state.pileOwner;
+      state.pileJustChanged = true;
+      addLog(-1, `— New round — ${pName(state.pileOwner)} leads.`);
       if (state.current !== PLAYER) {
-        setTimeout(aiTurn, 700);
+        scheduleAITurn();
+      } else {
+        render();
       }
       return;
     }
@@ -279,262 +238,244 @@
   }
 
   function advanceTurn() {
-    state.current = nextPlayer(state.current);
-    render();
+    state.current = (state.current + 1) % 4;
     if (state.current !== PLAYER) {
-      setTimeout(aiTurn, 700);
+      scheduleAITurn();
+    } else {
+      render();
     }
   }
 
-  /* ── AI logic ── */
-  function aiTurn() {
-    if (state.phase !== 'playing') return;
-    if (state.current === PLAYER) return;
+  /* ── AI ── */
+  function scheduleAITurn() {
+    state.aiThinking = true;
+    render();
+    const delay = 550 + cryptoRandInt(500); // 550–1050 ms
+    setTimeout(runAI, delay);
+  }
 
+  function runAI() {
+    if (state.phase !== 'playing' || state.current === PLAYER) return;
     const idx  = state.current;
     const hand = state.hands[idx];
-    const play = findAIPlay(hand, state.pileType, idx);
 
-    if (play) {
-      playCards(idx, play);
-    } else {
-      pass(idx);
+    // First turn: leader must play 3♠
+    if (state.firstTurn && idx === state.leader) {
+      const s3 = hand.find(c => c.rank === '3' && c.suit === '♠');
+      if (s3) { playCards(idx, [s3]); return; }
     }
+
+    const play = findAIPlay(hand, state.pileType);
+    if (play) playCards(idx, play);
+    else      doPass(idx);
   }
 
-  function findAIPlay(hand, pile, playerIdx) {
-    // Generate all candidate plays and pick the lowest that beats the pile
-    const candidates = generateCandidates(hand);
-    let best = null;
-    let bestVal = Infinity;
+  function findAIPlay(hand, pile) {
+    if (!pile) return leadPlay(hand);
 
-    for (const cards of candidates) {
-      const info = classifyHand(cards);
-      if (!info) continue;
-      if (!beats(info, pile)) continue;
-      if (info.value < bestVal) {
-        bestVal = info.value;
-        best    = cards;
-      }
+    const cands = allCandidates(hand);
+    let best = null, bestVal = Infinity;
+    for (const c of cands) {
+      const info = classify(c);
+      if (!info || !beats(info, pile)) continue;
+      if (info.value < bestVal) { bestVal = info.value; best = c; }
     }
-
-    // If leading (no pile), play the single lowest non-2 card, or lowest pair, etc.
-    if (!pile) {
-      return findLeadPlay(hand, playerIdx);
-    }
-
     return best;
   }
 
-  function findLeadPlay(hand, playerIdx) {
-    // Prefer pairs/triples of low cards; fallback to single lowest non-2
-    const cands = generateCandidates(hand);
-
-    // Try to play lowest pair first
-    let best = null;
-    let bestVal = Infinity;
-
-    for (const cards of cands) {
-      const info = classifyHand(cards);
-      if (!info) continue;
-      if (info.type === 'pair' && info.value < bestVal) {
-        bestVal = info.value;
-        best    = cards;
-      }
+  function leadPlay(hand) {
+    // Prefer lowest pair; fallback to lowest non-2 single
+    const cands = allCandidates(hand);
+    let best = null, bestVal = Infinity;
+    for (const c of cands) {
+      const info = classify(c);
+      if (!info || info.type !== 'pair') continue;
+      if (info.value < bestVal) { bestVal = info.value; best = c; }
     }
     if (best) return best;
-
-    // Fallback: lowest single non-2
     const nonTwo = hand.filter(c => c.rank !== '2');
-    if (nonTwo.length > 0) {
-      return [nonTwo[0]];
-    }
-    // Last resort: lowest card
-    return [hand[0]];
+    return nonTwo.length ? [nonTwo[0]] : [hand[0]];
   }
 
-  // Enumerate candidate plays from a hand
-  function generateCandidates(hand) {
-    const results = [];
+  function allCandidates(hand) {
+    const out = [];
+    hand.forEach(c => out.push([c]));
 
-    // Singles
-    for (const c of hand) results.push([c]);
-
-    // Group by rank
     const byRank = {};
-    for (const c of hand) {
-      if (!byRank[c.rank]) byRank[c.rank] = [];
-      byRank[c.rank].push(c);
+    hand.forEach(c => { (byRank[c.rank] = byRank[c.rank] || []).push(c); });
+
+    for (const g of Object.values(byRank)) {
+      if (g.length >= 2) out.push(g.slice(0,2));
+      if (g.length >= 3) out.push(g.slice(0,3));
+      if (g.length >= 4) out.push(g.slice(0,4));
     }
 
-    // Pairs, triples, quads
-    for (const rank in byRank) {
-      const group = byRank[rank];
-      if (group.length >= 2) results.push(group.slice(0,2));
-      if (group.length >= 3) results.push(group.slice(0,3));
-      if (group.length >= 4) results.push(group.slice(0,4));
-    }
-
-    // Sequences of 3+
-    const ranks = [...new Set(hand.map(c => c.rank))]
-      .filter(r => r !== '2')
+    const uRanks = [...new Set(hand.filter(c => c.rank !== '2').map(c => c.rank))]
       .sort((a,b) => rankVal(a) - rankVal(b));
 
-    for (let start = 0; start < ranks.length; start++) {
-      let run = [ranks[start]];
-      for (let end = start + 1; end < ranks.length; end++) {
-        if (rankVal(ranks[end]) === rankVal(run[run.length-1]) + 1) {
-          run.push(ranks[end]);
-          if (run.length >= 3) {
-            // Pick one card per rank
-            const seqCards = run.map(r => byRank[r][0]);
-            results.push(seqCards);
-          }
-        } else {
-          break;
-        }
+    // Sequences (3+ cards)
+    for (let s = 0; s < uRanks.length; s++) {
+      let run = [uRanks[s]];
+      for (let e = s + 1; e < uRanks.length; e++) {
+        if (rankVal(uRanks[e]) !== rankVal(run[run.length-1]) + 1) break;
+        run.push(uRanks[e]);
+        if (run.length >= 3) out.push(run.map(r => byRank[r][0]));
       }
     }
 
-    // Sequence of pairs (2 pairs minimum)
-    for (let start = 0; start < ranks.length; start++) {
-      if (!byRank[ranks[start]] || byRank[ranks[start]].length < 2) continue;
-      let run = [ranks[start]];
-      for (let end = start + 1; end < ranks.length; end++) {
-        if (!byRank[ranks[end]] || byRank[ranks[end]].length < 2) break;
-        if (rankVal(ranks[end]) === rankVal(run[run.length-1]) + 1) {
-          run.push(ranks[end]);
-          if (run.length >= 2) {
-            const spCards = run.flatMap(r => byRank[r].slice(0,2));
-            results.push(spCards);
-          }
-        } else {
-          break;
-        }
+    // Sequence of pairs (2+ consecutive pairs)
+    for (let s = 0; s < uRanks.length; s++) {
+      if (!byRank[uRanks[s]] || byRank[uRanks[s]].length < 2) continue;
+      let run = [uRanks[s]];
+      for (let e = s + 1; e < uRanks.length; e++) {
+        if (!byRank[uRanks[e]] || byRank[uRanks[e]].length < 2) break;
+        if (rankVal(uRanks[e]) !== rankVal(run[run.length-1]) + 1) break;
+        run.push(uRanks[e]);
+        if (run.length >= 2) out.push(run.flatMap(r => byRank[r].slice(0,2)));
       }
     }
 
-    return results;
+    return out;
   }
 
   /* ── Helpers ── */
-  function playerName(idx) {
-    if (idx === -1) return 'System';
-    return idx === PLAYER ? 'You' : `AI ${idx}`;
+  function pName(idx) {
+    if (idx < 0)        return '—';
+    if (idx === PLAYER) return 'You';
+    return AI_NAMES[idx];
   }
 
-  function describePlay(idx, cards, info) {
-    const who  = playerName(idx);
-    const desc = cardsToString(cards);
-    return `${who} played ${desc} (${info.type})`;
-  }
-
-  function cardsToString(cards) {
+  function cardsStr(cards) {
     return cards.map(c => c.rank + c.suit).join(' ');
   }
 
   function addLog(player, msg) {
     state.log.unshift({ player, msg });
-    if (state.log.length > 20) state.log.length = 20;
+    if (state.log.length > 25) state.log.length = 25;
+  }
+
+  function esc(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
   /* ── Rendering ── */
-  let selected = new Set(); // indices into player hand
-
   function render() {
-    const container = document.getElementById('game-container');
-    if (!container) return;
+    const el = document.getElementById('game-container');
+    if (!el) return;
+
+    const isFirstRender   = (gameRenderCount === 0);
+    const justChanged     = state.pileJustChanged;
+    gameRenderCount++;
+    state.pileJustChanged = false;
 
     if (state.phase === 'gameover') {
-      renderGameOver(container);
+      renderGameOver(el);
       return;
     }
 
-    container.innerHTML = buildGameHTML();
-    wireEvents(container);
+    el.innerHTML = buildUI(isFirstRender, justChanged);
+    wireEvents(el);
   }
 
-  function buildGameHTML() {
-    const isYourTurn = state.current === PLAYER;
-    const statusMsg  = isYourTurn
-      ? (state.pile.length === 0 ? 'Your turn — lead any hand.' : 'Your turn — beat the current play or pass.')
-      : `${playerName(state.current)} is thinking…`;
-    const statusCls  = isYourTurn ? 'your-turn' : 'ai-turn';
+  function buildUI(isFirst, justChanged) {
+    const isYT     = state.current === PLAYER && !state.aiThinking;
+    const thinking = state.aiThinking;
 
-    return `
-<div class="tl-game">
-  <div class="tl-status-bar ${statusCls}">${statusMsg}</div>
+    let statusInner, statusCls = '';
+    if (thinking) {
+      statusInner = `${pName(state.current)} is thinking <span class="tl-thinking-dots"><span></span><span></span><span></span></span>`;
+    } else if (isYT) {
+      statusInner = state.pile.length
+        ? 'Your turn — beat the play or <em>pass</em>'
+        : 'Your turn — lead any hand';
+      statusCls = 'your-turn';
+    } else {
+      statusInner = `${pName(state.current)}'s turn`;
+    }
 
+    // Hand-type hint for selected cards
+    const hand     = state.hands[PLAYER];
+    const selCards = [...selected].map(i => hand[i]);
+    const selInfo  = selCards.length ? classify(selCards) : null;
+    let hintText = '', hintCls = '';
+    if (selCards.length) {
+      if (selInfo) { hintText = `✓ ${TYPE_LABEL[selInfo.type]}`; hintCls = 'valid'; }
+      else         { hintText = '✗ Not a valid hand';            hintCls = 'invalid'; }
+    }
+
+    return `<div class="tl-game">
+  <div class="tl-status-bar ${statusCls}">${statusInner}</div>
   <div class="tl-table">
-    ${renderOpponentTop()}
-    ${renderOpponentSide(1, 'left')}
-    ${renderCenter()}
-    ${renderOpponentSide(3, 'right')}
+    ${zoneTop()}
+    ${zoneSide(1, 'left')}
+    ${centerArea(justChanged)}
+    ${zoneSide(3, 'right')}
   </div>
-
-  ${renderPlayerArea()}
-  ${renderLog()}
+  ${playerArea(isYT, isFirst)}
+  <div class="tl-hint ${hintCls}">${hintText}</div>
+  ${logArea()}
 </div>`;
   }
 
-  function renderOpponentTop() {
-    return `
-<div class="tl-opponent tl-opponent--top">
-  ${renderOpponentInner(2)}
+  function zoneTop() {
+    const n      = state.hands[2].length;
+    const active = state.current === 2;
+    const show   = Math.min(n, 11);
+    const backs  = Array(show).fill('<div class="tl-card-back tl-card-back--sm"></div>').join('');
+    return `<div class="tl-zone tl-zone--top">
+  <div class="tl-zone__name${active ? ' active' : ''}">Minh${active ? ' ●' : ''}</div>
+  <div class="tl-opp-cards--top">${backs}</div>
+  <div class="tl-zone__count">${n} card${n !== 1 ? 's' : ''}</div>
 </div>`;
   }
 
-  function renderOpponentSide(idx, side) {
-    return `
-<div class="tl-opponent tl-opponent--${side}">
-  ${renderOpponentInner(idx)}
-</div>`;
-  }
-
-  function renderOpponentInner(idx) {
+  function zoneSide(idx, side) {
     const n      = state.hands[idx].length;
-    const active = state.current === idx ? ' active' : '';
-    const backs  = Array(Math.min(n, 10)).fill('<div class="tl-card-back"></div>').join('');
-    return `
-  <span class="tl-opponent__name${active}">${playerName(idx)}${state.current === idx ? ' ●' : ''}</span>
-  <div class="tl-opponent__cards">${backs}</div>
-  <span class="tl-opponent__count">${n} card${n !== 1 ? 's' : ''}</span>`;
+    const active = state.current === idx;
+    const name   = AI_NAMES[idx];
+    const show   = Math.min(n, 6);
+    const backs  = Array(show).fill('<div class="tl-card-back tl-card-back--xs"></div>').join('');
+    return `<div class="tl-zone tl-zone--${side}">
+  <div class="tl-zone__name${active ? ' active' : ''}">${name}${active ? ' ●' : ''}</div>
+  <div class="tl-opp-cards--side">${backs}</div>
+  <div class="tl-zone__count">${n}</div>
+</div>`;
   }
 
-  function renderCenter() {
-    const pileHTML = state.pile.length === 0
-      ? `<span class="tl-play-area-label">Play area</span>`
-      : state.pile.map(c => cardHTML(c, false)).join('');
+  function centerArea(justChanged) {
+    const hasPile = state.pile.length > 0;
+    const pileHTML = hasPile
+      ? state.pile.map((c, i) => faceCard(c, justChanged ? 'played-in' : '', justChanged ? `--play-i:${i}` : '')).join('')
+      : `<span class="tl-play-area-empty">Play area</span>`;
 
-    const lastPlayer = state.pile.length > 0 && state.pileOwner >= 0
-      ? `<div class="tl-last-player">Played by ${playerName(state.pileOwner)}</div>`
+    const info = hasPile && state.pileType
+      ? `<div class="tl-play-info">by ${pName(state.pileOwner)} · ${TYPE_LABEL[state.pileType.type]}</div>`
       : '';
 
-    return `
-<div class="tl-center">
-  <div class="tl-play-area">${pileHTML}</div>
-  ${lastPlayer}
+    return `<div class="tl-center">
+  <div class="tl-play-area${hasPile ? ' has-cards' : ''}">${pileHTML}</div>
+  ${info}
 </div>`;
   }
 
-  function renderPlayerArea() {
-    const hand = state.hands[PLAYER];
-    const isYourTurn = state.current === PLAYER;
-    const labelCls = isYourTurn ? ' active' : '';
-    const canPlay  = isYourTurn && selected.size > 0;
-    const canPass  = isYourTurn && state.pile.length > 0;
+  function playerArea(isYT, isFirst) {
+    const hand    = state.hands[PLAYER];
+    const canPlay = isYT && selected.size > 0;
+    const canPass = isYT && state.pile.length > 0;
 
-    const handHTML = hand.map((c, i) => {
-      const isSel    = selected.has(i);
-      const cls      = isYourTurn ? ' clickable' : '';
-      const selCls   = isSel ? ' selected' : '';
-      return `<div class="tl-card tl-card--${SUIT_COLORS[c.suit]}${cls}${selCls}" data-idx="${i}">${cardInner(c)}</div>`;
+    const cards = hand.map((c, i) => {
+      const cls = [
+        isYT            ? 'clickable' : '',
+        selected.has(i) ? 'selected'  : '',
+        isFirst         ? 'dealing'   : '',
+      ].filter(Boolean).join(' ');
+      const sty = isFirst ? `--deal-i:${i}` : '';
+      return faceCard(c, cls, sty, String(i));
     }).join('');
 
-    return `
-<div class="tl-player-area">
-  <div class="tl-player-label${labelCls}">You${isYourTurn ? ' ●' : ''} · ${hand.length} cards</div>
-  <div class="tl-hand">${handHTML}</div>
+    return `<div class="tl-player-area">
+  <div class="tl-zone__name${isYT ? ' active' : ''}">You${isYT ? ' ●' : ''} · ${hand.length} cards</div>
+  <div class="tl-hand">${cards}</div>
   <div class="tl-actions">
     <button class="btn btn--primary" id="tl-play" ${canPlay ? '' : 'disabled'}>Play</button>
     <button class="btn btn--outline" id="tl-pass" ${canPass ? '' : 'disabled'}>Pass</button>
@@ -543,117 +484,93 @@
 </div>`;
   }
 
-  function renderLog() {
-    const entries = state.log.slice(0, 8).map(e => {
-      const cls = e.player === PLAYER ? ' you' : '';
-      return `<li class="tl-log__entry${cls}">${escHtml(e.msg)}</li>`;
+  function logArea() {
+    const rows = state.log.slice(0, 10).map(e => {
+      const cls = e.player === PLAYER ? ' you' : e.player < 0 ? ' sys' : '';
+      return `<li class="tl-log__entry${cls}">${esc(e.msg)}</li>`;
     }).join('');
-    return `
-<div class="tl-log">
+    return `<div class="tl-log">
   <div class="tl-log__title">Game log</div>
-  <ul class="tl-log__list">${entries}</ul>
+  <ul class="tl-log__list">${rows}</ul>
 </div>`;
   }
 
-  function cardHTML(card, clickable) {
-    const color = SUIT_COLORS[card.suit];
-    const cls   = clickable ? ' clickable' : '';
-    return `<div class="tl-card tl-card--${color}${cls}">${cardInner(card)}</div>`;
+  /* Render a face-up card div */
+  function faceCard(card, cls, style, dataIdx) {
+    const color    = SUIT_CLR[card.suit];
+    const clsStr   = cls   ? ` ${cls}`           : '';
+    const styleStr = style ? ` style="${style}"`  : '';
+    const dataStr  = dataIdx !== undefined ? ` data-idx="${dataIdx}"` : '';
+    return `<div class="tl-card tl-card--${color}${clsStr}"${styleStr}${dataStr}>${cardInner(card)}</div>`;
   }
 
-  function cardInner(card) {
-    return `<span class="tl-card__rank">${card.rank}</span><span class="tl-card__suit">${card.suit}</span>`;
+  function cardInner(c) {
+    return `<div class="tl-card__corner tl-card__corner--tl"><div class="tl-card__rank">${c.rank}</div><div class="tl-card__suit-s">${c.suit}</div></div><div class="tl-card__center">${c.suit}</div><div class="tl-card__corner tl-card__corner--br"><div class="tl-card__rank">${c.rank}</div><div class="tl-card__suit-s">${c.suit}</div></div>`;
   }
 
-  function renderGameOver(container) {
-    const winner = state.winner;
-    const isPlayer = winner === PLAYER;
-    const icon = isPlayer ? '🏆' : '😔';
-    const headline = isPlayer ? 'You Win!' : `${playerName(winner)} Wins`;
-    const msg = isPlayer
-      ? 'Congratulations! You played all your cards first.'
-      : `${playerName(winner)} played all their cards first.`;
-
-    container.innerHTML = `
-<div class="tl-game">
+  function renderGameOver(el) {
+    const w   = state.winner;
+    const isP = w === PLAYER;
+    el.innerHTML = `<div class="tl-game">
   <div class="tl-gameover visible">
-    <div class="tl-gameover__icon">${icon}</div>
-    <h2>${headline}</h2>
-    <p>${msg}</p>
+    <div class="tl-gameover__icon">${isP ? '🏆' : '🃏'}</div>
+    <h2>${isP ? 'Tiến Lên!' : `${pName(w)} Wins!`}</h2>
+    <p>${isP ? 'You emptied your hand first. Go forward!' : `${pName(w)} played all their cards first.`}</p>
     <button class="btn btn--primary" id="tl-new">Play Again</button>
   </div>
 </div>`;
-
-    const newBtn = container.querySelector('#tl-new');
-    if (newBtn) newBtn.addEventListener('click', () => { selected.clear(); newGame(); });
+    el.querySelector('#tl-new').addEventListener('click', newGame);
   }
 
-  function wireEvents(container) {
+  /* ── Event wiring ── */
+  function wireEvents(el) {
     // Card selection
-    container.querySelectorAll('.tl-hand .tl-card.clickable').forEach(el => {
-      el.addEventListener('click', () => {
-        const idx = parseInt(el.dataset.idx, 10);
-        if (selected.has(idx)) selected.delete(idx);
-        else selected.add(idx);
+    el.querySelectorAll('.tl-hand .tl-card.clickable').forEach(card => {
+      card.addEventListener('click', () => {
+        const i = +card.dataset.idx;
+        selected.has(i) ? selected.delete(i) : selected.add(i);
         render();
       });
     });
 
-    // Play button
-    const playBtn = container.querySelector('#tl-play');
-    if (playBtn) {
-      playBtn.addEventListener('click', () => {
-        if (state.current !== PLAYER) return;
-        const cards = [...selected].map(i => state.hands[PLAYER][i]);
-        const ok = playCards(PLAYER, cards);
-        if (ok) selected.clear();
-        else {
-          showError(container, 'Invalid play — that hand doesn\'t beat the current play.');
-        }
-      });
-    }
+    // Play
+    el.querySelector('#tl-play')?.addEventListener('click', () => {
+      if (state.current !== PLAYER || state.aiThinking) return;
+      const cards = [...selected].map(i => state.hands[PLAYER][i]);
+      const info  = classify(cards);
+      const hint  = el.querySelector('.tl-hint');
 
-    // Pass button
-    const passBtn = container.querySelector('#tl-pass');
-    if (passBtn) {
-      passBtn.addEventListener('click', () => {
-        if (state.current !== PLAYER) return;
-        selected.clear();
-        pass(PLAYER);
-      });
-    }
+      function showHint(msg) {
+        if (hint) { hint.textContent = msg; hint.className = 'tl-hint invalid'; }
+      }
+
+      if (!info) {
+        showHint('✗ Not a valid hand type'); return;
+      }
+      if (state.firstTurn && state.leader === PLAYER && !cards.some(c => c.rank === '3' && c.suit === '♠')) {
+        showHint('✗ First play must include the 3♠'); return;
+      }
+      if (state.pileType && !beats(info, state.pileType)) {
+        showHint('✗ Doesn\'t beat current play — try higher or pass'); return;
+      }
+
+      if (playCards(PLAYER, cards)) selected.clear();
+    });
+
+    // Pass
+    el.querySelector('#tl-pass')?.addEventListener('click', () => {
+      if (state.current !== PLAYER || state.aiThinking) return;
+      selected.clear();
+      doPass(PLAYER);
+    });
 
     // New game
-    const newBtn = container.querySelector('#tl-new');
-    if (newBtn) {
-      newBtn.addEventListener('click', () => { selected.clear(); newGame(); });
-    }
+    el.querySelector('#tl-new')?.addEventListener('click', newGame);
   }
 
-  function showError(container, msg) {
-    let err = container.querySelector('.tl-error');
-    if (!err) {
-      err = document.createElement('div');
-      err.className = 'tl-error';
-      err.style.cssText = 'color:#ff7070;font-size:var(--text-xs);text-align:center;padding:4px 0;';
-      const actions = container.querySelector('.tl-actions');
-      if (actions) actions.after(err);
-    }
-    err.textContent = msg;
-    clearTimeout(err._t);
-    err._t = setTimeout(() => { err.textContent = ''; }, 2500);
-  }
-
-  function escHtml(str) {
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-
-  /* ── Bootstrap ── */
+  /* ── Init ── */
   function init() {
-    const container = document.getElementById('game-container');
-    if (!container) return;
-    selected.clear();
-    newGame();
+    if (document.getElementById('game-container')) newGame();
   }
 
   if (document.readyState === 'loading') {
