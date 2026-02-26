@@ -260,6 +260,53 @@
     }
   }
 
+  // ── Hover preview ─────────────────────────────────────────────────────────
+  var hoveredPreviewIdx = -1;
+
+  function clearPreview() {
+    if (hoveredPreviewIdx !== -1) {
+      var old = elBoard.querySelector('[data-idx="' + hoveredPreviewIdx + '"]');
+      if (old) old.classList.remove('pt-cell--preview');
+      hoveredPreviewIdx = -1;
+    }
+  }
+
+  function onBoardMouseover(e) {
+    if (state.phase !== 'choosingPiece') return;
+    var pieceEl = e.target.closest('[data-pi]');
+    if (!pieceEl || parseInt(pieceEl.dataset.player) !== PLAYER) {
+      // also handle hovering the entry cell directly
+      var cellEl = e.target.closest('[data-idx]');
+      if (!cellEl) return;
+      var cIdx = parseInt(cellEl.dataset.idx);
+      if (cIdx !== 0) return;
+      // find off-board piece
+      var found = -1;
+      for (var pj = 0; pj < TOTAL_PIECES; pj++) {
+        if (state.pieces[PLAYER][pj] === null && state.validPieces.indexOf(pj) !== -1) { found = pj; break; }
+      }
+      if (found === -1) return;
+      var tgt = targetPos(null, state.roll);
+      if (tgt >= TRACK_LENGTH) return;
+      clearPreview();
+      var cell = elBoard.querySelector('[data-idx="' + tgt + '"]');
+      if (cell) { cell.classList.add('pt-cell--preview'); hoveredPreviewIdx = tgt; }
+      return;
+    }
+    var pi = parseInt(pieceEl.dataset.pi);
+    if (state.validPieces.indexOf(pi) === -1) return;
+    var pos = state.pieces[PLAYER][pi];
+    var tgt2 = targetPos(pos, state.roll);
+    if (tgt2 >= TRACK_LENGTH) return;
+    clearPreview();
+    var cell2 = elBoard.querySelector('[data-idx="' + tgt2 + '"]');
+    if (cell2) { cell2.classList.add('pt-cell--preview'); hoveredPreviewIdx = tgt2; }
+  }
+
+  function onBoardMouseout(e) {
+    if (!e.relatedTarget || !elBoard.contains(e.relatedTarget)) clearPreview();
+  }
+
   // ── Player turn ───────────────────────────────────────────────────────────
   function onRollClick() {
     if (state.phase !== 'idle' || state.animating || state.turn !== PLAYER) return;
@@ -456,6 +503,8 @@
     elRollBtn.addEventListener('click', onRollClick);
     elNewGameBtn.addEventListener('click', newGame);
     elBoard.addEventListener('click', onBoardClick);
+    elBoard.addEventListener('mouseover', onBoardMouseover);
+    elBoard.addEventListener('mouseout', onBoardMouseout);
     newGame();
   }
 
