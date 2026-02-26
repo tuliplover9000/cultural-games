@@ -140,6 +140,8 @@
       }
     }
 
+    hoveredPieceEl = null;
+    hoveredPreviewIdx = -1;
     elBoard.style.gridTemplateColumns = 'repeat(13, 1fr)';
     elBoard.innerHTML = html;
   }
@@ -262,8 +264,10 @@
 
   // ── Hover preview ─────────────────────────────────────────────────────────
   var hoveredPreviewIdx = -1;
+  var hoveredPieceEl = null;
 
-  function clearPreview() {
+  function clearHover() {
+    if (hoveredPieceEl) { hoveredPieceEl.classList.remove('pt-piece--hovered'); hoveredPieceEl = null; }
     if (hoveredPreviewIdx !== -1) {
       var old = elBoard.querySelector('[data-idx="' + hoveredPreviewIdx + '"]');
       if (old) old.classList.remove('pt-cell--preview');
@@ -271,40 +275,52 @@
     }
   }
 
+  function applyHover(pieceEl, previewIdx) {
+    if (pieceEl) { pieceEl.classList.add('pt-piece--hovered'); hoveredPieceEl = pieceEl; }
+    if (previewIdx !== -1) {
+      var cell = elBoard.querySelector('[data-idx="' + previewIdx + '"]');
+      if (cell) { cell.classList.add('pt-cell--preview'); hoveredPreviewIdx = previewIdx; }
+    }
+  }
+
   function onBoardMouseover(e) {
     if (state.phase !== 'choosingPiece') return;
+
+    var newPieceEl = null;
+    var newPreviewIdx = -1;
+
     var pieceEl = e.target.closest('[data-pi]');
-    if (!pieceEl || parseInt(pieceEl.dataset.player) !== PLAYER) {
-      // also handle hovering the entry cell directly
-      var cellEl = e.target.closest('[data-idx]');
-      if (!cellEl) return;
-      var cIdx = parseInt(cellEl.dataset.idx);
-      if (cIdx !== 0) return;
-      // find off-board piece
-      var found = -1;
-      for (var pj = 0; pj < TOTAL_PIECES; pj++) {
-        if (state.pieces[PLAYER][pj] === null && state.validPieces.indexOf(pj) !== -1) { found = pj; break; }
+    if (pieceEl && parseInt(pieceEl.dataset.player) === PLAYER) {
+      var pi = parseInt(pieceEl.dataset.pi);
+      if (state.validPieces.indexOf(pi) !== -1) {
+        newPieceEl = pieceEl;
+        var tgt = targetPos(state.pieces[PLAYER][pi], state.roll);
+        if (tgt < TRACK_LENGTH) newPreviewIdx = tgt;
       }
-      if (found === -1) return;
-      var tgt = targetPos(null, state.roll);
-      if (tgt >= TRACK_LENGTH) return;
-      clearPreview();
-      var cell = elBoard.querySelector('[data-idx="' + tgt + '"]');
-      if (cell) { cell.classList.add('pt-cell--preview'); hoveredPreviewIdx = tgt; }
-      return;
+    } else {
+      // hovering entry cell (idx=0) when an off-board piece is valid
+      var cellEl = e.target.closest('[data-idx]');
+      if (cellEl && parseInt(cellEl.dataset.idx) === 0) {
+        for (var pj = 0; pj < TOTAL_PIECES; pj++) {
+          if (state.pieces[PLAYER][pj] === null && state.validPieces.indexOf(pj) !== -1) {
+            var tgt0 = targetPos(null, state.roll);
+            if (tgt0 < TRACK_LENGTH) newPreviewIdx = tgt0;
+            break;
+          }
+        }
+      }
     }
-    var pi = parseInt(pieceEl.dataset.pi);
-    if (state.validPieces.indexOf(pi) === -1) return;
-    var pos = state.pieces[PLAYER][pi];
-    var tgt2 = targetPos(pos, state.roll);
-    if (tgt2 >= TRACK_LENGTH) return;
-    clearPreview();
-    var cell2 = elBoard.querySelector('[data-idx="' + tgt2 + '"]');
-    if (cell2) { cell2.classList.add('pt-cell--preview'); hoveredPreviewIdx = tgt2; }
+
+    // Only update DOM if something changed
+    if (newPieceEl !== hoveredPieceEl || newPreviewIdx !== hoveredPreviewIdx) {
+      clearHover();
+      applyHover(newPieceEl, newPreviewIdx);
+    }
   }
 
   function onBoardMouseout(e) {
-    if (!e.relatedTarget || !elBoard.contains(e.relatedTarget)) clearPreview();
+    var to = e.relatedTarget;
+    if (!to || !elBoard.contains(to)) clearHover();
   }
 
   // ── Player turn ───────────────────────────────────────────────────────────

@@ -1958,30 +1958,54 @@
   max-width: 500px;
   margin: 0 auto 1rem;
   gap: 3px;
-  padding: 6px;
-  background: rgba(0,0,0,0.35);
-  border-radius: 8px;
-  border: 1px solid rgba(201,149,42,0.15);
+  padding: 8px;
+  background: #020c05;
+  border-radius: 10px;
+  border: 2px solid rgba(201,149,42,0.45);
+  box-shadow:
+    0 0 0 1px rgba(201,149,42,0.1),
+    inset 0 0 50px rgba(0,0,0,0.9),
+    0 8px 30px rgba(0,0,0,0.7);
 }
 
 .pt-cell {
-  background: linear-gradient(145deg, #1f5535 0%, var(--pt-jade) 100%);
-  border: 1px solid rgba(201,149,42,0.25);
-  border-radius: 4px;
+  background: linear-gradient(150deg, #1d5230 0%, #112e1b 100%);
+  border: 1px solid rgba(201,149,42,0.18);
+  border-radius: 3px;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   aspect-ratio: 1;
   cursor: default;
-  transition: background 0.15s, box-shadow 0.15s;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), inset 0 -2px 3px rgba(0,0,0,0.4);
 }
 
+/* Safe zones: gold diamond marker */
 .pt-cell--safe {
-  background: linear-gradient(145deg, #5faa30 0%, var(--pt-safe) 100%);
+  background: linear-gradient(150deg, #1d5230 0%, #112e1b 100%);
   border-color: rgba(201,149,42,0.5);
-  box-shadow: inset 0 0 0 1px rgba(240,192,80,0.3);
+  box-shadow:
+    inset 0 0 0 1px rgba(240,192,80,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    inset 0 -2px 3px rgba(0,0,0,0.4);
 }
+
+.pt-cell--safe::before {
+  content: '';
+  position: absolute;
+  width: 32%;
+  aspect-ratio: 1;
+  background: rgba(201,149,42,0.55);
+  border: 1px solid rgba(240,192,80,0.4);
+  border-radius: 2px;
+  transform: rotate(45deg);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Safe cell with a piece: hide the diamond so piece is visible */
+.pt-cell--safe:not(:empty) > .pt-cell--safe::before { display: none; }
 
 .pt-cell--empty {
   background: transparent;
@@ -1990,30 +2014,17 @@
   box-shadow: none;
 }
 
-/* Valid moves: golden ring */
-@keyframes pt-pulse-valid {
-  0%, 100% { box-shadow: 0 0 0 2px var(--pt-gold), 0 0 6px rgba(240,192,80,0.3); }
-  50%      { box-shadow: 0 0 0 2px var(--pt-gold-light), 0 0 12px rgba(240,192,80,0.6); }
-}
-
-.pt-cell--valid {
-  cursor: pointer;
-  animation: pt-pulse-valid 1.4s ease infinite;
-}
-
-.pt-cell--valid:hover {
-  background: linear-gradient(145deg, rgba(201,149,42,0.35) 0%, rgba(201,149,42,0.2) 100%);
-}
-
-/* Landing preview: white-ish glow */
+/* Valid: just cursor change, no persistent glow */
+/* Landing preview: pulsing blue-white glow — only on hover */
 @keyframes pt-pulse-preview {
-  0%, 100% { box-shadow: 0 0 0 2px #e8f8ff, 0 0 10px rgba(200,240,255,0.5); }
-  50%      { box-shadow: 0 0 0 3px #ffffff, 0 0 18px rgba(200,240,255,0.8); }
+  0%, 100% { box-shadow: 0 0 0 2px rgba(160,230,255,0.9), 0 0 10px rgba(160,230,255,0.4), inset 0 0 8px rgba(160,230,255,0.15); }
+  50%      { box-shadow: 0 0 0 3px #ffffff, 0 0 20px rgba(200,240,255,0.7), inset 0 0 12px rgba(200,240,255,0.25); }
 }
 
 .pt-cell--preview {
-  animation: pt-pulse-preview 0.8s ease infinite;
-  background: linear-gradient(145deg, rgba(150,220,255,0.25) 0%, rgba(100,180,220,0.15) 100%) !important;
+  animation: pt-pulse-preview 0.75s ease infinite;
+  background: linear-gradient(150deg, rgba(100,200,240,0.2) 0%, rgba(60,150,200,0.12) 100%) !important;
+  border-color: rgba(160,230,255,0.6) !important;
 }
 
 /* Multiple pieces stacked */
@@ -2068,17 +2079,21 @@
     inset 0 1px 2px rgba(255,255,255,0.5);
 }
 
-.pt-cell--valid .pt-piece--player,
-.pt-cell--valid .pt-piece--ai {
+/* Hovered valid piece: bright ring + slight lift */
+@keyframes pt-piece-hover {
+  0%, 100% { box-shadow: 0 0 0 2px #fff, 0 4px 12px rgba(0,0,0,0.8), inset 0 1px 2px rgba(255,255,255,0.5); }
+  50%      { box-shadow: 0 0 0 3px #fff, 0 6px 18px rgba(0,0,0,0.9), inset 0 1px 2px rgba(255,255,255,0.5); }
+}
+
+.pt-piece--hovered {
+  transform: scale(1.2);
   cursor: pointer;
+  animation: pt-piece-hover 0.8s ease infinite;
+  z-index: 2;
 }
 
-.pt-cell--valid .pt-piece--player:hover {
-  transform: scale(1.15);
-}
-
-.pt-cell--valid .pt-piece--ai:hover {
-  transform: scale(1.15);
+.pt-cell--valid {
+  cursor: pointer;
 }
 
 /* ── Beans ──────────────────────────────────────────────────────────────── */
