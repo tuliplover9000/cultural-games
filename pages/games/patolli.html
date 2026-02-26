@@ -52,6 +52,38 @@
         </p>
       </header>
 
+      <!-- Game Container -->
+      <div class="game-container" id="game-container" aria-label="Game area">
+        <div class="pt-game-wrap">
+          <!-- Board -->
+          <div id="pt-board" class="pt-board" role="img" aria-label="Patolli board"></div>
+
+          <!-- Dice row -->
+          <div id="pt-dice-row" class="pt-dice-row" aria-live="polite"></div>
+
+          <!-- Controls -->
+          <div class="pt-controls">
+            <button id="pt-roll-btn" class="pt-btn">Roll Beans</button>
+            <button id="pt-new-game-btn" class="pt-btn pt-btn--secondary">New Game</button>
+          </div>
+
+          <!-- Status bar -->
+          <p id="pt-status" class="pt-status" aria-live="assertive"></p>
+
+          <!-- Tribute / score -->
+          <div id="pt-score" class="pt-score"></div>
+
+          <!-- Log -->
+          <ol id="pt-log" class="pt-log" aria-label="Game log" reversed></ol>
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="game-disclaimer" role="note">
+        🪙 This game uses <strong>virtual tribute coins only</strong>. No real money is involved.
+      </div>
+
+      <!-- How to Play -->
       <details class="accordion" open>
         <summary class="accordion__trigger">
           <span class="accordion__title">How to Play</span>
@@ -64,17 +96,18 @@
             to win.
           </p>
           <ol>
-            <li><strong>Bean Dice:</strong> throw 5 marked beans. Count how many land marked-side up — that's your move. <em>All 5 unmarked = move 10 spaces</em>. <em>All 5 marked = move 5 spaces AND take another turn</em>.</li>
-            <li>After rolling, choose which of your pieces to move. Only pieces with legal moves may be selected.</li>
-            <li><strong>Capture:</strong> landing on an opponent's piece sends it back to start. <strong>Safe zones</strong> protect pieces — pieces on safe spaces cannot be captured.</li>
+            <li><strong>Bean Dice:</strong> throw 5 marked beans. Count how many land marked-side up — that's your move. <em>All 5 blank = move 10 spaces</em>. <em>All 5 marked = move 5 spaces AND take another turn</em>.</li>
+            <li>After rolling, click one of your highlighted pieces to move it. Only pieces with legal moves are selectable.</li>
+            <li><strong>Capture:</strong> landing on an opponent's piece sends it back to start. <strong>Safe zones</strong> (green cells) protect pieces — pieces on safe spaces cannot be captured.</li>
             <li>You cannot move a piece onto a space already occupied by your own piece.</li>
             <li>Pieces must travel the full circuit around the cross-shaped track before exiting the board.</li>
             <li><strong>Win condition:</strong> first player to move all 6 pieces around the full track and off the board wins.</li>
-            <li>A <strong>virtual tribute system</strong> (coins) tracks captures and awards throughout the game.</li>
+            <li>A <strong>virtual tribute system</strong> tracks coins awarded for captures and finishing pieces.</li>
           </ol>
         </div>
       </details>
 
+      <!-- Cultural Context -->
       <details class="accordion">
         <summary class="accordion__trigger">
           <span class="accordion__title">Cultural Context</span>
@@ -107,18 +140,6 @@
           </p>
         </div>
       </details>
-
-      <div class="game-container" id="game-container" aria-label="Game area">
-        <div class="game-placeholder">
-          <div class="game-placeholder__icon" aria-hidden="true">🌿</div>
-          <h3>Coming in Phase 6</h3>
-          <p>The full Patolli board — cross shape, bean dice, piece movement, safe zones, and tribute system — will appear here.</p>
-        </div>
-      </div>
-
-      <div class="game-disclaimer" role="note">
-        🪙 This game uses <strong>virtual tribute coins only</strong>. No real money is involved.
-      </div>
 
     </div>
   </main>

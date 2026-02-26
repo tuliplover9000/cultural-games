@@ -1922,5 +1922,302 @@
 }
 
 /* =============================================================================
-   Patolli — Phase 6 (styles reserved, empty for now)
+   Patolli — Phase 6
 ============================================================================= */
+
+.pt-game-wrap {
+  --pt-jade:       #1a4a2e;
+  --pt-jade-light: #2d6e47;
+  --pt-gold:       #c9952a;
+  --pt-gold-light: #f0c050;
+  --pt-terra:      #8b3a0f;
+  --pt-player:     #3a9abf;
+  --pt-ai:         #d45a20;
+  --pt-safe:       #5a9e30;
+  --pt-bg:         #0e2a1a;
+
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem;
+  background: var(--pt-bg);
+  color: var(--pt-gold-light);
+  font-family: inherit;
+  border-radius: 8px;
+}
+
+/* Board */
+.pt-board {
+  display: grid;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto 0.75rem;
+  gap: 2px;
+}
+
+.pt-cell {
+  background: var(--pt-jade);
+  border: 1px solid rgba(201,149,42,0.4);
+  border-radius: 3px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  cursor: default;
+}
+
+.pt-cell--safe {
+  background: var(--pt-safe);
+  box-shadow: inset 0 0 0 2px var(--pt-gold);
+}
+
+.pt-cell--empty {
+  background: transparent;
+  border: none;
+  pointer-events: none;
+}
+
+.pt-cell--valid {
+  cursor: pointer;
+  box-shadow: 0 0 0 2px var(--pt-gold-light), 0 0 8px rgba(240,192,80,0.5);
+}
+
+.pt-cell--valid:hover {
+  background: rgba(201,149,42,0.25);
+}
+
+/* Pieces */
+.pt-piece {
+  width: 62%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.12s ease;
+  flex-shrink: 0;
+}
+
+.pt-piece--player {
+  background: radial-gradient(circle at 35% 35%, #6dd0f0 0%, #2a7a9a 50%, #1a5a7a 100%);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+.pt-piece--ai {
+  background: radial-gradient(circle at 35% 35%, #f08060 0%, #b04020 50%, #802010 100%);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+.pt-piece--moving {
+  transform: scale(1.35);
+}
+
+.pt-cell--multi {
+  flex-wrap: wrap;
+  gap: 1px;
+  padding: 2px;
+}
+
+.pt-cell--multi .pt-piece {
+  width: 44%;
+}
+
+/* Dice row */
+.pt-dice-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+  flex-wrap: wrap;
+  min-height: 2.5rem;
+}
+
+.pt-bean {
+  width: 2.2rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: var(--pt-terra);
+  border: 2px solid var(--pt-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: bold;
+  color: var(--pt-gold-light);
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.pt-bean--marked {
+  background: var(--pt-gold);
+  border-color: var(--pt-gold-light);
+  color: var(--pt-bg);
+}
+
+@keyframes pt-flip {
+  0%   { transform: rotateY(0deg);   }
+  50%  { transform: rotateY(90deg);  }
+  100% { transform: rotateY(0deg);   }
+}
+
+.pt-bean--rolling {
+  animation: pt-flip 0.35s ease;
+}
+
+.pt-roll-total {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--pt-gold-light);
+  margin-left: 0.5rem;
+  white-space: nowrap;
+}
+
+/* Controls */
+.pt-controls {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 0.5rem 0;
+}
+
+.pt-btn {
+  cursor: pointer;
+  padding: 0.5rem 1.4rem;
+  border-radius: 5px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: 2px solid var(--pt-gold);
+  background: var(--pt-jade-light);
+  color: var(--pt-gold-light);
+  font-family: inherit;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.pt-btn:hover:not(:disabled) {
+  background: var(--pt-jade);
+  transform: translateY(-1px);
+}
+
+.pt-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.pt-btn--secondary {
+  background: transparent;
+  border-color: rgba(201,149,42,0.45);
+  color: rgba(240,192,80,0.7);
+}
+
+.pt-btn--secondary:hover:not(:disabled) {
+  border-color: var(--pt-gold);
+  color: var(--pt-gold-light);
+  background: transparent;
+}
+
+.pt-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Status */
+.pt-status {
+  text-align: center;
+  font-size: 1.05rem;
+  min-height: 1.6em;
+  color: var(--pt-gold-light);
+  margin: 0.25rem 0;
+}
+
+/* Score */
+.pt-score {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: rgba(240,192,80,0.8);
+  margin: 0.25rem 0 0.5rem;
+  flex-wrap: wrap;
+}
+
+.pt-score__label {
+  font-weight: 600;
+  color: var(--pt-gold-light);
+}
+
+/* Log */
+.pt-log {
+  max-height: 130px;
+  overflow-y: auto;
+  font-size: 0.78rem;
+  color: rgba(240,192,80,0.5);
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  border-top: 1px solid rgba(201,149,42,0.2);
+  padding-top: 0.4rem;
+}
+
+.pt-log li {
+  padding: 0.1rem 0;
+}
+
+.pt-log li:first-child {
+  color: var(--pt-gold-light);
+}
+
+/* Game over banner */
+@keyframes pt-pop {
+  0%   { transform: scale(0.6); opacity: 0; }
+  70%  { transform: scale(1.08); }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+.pt-gameover {
+  text-align: center;
+  padding: 1rem;
+  animation: pt-pop 0.4s ease forwards;
+}
+
+.pt-gameover__title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--pt-gold-light);
+  margin-bottom: 0.25rem;
+}
+
+.pt-gameover__sub {
+  color: rgba(240,192,80,0.7);
+  font-size: 0.95rem;
+}
+
+/* Thinking dots */
+.pt-thinking {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.pt-thinking span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--pt-gold);
+  animation: pt-dot 1s infinite;
+}
+
+.pt-thinking span:nth-child(2) { animation-delay: 0.2s; }
+.pt-thinking span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes pt-dot {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+  40%           { opacity: 1;   transform: scale(1.1); }
+}
+
+/* Responsive */
+@media (max-width: 560px) {
+  .pt-bean       { width: 1.7rem; height: 1.1rem; font-size: 0.55rem; }
+  .pt-btn        { padding: 0.4rem 0.9rem; font-size: 0.85rem; }
+  .pt-roll-total { font-size: 0.95rem; }
+  .pt-status     { font-size: 0.92rem; }
+}
