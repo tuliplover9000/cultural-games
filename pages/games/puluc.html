@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Play Puluc — the ancient Maya stick-dice racing game with prisoner capture. Free, in your browser." />
+  <title>Puluc — Cultural Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/components.css" />
+  <link rel="stylesheet" href="../../css/games.css" />
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../../index.html" class="nav-logo" aria-label="Cultural Games — Home">
+        <span class="nav-logo-icon" aria-hidden="true">🎲</span>
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="../browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="../about.html"  class="nav-link">About</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+
+      <div class="game-nav-bar">
+        <a href="../browse.html" class="back-link">Back to Browse</a>
+      </div>
+
+      <header class="game-header">
+        <div class="game-header__icon" aria-hidden="true">🌲</div>
+        <h1 class="game-header__title">Puluc</h1>
+        <p class="game-header__origin">
+          Maya Mesoamerica &nbsp;&middot;&nbsp;
+          <span class="badge badge--dice" style="display:inline-flex; vertical-align:middle; margin-left:4px;">Dice</span>
+        </p>
+      </header>
+
+      <!-- Game Container -->
+      <div class="game-container" id="game-container" aria-label="Game area">
+        <div class="pu-game-wrap">
+
+          <!-- Track -->
+          <div id="pu-track" class="pu-track" role="img" aria-label="Puluc track"></div>
+
+          <!-- Dice row -->
+          <div id="pu-dice-row" class="pu-dice-row" aria-live="polite"></div>
+
+          <!-- Controls -->
+          <div class="pu-controls">
+            <div class="pu-mode-row">
+              <button id="pu-mode-ai"    class="pu-btn pu-btn--mode active">vs AI</button>
+              <button id="pu-mode-human" class="pu-btn pu-btn--mode">vs Player</button>
+            </div>
+            <button id="pu-roll-btn"     class="pu-btn">Roll Sticks</button>
+            <button id="pu-new-game-btn" class="pu-btn pu-btn--secondary">New Game</button>
+          </div>
+
+          <!-- Status bar -->
+          <p id="pu-status" class="pu-status" aria-live="assertive"></p>
+
+          <!-- Score -->
+          <div id="pu-score" class="pu-score"></div>
+
+          <!-- Log -->
+          <ol id="pu-log" class="pu-log" aria-label="Game log" reversed></ol>
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="game-disclaimer" role="note">
+        🌿 This game uses <strong>virtual pieces only</strong>. No real money is involved.
+      </div>
+
+      <!-- How to Play -->
+      <details class="accordion" open>
+        <summary class="accordion__trigger">
+          <span class="accordion__title">How to Play</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Puluc is an ancient Maya racing game played on a <strong>linear track of 11 spaces</strong>.
+            Each player races 5 pieces from their end toward the opponent's end. Rules follow the
+            Brewster/Acosta version.
+          </p>
+          <ol>
+            <li><strong>Stick Dice:</strong> throw 4 sticks — each lands blank or marked. Count the marked sides for your move. All blank or all marked = move 4 spaces.</li>
+            <li>After rolling, click a highlighted piece on the board (or your entry zone) to move it. Your entry zone is on the left; your pieces move right.</li>
+            <li><strong>Enter new pieces:</strong> click your entry zone (left side) to bring a waiting piece onto the track at the rolled distance.</li>
+            <li><strong>Capture:</strong> if your piece lands on an opponent's piece, you capture it — it becomes a prisoner carried under your piece. The stack moves together.</li>
+            <li><strong>Releasing prisoners:</strong> if your stack is captured, all prisoners you held are freed back to their owner's entry pool.</li>
+            <li>When your stack exits the far end, any prisoners it carried are also released back to the opponent.</li>
+            <li><strong>Win condition:</strong> first player to move all 5 of their pieces off the far end wins.</li>
+          </ol>
+        </div>
+      </details>
+
+      <!-- Cultural Context -->
+      <details class="accordion">
+        <summary class="accordion__trigger">
+          <span class="accordion__title">Cultural Context</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Puluc is a traditional game of the Kekchi Maya people of Guatemala and southern
+            Mexico, with roots stretching back thousands of years into pre-Columbian
+            Mesoamerica. The game was documented by ethnographers including Terrence
+            Kaufman, and later analyzed by Vivan Acosta and others who studied the game
+            among contemporary Maya communities in Alta Verapaz, Guatemala.
+          </p>
+          <p>
+            The stick dice — flat wooden sticks painted on one side — connect Puluc to a
+            broader family of lot-casting games found across the Americas, from the Aztec
+            patolli to the board games of the ancient Mississippi cultures. The dramatic
+            prisoner-capture mechanic mirrors the importance of warfare and captive-taking
+            in Maya ritual and political life, where capturing enemies alive was often more
+            valued than killing them.
+          </p>
+          <p>
+            Unlike many ancient games, Puluc has never fully disappeared. It continues to
+            be played in Maya highland communities, passed down through generations as both
+            a game and a form of cultural memory. Its survival is a testament to the
+            resilience of indigenous cultures in the face of centuries of colonialism
+            and erasure.
+          </p>
+        </div>
+      </details>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <span class="footer-brand">Cultural Games</span>
+      <p class="footer-mission">Preserving cultural heritage through play — one game at a time.</p>
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links" role="list">
+          <li><a href="../browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="../about.html"  class="footer-link">About</a></li>
+        </ul>
+      </nav>
+      <div class="footer-divider"></div>
+      <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
+    </div>
+  </footer>
+
+  <script src="../../js/utils/helpers.js"></script>
+  <script src="../../js/utils/navigation.js"></script>
+  <script src="../../js/games/puluc.js"></script>
+</body>
+</html>

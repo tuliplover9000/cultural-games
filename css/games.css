@@ -2424,3 +2424,376 @@
   .pt-board       { gap: 2px; padding: 4px; }
   .pt-score > span { min-width: 140px; font-size: 0.8rem; }
 }
+
+/* ════════════════════════════════════════════════════════════════════════
+   PULUC — Maya / Mesoamerica
+   Prefix: pu-
+   Theme:  deep forest green · jade · raw linen
+════════════════════════════════════════════════════════════════════════ */
+
+/* ── Design tokens ───────────────────────────────────────────────────── */
+.pu-game-wrap {
+  --pu-bg:         #1a2e10;
+  --pu-track-bg:   #2d4a1e;
+  --pu-space:      #3d6a2a;
+  --pu-space-alt:  #355e24;
+  --pu-border:     rgba(160, 210, 100, 0.18);
+  --pu-player:     #f0e0a0;   /* pale gold / linen */
+  --pu-player-dim: rgba(240, 224, 160, 0.55);
+  --pu-ai:         #9b2c2c;   /* dark red */
+  --pu-ai-dim:     rgba(155, 44, 44, 0.55);
+  --pu-scored:     rgba(200, 200, 200, 0.25);
+  --pu-selected:   #ffe066;
+  --pu-stick:      #6b4c20;   /* blank stick — dark wood */
+  --pu-stick-1:    #e8c068;   /* marked stick — light wood */
+  --pu-gold:       #c8a050;
+  --pu-gold-light: #f0d080;
+  --pu-gold-dim:   rgba(200, 160, 80, 0.55);
+  --pu-text:       #d8c89a;
+}
+
+/* ── Outer wrap ──────────────────────────────────────────────────────── */
+.pu-game-wrap {
+  background: var(--pu-bg);
+  border-radius: 16px;
+  padding: 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: var(--pu-text);
+  font-family: var(--font-body, 'Inter', sans-serif);
+}
+
+/* ── Track ───────────────────────────────────────────────────────────── */
+.pu-track {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  background: var(--pu-track-bg);
+  border: 1px solid var(--pu-border);
+  border-radius: 10px;
+  padding: 10px 8px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
+}
+
+/* ── Track spaces ────────────────────────────────────────────────────── */
+.pu-space {
+  flex: 1 0 2.6rem;
+  min-width: 2.6rem;
+  max-width: 3.4rem;
+  height: 4.2rem;
+  background: var(--pu-space);
+  border: 1px solid var(--pu-border);
+  border-radius: 6px;
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;   /* stack pieces from bottom */
+  align-items: center;
+  justify-content: flex-start;
+  padding: 3px 2px;
+  gap: 2px;
+  box-sizing: border-box;
+  transition: background 0.15s;
+}
+
+.pu-space:nth-child(even) {
+  background: var(--pu-space-alt);
+}
+
+/* ── Pieces ──────────────────────────────────────────────────────────── */
+.pu-piece {
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: transform 0.12s, box-shadow 0.12s;
+  position: relative;
+  z-index: 1;
+}
+
+.pu-piece--player {
+  background: radial-gradient(circle at 35% 35%, #fff8d8, var(--pu-player) 55%, #b89050);
+  border: 2px solid rgba(200,160,60,0.7);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.pu-piece--ai {
+  background: radial-gradient(circle at 35% 35%, #cc4444, var(--pu-ai) 55%, #5a1010);
+  border: 2px solid rgba(180, 60, 60, 0.7);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+/* Prisoner pieces — smaller and dimmer, shown underneath */
+.pu-piece--prisoner {
+  opacity: 0.5;
+  transform: scale(0.72);
+  z-index: 0;
+}
+
+/* Waiting pieces in the off-board zone */
+.pu-piece--waiting {
+  width: 1.3rem;
+  height: 1.3rem;
+  opacity: 0.75;
+}
+
+/* Scored (exited) pieces — greyed out check marks */
+.pu-piece--scored {
+  width: 1.3rem;
+  height: 1.3rem;
+  opacity: 0.35;
+  border-style: dashed;
+}
+
+/* Selectable — gold ring + pointer */
+.pu-piece--selectable {
+  cursor: pointer;
+  box-shadow: 0 0 0 3px var(--pu-selected), 0 0 10px rgba(255,220,80,0.55);
+  animation: pu-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pu-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px var(--pu-selected), 0 0 6px  rgba(255,220,80,0.3); }
+  50%       { box-shadow: 0 0 0 4px var(--pu-selected), 0 0 14px rgba(255,220,80,0.65); }
+}
+
+/* ── Off-board zones ─────────────────────────────────────────────────── */
+.pu-offboard {
+  flex-shrink: 0;
+  width: 4rem;
+  min-height: 4.2rem;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--pu-border);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 6px 4px 4px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.pu-offboard--player { border-radius: 8px 6px 6px 8px; }
+.pu-offboard--ai     { border-radius: 6px 8px 8px 6px; }
+
+.pu-offboard--selectable {
+  cursor: pointer;
+  border-color: var(--pu-selected);
+  box-shadow: 0 0 0 2px var(--pu-selected), 0 0 12px rgba(255,220,80,0.4);
+  animation: pu-zone-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pu-zone-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px var(--pu-selected), 0 0 8px  rgba(255,220,80,0.3); }
+  50%       { box-shadow: 0 0 0 3px var(--pu-selected), 0 0 18px rgba(255,220,80,0.6); }
+}
+
+.pu-offboard__label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--pu-gold-dim);
+  text-transform: uppercase;
+  position: absolute;
+  bottom: 3px;
+  width: 100%;
+  text-align: center;
+}
+
+/* ── Stick dice ──────────────────────────────────────────────────────── */
+.pu-dice-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 2.2rem;
+  flex-wrap: wrap;
+}
+
+.pu-stick {
+  width: 2.6rem;
+  height: 0.7rem;
+  border-radius: 6px;
+  background: var(--pu-stick);
+  border: 1px solid rgba(120,80,30,0.6);
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.08), 0 1px 3px rgba(0,0,0,0.5);
+  transition: background 0.15s;
+}
+
+.pu-stick--marked {
+  background: var(--pu-stick-1);
+  border-color: rgba(220,180,80,0.6);
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.2), 0 0 6px rgba(230,190,80,0.4);
+}
+
+.pu-roll-total {
+  font-size: 0.92rem;
+  color: var(--pu-gold-light);
+  font-weight: 600;
+  margin-left: 8px;
+  letter-spacing: 0.03em;
+}
+
+/* ── Controls ────────────────────────────────────────────────────────── */
+.pu-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  width: 100%;
+}
+
+.pu-mode-row {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  justify-content: center;
+}
+
+.pu-btn {
+  padding: 0.5rem 1.4rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  border: 1.5px solid var(--pu-gold);
+  border-radius: 8px;
+  background: rgba(200,160,80,0.14);
+  color: var(--pu-gold-light);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+}
+
+.pu-btn:hover:not(:disabled) {
+  background: rgba(200,160,80,0.26);
+}
+
+.pu-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.pu-btn--secondary {
+  border-color: rgba(200,160,80,0.35);
+  background: transparent;
+  color: var(--pu-gold-dim);
+}
+
+.pu-btn--secondary:hover:not(:disabled) {
+  border-color: var(--pu-gold);
+  color: var(--pu-gold-light);
+  background: rgba(200,160,80,0.12);
+}
+
+.pu-btn--mode {
+  padding: 5px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid rgba(200,160,80,0.25);
+  color: rgba(200,160,80,0.45);
+  box-shadow: none;
+}
+
+.pu-btn--mode.active {
+  border-color: var(--pu-gold);
+  color: var(--pu-gold-light);
+  background: rgba(200,160,80,0.15);
+}
+
+/* ── Status ──────────────────────────────────────────────────────────── */
+.pu-status {
+  font-size: 0.95rem;
+  color: var(--pu-gold-light);
+  text-align: center;
+  min-height: 1.4em;
+  font-weight: 500;
+}
+
+/* ── Score ───────────────────────────────────────────────────────────── */
+.pu-score {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.pu-score > span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--pu-gold-dim);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--pu-border);
+  border-radius: 20px;
+  padding: 3px 14px;
+  min-width: 160px;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+/* ── Log ─────────────────────────────────────────────────────────────── */
+.pu-log {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  max-height: 130px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pu-log li {
+  font-size: 0.78rem;
+  color: rgba(210,195,150,0.65);
+  padding: 1px 6px;
+  border-left: 2px solid rgba(200,160,80,0.2);
+}
+
+.pu-log li:first-child {
+  color: rgba(210,195,150,0.9);
+  border-left-color: var(--pu-gold);
+}
+
+/* ── Thinking dots ───────────────────────────────────────────────────── */
+.pu-thinking {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.pu-thinking span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--pu-gold);
+  animation: pu-dot 1s infinite;
+}
+
+.pu-thinking span:nth-child(2) { animation-delay: 0.2s; }
+.pu-thinking span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes pu-dot {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.7); }
+  40%           { opacity: 1;   transform: scale(1.2); }
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 560px) {
+  .pu-game-wrap      { padding: 1rem 0.75rem; gap: 0.75rem; }
+  .pu-space          { flex: 1 0 1.8rem; min-width: 1.8rem; height: 3.4rem; }
+  .pu-piece          { width: 1.3rem; height: 1.3rem; }
+  .pu-piece--waiting { width: 1rem;   height: 1rem; }
+  .pu-offboard       { width: 3rem;   min-height: 3.4rem; }
+  .pu-stick          { width: 1.8rem; height: 0.55rem; }
+  .pu-btn            { padding: 0.4rem 0.9rem; font-size: 0.84rem; }
+  .pu-score > span   { min-width: 130px; font-size: 0.78rem; }
+}
