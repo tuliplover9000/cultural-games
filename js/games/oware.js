@@ -324,6 +324,17 @@
     wireEvents(el);
   }
 
+  function handCluster() {
+    const count = state.sowHand;
+    if (count === 0) return '';
+    const show = Math.min(count, 8);
+    const seeds = Array.from({ length: show }, (_, i) => {
+      const rot = ((i * 47 + 13) % 120) - 60;
+      return `<span class="ow-hand-seed" style="--rot:${rot}deg"></span>`;
+    }).join('');
+    return `<div class="ow-hand"><div class="ow-hand__cluster">${seeds}</div><span class="ow-hand__count">&times;${count}</span></div>`;
+  }
+
   function buildUI() {
     if (state.phase === 'gameover') return buildGameOver();
 
@@ -357,6 +368,7 @@
 
     return `<div class="ow-game">
   <div class="ow-status">${statusMsg}</div>
+  ${state.phase === 'sowing' ? handCluster() : ''}
   <div class="ow-board-wrap">
     <div class="ow-store ow-store--ai">
       <div class="ow-store__label">Opponent</div>

@@ -105,7 +105,8 @@
     const show = Math.min(count, 7);
     let dots = '';
     for (let i = 0; i < show; i++) {
-      dots += `<span class="oaq-seed oaq-seed--c${(i % 4) + 1}"></span>`;
+      const rot = ((i * 47 + 23) % 100) - 50;
+      dots += `<span class="oaq-seed" style="--rot:${rot}deg"></span>`;
     }
     el.innerHTML = `<div class="oaq-fly-seeds">${dots}</div><span class="oaq-fly-label">\xd7${count}</span>`;
   }
@@ -400,18 +401,27 @@
     `;
   }
 
-  // ── Seed dot renderer ────────────────────────────────────────────────────
-  function seedDotsHTML(count, max) {
+  // ── Seed renderers (Oware-style: circular arrangement, amber ovals) ───────
+  function seedRot(pit, i) {
+    const h = ((pit + 1) * 31 + i * 79 + (pit + 1) * (i + 1) * 13) % 160;
+    return h - 80;
+  }
+
+  function circleSeeds(count, pitIdx) {
     if (count === 0) return '<span class="oaq-seed-none"></span>';
-    const show = Math.min(count, max);
-    let dots = '';
+    const show = Math.min(count, 12);
+    const r = show === 1 ? 0 : 8 + show * 0.9;
+    let html = '<div class="oaq-seeds">';
     for (let i = 0; i < show; i++) {
-      dots += `<span class="oaq-seed oaq-seed--c${(i % 4) + 1}"></span>`;
+      const angle = (2 * Math.PI * i / show) - Math.PI / 2;
+      const x = show === 1 ? 0 : +(r * Math.cos(angle)).toFixed(1);
+      const y = show === 1 ? 0 : +(r * Math.sin(angle)).toFixed(1);
+      const rot = seedRot(pitIdx, i);
+      html += `<span class="oaq-seed" style="--x:${x}px;--y:${y}px;--rot:${rot}deg"></span>`;
     }
-    const overflow = count > max
-      ? `<span class="oaq-seed-overflow">+${count - max}</span>`
-      : '';
-    return `<div class="oaq-seeds">${dots}${overflow}</div>`;
+    if (count > 12) html += `<span class="oaq-seed-overflow">+${count - 12}</span>`;
+    html += '</div>';
+    return html;
   }
 
   function buildBoardHTML() {
@@ -449,7 +459,8 @@
           ${canClick ? '' : 'disabled'}
           aria-label="${label}: ${count} ${seedWord}"
         >
-          ${seedDotsHTML(count, 10)}
+          ${circleSeeds(count, idx)}
+          <div class="oaq-pit__count">${count}</div>
         </button>`;
     }
 
@@ -457,7 +468,7 @@
     const q2 = `
       <div class="oaq-quan oaq-quan--p2" data-pit="11" style="grid-column:1;grid-row:1/3;" aria-label="Player 2 quan: ${board[Q2]} seeds">
         <span class="oaq-quan__label">P2 Quan</span>
-        ${seedDotsHTML(board[Q2], 14)}
+        ${circleSeeds(board[Q2], Q2)}
         <span class="oaq-quan__count">${board[Q2]}</span>
       </div>`;
 
@@ -465,7 +476,7 @@
     const q1 = `
       <div class="oaq-quan oaq-quan--p1" data-pit="5" style="grid-column:7;grid-row:1/3;" aria-label="Player 1 quan: ${board[Q1]} seeds">
         <span class="oaq-quan__label">P1 Quan</span>
-        ${seedDotsHTML(board[Q1], 14)}
+        ${circleSeeds(board[Q1], Q1)}
         <span class="oaq-quan__count">${board[Q1]}</span>
       </div>`;
 
