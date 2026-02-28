@@ -439,19 +439,15 @@
 </div>`;
   }
 
-  // Golden angle — drives sunflower spiral so seeds fill centre too
-  const OW_GOLDEN = 2.399963;
-
-  /** Render round pebble seeds in a sunflower spiral (fills centre outward) */
+  /** Render round pebble seeds arranged in a circle within the pit */
   function circleSeeds(count, pit, lit) {
     const show = Math.min(count, 12);
     if (!show) return '';
-    const maxR = 22; // fits 11px seeds in 70px pit
+    const r = show === 1 ? 0 : 7 + show * 1.3;
     return Array.from({ length: show }, (_, i) => {
-      const r   = show === 1 ? 0 : Math.sqrt((i + 0.5) / show) * maxR;
-      const ang = i * OW_GOLDEN;
-      const x   = show === 1 ? 0 : +(r * Math.cos(ang)).toFixed(1);
-      const y   = show === 1 ? 0 : +(r * Math.sin(ang)).toFixed(1);
+      const angle = (2 * Math.PI * i / show) - Math.PI / 2;
+      const x = show === 1 ? 0 : +(r * Math.cos(angle)).toFixed(1);
+      const y = show === 1 ? 0 : +(r * Math.sin(angle)).toFixed(1);
       const isNew = lit && i === show - 1;
       return `<span class="ow-seed${isNew ? ' ow-seed--new' : ''}" style="--x:${x}px;--y:${y}px"></span>`;
     }).join('');
