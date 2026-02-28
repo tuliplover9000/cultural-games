@@ -1546,13 +1546,13 @@
 ============================================================================= */
 
 .ow-game {
-  background: radial-gradient(ellipse at 50% 20%, #2e1508 0%, #110703 100%);
+  background: radial-gradient(ellipse at 50% 20%, #3d1f0a 0%, #1a0b04 100%);
   border-radius: var(--radius-xl);
   padding: var(--space-4) var(--space-3);
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  min-height: 480px;
+  min-height: 400px;
   color: #e8c898;
   font-family: var(--font-body);
 }
@@ -1597,20 +1597,19 @@
 }
 
 .ow-board {
-  background: linear-gradient(170deg, #4a2510 0%, #2c1308 55%, #3a1c09 100%);
-  border-radius: 26px;
+  background: linear-gradient(170deg, #3d1f0a 0%, #1c0d03 55%, #2e1508 100%);
+  border-radius: 24px;
   padding: var(--space-3) var(--space-4);
   box-shadow:
-    0 12px 40px rgba(0,0,0,0.8),
-    inset 0 2px 0 rgba(255,200,100,0.12),
-    inset 0 -4px 16px rgba(0,0,0,0.65),
-    inset 5px 0 12px rgba(0,0,0,0.25),
-    inset -5px 0 12px rgba(0,0,0,0.25);
-  border: 3px solid #6b3818;
-  border-top-color: #8a4e28;
+    0 8px 28px rgba(0,0,0,0.7),
+    inset 0 2px 0 rgba(255,200,100,0.1),
+    inset 0 -3px 12px rgba(0,0,0,0.5),
+    inset 4px 0 10px rgba(0,0,0,0.2),
+    inset -4px 0 10px rgba(0,0,0,0.2);
+  border: 2px solid #5c3015;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .ow-row {
@@ -1638,22 +1637,13 @@
   );
 }
 
-/* ── Score stores (styled as carved end pits) ── */
+/* ── Score stores ── */
 .ow-store {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  min-width: 70px;
-  background: linear-gradient(180deg, #2a1206 0%, #0e0602 100%);
-  border: 3px solid #5c3015;
-  border-top-color: #7a4020;
-  border-radius: 40px;
-  padding: 14px 8px;
-  box-shadow:
-    inset 0 8px 24px rgba(0,0,0,0.9),
-    inset 0 2px 6px rgba(0,0,0,0.7),
-    0 4px 12px rgba(0,0,0,0.5);
+  gap: 4px;
+  min-width: 60px;
 }
 
 .ow-store__label {
@@ -1681,16 +1671,14 @@
 
 /* ── Pits ── */
 .ow-pit {
-  width: 70px;
-  height: 74px;
-  background: radial-gradient(ellipse at 50% 35%, #2a1206 0%, #0d0501 75%);
+  width: 68px;
+  height: 72px;
+  background: #1e0e04;
   border-radius: 50%;
   border: 2px solid #5c3015;
   box-shadow:
-    inset 0 6px 22px rgba(0,0,0,0.92),
-    inset 0 2px 8px rgba(0,0,0,0.8),
-    0 2px 5px rgba(0,0,0,0.4),
-    0 1px 0 rgba(255,180,80,0.06);
+    inset 0 4px 14px rgba(0,0,0,0.75),
+    0 2px 4px rgba(0,0,0,0.45);
   position: relative;
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
@@ -1703,15 +1691,16 @@
 
 .ow-seed {
   position: absolute;
-  width: 11px;
-  height: 11px;
+  width: 5px;
+  height: 10px;
   border-radius: 50%;
-  /* Offset from pit centre using --x / --y */
-  left: calc(50% + var(--x, 0px) - 5.5px);
-  top:  calc(50% + var(--y, 0px) - 5.5px);
-  /* Sphere pebble gradient — warm mahogany stone */
-  background: radial-gradient(circle at 36% 30%, #e8c87a 0%, #b07828 38%, #6a3e10 68%, #3a1e06 100%);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,220,120,0.15);
+  /* Offset from pit centre using --x / --y; rotate via --rot */
+  left: calc(50% + var(--x, 0px) - 2.5px);
+  top:  calc(50% + var(--y, 0px) - 5px);
+  transform: rotate(var(--rot, 0deg));
+  /* Warm dark-brown gradient — dried Ayo seed */
+  background: linear-gradient(160deg, #c07818 0%, #7a3e08 45%, #4a2208 100%);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,200,90,0.18);
 }
 
 /* The seed that just landed pops in */
@@ -1720,8 +1709,8 @@
 }
 
 @keyframes ow-seed-in {
-  from { transform: scale(0); opacity: 0; }
-  to   { transform: scale(1); opacity: 1; }
+  from { transform: rotate(var(--rot, 0deg)) scale(0); opacity: 0; }
+  to   { transform: rotate(var(--rot, 0deg)) scale(1); opacity: 1; }
 }
 
 /* Count badge at the bottom of the pit */
@@ -1779,34 +1768,6 @@
 @keyframes ow-ai-select {
   from { box-shadow: inset 0 4px 14px rgba(0,0,0,0.4), 0 0 12px rgba(224,64,32,0.45); }
   to   { box-shadow: inset 0 4px 14px rgba(0,0,0,0.25), 0 0 30px rgba(224,64,32,0.85); }
-}
-
-/* ── Flying sow cluster (position:fixed on body; lives above all content) ── */
-.ow-fly-cluster {
-  position: fixed;
-  width: 40px;
-  height: 40px;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(circle at 40% 35%, #5c2e08 0%, #220e02 80%);
-  border: 2px solid #c8871a;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: 800;
-  color: #ffd580;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
-  box-shadow:
-    0 0 20px rgba(200,135,26,0.6),
-    0 3px 10px rgba(0,0,0,0.65);
-  pointer-events: none;
-  z-index: 9999;
-  /* No transition on initial placement — snap to source pit instantly */
-}
-
-.ow-fly-cluster--moving {
-  transition: left 160ms ease-out, top 160ms ease-out;
 }
 
 /* ── Actions ── */
@@ -1946,13 +1907,12 @@
 /* ── Responsive ── */
 @media (max-width: 560px) {
   .ow-pit { width: 46px; height: 50px; }
-  .ow-seed { width: 7px; height: 7px; left: calc(50% + var(--x, 0px) - 3.5px); top: calc(50% + var(--y, 0px) - 3.5px); }
+  .ow-seed { width: 4px; height: 8px; left: calc(50% + var(--x, 0px) - 2px); top: calc(50% + var(--y, 0px) - 4px); }
   .ow-pit__count { font-size: 10px; }
   .ow-row { gap: 5px; }
   .ow-board { padding: var(--space-2) var(--space-2); }
-  .ow-store { min-width: 48px; padding: 10px 6px; }
+  .ow-store { min-width: 44px; }
   .ow-store__val { font-size: 1.7rem; }
-  .ow-fly-cluster { width: 32px; height: 32px; font-size: 12px; }
 }
 
 /* =============================================================================
