@@ -204,7 +204,9 @@
       if (pos === TRACK_LENGTH) continue;
       var tgt = targetPos(pos, roll);
       if (tgt < 0) continue;
-      // Not blocked by own piece
+      // Finishing is always valid — multiple pieces can exit
+      if (tgt === TRACK_LENGTH) { valid.push(pi); continue; }
+      // Not blocked by own on-board piece
       var blocked = state.pieces[player].some(function (p, pj) {
         return pj !== pi && p === tgt;
       });
