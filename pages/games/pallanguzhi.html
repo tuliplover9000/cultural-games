@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Play Pallanguzhi — the ancient South Indian mancala with shell capturing. Free, in your browser." />
+  <title>Pallanguzhi — Cultural Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/components.css" />
+  <link rel="stylesheet" href="../../css/games.css" />
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../../index.html" class="nav-logo" aria-label="Cultural Games — Home">
+        <span class="nav-logo-icon" aria-hidden="true">🎲</span>
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="../browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="../about.html"  class="nav-link">About</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+
+      <div class="game-nav-bar">
+        <a href="../browse.html" class="back-link">Back to Browse</a>
+      </div>
+
+      <header class="game-header">
+        <div class="game-header__icon" aria-hidden="true">🐚</div>
+        <h1 class="game-header__title">Pallanguzhi</h1>
+        <p class="game-header__origin">
+          South India &nbsp;&middot;&nbsp;
+          <span class="badge badge--board" style="display:inline-flex; vertical-align:middle; margin-left:4px;">Board</span>
+        </p>
+      </header>
+
+      <!-- Game Container -->
+      <div class="game-container" id="game-container" aria-label="Game area">
+        <div class="pg-game-wrap">
+
+          <!-- Board (14 cups: 7 AI top, 7 Player bottom) -->
+          <div id="pg-board" class="pg-board" role="img" aria-label="Pallanguzhi board"></div>
+
+          <!-- Stores row -->
+          <div class="pg-stores-row">
+            <div class="pg-store-block">
+              <div class="pg-store-label" id="pg-ai-store-label">AI Store</div>
+              <div class="pg-store" id="pg-store-ai" aria-label="AI store">0</div>
+            </div>
+            <div class="pg-store-block">
+              <div class="pg-store-label">Your Store</div>
+              <div class="pg-store" id="pg-store-player" aria-label="Your store">0</div>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="pg-controls">
+            <div class="pg-mode-row">
+              <button id="pg-mode-ai"    class="pg-btn pg-btn--mode active">vs AI</button>
+              <button id="pg-mode-human" class="pg-btn pg-btn--mode">vs Player</button>
+            </div>
+            <button id="pg-new-game-btn" class="pg-btn pg-btn--secondary">New Game</button>
+          </div>
+
+          <!-- Status bar -->
+          <p id="pg-status" class="pg-status" aria-live="assertive"></p>
+
+          <!-- Log -->
+          <ol id="pg-log" class="pg-log" aria-label="Game log" reversed></ol>
+        </div>
+      </div>
+
+      <!-- How to Play -->
+      <details class="accordion" open>
+        <summary class="accordion__trigger">
+          <span class="accordion__title">How to Play</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Pallanguzhi is a traditional South Indian mancala played on a board with
+            <strong>7 cups per side</strong> and 6 shells in each cup (84 total).
+            Capture the most shells to win.
+          </p>
+          <ol>
+            <li><strong>Your turn:</strong> click any highlighted cup in your row (bottom) that has shells.</li>
+            <li>All shells from that cup are lifted and distributed one-by-one counter-clockwise around the board.</li>
+            <li><strong>Capture-on-4:</strong> if the last shell lands in a cup that now holds exactly 4, capture all 4 into your store. Sowing then continues from the next available cup.</li>
+            <li><strong>Continue sowing:</strong> if the last shell lands in a non-empty cup (not 4), pick up all shells there and continue sowing.</li>
+            <li><strong>Empty-cup capture:</strong> if the last shell lands in a cup that was empty, check the directly opposite cup. If it has shells, capture them into your store. Your turn then ends.</li>
+            <li><strong>Win condition:</strong> when a player's row is empty, all remaining shells are swept to their owners' stores. The player with the most shells wins.</li>
+          </ol>
+        </div>
+      </details>
+
+      <!-- Cultural Context -->
+      <details class="accordion">
+        <summary class="accordion__trigger">
+          <span class="accordion__title">Cultural Context</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Pallanguzhi (பல்லாங்குழி) is one of the oldest board games of South Asia,
+            with a history spanning over a thousand years in Tamil Nadu, Kerala, and
+            Sri Lanka. Carved wooden boards — often made of teak or jackwood and
+            polished with coconut oil — are still found in households across South India,
+            alongside cowrie shells or tamarind seeds used as counters.
+          </p>
+          <p>
+            Traditionally a game played by women and girls, Pallanguzhi was a central part
+            of household and festival culture, often played during Pongal and other
+            Tamil celebrations. The game's name comes from the Tamil words
+            <em>pallam</em> (pit/cup) and <em>kuzhi</em> (hole), describing the carved
+            depressions in the playing board.
+          </p>
+          <p>
+            The game belongs to the global family of mancala games, variants of which
+            appear across Africa, the Middle East, and Asia — suggesting ancient trade
+            routes and cultural exchange. Despite modernisation, Pallanguzhi remains
+            a beloved game, taught by grandmothers to grandchildren as both
+            a pastime and a living piece of cultural heritage.
+          </p>
+        </div>
+      </details>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <span class="footer-brand">Cultural Games</span>
+      <p class="footer-mission">Preserving cultural heritage through play — one game at a time.</p>
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links" role="list">
+          <li><a href="../browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="../about.html"  class="footer-link">About</a></li>
+        </ul>
+      </nav>
+      <div class="footer-divider"></div>
+      <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
+    </div>
+  </footer>
+
+  <script src="../../js/utils/helpers.js"></script>
+  <script src="../../js/utils/navigation.js"></script>
+  <script src="../../js/games/pallanguzhi.js"></script>
+</body>
+</html>

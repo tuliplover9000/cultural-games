@@ -2894,3 +2894,328 @@
   .pu-score > span { min-width: 130px; font-size: 0.78rem; }
   .pu-offboard     { padding: 6px 8px; }
 }
+
+
+/* =============================================================================
+   PALLANGUZHI (South India) � pg- prefix
+   Carved sandalwood theme: warm amber, deep brown, gold leaf
+============================================================================= */
+
+.pg-game-wrap {
+  --pg-wood:       #7a3b10;
+  --pg-wood-dark:  #4a1e00;
+  --pg-wood-mid:   #8b4513;
+  --pg-cup-bg:     #9c4c20;
+  --pg-cup-hover:  #c07040;
+  --pg-cup-active: #c8850a;
+  --pg-shell-col:  #f0dda0;
+  --pg-gold:       #d4a017;
+  --pg-gold-light: #f0c84a;
+  --pg-store-bg:   #311200;
+  --pg-store-rim:  #8b5a20;
+  --pg-text:       #fff2d8;
+  --pg-text-dim:   rgba(255, 242, 216, 0.55);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1rem;
+  background: linear-gradient(160deg, #3a1a00 0%, #200e00 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.6);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* -- Board ------------------------------------------------------------ */
+.pg-board {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  background: var(--pg-wood-dark);
+  border-radius: 18px;
+  border: 3px solid rgba(180, 110, 40, 0.45);
+  box-shadow:
+    inset 0 3px 14px rgba(0,0,0,0.6),
+    0 4px 12px rgba(0,0,0,0.5);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.pg-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+/* Label rows */
+.pg-row--ai::before {
+  display: none; /* handled by store labels */
+}
+
+/* -- Cups -------------------------------------------------------------- */
+.pg-cup {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #b86030 0%, var(--pg-cup-bg) 60%, #5a2200 100%);
+  border: 2px solid rgba(160, 90, 30, 0.55);
+  box-shadow:
+    inset 0 3px 8px rgba(0,0,0,0.55),
+    inset 0 -1px 3px rgba(255,200,100,0.08),
+    0 2px 4px rgba(0,0,0,0.4);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px;
+  box-sizing: border-box;
+  cursor: default;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+  overflow: hidden;
+  user-select: none;
+}
+
+.pg-cup--clickable {
+  cursor: pointer;
+  background: radial-gradient(circle at 40% 35%, #d4803c 0%, var(--pg-cup-active) 60%, #6b2c00 100%);
+  border-color: var(--pg-gold);
+  box-shadow:
+    inset 0 3px 8px rgba(0,0,0,0.4),
+    0 0 8px rgba(212, 160, 23, 0.35),
+    0 2px 4px rgba(0,0,0,0.4);
+}
+
+.pg-cup--clickable:hover {
+  transform: scale(1.06);
+  box-shadow:
+    inset 0 3px 8px rgba(0,0,0,0.3),
+    0 0 14px rgba(212, 160, 23, 0.6),
+    0 4px 8px rgba(0,0,0,0.5);
+}
+
+.pg-cup--sowing {
+  animation: pg-pulse 0.25s ease;
+  border-color: var(--pg-gold-light) !important;
+  box-shadow:
+    0 0 18px rgba(240, 200, 74, 0.7),
+    inset 0 2px 6px rgba(0,0,0,0.3) !important;
+}
+
+.pg-cup--empty {
+  opacity: 0.45;
+  cursor: default;
+}
+.pg-cup--empty.pg-cup--clickable {
+  opacity: 1;
+}
+
+@keyframes pg-pulse {
+  0%   { transform: scale(1);    box-shadow: 0 0 6px rgba(240,200,74,0.4); }
+  50%  { transform: scale(1.08); box-shadow: 0 0 22px rgba(240,200,74,0.9); }
+  100% { transform: scale(1);    box-shadow: 0 0 6px rgba(240,200,74,0.4); }
+}
+
+/* -- Shells (dot display inside cups) -------------------------------- */
+.pg-shell {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff8e0, #d4b060 70%, #a07820);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  flex-shrink: 0;
+}
+
+/* Shell dot grid (≤ 9 shells) */
+.pg-shell-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 2px;
+  width: 100%;
+}
+
+/* Large number for high counts and empty marker */
+.pg-cup-big {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--pg-text);
+  line-height: 1;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+/* hidden legacy */
+.pg-cup-num {
+  display: none; /* hidden� shell dots are the primary display */
+}
+
+/* -- Stores row -------------------------------------------------------- */
+.pg-stores-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.pg-store-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.pg-store-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--pg-text-dim);
+}
+
+.pg-store {
+  width: 72px;
+  height: 44px;
+  border-radius: 22px;
+  background: radial-gradient(ellipse at 40% 35%, #4a1e00 0%, var(--pg-store-bg) 70%);
+  border: 2px solid var(--pg-store-rim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--pg-gold);
+  box-shadow:
+    inset 0 3px 10px rgba(0,0,0,0.7),
+    0 2px 6px rgba(0,0,0,0.4);
+  text-shadow: 0 1px 4px rgba(200,130,0,0.5);
+}
+
+/* -- Controls ---------------------------------------------------------- */
+.pg-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.pg-mode-row {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.pg-btn {
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
+  border: 1.5px solid var(--pg-gold);
+  background: rgba(212, 160, 23, 0.12);
+  color: var(--pg-gold);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s;
+  font-family: inherit;
+}
+
+.pg-btn:hover {
+  background: rgba(212, 160, 23, 0.24);
+  box-shadow: 0 0 8px rgba(212, 160, 23, 0.3);
+}
+
+.pg-btn--secondary {
+  border-color: rgba(212, 160, 23, 0.35);
+  background: rgba(212, 160, 23, 0.05);
+  color: rgba(240, 200, 100, 0.7);
+}
+
+.pg-btn--mode {
+  font-size: 0.78rem;
+  padding: 0.35rem 0.9rem;
+  border-color: rgba(212, 160, 23, 0.3);
+  background: rgba(212, 160, 23, 0.05);
+  color: rgba(240, 200, 100, 0.5);
+}
+
+.pg-btn--mode.active {
+  border-color: var(--pg-gold);
+  color: var(--pg-gold);
+  background: rgba(212, 160, 23, 0.18);
+}
+
+/* -- Status ------------------------------------------------------------ */
+.pg-status {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--pg-text);
+  text-align: center;
+  min-height: 1.4rem;
+  letter-spacing: 0.02em;
+}
+
+/* -- Thinking dots ----------------------------------------------------- */
+.pg-thinking {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+.pg-thinking span {
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--pg-gold);
+  animation: pg-dot 1s infinite;
+}
+
+.pg-thinking span:nth-child(2) { animation-delay: 0.2s; }
+.pg-thinking span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes pg-dot {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.7); }
+  40%           { opacity: 1;   transform: scale(1.2); }
+}
+
+/* -- Log --------------------------------------------------------------- */
+.pg-log {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 130px;
+  overflow-y: auto;
+  width: 100%;
+  font-size: 0.78rem;
+  color: var(--pg-text-dim);
+  border-top: 1px solid rgba(180, 110, 40, 0.2);
+  padding-top: 0.5rem;
+}
+
+.pg-log li {
+  padding: 0.15rem 0;
+  border-bottom: 1px solid rgba(255, 242, 216, 0.04);
+}
+
+.pg-log li:first-child {
+  color: var(--pg-text);
+}
+
+/* -- Responsive -------------------------------------------------------- */
+@media (max-width: 560px) {
+  .pg-game-wrap { padding: 0.75rem 0.5rem; gap: 0.75rem; }
+  .pg-board { padding: 8px; gap: 4px; }
+  .pg-row { gap: 4px; }
+  .pg-shell { width: 5px; height: 5px; }
+  .pg-store { width: 58px; height: 38px; font-size: 1.1rem; }
+  .pg-btn { padding: 0.4rem 0.9rem; font-size: 0.82rem; }
+}
