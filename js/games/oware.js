@@ -29,6 +29,7 @@
   /* ── State ── */
   let state = {};
   let difficulty = 'hard'; // 'easy' | 'hard' — persists across games
+  let mode = 'vs-ai';      // 'vs-ai' | 'vs-human' — persists across games
 
   function newGame() {
     state = {
@@ -187,9 +188,11 @@
     state.pits[fromPit] = 0;
     state.lastSown = -1;
 
+    const p1name = mode === 'vs-human' ? 'Player 1' : 'You';
+    const p2name = mode === 'vs-human' ? 'Player 2' : 'Opponent';
     const label = state.current === PLAYER
-      ? `You sow from pit ${fromPit + 1}.`
-      : `Opponent sows from their pit ${fromPit - 5}.`;
+      ? `${p1name} sow${mode === 'vs-human' ? 's' : ''} from pit ${fromPit + 1}.`
+      : `${p2name} sows from their pit ${fromPit - 5}.`;
     addLog(label);
 
     render();
@@ -231,9 +234,11 @@
         cp = (cp - 1 + 12) % 12;
       }
       if (captured) {
+        const cp1 = mode === 'vs-human' ? 'Player 1' : 'You';
+        const cp2 = mode === 'vs-human' ? 'Player 2' : 'Opponent';
         addLog(player === PLAYER
-          ? `You captured ${captured} seed${captured > 1 ? 's' : ''}!`
-          : `Opponent captured ${captured} seed${captured > 1 ? 's' : ''}!`);
+          ? `${cp1} captured ${captured} seed${captured > 1 ? 's' : ''}!`
+          : `${cp2} captured ${captured} seed${captured > 1 ? 's' : ''}!`);
       }
     }
 
@@ -245,8 +250,10 @@
       state.phase  = 'gameover';
       state.winner = state.scores[PLAYER] > state.scores[AI] ? PLAYER
                    : state.scores[AI] > state.scores[PLAYER] ? AI : 2;
-      addLog(state.winner === PLAYER ? 'Game over — you win!'
-           : state.winner === AI     ? 'Game over — opponent wins.'
+      const gp1 = mode === 'vs-human' ? 'Player 1 wins!' : 'you win!';
+      const gp2 = mode === 'vs-human' ? 'Player 2 wins.' : 'opponent wins.';
+      addLog(state.winner === PLAYER ? `Game over — ${gp1}`
+           : state.winner === AI     ? `Game over — ${gp2}`
                                      : 'Game over — it\'s a draw!');
       render();
       return;
@@ -256,10 +263,15 @@
 
     // Hand off to the other player
     if (player === PLAYER) {
-      state.phase   = 'ai-thinking';
       state.current = AI;
-      render();
-      setTimeout(runAI, 800 + Math.random() * 600);
+      if (mode === 'vs-human') {
+        state.phase = 'idle';
+        render();
+      } else {
+        state.phase = 'ai-thinking';
+        render();
+        setTimeout(runAI, 800 + Math.random() * 600);
+      }
     } else {
       state.phase   = 'idle';
       state.current = PLAYER;
@@ -328,61 +340,81 @@
     if (state.phase === 'gameover') return buildGameOver();
 
     const snap    = { pits: [...state.pits], scores: [...state.scores], phase: state.phase };
-    const isIdle  = state.phase === 'idle' && state.current === PLAYER;
-    const moves   = isIdle ? validMoves(snap, PLAYER) : [];
-    const aiSel   = state.phase === 'ai-selecting' ? state.aiSelectedPit : -1;
+    const vsHuman = mode === 'vs-human';
 
+    // Clickable pits
+    const botIdle  = state.phase === 'idle' && state.current === PLAYER;
+    const topIdle  = vsHuman && state.phase === 'idle' && state.current === AI;
+    const botMoves = botIdle ? validMoves(snap, PLAYER) : [];
+    const topMoves = topIdle ? validMoves(snap, AI)     : [];
+    const aiSel    = state.phase === 'ai-selecting' ? state.aiSelectedPit : -1;
+
+    // Status message
     let statusMsg;
     if (state.phase === 'ai-thinking') {
       statusMsg = `Opponent is thinking <span class="ow-dots"><span></span><span></span><span></span></span>`;
     } else if (state.phase === 'ai-selecting') {
       statusMsg = 'Opponent chose a pit…';
-    } else if (state.phase === 'sowing' && state.current === AI) {
-      statusMsg = 'Opponent sowing…';
-    } else if (state.phase === 'sowing' && state.current === PLAYER) {
-      statusMsg = 'Sowing…';
+    } else if (state.phase === 'sowing') {
+      statusMsg = vsHuman
+        ? (state.current === PLAYER ? 'Player 1 sowing…' : 'Player 2 sowing…')
+        : (state.current === PLAYER ? 'Sowing…'          : 'Opponent sowing…');
     } else {
-      statusMsg = 'Your turn — click a highlighted pit to sow';
+      statusMsg = vsHuman
+        ? (state.current === PLAYER ? 'Player 1 — click a highlighted pit' : 'Player 2 — click a highlighted pit')
+        : 'Your turn — click a highlighted pit to sow';
     }
 
-    // AI row: display pits 11 → 6 (left to right from player's perspective)
+    // Store / row labels
+    const topLabel    = vsHuman ? 'Player 2'       : 'Opponent';
+    const botLabel    = vsHuman ? 'Player 1'       : 'You';
+    const topRowLabel = vsHuman ? "Player 2's pits" : "Opponent's pits";
+    const botRowLabel = vsHuman ? "Player 1's pits" : 'Your pits';
+
+    // Board rows
     const topRow = [11, 10, 9, 8, 7, 6]
-      .map(p => pitHTML(p, false, p === state.lastSown, p === aiSel))
+      .map(p => pitHTML(p, topMoves.includes(p), p === state.lastSown, p === aiSel))
+      .join('');
+    const botRow = [0, 1, 2, 3, 4, 5]
+      .map(p => pitHTML(p, botMoves.includes(p), p === state.lastSown, false))
       .join('');
 
-    // Player row: pits 0 → 5
-    const botRow = [0, 1, 2, 3, 4, 5]
-      .map(p => pitHTML(p, moves.includes(p), p === state.lastSown, false))
-      .join('');
+    // Difficulty row (hidden in vs-human mode)
+    const diffHTML = vsHuman ? '' : `
+    <div class="ow-difficulty">
+      <span class="ow-difficulty__label">Difficulty:</span>
+      <button class="ow-diff-btn${difficulty === 'easy' ? ' active' : ''}" id="ow-easy">Easy</button>
+      <button class="ow-diff-btn${difficulty === 'hard' ? ' active' : ''}" id="ow-hard">Hard</button>
+    </div>`;
 
     return `<div class="ow-game">
   <div class="ow-status">${statusMsg}</div>
   <div class="ow-board-wrap">
     <div class="ow-store ow-store--ai">
-      <div class="ow-store__label">Opponent</div>
+      <div class="ow-store__label">${topLabel}</div>
       <div class="ow-store__val">${state.scores[AI]}</div>
       <div class="ow-store__sub">captured</div>
     </div>
     <div class="ow-board">
-      <div class="ow-row-label ow-row-label--ai">Opponent's pits</div>
+      <div class="ow-row-label ow-row-label--ai">${topRowLabel}</div>
       <div class="ow-row ow-row--ai">${topRow}</div>
       <div class="ow-divider"></div>
       <div class="ow-row ow-row--player">${botRow}</div>
-      <div class="ow-row-label ow-row-label--player">Your pits</div>
+      <div class="ow-row-label ow-row-label--player">${botRowLabel}</div>
     </div>
     <div class="ow-store ow-store--player">
-      <div class="ow-store__label">You</div>
+      <div class="ow-store__label">${botLabel}</div>
       <div class="ow-store__val">${state.scores[PLAYER]}</div>
       <div class="ow-store__sub">captured</div>
     </div>
   </div>
   ${buildLog()}
   <div class="ow-actions">
-    <div class="ow-difficulty">
-      <span class="ow-difficulty__label">Difficulty:</span>
-      <button class="ow-diff-btn${difficulty === 'easy' ? ' active' : ''}" id="ow-easy">Easy</button>
-      <button class="ow-diff-btn${difficulty === 'hard' ? ' active' : ''}" id="ow-hard">Hard</button>
-    </div>
+    <div class="ow-mode">
+      <span class="ow-difficulty__label">Mode:</span>
+      <button class="ow-diff-btn${mode === 'vs-ai'    ? ' active' : ''}" id="ow-mode-ai">vs AI</button>
+      <button class="ow-diff-btn${mode === 'vs-human' ? ' active' : ''}" id="ow-mode-human">vs Player</button>
+    </div>${diffHTML}
     <button class="ow-btn" id="ow-new">New Game</button>
   </div>
 </div>`;
@@ -434,16 +466,23 @@
   }
 
   function buildGameOver() {
-    const ps = state.scores[PLAYER];
-    const as = state.scores[AI];
-    const w  = state.winner;
-    const icon  = w === PLAYER ? '🏆' : w === AI ? '🟤' : '🤝';
-    const title = w === PLAYER ? 'You Win!' : w === AI ? 'Opponent Wins' : "It's a Draw";
+    const ps      = state.scores[PLAYER];
+    const as      = state.scores[AI];
+    const w       = state.winner;
+    const vsHuman = mode === 'vs-human';
+    const icon    = w === PLAYER ? '🏆' : w === AI ? '🟤' : '🤝';
+    const title   = w === PLAYER
+      ? (vsHuman ? 'Player 1 Wins!' : 'You Win!')
+      : w === AI
+      ? (vsHuman ? 'Player 2 Wins'  : 'Opponent Wins')
+      : "It's a Draw";
+    const p1name  = vsHuman ? 'Player 1' : 'You';
+    const p2name  = vsHuman ? 'Player 2' : 'Opponent';
     return `<div class="ow-game">
   <div class="ow-gameover">
     <div class="ow-gameover__icon">${icon}</div>
     <h2>${title}</h2>
-    <p>Final score: You <strong>${ps}</strong> — Opponent <strong>${as}</strong></p>
+    <p>Final score: ${p1name} <strong>${ps}</strong> — ${p2name} <strong>${as}</strong></p>
     <button class="ow-btn ow-btn--primary" id="ow-new">Play Again</button>
   </div>
 </div>`;
@@ -456,16 +495,27 @@
   function wireEvents(el) {
     el.querySelectorAll('.ow-pit--clickable').forEach(pitEl => {
       pitEl.addEventListener('click', () => {
-        if (state.phase !== 'idle' || state.current !== PLAYER) return;
-        const pit   = +pitEl.dataset.pit;
-        const snap  = { pits: [...state.pits], scores: [...state.scores], phase: state.phase };
-        const moves = validMoves(snap, PLAYER);
+        if (state.phase !== 'idle') return;
+        const validCurrent = state.current === PLAYER
+          || (mode === 'vs-human' && state.current === AI);
+        if (!validCurrent) return;
+        const pit  = +pitEl.dataset.pit;
+        const snap = { pits: [...state.pits], scores: [...state.scores], phase: state.phase };
+        const moves = validMoves(snap, state.current);
         if (moves.includes(pit)) doSow(pit);
       });
     });
 
     el.querySelector('#ow-new')?.addEventListener('click', newGame);
 
+    el.querySelector('#ow-mode-ai')?.addEventListener('click', () => {
+      mode = 'vs-ai';
+      newGame();
+    });
+    el.querySelector('#ow-mode-human')?.addEventListener('click', () => {
+      mode = 'vs-human';
+      newGame();
+    });
     el.querySelector('#ow-easy')?.addEventListener('click', () => {
       difficulty = 'easy';
       render();

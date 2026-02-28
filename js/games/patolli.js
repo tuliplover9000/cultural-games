@@ -10,6 +10,7 @@
   var PLAYER = 0, AI = 1;
   var TOTAL_PIECES = 6;
   var MOVE_MS = 130;
+  var mode = 'vs-ai'; // 'vs-ai' | 'vs-human' — persists across games
 
   // ── Board track ───────────────────────────────────────────────────────────
   // Cross on 13×13 grid: vertical band cols 4-8, horizontal band rows 4-8.
@@ -81,6 +82,11 @@
   // ── DOM refs ──────────────────────────────────────────────────────────────
   var elBoard, elDiceRow, elRollBtn, elNewGameBtn, elStatus, elScore, elLog;
 
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  function p1Name() { return mode === 'vs-human' ? 'Player 1' : 'You'; }
+  function p2Name() { return mode === 'vs-human' ? 'Player 2' : 'AI'; }
+  function playerName(pl) { return pl === PLAYER ? p1Name() : p2Name(); }
+
   // ── Render ────────────────────────────────────────────────────────────────
   function render() {
     renderBoard();
@@ -100,11 +106,11 @@
       });
     });
 
-    // Determine which track indices are selectable
+    // Determine which track indices are selectable (current player's valid pieces)
     var selectableIdx = new Set();
     if (state.phase === 'choosingPiece') {
       state.validPieces.forEach(function (pi) {
-        var pos = state.pieces[PLAYER][pi];
+        var pos = state.pieces[state.turn][pi];
         selectableIdx.add(pos === null ? 0 : pos);
       });
     }
@@ -160,9 +166,9 @@
     var pDone = state.pieces[PLAYER].filter(function (p) { return p === TRACK_LENGTH; }).length;
     var aDone = state.pieces[AI].filter(function (p) { return p === TRACK_LENGTH; }).length;
     elScore.innerHTML =
-      '<span><span class="pt-score__label" style="color:#3a9abf">You</span> — ' +
+      '<span><span class="pt-score__label" style="color:#3a9abf">' + p1Name() + '</span> — ' +
         pDone + '/6 done &middot; ' + state.coins[PLAYER] + ' coins</span>' +
-      '<span><span class="pt-score__label" style="color:#d45a20">AI</span> — ' +
+      '<span><span class="pt-score__label" style="color:#d45a20">' + p2Name() + '</span> — ' +
         aDone + '/6 done &middot; ' + state.coins[AI] + ' coins</span>';
   }
 
@@ -245,11 +251,11 @@
   function resolveLanding(player, pieceIdx) {
     var pos = state.pieces[player][pieceIdx];
     var opp = 1 - player;
-    var name = player === PLAYER ? 'Your' : "AI's";
+    var name = playerName(player);
 
     if (pos === TRACK_LENGTH) {
       state.coins[player] += 3;
-      addLog(name + ' piece finished the circuit! +3 coins');
+      addLog(name + "'s piece finished the circuit! +3 coins");
       return;
     }
 
@@ -258,7 +264,7 @@
         if (state.pieces[opp][pi] === pos) {
           state.pieces[opp][pi] = null;
           state.coins[player] += 2;
-          addLog((player === PLAYER ? 'You' : 'AI') + ' captured a piece! +2 coins');
+          addLog(name + ' captured a piece! +2 coins');
         }
       }
     }
@@ -292,11 +298,11 @@
     var newPreviewIdx = -1;
 
     var pieceEl = e.target.closest('[data-pi]');
-    if (pieceEl && parseInt(pieceEl.dataset.player) === PLAYER) {
+    if (pieceEl && parseInt(pieceEl.dataset.player) === state.turn) {
       var pi = parseInt(pieceEl.dataset.pi);
       if (state.validPieces.indexOf(pi) !== -1) {
         newPieceEl = pieceEl;
-        var tgt = targetPos(state.pieces[PLAYER][pi], state.roll);
+        var tgt = targetPos(state.pieces[state.turn][pi], state.roll);
         if (tgt < TRACK_LENGTH) newPreviewIdx = tgt;
       }
     } else {
@@ -304,7 +310,7 @@
       var cellEl = e.target.closest('[data-idx]');
       if (cellEl && parseInt(cellEl.dataset.idx) === 0) {
         for (var pj = 0; pj < TOTAL_PIECES; pj++) {
-          if (state.pieces[PLAYER][pj] === null && state.validPieces.indexOf(pj) !== -1) {
+          if (state.pieces[state.turn][pj] === null && state.validPieces.indexOf(pj) !== -1) {
             var tgt0 = targetPos(null, state.roll);
             if (tgt0 < TRACK_LENGTH) newPreviewIdx = tgt0;
             break;
@@ -327,24 +333,26 @@
 
   // ── Player turn ───────────────────────────────────────────────────────────
   function onRollClick() {
-    if (state.phase !== 'idle' || state.animating || state.turn !== PLAYER) return;
+    if (state.phase !== 'idle' || state.animating) return;
+    if (mode === 'vs-ai' && state.turn !== PLAYER) return;
 
+    var curTurn = state.turn;
     var result = rollBeans();
     state.roll = result.value;
     state.rollDetail = result.detail;
     state.rollAgain = result.again;
     renderDice();
 
-    var valid = getValidMoves(PLAYER, result.value);
+    var valid = getValidMoves(curTurn, result.value);
     state.validPieces = valid;
-    addLog('You rolled ' + result.value + (result.again ? ' — roll again!' : ''));
+    addLog(playerName(curTurn) + ' rolled ' + result.value + (result.again ? ' — roll again!' : ''));
 
     if (valid.length === 0) {
       setStatus('No valid moves. Turn passes.');
       addLog('No valid moves — turn passes.');
       state.phase = 'idle';
       render();
-      setTimeout(function () { endTurn(PLAYER); }, 900);
+      setTimeout(function () { endTurn(curTurn); }, 900);
       return;
     }
 
@@ -356,25 +364,27 @@
 
   function onBoardClick(e) {
     if (state.phase !== 'choosingPiece' || state.animating) return;
+    if (mode === 'vs-ai' && state.turn !== PLAYER) return;
 
+    var curTurn = state.turn;
     var pieceEl = e.target.closest('[data-player]');
     var cellEl  = e.target.closest('[data-idx]');
     var pieceIdx = -1;
 
-    if (pieceEl && parseInt(pieceEl.dataset.player) === PLAYER) {
+    if (pieceEl && parseInt(pieceEl.dataset.player) === curTurn) {
       pieceIdx = parseInt(pieceEl.dataset.pi);
     } else if (cellEl) {
       var idx = parseInt(cellEl.dataset.idx);
-      // find player piece at this track index
+      // find current player's piece at this track index
       for (var pi = 0; pi < TOTAL_PIECES; pi++) {
-        if (state.pieces[PLAYER][pi] === idx && state.validPieces.indexOf(pi) !== -1) {
+        if (state.pieces[curTurn][pi] === idx && state.validPieces.indexOf(pi) !== -1) {
           pieceIdx = pi; break;
         }
       }
       // clicking entry cell (idx=0) with an off-board piece
       if (pieceIdx === -1 && idx === 0) {
         for (var pj = 0; pj < TOTAL_PIECES; pj++) {
-          if (state.pieces[PLAYER][pj] === null && state.validPieces.indexOf(pj) !== -1) {
+          if (state.pieces[curTurn][pj] === null && state.validPieces.indexOf(pj) !== -1) {
             pieceIdx = pj; break;
           }
         }
@@ -385,15 +395,18 @@
 
     state.phase = 'moving';
     setStatus('Moving…');
-    movePiece(PLAYER, pieceIdx, state.roll, function () {
+    movePiece(curTurn, pieceIdx, state.roll, function () {
       if (state.rollAgain) {
         state.rollAgain = false;
         state.phase = 'idle';
         elRollBtn.disabled = false;
-        setStatus('Roll again!');
+        var rollAgainMsg = mode === 'vs-human'
+          ? playerName(curTurn) + ': Roll again!'
+          : 'Roll again!';
+        setStatus(rollAgainMsg);
         render();
       } else {
-        endTurn(PLAYER);
+        endTurn(curTurn);
       }
     });
   }
@@ -473,28 +486,33 @@
     state.validPieces = [];
     render();
 
-    if (next === PLAYER) {
-      elRollBtn.disabled = false;
-      setStatus('Your turn — roll the beans!');
-    } else {
+    if (next === AI && mode === 'vs-ai') {
       elRollBtn.disabled = true;
       setTimeout(aiTurn, 500);
+    } else {
+      elRollBtn.disabled = false;
+      var turnMsg = mode === 'vs-human'
+        ? playerName(next) + ' — roll the beans!'
+        : 'Your turn — roll the beans!';
+      setStatus(turnMsg);
     }
   }
 
   function gameOver(winner) {
     state.phase = 'over';
     elRollBtn.disabled = true;
-    var you = state.coins[PLAYER], ai = state.coins[AI];
+    var p1coins = state.coins[PLAYER], p2coins = state.coins[AI];
+    var wName = playerName(winner);
+    var lName = playerName(1 - winner);
     if (winner === PLAYER) {
-      setStatus('<div class="pt-gameover"><div class="pt-gameover__title">🏆 You Win!</div>' +
-        '<div class="pt-gameover__sub">All pieces completed the circuit · ' + you + ' coins earned</div></div>');
+      setStatus('<div class="pt-gameover"><div class="pt-gameover__title">🏆 ' + wName + ' Win' + (mode === 'vs-human' ? 's' : '') + '!</div>' +
+        '<div class="pt-gameover__sub">All pieces completed the circuit · ' + p1coins + ' coins earned</div></div>');
     } else {
-      setStatus('<div class="pt-gameover"><div class="pt-gameover__title">AI Wins</div>' +
-        '<div class="pt-gameover__sub">The AI completed first · Your coins: ' + you + '</div></div>');
+      setStatus('<div class="pt-gameover"><div class="pt-gameover__title">' + wName + ' Wins</div>' +
+        '<div class="pt-gameover__sub">' + wName + ' completed first · ' + lName + '\'s coins: ' + p1coins + '</div></div>');
     }
-    addLog('Game over — ' + (winner === PLAYER ? 'You win' : 'AI wins') +
-           '! You: ' + you + ' coins · AI: ' + ai + ' coins');
+    addLog('Game over — ' + wName + ' wins! ' +
+           p1Name() + ': ' + p1coins + ' coins · ' + p2Name() + ': ' + p2coins + ' coins');
     renderScore();
   }
 
@@ -503,9 +521,20 @@
     elRollBtn.disabled = false;
     elLog.innerHTML = '';
     elDiceRow.innerHTML = '';
-    setStatus('Your turn — roll the beans!');
+    var startMsg = mode === 'vs-human'
+      ? 'Player 1 — roll the beans!'
+      : 'Your turn — roll the beans!';
+    setStatus(startMsg);
     render();
-    addLog('New game started. You go first!');
+    addLog('New game started. ' + (mode === 'vs-human' ? 'Player 1' : 'You') + ' go first!');
+  }
+
+  // ── Mode button helpers ────────────────────────────────────────────────────
+  function updateModeButtons() {
+    var btnAI    = document.getElementById('pt-mode-ai');
+    var btnHuman = document.getElementById('pt-mode-human');
+    if (btnAI)    btnAI.classList.toggle('active', mode === 'vs-ai');
+    if (btnHuman) btnHuman.classList.toggle('active', mode === 'vs-human');
   }
 
   // ── Init ──────────────────────────────────────────────────────────────────
@@ -523,6 +552,24 @@
     elBoard.addEventListener('click', onBoardClick);
     elBoard.addEventListener('mouseover', onBoardMouseover);
     elBoard.addEventListener('mouseout', onBoardMouseout);
+
+    var btnAI    = document.getElementById('pt-mode-ai');
+    var btnHuman = document.getElementById('pt-mode-human');
+    if (btnAI) {
+      btnAI.addEventListener('click', function () {
+        mode = 'vs-ai';
+        updateModeButtons();
+        newGame();
+      });
+    }
+    if (btnHuman) {
+      btnHuman.addEventListener('click', function () {
+        mode = 'vs-human';
+        updateModeButtons();
+        newGame();
+      });
+    }
+
     newGame();
   }
 
