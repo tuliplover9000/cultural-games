@@ -125,6 +125,7 @@
         }
         var cls = 'pt-cell';
         if (SAFE_INDICES.has(idx)) cls += ' pt-cell--safe';
+        if (idx === 0)             cls += ' pt-cell--start';
         if (selectableIdx.has(idx)) cls += ' pt-cell--valid';
 
         var cp = cellMap[idx] || { 0: [], 1: [] };

@@ -2001,6 +2001,40 @@
 /* Safe cell with a piece: hide the diamond so piece is visible */
 .pt-cell--safe:not(:empty) > .pt-cell--safe::before { display: none; }
 
+/* ── Start cell (track index 0) ── */
+.pt-cell--start {
+  border-color: rgba(255,215,50,0.95) !important;
+  background: linear-gradient(150deg, #2e7d45 0%, #1a4528 100%) !important;
+  animation: pt-start-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes pt-start-pulse {
+  0%, 100% { box-shadow: 0 0 5px rgba(255,205,40,0.25), inset 0 0 0 1px rgba(255,215,50,0.3); }
+  50%       { box-shadow: 0 0 16px rgba(255,205,40,0.65), inset 0 0 0 1px rgba(255,215,50,0.7); }
+}
+
+/* Hide the safe-zone diamond on the start cell */
+.pt-cell--start.pt-cell--safe::before {
+  display: none;
+}
+
+/* "▶ START" label — sits behind pieces (z-index 0) */
+.pt-cell--start::after {
+  content: '▶ START';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 6px;
+  font-weight: 800;
+  color: rgba(255,215,50,0.92);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 0;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+}
+
 .pt-cell--empty {
   background: transparent;
   border: none;
