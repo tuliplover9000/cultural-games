@@ -902,46 +902,21 @@
   100% { box-shadow: inset 0 5px 18px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,0.35); }
 }
 
-/* ── Flying seed cluster — pill of seeds + count label ── */
+/* ── Flying seed cluster — circular pit-like bubble of scattered seeds ── */
 .oaq-fly-cluster {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
+  width: 58px;
+  height: 58px;
+  /* position:fixed + left/top + transform set inline by JS */
+  background: radial-gradient(ellipse at 50% 30%, #200804 0%, #080101 82%);
+  border: 1.5px solid rgba(200,135,26,0.55);
+  border-radius: 50%;
+  box-shadow:
+    0 0 22px rgba(200,135,26,0.4),
+    0 4px 14px rgba(0,0,0,0.7),
+    inset 0 3px 10px rgba(0,0,0,0.7);
   pointer-events: none;
-  /* position:fixed + left/top set inline by JS */
-}
-
-.oaq-fly-seeds {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 3px;
-  justify-content: center;
-  max-width: 70px;
-  background: rgba(14, 4, 2, 0.9);
-  border: 1.5px solid #c8871a;
-  border-radius: 12px;
-  padding: 7px 7px 6px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.75), 0 0 14px rgba(200,135,26,0.3);
-}
-
-/* Cluster seeds use flex layout (override the absolute pit positioning) */
-.oaq-cluster-seed {
-  position: relative !important;
-  left: auto !important;
-  top: auto !important;
-  width: 11px;
-  height: 11px;
-  flex-shrink: 0;
-}
-
-.oaq-fly-label {
-  font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 700;
-  color: #ffd580;
-  text-shadow: 0 1px 5px rgba(0,0,0,0.9);
-  line-height: 1;
+  z-index: 9999;
+  /* Seeds inside use position:absolute relative to this fixed element */
 }
 
 /* ── Status ── */
@@ -994,6 +969,23 @@
   gap: var(--space-2);
   justify-content: center;
   flex-wrap: wrap;
+}
+
+.oaq-actions .btn {
+  border: 2px solid rgba(200,135,26,0.45);
+  background: rgba(200,135,26,0.1);
+  color: #f0d8b0;
+  border-radius: var(--radius-md);
+  padding: 9px 22px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 120ms, border-color 120ms;
+}
+
+.oaq-actions .btn:hover {
+  background: rgba(200,135,26,0.22);
+  border-color: #c8871a;
 }
 
 /* ── Game over ── */

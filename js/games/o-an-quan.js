@@ -99,15 +99,21 @@
     anim.cancel();
   }
 
-  // ── Set content of a flying seed cluster (seed dots + count label) ────────
+  // ── Set content of a flying seed cluster (scattered pile of circles) ────────
   function setClusterContent(el, count) {
     if (count <= 0) { el.innerHTML = ''; return; }
-    const show = Math.min(count, 8);
-    let dots = '';
+    const show = Math.min(count, 10);
+    const r = show === 1 ? 0 : 3 + show * 1.5;
+    let html = '';
     for (let i = 0; i < show; i++) {
-      dots += `<span class="oaq-seed oaq-cluster-seed"></span>`;
+      const angle = (2 * Math.PI * i / show) - Math.PI / 2;
+      const jx = (((i * 37 + 11) % 100) / 100 - 0.5) * 5;
+      const jy = (((i * 53 + 23) % 100) / 100 - 0.5) * 5;
+      const x = show === 1 ? 0 : +(r * Math.cos(angle) + jx).toFixed(1);
+      const y = show === 1 ? 0 : +(r * Math.sin(angle) + jy).toFixed(1);
+      html += `<span class="oaq-seed" style="--x:${x}px;--y:${y}px"></span>`;
     }
-    el.innerHTML = `<div class="oaq-fly-seeds">${dots}</div><span class="oaq-fly-label">\xd7${count}</span>`;
+    el.innerHTML = html;
   }
 
   // ── Arc the cluster element from its current position to a target pit ─────
@@ -462,7 +468,6 @@
           aria-label="${label}: ${count} ${seedWord}"
         >
           ${circleSeeds(count, idx)}
-          <div class="oaq-pit__count">${count}</div>
         </button>`;
     }
 
