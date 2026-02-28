@@ -99,9 +99,15 @@
     anim.cancel();
   }
 
-  // ── Set content of a flying seed cluster (simple count disc) ─────────────
+  // ── Set content of a flying seed cluster (seed dots + count label) ────────
   function setClusterContent(el, count) {
-    el.textContent = count > 0 ? count : '';
+    if (count <= 0) { el.innerHTML = ''; return; }
+    const show = Math.min(count, 8);
+    let dots = '';
+    for (let i = 0; i < show; i++) {
+      dots += `<span class="oaq-seed oaq-cluster-seed"></span>`;
+    }
+    el.innerHTML = `<div class="oaq-fly-seeds">${dots}</div><span class="oaq-fly-label">\xd7${count}</span>`;
   }
 
   // ── Arc the cluster element from its current position to a target pit ─────
@@ -394,17 +400,25 @@
     `;
   }
 
-  // ── Seed renderer: round pebbles in a circular arrangement ──────────────
+  // ── Deterministic jitter so seeds look naturally scattered, not perfectly circular
+  function seedJitter(pit, i, axis) {
+    const h = ((pit + 1) * 31 + i * 79 + axis * 53 + pit * i * 11) % 100;
+    return (h / 100 - 0.5) * 6; // ±3 px offset
+  }
+
+  // ── Seed renderer: round pebbles in a staggered circular arrangement ──────
   function circleSeeds(count, pitIdx) {
     if (count === 0) return '<span class="oaq-seed-none"></span>';
     const show = Math.min(count, 12);
-    // Radius grows with seed count so pebbles fill the pit without overlapping
     const r = show === 1 ? 0 : 5 + show * 1.15;
     let html = '<div class="oaq-seeds">';
     for (let i = 0; i < show; i++) {
       const angle = (2 * Math.PI * i / show) - Math.PI / 2;
-      const x = show === 1 ? 0 : +(r * Math.cos(angle)).toFixed(1);
-      const y = show === 1 ? 0 : +(r * Math.sin(angle)).toFixed(1);
+      // Add per-seed jitter so they look naturally scattered in the pit
+      const jx = show > 1 ? seedJitter(pitIdx, i, 0) : 0;
+      const jy = show > 1 ? seedJitter(pitIdx, i, 1) : 0;
+      const x = show === 1 ? 0 : +(r * Math.cos(angle) + jx).toFixed(1);
+      const y = show === 1 ? 0 : +(r * Math.sin(angle) + jy).toFixed(1);
       html += `<span class="oaq-seed" style="--x:${x}px;--y:${y}px"></span>`;
     }
     if (count > 12) html += `<span class="oaq-seed-overflow">+${count - 12}</span>`;
