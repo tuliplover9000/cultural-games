@@ -412,68 +412,39 @@
     return (h / 100 - 0.5) * 6; // ±3 px offset
   }
 
-  // ── Seed renderer for quan stores (two-ring for large counts) ───────────
-  function quanSeeds(count, pitIdx) {
-    if (count === 0) return '<div class="oaq-seeds oaq-quan-seeds"></div>';
-    const show = Math.min(count, 18);
-    let html = '<div class="oaq-seeds oaq-quan-seeds">';
+  // Golden angle in radians — drives sunflower spiral (no obvious rings)
+  const GOLDEN_ANGLE = 2.399963;
 
-    if (show <= 9) {
-      // Single ring
-      const r = show === 1 ? 0 : 5 + show * 2.4;
-      for (let i = 0; i < show; i++) {
-        const angle = (2 * Math.PI * i / show) - Math.PI / 2;
-        const jx = show > 1 ? seedJitter(pitIdx, i, 0) : 0;
-        const jy = show > 1 ? seedJitter(pitIdx, i, 1) : 0;
-        const x = show === 1 ? 0 : +(r * Math.cos(angle) + jx).toFixed(1);
-        const y = show === 1 ? 0 : +(r * Math.sin(angle) + jy).toFixed(1);
-        html += `<span class="oaq-seed" style="--x:${x}px;--y:${y}px"></span>`;
-      }
-    } else {
-      // Inner ring: 6 seeds at r=13, outer ring: remainder at r=27
-      const innerN = 6;
-      for (let i = 0; i < innerN; i++) {
-        const angle = (2 * Math.PI * i / innerN) - Math.PI / 2;
-        const jx = seedJitter(pitIdx, i, 0) * 0.5;
-        const jy = seedJitter(pitIdx, i, 1) * 0.5;
-        const x = +(13 * Math.cos(angle) + jx).toFixed(1);
-        const y = +(13 * Math.sin(angle) + jy).toFixed(1);
-        html += `<span class="oaq-seed" style="--x:${x}px;--y:${y}px"></span>`;
-      }
-      const outerN = show - innerN;
-      for (let i = 0; i < outerN; i++) {
-        const angle = (2 * Math.PI * i / outerN) - Math.PI / 2 + 0.3;
-        const jx = seedJitter(pitIdx, i + innerN, 0);
-        const jy = seedJitter(pitIdx, i + innerN, 1);
-        const x = +(27 * Math.cos(angle) + jx).toFixed(1);
-        const y = +(27 * Math.sin(angle) + jy).toFixed(1);
-        html += `<span class="oaq-seed" style="--x:${x}px;--y:${y}px"></span>`;
-      }
+  // ── Sunflower spiral: seeds spread from centre outward, fills the whole pit
+  function spiralSeeds(count, pitIdx, maxShown, maxR, cssClass) {
+    const cls = cssClass ? `oaq-seeds ${cssClass}` : 'oaq-seeds';
+    if (count === 0) return `<${cssClass ? 'div' : 'span'} class="${cls}"></${cssClass ? 'div' : 'span'}>`;
+    const show = Math.min(count, maxShown);
+    let html = `<div class="${cls}">`;
+    for (let i = 0; i < show; i++) {
+      // sqrt gives even area coverage — centre seeds are densely placed
+      const r   = show === 1 ? 0 : Math.sqrt((i + 0.5) / show) * maxR;
+      const ang = i * GOLDEN_ANGLE;
+      const jx  = show > 1 ? seedJitter(pitIdx, i, 0) * 0.5 : 0;
+      const jy  = show > 1 ? seedJitter(pitIdx, i, 1) * 0.5 : 0;
+      const x   = show === 1 ? 0 : +(r * Math.cos(ang) + jx).toFixed(1);
+      const y   = show === 1 ? 0 : +(r * Math.sin(ang) + jy).toFixed(1);
+      html += `<span class="oaq-seed" style="--x:${x}px;--y:${y}px"></span>`;
     }
-
-    if (count > 18) html += `<span class="oaq-seed-overflow">+${count - 18}</span>`;
+    if (count > maxShown) html += `<span class="oaq-seed-overflow">+${count - maxShown}</span>`;
     html += '</div>';
     return html;
   }
 
-  // ── Seed renderer: round pebbles in a staggered circular arrangement ──────
+  // Small pits — max 12 shown, radius ~20px
   function circleSeeds(count, pitIdx) {
     if (count === 0) return '<span class="oaq-seed-none"></span>';
-    const show = Math.min(count, 12);
-    const r = show === 1 ? 0 : 4 + show * 1.5;
-    let html = '<div class="oaq-seeds">';
-    for (let i = 0; i < show; i++) {
-      const angle = (2 * Math.PI * i / show) - Math.PI / 2;
-      // Add per-seed jitter so they look naturally scattered in the pit
-      const jx = show > 1 ? seedJitter(pitIdx, i, 0) : 0;
-      const jy = show > 1 ? seedJitter(pitIdx, i, 1) : 0;
-      const x = show === 1 ? 0 : +(r * Math.cos(angle) + jx).toFixed(1);
-      const y = show === 1 ? 0 : +(r * Math.sin(angle) + jy).toFixed(1);
-      html += `<span class="oaq-seed" style="--x:${x}px;--y:${y}px"></span>`;
-    }
-    if (count > 12) html += `<span class="oaq-seed-overflow">+${count - 12}</span>`;
-    html += '</div>';
-    return html;
+    return spiralSeeds(count, pitIdx, 12, 20, '');
+  }
+
+  // Quan stores — max 18 shown, larger radius to fill the taller store
+  function quanSeeds(count, pitIdx) {
+    return spiralSeeds(count, pitIdx, 18, 28, 'oaq-quan-seeds');
   }
 
   function buildBoardHTML() {
