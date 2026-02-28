@@ -26,11 +26,54 @@
   const AI_PITS     = [6, 7, 8, 9, 10, 11];
   const SOW_MS      = 180;   // ms per seed step (normal speed)
 
+  /* ── Flying sow cluster (lives on body; survives game-container re-renders) ── */
+  let owCluster = null;
+
+  function owGetPitRect(pitIdx) {
+    const el = document.querySelector(`[data-pit="${pitIdx}"]`);
+    return el ? el.getBoundingClientRect() : null;
+  }
+
+  function owCreateCluster(count, fromPit) {
+    owDestroyCluster();
+    const rect = owGetPitRect(fromPit);
+    const div  = document.createElement('div');
+    div.className   = 'ow-fly-cluster';
+    div.textContent = count;
+    if (rect) {
+      div.style.left = (rect.left + rect.width  / 2) + 'px';
+      div.style.top  = (rect.top  + rect.height / 2) + 'px';
+    }
+    document.body.appendChild(div);
+    owCluster = div;
+    // Enable smooth transitions after first paint so it doesn't slide from 0,0
+    requestAnimationFrame(() => {
+      if (owCluster) owCluster.classList.add('ow-fly-cluster--moving');
+    });
+  }
+
+  function owMoveCluster(pitIdx) {
+    if (!owCluster) return;
+    const rect = owGetPitRect(pitIdx);
+    if (!rect) return;
+    owCluster.style.left = (rect.left + rect.width  / 2) + 'px';
+    owCluster.style.top  = (rect.top  + rect.height / 2) + 'px';
+  }
+
+  function owSetClusterCount(count) {
+    if (owCluster) owCluster.textContent = count;
+  }
+
+  function owDestroyCluster() {
+    if (owCluster) { owCluster.remove(); owCluster = null; }
+  }
+
   /* ── State ── */
   let state = {};
   let difficulty = 'hard'; // 'easy' | 'hard' — persists across games
 
   function newGame() {
+    owDestroyCluster();
     state = {
       pits:     Array(12).fill(4),
       scores:   [0, 0],
@@ -192,6 +235,8 @@
       : `Opponent sows from their pit ${fromPit - 5}.`;
     addLog(label);
 
+    // Create flying cluster at source pit (query DOM BEFORE render destroys it)
+    owCreateCluster(state.sowHand, fromPit);
     render();
     setTimeout(sowStep, SOW_MS);
   }
@@ -212,11 +257,17 @@
     state.pits[state.sowPos]++;
     state.sowHand--;
     state.lastSown = state.sowPos;
+
+    // Move cluster to target pit (query DOM BEFORE render; layout is stable)
+    owMoveCluster(state.sowPos);
+    owSetClusterCount(state.sowHand);
+
     render();
     setTimeout(sowStep, SOW_MS);
   }
 
   function finishSow() {
+    owDestroyCluster();
     const player = state.current;
     const pos    = state.sowPos;
     const inOpp  = player === PLAYER ? (p => p >= 6) : (p => p < 6);
@@ -324,17 +375,6 @@
     wireEvents(el);
   }
 
-  function handCluster() {
-    const count = state.sowHand;
-    if (count === 0) return '';
-    const show = Math.min(count, 8);
-    const seeds = Array.from({ length: show }, (_, i) => {
-      const rot = ((i * 47 + 13) % 120) - 60;
-      return `<span class="ow-hand-seed" style="--rot:${rot}deg"></span>`;
-    }).join('');
-    return `<div class="ow-hand"><div class="ow-hand__cluster">${seeds}</div><span class="ow-hand__count">&times;${count}</span></div>`;
-  }
-
   function buildUI() {
     if (state.phase === 'gameover') return buildGameOver();
 
@@ -368,7 +408,6 @@
 
     return `<div class="ow-game">
   <div class="ow-status">${statusMsg}</div>
-  ${state.phase === 'sowing' ? handCluster() : ''}
   <div class="ow-board-wrap">
     <div class="ow-store ow-store--ai">
       <div class="ow-store__label">Opponent</div>
@@ -400,25 +439,18 @@
 </div>`;
   }
 
-  /** Deterministic but varied rotation per seed — avoids obvious patterns */
-  function seedRot(pit, i) {
-    const h = ((pit + 1) * 31 + i * 79 + (pit + 1) * (i + 1) * 13) % 160;
-    return h - 80; // -80 … +79 degrees
-  }
-
-  /** Render seeds arranged in a circle within the pit */
+  /** Render round pebble seeds arranged in a circle within the pit */
   function circleSeeds(count, pit, lit) {
     const show = Math.min(count, 12);
     if (!show) return '';
-    // Radius grows gently with seed count so seeds spread to fill the pit
-    const r = show === 1 ? 0 : 8 + show * 0.9;
+    // Radius expands with seed count so pebbles fill the pit without overlapping
+    const r = show === 1 ? 0 : 7 + show * 1.3;
     return Array.from({ length: show }, (_, i) => {
-      const angle = (2 * Math.PI * i / show) - Math.PI / 2; // start from top
+      const angle = (2 * Math.PI * i / show) - Math.PI / 2; // top-first
       const x = show === 1 ? 0 : +(r * Math.cos(angle)).toFixed(1);
       const y = show === 1 ? 0 : +(r * Math.sin(angle)).toFixed(1);
-      const rot = seedRot(pit, i);
       const isNew = lit && i === show - 1;
-      return `<span class="ow-seed${isNew ? ' ow-seed--new' : ''}" style="--x:${x}px;--y:${y}px;--rot:${rot}deg"></span>`;
+      return `<span class="ow-seed${isNew ? ' ow-seed--new' : ''}" style="--x:${x}px;--y:${y}px"></span>`;
     }).join('');
   }
 

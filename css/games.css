@@ -628,44 +628,46 @@
 
 /* =============================================================================
    Ô Ăn Quan — Phase 3
+   Traditional Vietnamese lacquerware aesthetic
 ============================================================================= */
 
 .oaq-game {
-  padding: var(--space-4);
+  padding: var(--space-4) var(--space-3);
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-3);
   font-family: var(--font-body);
+  color: #f0d8b0;
 }
 
 /* ── Turn banner ── */
 .oaq-turn-banner {
   text-align: center;
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-lg);
-  font-weight: var(--weight-semibold);
-  font-size: var(--text-sm);
-  letter-spacing: 0.06em;
+  padding: 8px var(--space-3);
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  transition: background-color 300ms, color 300ms;
+  transition: background-color 300ms, color 300ms, border-color 300ms;
 }
 
 .oaq-turn-banner.p1 {
   background: rgba(44, 120, 115, 0.15);
-  color: var(--color-accent-teal);
+  color: #5bc8c0;
   border: 1px solid rgba(44, 120, 115, 0.3);
 }
 
 .oaq-turn-banner.p2 {
-  background: rgba(184, 50, 50, 0.12);
-  color: var(--color-accent-red);
-  border: 1px solid rgba(184, 50, 50, 0.3);
+  background: rgba(192, 64, 64, 0.15);
+  color: #e06060;
+  border: 1px solid rgba(192, 64, 64, 0.3);
 }
 
 .oaq-turn-banner.gameover {
-  background: rgba(200, 155, 60, 0.15);
-  color: var(--color-accent-gold);
-  border: 1px solid rgba(200, 155, 60, 0.4);
+  background: rgba(200, 149, 42, 0.15);
+  color: #f0c050;
+  border: 1px solid rgba(200, 149, 42, 0.4);
 }
 
 /* ── Score bar ── */
@@ -674,6 +676,7 @@
   justify-content: space-between;
   align-items: center;
   gap: var(--space-2);
+  padding: 0 var(--space-2);
 }
 
 .oaq-score-player {
@@ -684,10 +687,11 @@
 }
 
 .oaq-score-player__label {
-  font-size: var(--text-xs);
+  font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--color-text-muted);
+  color: rgba(240,216,176,0.4);
+  font-weight: 600;
 }
 
 .oaq-score-player__num {
@@ -697,31 +701,32 @@
   line-height: 1;
 }
 
-.oaq-score-player.p1 .oaq-score-player__num { color: var(--color-accent-teal); }
-.oaq-score-player.p2 .oaq-score-player__num { color: var(--color-accent-red); }
+.oaq-score-player.p1 .oaq-score-player__num { color: #5bc8c0; }
+.oaq-score-player.p2 .oaq-score-player__num { color: #e06060; }
 
 .oaq-score-divider {
-  font-family: var(--font-display);
-  font-size: var(--text-2xl);
-  color: var(--color-text-muted);
-  opacity: 0.4;
+  font-size: var(--text-xl);
+  color: rgba(240,216,176,0.18);
 }
 
-/* ── Board ── */
+/* ── Board — lacquered Vietnamese wood ── */
 .oaq-board {
   display: grid;
-  /* 7 columns: quan-left | 5 small pits | quan-right */
-  grid-template-columns: 100px repeat(5, 1fr) 100px;
+  grid-template-columns: 88px repeat(5, 1fr) 88px;
   grid-template-rows: 1fr 1fr;
   gap: 8px;
-  background: #3a2010;
-  padding: var(--space-3);
-  border-radius: var(--radius-xl);
-  border: 4px solid #241508;
-  box-shadow: inset 0 4px 14px rgba(0,0,0,0.6), var(--shadow-lg);
+  background: linear-gradient(170deg, #3e1008 0%, #1e0504 55%, #2e0a06 100%);
+  padding: 14px;
+  border-radius: 22px;
+  border: 3px solid #6b2010;
+  border-top-color: #8a3018;
+  box-shadow:
+    0 10px 32px rgba(0,0,0,0.75),
+    inset 0 2px 0 rgba(255,150,80,0.1),
+    inset 0 -3px 14px rgba(0,0,0,0.6);
 }
 
-/* ── Quan pits (left & right, span 2 rows) ── */
+/* ── Quan pits (carved end stores) ── */
 .oaq-quan {
   grid-row: 1 / 3;
   display: flex;
@@ -729,81 +734,87 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background: #5a3218;
-  border: 3px solid #8b6040;
-  border-radius: var(--radius-xl);
-  padding: var(--space-2);
-  min-height: 140px;
+  background: radial-gradient(ellipse at 50% 30%, #280a04 0%, #0e0202 80%);
+  border: 2px solid #7a3818;
+  border-top-color: #a04820;
+  border-radius: 50px;
+  padding: 16px 8px;
+  min-height: 148px;
   position: relative;
+  box-shadow:
+    inset 0 6px 20px rgba(0,0,0,0.92),
+    inset 0 2px 6px rgba(0,0,0,0.7),
+    0 3px 8px rgba(0,0,0,0.4);
 }
 
 .oaq-quan--p2 { grid-column: 1; }
 .oaq-quan--p1 { grid-column: 7; }
 
 .oaq-quan__label {
-  font-size: var(--text-xs);
+  font-size: 9px;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  opacity: 0.7;
-  color: #e8c990;
+  letter-spacing: 0.14em;
+  color: rgba(240,216,176,0.35);
+  font-weight: 700;
 }
 
 .oaq-quan__count {
   font-family: var(--font-display);
-  font-size: var(--text-3xl);
-  font-weight: var(--weight-bold);
-  color: var(--color-accent-gold);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #f0c050;
   line-height: 1;
+  text-shadow: 0 0 14px rgba(240,192,80,0.4);
 }
 
-.oaq-quan__seeds-label {
-  font-size: 10px;
-  color: rgba(232,201,144,0.6);
+.oaq-quan__sub {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(240,216,176,0.25);
 }
 
-/* ── Small pits (top and bottom rows) ── */
+/* ── Small pits (oval, carved) ── */
 .oaq-pit {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  background: #7a5030;
-  border: 2px solid #a07050;
-  border-radius: var(--radius-lg);
-  padding: var(--space-2) var(--space-1);
-  min-height: 76px;
+  background: radial-gradient(ellipse at 50% 30%, #2a0a04 0%, #100302 80%);
+  border: 2px solid #6b2010;
+  border-radius: 50%;
+  min-height: 74px;
   cursor: default;
-  transition: background-color 150ms, border-color 150ms, transform 120ms;
+  transition: border-color 150ms, box-shadow 150ms, transform 120ms;
   position: relative;
+  box-shadow:
+    inset 0 5px 18px rgba(0,0,0,0.9),
+    inset 0 2px 6px rgba(0,0,0,0.7),
+    0 2px 4px rgba(0,0,0,0.35);
 }
 
-/* Top row: Player 2's pits */
-.oaq-pit--top { grid-row: 1; }
-
-/* Bottom row: Player 1's pits */
-.oaq-pit--bottom { grid-row: 2; }
-
-/* Clickable state */
+/* Clickable (valid moves for current player) */
 .oaq-pit.clickable {
   cursor: pointer;
-  border-color: var(--color-accent-gold);
-  background: #9a6840;
+  border-color: #c8871a;
 }
 
 .oaq-pit.clickable:hover {
-  background: #b08060;
-  transform: scale(1.04);
-  box-shadow: 0 0 14px rgba(200,155,60,0.4);
+  border-color: #e8a030;
+  box-shadow:
+    inset 0 5px 18px rgba(0,0,0,0.6),
+    0 0 16px rgba(200,135,26,0.45),
+    0 2px 4px rgba(0,0,0,0.35);
+  transform: scale(1.05);
 }
 
 .oaq-pit.active {
-  border-color: #fff;
-  background: #c08848;
-  box-shadow: 0 0 18px rgba(255,255,255,0.25);
+  border-color: #f0c050;
+  box-shadow:
+    inset 0 4px 14px rgba(0,0,0,0.5),
+    0 0 20px rgba(240,192,80,0.35);
 }
 
-/* ── Seed dots inside pits (Oware-style: oval, circular arrangement) ── */
+/* ── Round pebble seeds (absolute, circular arrangement) ── */
 .oaq-seeds {
   position: absolute;
   inset: 0;
@@ -812,14 +823,13 @@
 
 .oaq-seed {
   position: absolute;
-  width: 5px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  left: calc(50% + var(--x, 0px) - 2.5px);
-  top:  calc(50% + var(--y, 0px) - 5px);
-  transform: rotate(var(--rot, 0deg));
-  background: linear-gradient(160deg, #c07818 0%, #7a3e08 45%, #4a2208 100%);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,200,90,0.18);
+  left: calc(50% + var(--x, 0px) - 4px);
+  top:  calc(50% + var(--y, 0px) - 4px);
+  background: radial-gradient(circle at 38% 32%, #e8c87a 0%, #b07828 40%, #6a3e10 72%, #3a1e06 100%);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,220,120,0.15);
 }
 
 .oaq-seed-none {
@@ -828,15 +838,15 @@
   transform: translate(-50%, -50%);
   width: 6px; height: 6px;
   border-radius: 50%;
-  background: rgba(200,155,60,0.08);
+  background: rgba(200,100,30,0.05);
 }
 
 .oaq-seed-overflow {
   position: absolute;
-  bottom: 4px; left: 50%;
+  bottom: 5px; left: 50%;
   transform: translateX(-50%);
   font-size: 9px;
-  font-weight: bold;
+  font-weight: 700;
   color: #f0ddb0;
   background: rgba(0,0,0,0.5);
   border-radius: 8px;
@@ -847,101 +857,71 @@
 
 .oaq-pit__count {
   position: absolute;
-  bottom: 5px; left: 50%;
+  bottom: 7px; left: 50%;
   transform: translateX(-50%);
   font-size: 11px;
   font-weight: 700;
-  color: rgba(232,201,144,0.85);
+  color: rgba(240,216,176,0.65);
   pointer-events: none;
   z-index: 1;
 }
 
-/* Bounce seeds when a seed lands */
-.oaq-pit.sow-flash .oaq-seeds {
-  animation: oaq-seeds-bunch 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes oaq-seeds-bunch {
-  0%   { transform: scale(1); }
-  40%  { transform: scale(1.15); }
-  70%  { transform: scale(0.97); }
-  100% { transform: scale(1); }
-}
-
-/* ── Flying seed cluster ── */
-.oaq-fly-cluster {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  pointer-events: none;
-}
-
-.oaq-fly-seeds {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 3px;
-  justify-content: center;
-  max-width: 64px;
-  background: rgba(20, 10, 4, 0.88);
-  border: 1.5px solid rgba(200, 155, 60, 0.65);
-  border-radius: 14px;
-  padding: 7px 6px 5px;
-  box-shadow: 0 6px 22px rgba(0,0,0,0.75), 0 0 14px rgba(200,155,60,0.3);
-}
-
-/* Cluster seeds: flex layout (not absolute) */
-.oaq-fly-cluster .oaq-seed {
-  position: relative !important;
-  left: auto !important;
-  top: auto !important;
-  transform: rotate(var(--rot, 0deg));
-  flex-shrink: 0;
-}
-
-.oaq-fly-label {
-  font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: var(--weight-bold);
-  color: var(--color-accent-gold);
-  text-shadow: 0 1px 5px rgba(0,0,0,0.9);
-  line-height: 1;
-}
-
-/* Sowing animation highlight */
+/* Pit flash when a seed lands */
 .oaq-pit.sow-flash {
-  animation: oaq-sow 250ms ease;
+  animation: oaq-sow 260ms ease;
 }
 
 @keyframes oaq-sow {
-  0%   { background: #d4a060; transform: scale(1.08); }
-  100% { background: #7a5030; transform: scale(1); }
+  0%   { box-shadow: inset 0 5px 18px rgba(0,0,0,0.4), 0 0 18px rgba(232,160,48,0.55); }
+  100% { box-shadow: inset 0 5px 18px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,0.35); }
 }
 
-/* ── Status message ── */
+/* ── Flying seed cluster — simple amber disc (matches Oware style) ── */
+.oaq-fly-cluster {
+  width: 38px;
+  height: 38px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at 40% 35%, #6a2a08 0%, #200804 80%);
+  border: 2px solid #c8871a;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: #ffd580;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+  box-shadow:
+    0 0 18px rgba(200,135,26,0.55),
+    0 3px 10px rgba(0,0,0,0.65);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── Status ── */
 .oaq-status {
   text-align: center;
   font-size: var(--text-sm);
-  color: var(--color-text-muted);
+  color: rgba(240,216,176,0.45);
   font-style: italic;
   min-height: 1.4em;
 }
 
 /* ── Move log ── */
 .oaq-log {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(240,216,176,0.07);
+  border-radius: var(--radius-md);
   padding: var(--space-2) var(--space-3);
 }
 
 .oaq-log__title {
-  font-size: var(--text-xs);
+  font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--color-text-muted);
+  color: rgba(240,216,176,0.28);
   margin-bottom: var(--space-1);
-  font-weight: var(--weight-semibold);
+  font-weight: 700;
 }
 
 .oaq-log__list {
@@ -952,15 +932,15 @@
 }
 
 .oaq-log__entry {
-  font-size: var(--text-xs);
-  color: var(--color-text-muted);
+  font-size: 11px;
+  color: rgba(240,216,176,0.42);
   padding: 2px 0;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
 }
 
 .oaq-log__entry:last-child { border-bottom: none; }
-.oaq-log__entry.p1 { color: var(--color-accent-teal); }
-.oaq-log__entry.p2 { color: var(--color-accent-red); }
+.oaq-log__entry.p1 { color: #5bc8c0; }
+.oaq-log__entry.p2 { color: #e06060; }
 
 /* ── Actions ── */
 .oaq-actions {
@@ -990,11 +970,11 @@
 .oaq-gameover h2 {
   font-size: var(--text-3xl);
   font-family: var(--font-display);
-  color: var(--color-accent-gold);
+  color: #f0c050;
   margin-bottom: var(--space-1);
 }
 
-.oaq-gameover p { color: var(--color-text-muted); margin-bottom: var(--space-4); }
+.oaq-gameover p { color: rgba(240,216,176,0.5); margin-bottom: var(--space-4); }
 
 .oaq-final-scores {
   display: flex;
@@ -1003,9 +983,7 @@
   margin-bottom: var(--space-4);
 }
 
-.oaq-final-score {
-  text-align: center;
-}
+.oaq-final-score { text-align: center; }
 
 .oaq-final-score__num {
   font-family: var(--font-display);
@@ -1014,39 +992,22 @@
   line-height: 1;
 }
 
-.oaq-final-score.p1 .oaq-final-score__num { color: var(--color-accent-teal); }
-.oaq-final-score.p2 .oaq-final-score__num { color: var(--color-accent-red); }
-.oaq-final-score__label { font-size: var(--text-xs); color: var(--color-text-muted); margin-top: 4px; }
+.oaq-final-score.p1 .oaq-final-score__num { color: #5bc8c0; }
+.oaq-final-score.p2 .oaq-final-score__num { color: #e06060; }
+.oaq-final-score__label { font-size: var(--text-xs); color: rgba(240,216,176,0.38); margin-top: 4px; }
 
 /* ── Responsive ── */
 @media (max-width: 560px) {
   .oaq-board {
     grid-template-columns: 56px repeat(5, 1fr) 56px;
-    gap: 4px;
-    padding: var(--space-2);
+    gap: 5px;
+    padding: 10px;
   }
-
-  .oaq-quan {
-    min-height: 100px;
-  }
-
-  .oaq-quan__count {
-    font-size: var(--text-xl);
-  }
-
-  .oaq-pit {
-    min-height: 50px;
-    padding: var(--space-1);
-  }
-
-  .oaq-seed {
-    width: 7px;
-    height: 7px;
-  }
-
-  .oaq-seeds {
-    gap: 2px;
-  }
+  .oaq-quan { min-height: 100px; border-radius: 36px; padding: 12px 6px; }
+  .oaq-quan__count { font-size: 1.9rem; }
+  .oaq-pit { min-height: 52px; }
+  .oaq-seed { width: 6px; height: 6px; left: calc(50% + var(--x, 0px) - 3px); top: calc(50% + var(--y, 0px) - 3px); }
+  .oaq-fly-cluster { width: 30px; height: 30px; font-size: 12px; }
 }
 
 /* =============================================================================
@@ -1559,7 +1520,7 @@
 ============================================================================= */
 
 .ow-game {
-  background: radial-gradient(ellipse at 50% 30%, #3d1f0a 0%, #1a0b04 100%);
+  background: radial-gradient(ellipse at 50% 20%, #2e1508 0%, #110703 100%);
   border-radius: var(--radius-xl);
   padding: var(--space-4) var(--space-3);
   display: flex;
@@ -1610,17 +1571,20 @@
 }
 
 .ow-board {
-  background: #3a1e0a;
-  border-radius: 20px;
-  padding: var(--space-2) var(--space-3);
+  background: linear-gradient(170deg, #4a2510 0%, #2c1308 55%, #3a1c09 100%);
+  border-radius: 26px;
+  padding: var(--space-3) var(--space-4);
   box-shadow:
-    0 8px 28px rgba(0,0,0,0.65),
-    inset 0 1px 0 rgba(255,200,100,0.08),
-    inset 0 -2px 10px rgba(0,0,0,0.5);
-  border: 2px solid #5c3015;
+    0 12px 40px rgba(0,0,0,0.8),
+    inset 0 2px 0 rgba(255,200,100,0.12),
+    inset 0 -4px 16px rgba(0,0,0,0.65),
+    inset 5px 0 12px rgba(0,0,0,0.25),
+    inset -5px 0 12px rgba(0,0,0,0.25);
+  border: 3px solid #6b3818;
+  border-top-color: #8a4e28;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .ow-row {
@@ -1648,13 +1612,22 @@
   );
 }
 
-/* ── Score stores ── */
+/* ── Score stores (styled as carved end pits) ── */
 .ow-store {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  min-width: 60px;
+  gap: 6px;
+  min-width: 70px;
+  background: linear-gradient(180deg, #2a1206 0%, #0e0602 100%);
+  border: 3px solid #5c3015;
+  border-top-color: #7a4020;
+  border-radius: 40px;
+  padding: 14px 8px;
+  box-shadow:
+    inset 0 8px 24px rgba(0,0,0,0.9),
+    inset 0 2px 6px rgba(0,0,0,0.7),
+    0 4px 12px rgba(0,0,0,0.5);
 }
 
 .ow-store__label {
@@ -1682,14 +1655,16 @@
 
 /* ── Pits ── */
 .ow-pit {
-  width: 68px;
-  height: 72px;
-  background: #1e0e04;
+  width: 70px;
+  height: 74px;
+  background: radial-gradient(ellipse at 50% 35%, #2a1206 0%, #0d0501 75%);
   border-radius: 50%;
   border: 2px solid #5c3015;
   box-shadow:
-    inset 0 4px 14px rgba(0,0,0,0.75),
-    0 2px 4px rgba(0,0,0,0.45);
+    inset 0 6px 22px rgba(0,0,0,0.92),
+    inset 0 2px 8px rgba(0,0,0,0.8),
+    0 2px 5px rgba(0,0,0,0.4),
+    0 1px 0 rgba(255,180,80,0.06);
   position: relative;
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
@@ -1702,16 +1677,15 @@
 
 .ow-seed {
   position: absolute;
-  width: 5px;
-  height: 10px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
-  /* Offset from pit centre using --x / --y; rotate via --rot */
-  left: calc(50% + var(--x, 0px) - 2.5px);
-  top:  calc(50% + var(--y, 0px) - 5px);
-  transform: rotate(var(--rot, 0deg));
-  /* Warm dark-brown gradient — dried Ayo seed */
-  background: linear-gradient(160deg, #c07818 0%, #7a3e08 45%, #4a2208 100%);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,200,90,0.18);
+  /* Offset from pit centre using --x / --y */
+  left: calc(50% + var(--x, 0px) - 5.5px);
+  top:  calc(50% + var(--y, 0px) - 5.5px);
+  /* Sphere pebble gradient — warm mahogany stone */
+  background: radial-gradient(circle at 36% 30%, #e8c87a 0%, #b07828 38%, #6a3e10 68%, #3a1e06 100%);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,220,120,0.15);
 }
 
 /* The seed that just landed pops in */
@@ -1720,8 +1694,8 @@
 }
 
 @keyframes ow-seed-in {
-  from { transform: rotate(var(--rot, 0deg)) scale(0); opacity: 0; }
-  to   { transform: rotate(var(--rot, 0deg)) scale(1); opacity: 1; }
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
 }
 
 /* Count badge at the bottom of the pit */
@@ -1781,42 +1755,32 @@
   to   { box-shadow: inset 0 4px 14px rgba(0,0,0,0.25), 0 0 30px rgba(224,64,32,0.85); }
 }
 
-/* ── Hand / carrying display ── */
-.ow-hand {
+/* ── Flying sow cluster (position:fixed on body; lives above all content) ── */
+.ow-fly-cluster {
+  position: fixed;
+  width: 40px;
+  height: 40px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at 40% 35%, #5c2e08 0%, #220e02 80%);
+  border: 2px solid #c8871a;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  margin: 0 auto 0.4rem;
-  padding: 0.3rem 1rem 0.3rem 0.75rem;
-  background: rgba(0,0,0,0.35);
-  border: 1px solid rgba(200,135,26,0.35);
-  border-radius: 20px;
-  width: fit-content;
-}
-
-.ow-hand__cluster {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.ow-hand-seed {
-  display: inline-block;
-  width: 5px;
-  height: 10px;
-  border-radius: 50%;
-  background: linear-gradient(160deg, #c07818 0%, #7a3e08 45%, #4a2208 100%);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,200,90,0.18);
-  transform: rotate(var(--rot, 0deg));
-  flex-shrink: 0;
-}
-
-.ow-hand__count {
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 800;
   color: #ffd580;
-  letter-spacing: 0.02em;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+  box-shadow:
+    0 0 20px rgba(200,135,26,0.6),
+    0 3px 10px rgba(0,0,0,0.65);
+  pointer-events: none;
+  z-index: 9999;
+  /* No transition on initial placement — snap to source pit instantly */
+}
+
+.ow-fly-cluster--moving {
+  transition: left 160ms ease-out, top 160ms ease-out;
 }
 
 /* ── Actions ── */
@@ -1956,12 +1920,13 @@
 /* ── Responsive ── */
 @media (max-width: 560px) {
   .ow-pit { width: 46px; height: 50px; }
-  .ow-seed { width: 4px; height: 8px; left: calc(50% + var(--x, 0px) - 2px); top: calc(50% + var(--y, 0px) - 4px); }
+  .ow-seed { width: 7px; height: 7px; left: calc(50% + var(--x, 0px) - 3.5px); top: calc(50% + var(--y, 0px) - 3.5px); }
   .ow-pit__count { font-size: 10px; }
   .ow-row { gap: 5px; }
   .ow-board { padding: var(--space-2) var(--space-2); }
-  .ow-store { min-width: 44px; }
+  .ow-store { min-width: 48px; padding: 10px 6px; }
   .ow-store__val { font-size: 1.7rem; }
+  .ow-fly-cluster { width: 32px; height: 32px; font-size: 12px; }
 }
 
 /* =============================================================================

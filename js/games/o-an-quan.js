@@ -99,16 +99,9 @@
     anim.cancel();
   }
 
-  // ── Set content of a flying seed cluster ─────────────────────────────────
+  // ── Set content of a flying seed cluster (simple count disc) ─────────────
   function setClusterContent(el, count) {
-    if (count <= 0) { el.innerHTML = ''; return; }
-    const show = Math.min(count, 7);
-    let dots = '';
-    for (let i = 0; i < show; i++) {
-      const rot = ((i * 47 + 23) % 100) - 50;
-      dots += `<span class="oaq-seed" style="--rot:${rot}deg"></span>`;
-    }
-    el.innerHTML = `<div class="oaq-fly-seeds">${dots}</div><span class="oaq-fly-label">\xd7${count}</span>`;
+    el.textContent = count > 0 ? count : '';
   }
 
   // ── Arc the cluster element from its current position to a target pit ─────
@@ -401,23 +394,18 @@
     `;
   }
 
-  // ── Seed renderers (Oware-style: circular arrangement, amber ovals) ───────
-  function seedRot(pit, i) {
-    const h = ((pit + 1) * 31 + i * 79 + (pit + 1) * (i + 1) * 13) % 160;
-    return h - 80;
-  }
-
+  // ── Seed renderer: round pebbles in a circular arrangement ──────────────
   function circleSeeds(count, pitIdx) {
     if (count === 0) return '<span class="oaq-seed-none"></span>';
     const show = Math.min(count, 12);
-    const r = show === 1 ? 0 : 8 + show * 0.9;
+    // Radius grows with seed count so pebbles fill the pit without overlapping
+    const r = show === 1 ? 0 : 5 + show * 1.15;
     let html = '<div class="oaq-seeds">';
     for (let i = 0; i < show; i++) {
       const angle = (2 * Math.PI * i / show) - Math.PI / 2;
       const x = show === 1 ? 0 : +(r * Math.cos(angle)).toFixed(1);
       const y = show === 1 ? 0 : +(r * Math.sin(angle)).toFixed(1);
-      const rot = seedRot(pitIdx, i);
-      html += `<span class="oaq-seed" style="--x:${x}px;--y:${y}px;--rot:${rot}deg"></span>`;
+      html += `<span class="oaq-seed" style="--x:${x}px;--y:${y}px"></span>`;
     }
     if (count > 12) html += `<span class="oaq-seed-overflow">+${count - 12}</span>`;
     html += '</div>';
@@ -467,17 +455,17 @@
     // Q2: column 1, rows 1-2  (data-pit="11" lets animateSeedFly target it)
     const q2 = `
       <div class="oaq-quan oaq-quan--p2" data-pit="11" style="grid-column:1;grid-row:1/3;" aria-label="Player 2 quan: ${board[Q2]} seeds">
-        <span class="oaq-quan__label">P2 Quan</span>
-        ${circleSeeds(board[Q2], Q2)}
+        <span class="oaq-quan__label">P2</span>
         <span class="oaq-quan__count">${board[Q2]}</span>
+        <span class="oaq-quan__sub">seeds</span>
       </div>`;
 
     // Q1: column 7, rows 1-2  (data-pit="5")
     const q1 = `
       <div class="oaq-quan oaq-quan--p1" data-pit="5" style="grid-column:7;grid-row:1/3;" aria-label="Player 1 quan: ${board[Q1]} seeds">
-        <span class="oaq-quan__label">P1 Quan</span>
-        ${circleSeeds(board[Q1], Q1)}
+        <span class="oaq-quan__label">P1</span>
         <span class="oaq-quan__count">${board[Q1]}</span>
+        <span class="oaq-quan__sub">seeds</span>
       </div>`;
 
     // Top pits: indices 10,9,8,7,6 → columns 2,3,4,5,6
