@@ -410,7 +410,7 @@
   function circleSeeds(count, pitIdx) {
     if (count === 0) return '<span class="oaq-seed-none"></span>';
     const show = Math.min(count, 12);
-    const r = show === 1 ? 0 : 5 + show * 1.15;
+    const r = show === 1 ? 0 : 4 + show * 1.5;
     let html = '<div class="oaq-seeds">';
     for (let i = 0; i < show; i++) {
       const angle = (2 * Math.PI * i / show) - Math.PI / 2;

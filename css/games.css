@@ -638,7 +638,7 @@
   gap: var(--space-3);
   font-family: var(--font-body);
   color: #f0d8b0;
-  background: radial-gradient(ellipse at 50% 15%, #1a0604 0%, #060101 100%);
+  background: radial-gradient(ellipse at 50% 15%, #2e1008 0%, #150404 100%);
   border-radius: var(--radius-xl);
   border: 1px solid rgba(240,216,176,0.06);
   box-shadow: 0 4px 24px rgba(0,0,0,0.5);
@@ -849,13 +849,13 @@
 
 .oaq-seed {
   position: absolute;
-  width: 8px;
-  height: 8px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
-  left: calc(50% + var(--x, 0px) - 4px);
-  top:  calc(50% + var(--y, 0px) - 4px);
+  left: calc(50% + var(--x, 0px) - 5.5px);
+  top:  calc(50% + var(--y, 0px) - 5.5px);
   background: radial-gradient(circle at 38% 32%, #e8c87a 0%, #b07828 40%, #6a3e10 72%, #3a1e06 100%);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,220,120,0.15);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,220,120,0.18);
 }
 
 .oaq-seed-none {
@@ -917,11 +917,11 @@
   flex-wrap: wrap;
   gap: 3px;
   justify-content: center;
-  max-width: 60px;
+  max-width: 70px;
   background: rgba(14, 4, 2, 0.9);
   border: 1.5px solid #c8871a;
   border-radius: 12px;
-  padding: 6px 6px 5px;
+  padding: 7px 7px 6px;
   box-shadow: 0 5px 20px rgba(0,0,0,0.75), 0 0 14px rgba(200,135,26,0.3);
 }
 
@@ -930,8 +930,8 @@
   position: relative !important;
   left: auto !important;
   top: auto !important;
-  width: 8px;
-  height: 8px;
+  width: 11px;
+  height: 11px;
   flex-shrink: 0;
 }
 
@@ -1053,7 +1053,7 @@
   .oaq-quan__count { font-size: 2.4rem; }
   .oaq-score-player__num { font-size: var(--text-2xl); }
   .oaq-pit { min-height: 52px; }
-  .oaq-seed { width: 6px; height: 6px; left: calc(50% + var(--x, 0px) - 3px); top: calc(50% + var(--y, 0px) - 3px); }
+  .oaq-seed { width: 8px; height: 8px; left: calc(50% + var(--x, 0px) - 4px); top: calc(50% + var(--y, 0px) - 4px); }
   .oaq-fly-cluster { width: 30px; height: 30px; font-size: 12px; }
 }
 
