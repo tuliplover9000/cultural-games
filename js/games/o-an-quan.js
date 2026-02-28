@@ -376,14 +376,14 @@
       <div class="oaq-turn-banner ${bannerClass}">${bannerText}</div>
 
       <div class="oaq-score-bar">
-        <div class="oaq-score-player p1">
-          <div class="oaq-score-player__label">Player 1</div>
-          <div class="oaq-score-player__num">${p1Score}</div>
-        </div>
-        <div class="oaq-score-divider">vs</div>
         <div class="oaq-score-player p2">
           <div class="oaq-score-player__label">Player 2</div>
           <div class="oaq-score-player__num">${p2Score}</div>
+        </div>
+        <div class="oaq-score-divider">vs</div>
+        <div class="oaq-score-player p1">
+          <div class="oaq-score-player__label">Player 1</div>
+          <div class="oaq-score-player__num">${p1Score}</div>
         </div>
       </div>
 
@@ -410,6 +410,50 @@
   function seedJitter(pit, i, axis) {
     const h = ((pit + 1) * 31 + i * 79 + axis * 53 + pit * i * 11) % 100;
     return (h / 100 - 0.5) * 6; // ±3 px offset
+  }
+
+  // ── Seed renderer for quan stores (two-ring for large counts) ───────────
+  function quanSeeds(count, pitIdx) {
+    if (count === 0) return '<div class="oaq-seeds oaq-quan-seeds"></div>';
+    const show = Math.min(count, 18);
+    let html = '<div class="oaq-seeds oaq-quan-seeds">';
+
+    if (show <= 9) {
+      // Single ring
+      const r = show === 1 ? 0 : 5 + show * 2.4;
+      for (let i = 0; i < show; i++) {
+        const angle = (2 * Math.PI * i / show) - Math.PI / 2;
+        const jx = show > 1 ? seedJitter(pitIdx, i, 0) : 0;
+        const jy = show > 1 ? seedJitter(pitIdx, i, 1) : 0;
+        const x = show === 1 ? 0 : +(r * Math.cos(angle) + jx).toFixed(1);
+        const y = show === 1 ? 0 : +(r * Math.sin(angle) + jy).toFixed(1);
+        html += `<span class="oaq-seed" style="--x:${x}px;--y:${y}px"></span>`;
+      }
+    } else {
+      // Inner ring: 6 seeds at r=13, outer ring: remainder at r=27
+      const innerN = 6;
+      for (let i = 0; i < innerN; i++) {
+        const angle = (2 * Math.PI * i / innerN) - Math.PI / 2;
+        const jx = seedJitter(pitIdx, i, 0) * 0.5;
+        const jy = seedJitter(pitIdx, i, 1) * 0.5;
+        const x = +(13 * Math.cos(angle) + jx).toFixed(1);
+        const y = +(13 * Math.sin(angle) + jy).toFixed(1);
+        html += `<span class="oaq-seed" style="--x:${x}px;--y:${y}px"></span>`;
+      }
+      const outerN = show - innerN;
+      for (let i = 0; i < outerN; i++) {
+        const angle = (2 * Math.PI * i / outerN) - Math.PI / 2 + 0.3;
+        const jx = seedJitter(pitIdx, i + innerN, 0);
+        const jy = seedJitter(pitIdx, i + innerN, 1);
+        const x = +(27 * Math.cos(angle) + jx).toFixed(1);
+        const y = +(27 * Math.sin(angle) + jy).toFixed(1);
+        html += `<span class="oaq-seed" style="--x:${x}px;--y:${y}px"></span>`;
+      }
+    }
+
+    if (count > 18) html += `<span class="oaq-seed-overflow">+${count - 18}</span>`;
+    html += '</div>';
+    return html;
   }
 
   // ── Seed renderer: round pebbles in a staggered circular arrangement ──────
@@ -468,6 +512,7 @@
           aria-label="${label}: ${count} ${seedWord}"
         >
           ${circleSeeds(count, idx)}
+          <div class="oaq-pit__count">${count}</div>
         </button>`;
     }
 
@@ -475,16 +520,14 @@
     const q2 = `
       <div class="oaq-quan oaq-quan--p2" data-pit="11" style="grid-column:1;grid-row:1/3;" aria-label="Player 2 quan: ${board[Q2]} seeds">
         <span class="oaq-quan__label">P2</span>
-        <span class="oaq-quan__count">${board[Q2]}</span>
-        <span class="oaq-quan__sub">seeds</span>
+        ${quanSeeds(board[Q2], Q2)}
       </div>`;
 
     // Q1: column 7, rows 1-2  (data-pit="5")
     const q1 = `
       <div class="oaq-quan oaq-quan--p1" data-pit="5" style="grid-column:7;grid-row:1/3;" aria-label="Player 1 quan: ${board[Q1]} seeds">
         <span class="oaq-quan__label">P1</span>
-        <span class="oaq-quan__count">${board[Q1]}</span>
-        <span class="oaq-quan__sub">seeds</span>
+        ${quanSeeds(board[Q1], Q1)}
       </div>`;
 
     // Top pits: indices 10,9,8,7,6 → columns 2,3,4,5,6
