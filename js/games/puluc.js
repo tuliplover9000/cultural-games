@@ -329,7 +329,7 @@
       return '<div class="pu-stick' + (m ? ' pu-stick--marked' : '') + '" aria-hidden="true"></div>';
     }).join('');
     elDiceRow.innerHTML =
-      stickHtml +
+      '<div class="pu-sticks">' + stickHtml + '</div>' +
       '<div class="pu-roll-total">Roll: <strong>' + state.roll + '</strong></div>';
   }
 

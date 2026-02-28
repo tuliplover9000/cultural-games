@@ -2651,35 +2651,96 @@
 /* ── Stick dice ──────────────────────────────────────────────────────── */
 .pu-dice-row {
   display: flex;
+  flex-direction: column;
   align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+}
+
+/* The four sticks laid out in a row */
+.pu-sticks {
+  display: flex;
+  align-items: flex-end;
   justify-content: center;
-  gap: 7px;
-  min-height: 2rem;
-  flex-wrap: wrap;
+  gap: 10px;
 }
 
+/* A single stick — tall narrow slab, like carved wood/bone */
 .pu-stick {
-  width: 3rem;
-  height: 0.75rem;
-  border-radius: 6px;
-  background: var(--pu-stick);
-  border: 1px solid rgba(90, 60, 20, 0.7);
-  box-shadow: inset 0 1px 2px rgba(255,255,255,0.06), 0 1px 4px rgba(0,0,0,0.5);
-  transition: background 0.12s, box-shadow 0.12s;
+  width: 1.05rem;
+  height: 4rem;
+  border-radius: 10px 10px 8px 8px;
+  position: relative;
+  /* blank side: dark, dense wood grain */
+  background: linear-gradient(
+    to right,
+    #2c1a08 0%,
+    #47300e 22%,
+    #3a2409 44%,
+    #512e0d 66%,
+    #3a2409 80%,
+    #2c1a08 100%
+  );
+  border: 1px solid rgba(30, 15, 5, 0.9);
+  box-shadow:
+    3px 4px 8px rgba(0,0,0,0.65),
+    inset 1px 0 2px rgba(255,255,255,0.04),
+    inset -1px 0 1px rgba(0,0,0,0.3);
+  transition: background 0.15s, box-shadow 0.15s;
+  flex-shrink: 0;
 }
 
+/* marked side: lighter heartwood, clearly painted/carved */
 .pu-stick--marked {
-  background: var(--pu-stick-1);
-  border-color: rgba(220, 175, 60, 0.7);
-  box-shadow: inset 0 1px 3px rgba(255,255,200,0.25), 0 0 8px rgba(220,180,60,0.45);
+  background: linear-gradient(
+    to right,
+    #8a5c18 0%,
+    #c8902a 22%,
+    #b07820 44%,
+    #d4a030 66%,
+    #b07820 80%,
+    #8a5c18 100%
+  );
+  border-color: rgba(140, 90, 15, 0.85);
+  box-shadow:
+    3px 4px 8px rgba(0,0,0,0.5),
+    inset 1px 0 3px rgba(255,220,140,0.18),
+    0 0 10px rgba(200,155,40,0.25);
+}
+
+/* Carved stripe mark on the light face */
+.pu-stick--marked::after {
+  content: '';
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 248, 210, 0.9);
+  box-shadow: 0 0 5px rgba(255, 240, 180, 0.7);
+}
+
+/* Small dot at midpoint of blank face for symmetry with marked */
+.pu-stick:not(.pu-stick--marked)::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .pu-roll-total {
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--pu-gold-light);
-  margin-left: 10px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  text-align: center;
 }
 
 /* ── Controls ────────────────────────────────────────────────────────── */
@@ -2828,7 +2889,7 @@
   .pu-piece--prisoner { width: 1.1rem; height: 1.1rem; }
   .pu-piece--waiting,
   .pu-piece--scored   { width: 1.2rem; height: 1.2rem; }
-  .pu-stick        { width: 2rem;   height: 0.6rem; }
+  .pu-stick        { width: 0.85rem; height: 3rem; }
   .pu-btn          { padding: 0.4rem 0.9rem; font-size: 0.85rem; }
   .pu-score > span { min-width: 130px; font-size: 0.78rem; }
   .pu-offboard     { padding: 6px 8px; }
