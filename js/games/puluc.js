@@ -334,28 +334,24 @@
   }
 
   function renderTrack() {
-    var curTurn   = state.turn;
-    var validMvs  = state._validMoves || [];
-    var hasEnter  = false;
-    var selectIdx = {};   // stackIdx → true, for on-board pieces of current player
+    var curTurn  = state.turn;
+    var validMvs = state._validMoves || [];
+    var hasEnter = false;
+    var selectIdx = {};
 
     validMvs.forEach(function (mv) {
-      if (mv.type === 'enter') {
-        hasEnter = true;
-      } else {
-        selectIdx[mv.stackIdx] = true;
-      }
+      if (mv.type === 'enter') { hasEnter = true; }
+      else                     { selectIdx[mv.stackIdx] = true; }
     });
 
-    // Build each track cell
-    var cellsHtml = '';
+    // ── Board strip (11 spaces, full width) ───────────────────────────
+    var boardHtml = '<div class="pu-board">';
     for (var s = 0; s < TRACK_LEN; s++) {
       var piecesHtml = '';
 
-      // AI pieces (rendered first / bottom of stack visually)
+      // AI pieces — prisoners first (bottom), then lead piece (top)
       state.stacks[AI].forEach(function (stack, idx) {
         if (stack.pos !== s) return;
-        // Prisoners (player pieces carried by AI)
         for (var pr = 0; pr < stack.prisoners; pr++) {
           piecesHtml += '<div class="pu-piece pu-piece--player pu-piece--prisoner"></div>';
         }
@@ -365,10 +361,9 @@
           '" data-who="1" data-stack-idx="' + idx + '"></div>';
       });
 
-      // Player pieces (on top)
+      // Player pieces — prisoners first (bottom), then lead piece (top)
       state.stacks[PLAYER].forEach(function (stack, idx) {
         if (stack.pos !== s) return;
-        // Prisoners (AI pieces carried by player)
         for (var pr = 0; pr < stack.prisoners; pr++) {
           piecesHtml += '<div class="pu-piece pu-piece--ai pu-piece--prisoner"></div>';
         }
@@ -378,36 +373,45 @@
           '" data-who="0" data-stack-idx="' + idx + '"></div>';
       });
 
-      cellsHtml += '<div class="pu-space" data-pos="' + s + '">' + piecesHtml + '</div>';
+      boardHtml +=
+        '<div class="pu-space" data-pos="' + s + '">' +
+        piecesHtml +
+        '<span class="pu-space__num">' + (s + 1) + '</span>' +
+        '</div>';
     }
+    boardHtml += '</div>';
 
-    // Player off-board zone (left)
+    // ── Entry zones row (below board) ─────────────────────────────────
     var playerEnterable = state.phase === 'choosingMove' && curTurn === PLAYER && hasEnter;
-    var playerZoneHtml = '<div class="pu-offboard pu-offboard--player' +
-      (playerEnterable ? ' pu-offboard--selectable' : '') +
-      '" aria-label="Player 1 pieces">';
-    for (var p = 0; p < state.offBoard[PLAYER]; p++) {
-      playerZoneHtml += '<div class="pu-piece pu-piece--player pu-piece--waiting"></div>';
-    }
-    for (var pc = 0; pc < state.captured[PLAYER]; pc++) {
-      playerZoneHtml += '<div class="pu-piece pu-piece--player pu-piece--scored"></div>';
-    }
-    playerZoneHtml += '<div class="pu-offboard__label">P1</div></div>';
+    var aiEnterable     = state.phase === 'choosingMove' && curTurn === AI     && hasEnter;
+    var p2Label         = mode === 'vs-human' ? 'P2' : 'AI';
 
-    // AI off-board zone (right)
-    var aiEnterable = state.phase === 'choosingMove' && curTurn === AI && hasEnter;
-    var aiZoneHtml = '<div class="pu-offboard pu-offboard--ai' +
-      (aiEnterable ? ' pu-offboard--selectable' : '') +
-      '" aria-label="' + p2Name() + ' pieces">';
-    for (var a = 0; a < state.offBoard[AI]; a++) {
-      aiZoneHtml += '<div class="pu-piece pu-piece--ai pu-piece--waiting"></div>';
+    function pieceDots(who, waiting, scored) {
+      var html = '';
+      for (var i = 0; i < waiting; i++) {
+        html += '<div class="pu-piece pu-piece--' + (who === PLAYER ? 'player' : 'ai') + ' pu-piece--waiting"></div>';
+      }
+      for (var j = 0; j < scored; j++) {
+        html += '<div class="pu-piece pu-piece--' + (who === PLAYER ? 'player' : 'ai') + ' pu-piece--scored"></div>';
+      }
+      return html;
     }
-    for (var ac = 0; ac < state.captured[AI]; ac++) {
-      aiZoneHtml += '<div class="pu-piece pu-piece--ai pu-piece--scored"></div>';
-    }
-    aiZoneHtml += '<div class="pu-offboard__label">' + (mode === 'vs-human' ? 'P2' : 'AI') + '</div></div>';
 
-    elTrack.innerHTML = playerZoneHtml + cellsHtml + aiZoneHtml;
+    var playerZone =
+      '<div class="pu-offboard pu-offboard--player' + (playerEnterable ? ' pu-offboard--selectable' : '') + '">' +
+      '<div class="pu-offboard__head"><span class="pu-offboard__name">P1</span><span class="pu-offboard__dir">→→→</span></div>' +
+      '<div class="pu-offboard__pieces">' + pieceDots(PLAYER, state.offBoard[PLAYER], state.captured[PLAYER]) + '</div>' +
+      '</div>';
+
+    var aiZone =
+      '<div class="pu-offboard pu-offboard--ai' + (aiEnterable ? ' pu-offboard--selectable' : '') + '">' +
+      '<div class="pu-offboard__head"><span class="pu-offboard__dir">←←←</span><span class="pu-offboard__name">' + p2Label + '</span></div>' +
+      '<div class="pu-offboard__pieces">' + pieceDots(AI, state.offBoard[AI], state.captured[AI]) + '</div>' +
+      '</div>';
+
+    var entryRowHtml = '<div class="pu-entry-row">' + playerZone + aiZone + '</div>';
+
+    elTrack.innerHTML = boardHtml + entryRowHtml;
   }
 
   function renderScore() {

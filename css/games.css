@@ -2433,177 +2433,219 @@
 
 /* ── Design tokens ───────────────────────────────────────────────────── */
 .pu-game-wrap {
-  --pu-bg:         #1a2e10;
-  --pu-track-bg:   #2d4a1e;
-  --pu-space:      #3d6a2a;
-  --pu-space-alt:  #355e24;
-  --pu-border:     rgba(160, 210, 100, 0.18);
-  --pu-player:     #f0e0a0;   /* pale gold / linen */
-  --pu-player-dim: rgba(240, 224, 160, 0.55);
-  --pu-ai:         #9b2c2c;   /* dark red */
-  --pu-ai-dim:     rgba(155, 44, 44, 0.55);
-  --pu-scored:     rgba(200, 200, 200, 0.25);
-  --pu-selected:   #ffe066;
-  --pu-stick:      #6b4c20;   /* blank stick — dark wood */
-  --pu-stick-1:    #e8c068;   /* marked stick — light wood */
-  --pu-gold:       #c8a050;
-  --pu-gold-light: #f0d080;
-  --pu-gold-dim:   rgba(200, 160, 80, 0.55);
-  --pu-text:       #d8c89a;
+  --pu-bg:          #16270d;
+  --pu-board-frame: #0c1a06;
+  --pu-space:       #233f17;
+  --pu-space-alt:   #1e3813;
+  --pu-border:      rgba(120, 185, 70, 0.2);
+  --pu-player:      #f0e0a0;
+  --pu-ai:          #9b2c2c;
+  --pu-selected:    #ffe066;
+  --pu-stick:       #5a3e18;
+  --pu-stick-1:     #ddb84a;
+  --pu-gold:        #c8a050;
+  --pu-gold-light:  #f0d080;
+  --pu-gold-dim:    rgba(200, 160, 80, 0.55);
+  --pu-text:        #cdc08a;
 }
 
 /* ── Outer wrap ──────────────────────────────────────────────────────── */
 .pu-game-wrap {
   background: var(--pu-bg);
   border-radius: 16px;
-  padding: 1.5rem 1.25rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1rem;
+  align-items: stretch;   /* let children fill the full width */
+  gap: 0.9rem;
   color: var(--pu-text);
   font-family: var(--font-body, 'Inter', sans-serif);
-}
-
-/* ── Track ───────────────────────────────────────────────────────────── */
-.pu-track {
-  display: flex;
-  align-items: stretch;
-  gap: 4px;
-  background: var(--pu-track-bg);
-  border: 1px solid var(--pu-border);
-  border-radius: 10px;
-  padding: 10px 8px;
   width: 100%;
   box-sizing: border-box;
-  overflow-x: auto;
 }
 
-/* ── Track spaces ────────────────────────────────────────────────────── */
+/* ── Track outer shell (column: board + entry row) ───────────────────── */
+.pu-track {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  width: 100%;
+}
+
+/* ── Board strip — the 11 cells ──────────────────────────────────────── */
+.pu-board {
+  display: flex;
+  gap: 4px;
+  background: var(--pu-board-frame);
+  border: 2px solid rgba(100, 160, 55, 0.28);
+  border-radius: 12px;
+  padding: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  /* subtle inner glow to suggest carved wood */
+  box-shadow: inset 0 2px 12px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.35);
+}
+
+/* ── Individual track spaces ─────────────────────────────────────────── */
 .pu-space {
-  flex: 1 0 2.6rem;
-  min-width: 2.6rem;
-  max-width: 3.4rem;
-  height: 4.2rem;
+  flex: 1;
+  min-width: 0;           /* allow shrinking below content size */
+  height: 6rem;
   background: var(--pu-space);
-  border: 1px solid var(--pu-border);
+  border: 1px solid rgba(90, 145, 45, 0.18);
   border-radius: 6px;
   position: relative;
   display: flex;
-  flex-direction: column-reverse;   /* stack pieces from bottom */
+  flex-direction: column-reverse;  /* pieces stack from bottom upward */
   align-items: center;
   justify-content: flex-start;
-  padding: 3px 2px;
-  gap: 2px;
+  padding: 4px 2px 18px;
+  gap: 3px;
   box-sizing: border-box;
-  transition: background 0.15s;
+  /* inset shadow gives a "carved pit" feel */
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.45);
+  transition: background 0.12s;
 }
 
-.pu-space:nth-child(even) {
-  background: var(--pu-space-alt);
+.pu-space:nth-child(even) { background: var(--pu-space-alt); }
+
+/* Small space number at the bottom */
+.pu-space__num {
+  position: absolute;
+  bottom: 3px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 8px;
+  font-weight: 700;
+  color: rgba(140, 200, 90, 0.28);
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  user-select: none;
 }
+
+/* First and last spaces — entry/exit accent */
+.pu-space[data-pos="0"]  { border-color: rgba(200,240,120,0.25); }
+.pu-space[data-pos="10"] { border-color: rgba(200,100,80,0.25); }
 
 /* ── Pieces ──────────────────────────────────────────────────────────── */
 .pu-piece {
-  width: 1.65rem;
-  height: 1.65rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
   flex-shrink: 0;
-  transition: transform 0.12s, box-shadow 0.12s;
   position: relative;
   z-index: 1;
+  transition: transform 0.12s, box-shadow 0.12s;
 }
 
 .pu-piece--player {
-  background: radial-gradient(circle at 35% 35%, #fff8d8, var(--pu-player) 55%, #b89050);
-  border: 2px solid rgba(200,160,60,0.7);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  background: radial-gradient(circle at 35% 30%, #fff8d8 0%, #e8d080 45%, #b08830 100%);
+  border: 2px solid rgba(200, 160, 50, 0.75);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.55), inset 0 1px 2px rgba(255,255,200,0.3);
 }
 
 .pu-piece--ai {
-  background: radial-gradient(circle at 35% 35%, #cc4444, var(--pu-ai) 55%, #5a1010);
-  border: 2px solid rgba(180, 60, 60, 0.7);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  background: radial-gradient(circle at 35% 30%, #d04040 0%, #8b1c1c 50%, #4a0a0a 100%);
+  border: 2px solid rgba(160, 50, 50, 0.75);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.55), inset 0 1px 2px rgba(255,150,150,0.15);
 }
 
-/* Prisoner pieces — smaller and dimmer, shown underneath */
+/* Prisoner — smaller, dimmer, shown underneath lead piece */
 .pu-piece--prisoner {
-  opacity: 0.5;
-  transform: scale(0.72);
+  width: 1.45rem;
+  height: 1.45rem;
+  opacity: 0.48;
   z-index: 0;
 }
 
-/* Waiting pieces in the off-board zone */
+/* Waiting (off-board, not yet entered) */
 .pu-piece--waiting {
-  width: 1.3rem;
-  height: 1.3rem;
-  opacity: 0.75;
+  width: 1.55rem;
+  height: 1.55rem;
+  opacity: 0.72;
 }
 
-/* Scored (exited) pieces — greyed out check marks */
+/* Scored (permanently exited) */
 .pu-piece--scored {
-  width: 1.3rem;
-  height: 1.3rem;
-  opacity: 0.35;
+  width: 1.55rem;
+  height: 1.55rem;
+  opacity: 0.28;
   border-style: dashed;
 }
 
-/* Selectable — gold ring + pointer */
+/* Selectable — gold glow + pointer */
 .pu-piece--selectable {
   cursor: pointer;
-  box-shadow: 0 0 0 3px var(--pu-selected), 0 0 10px rgba(255,220,80,0.55);
-  animation: pu-pulse 1.4s ease-in-out infinite;
+  animation: pu-pulse 1.3s ease-in-out infinite;
 }
 
 @keyframes pu-pulse {
-  0%, 100% { box-shadow: 0 0 0 2px var(--pu-selected), 0 0 6px  rgba(255,220,80,0.3); }
-  50%       { box-shadow: 0 0 0 4px var(--pu-selected), 0 0 14px rgba(255,220,80,0.65); }
+  0%, 100% { box-shadow: 0 0 0 2px var(--pu-selected), 0 0 6px  rgba(255,220,80,0.4); }
+  50%       { box-shadow: 0 0 0 4px var(--pu-selected), 0 0 16px rgba(255,220,80,0.7); }
 }
 
-/* ── Off-board zones ─────────────────────────────────────────────────── */
+/* ── Entry zones (below board) ───────────────────────────────────────── */
+.pu-entry-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  width: 100%;
+}
+
 .pu-offboard {
-  flex-shrink: 0;
-  width: 4rem;
-  min-height: 4.2rem;
-  background: rgba(0,0,0,0.25);
+  flex: 0 1 48%;
+  max-width: 48%;
+  background: rgba(0,0,0,0.22);
   border: 1px solid var(--pu-border);
   border-radius: 8px;
+  padding: 8px 10px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 3px;
-  padding: 6px 4px 4px;
-  box-sizing: border-box;
-  position: relative;
+  gap: 6px;
 }
-
-.pu-offboard--player { border-radius: 8px 6px 6px 8px; }
-.pu-offboard--ai     { border-radius: 6px 8px 8px 6px; }
 
 .pu-offboard--selectable {
   cursor: pointer;
-  border-color: var(--pu-selected);
-  box-shadow: 0 0 0 2px var(--pu-selected), 0 0 12px rgba(255,220,80,0.4);
-  animation: pu-zone-pulse 1.4s ease-in-out infinite;
+  border-color: rgba(255, 220, 80, 0.7);
+  box-shadow: 0 0 0 2px rgba(255,220,80,0.3), 0 0 14px rgba(255,220,80,0.25);
+  animation: pu-zone-pulse 1.3s ease-in-out infinite;
 }
 
 @keyframes pu-zone-pulse {
-  0%, 100% { box-shadow: 0 0 0 2px var(--pu-selected), 0 0 8px  rgba(255,220,80,0.3); }
-  50%       { box-shadow: 0 0 0 3px var(--pu-selected), 0 0 18px rgba(255,220,80,0.6); }
+  0%, 100% { box-shadow: 0 0 0 1px rgba(255,220,80,0.35), 0 0 8px  rgba(255,220,80,0.2); }
+  50%       { box-shadow: 0 0 0 3px rgba(255,220,80,0.55), 0 0 20px rgba(255,220,80,0.4); }
 }
 
-.pu-offboard__label {
-  font-size: 9px;
+.pu-offboard__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pu-offboard--ai .pu-offboard__head { flex-direction: row-reverse; }
+
+.pu-offboard__name {
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.05em;
-  color: var(--pu-gold-dim);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  position: absolute;
-  bottom: 3px;
-  width: 100%;
-  text-align: center;
+  color: var(--pu-gold-dim);
+}
+
+.pu-offboard__dir {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: rgba(140, 200, 90, 0.4);
+}
+
+.pu-offboard__pieces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
 }
 
 /* ── Stick dice ──────────────────────────────────────────────────────── */
@@ -2611,33 +2653,33 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  min-height: 2.2rem;
+  gap: 7px;
+  min-height: 2rem;
   flex-wrap: wrap;
 }
 
 .pu-stick {
-  width: 2.6rem;
-  height: 0.7rem;
+  width: 3rem;
+  height: 0.75rem;
   border-radius: 6px;
   background: var(--pu-stick);
-  border: 1px solid rgba(120,80,30,0.6);
-  box-shadow: inset 0 1px 2px rgba(255,255,255,0.08), 0 1px 3px rgba(0,0,0,0.5);
-  transition: background 0.15s;
+  border: 1px solid rgba(90, 60, 20, 0.7);
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.06), 0 1px 4px rgba(0,0,0,0.5);
+  transition: background 0.12s, box-shadow 0.12s;
 }
 
 .pu-stick--marked {
   background: var(--pu-stick-1);
-  border-color: rgba(220,180,80,0.6);
-  box-shadow: inset 0 1px 2px rgba(255,255,255,0.2), 0 0 6px rgba(230,190,80,0.4);
+  border-color: rgba(220, 175, 60, 0.7);
+  box-shadow: inset 0 1px 3px rgba(255,255,200,0.25), 0 0 8px rgba(220,180,60,0.45);
 }
 
 .pu-roll-total {
-  font-size: 0.92rem;
+  font-size: 0.95rem;
+  font-weight: 700;
   color: var(--pu-gold-light);
-  font-weight: 600;
-  margin-left: 8px;
-  letter-spacing: 0.03em;
+  margin-left: 10px;
+  letter-spacing: 0.04em;
 }
 
 /* ── Controls ────────────────────────────────────────────────────────── */
@@ -2646,7 +2688,6 @@
   flex-wrap: wrap;
   gap: 8px;
   justify-content: center;
-  width: 100%;
 }
 
 .pu-mode-row {
@@ -2657,38 +2698,31 @@
 }
 
 .pu-btn {
-  padding: 0.5rem 1.4rem;
+  padding: 0.5rem 1.5rem;
   font-size: 0.9rem;
   font-weight: 600;
   font-family: inherit;
   border: 1.5px solid var(--pu-gold);
   border-radius: 8px;
-  background: rgba(200,160,80,0.14);
+  background: rgba(200,160,80,0.13);
   color: var(--pu-gold-light);
   cursor: pointer;
   letter-spacing: 0.04em;
-  transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+  transition: background 0.14s, border-color 0.14s, opacity 0.14s;
 }
 
-.pu-btn:hover:not(:disabled) {
-  background: rgba(200,160,80,0.26);
-}
-
-.pu-btn:disabled {
-  opacity: 0.38;
-  cursor: not-allowed;
-}
+.pu-btn:hover:not(:disabled) { background: rgba(200,160,80,0.25); }
+.pu-btn:disabled              { opacity: 0.35; cursor: not-allowed; }
 
 .pu-btn--secondary {
-  border-color: rgba(200,160,80,0.35);
+  border-color: rgba(200,160,80,0.3);
   background: transparent;
   color: var(--pu-gold-dim);
 }
-
 .pu-btn--secondary:hover:not(:disabled) {
   border-color: var(--pu-gold);
   color: var(--pu-gold-light);
-  background: rgba(200,160,80,0.12);
+  background: rgba(200,160,80,0.1);
 }
 
 .pu-btn--mode {
@@ -2696,15 +2730,14 @@
   font-size: 11px;
   font-weight: 600;
   background: transparent;
-  border: 1px solid rgba(200,160,80,0.25);
-  color: rgba(200,160,80,0.45);
+  border: 1px solid rgba(200,160,80,0.22);
+  color: rgba(200,160,80,0.42);
   box-shadow: none;
 }
-
 .pu-btn--mode.active {
   border-color: var(--pu-gold);
   color: var(--pu-gold-light);
-  background: rgba(200,160,80,0.15);
+  background: rgba(200,160,80,0.14);
 }
 
 /* ── Status ──────────────────────────────────────────────────────────── */
@@ -2719,20 +2752,20 @@
 /* ── Score ───────────────────────────────────────────────────────────── */
 .pu-score {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   justify-content: center;
   flex-wrap: wrap;
 }
 
 .pu-score > span {
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   font-weight: 600;
   color: var(--pu-gold-dim);
-  background: rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.04);
   border: 1px solid var(--pu-border);
   border-radius: 20px;
   padding: 3px 14px;
-  min-width: 160px;
+  min-width: 155px;
   text-align: center;
   letter-spacing: 0.02em;
 }
@@ -2743,7 +2776,7 @@
   padding: 0;
   margin: 0;
   width: 100%;
-  max-height: 130px;
+  max-height: 120px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -2752,13 +2785,13 @@
 
 .pu-log li {
   font-size: 0.78rem;
-  color: rgba(210,195,150,0.65);
+  color: rgba(205, 190, 145, 0.6);
   padding: 1px 6px;
-  border-left: 2px solid rgba(200,160,80,0.2);
+  border-left: 2px solid rgba(200,160,80,0.18);
 }
 
 .pu-log li:first-child {
-  color: rgba(210,195,150,0.9);
+  color: rgba(205,190,145,0.9);
   border-left-color: var(--pu-gold);
 }
 
@@ -2788,12 +2821,15 @@
 
 /* ── Responsive ──────────────────────────────────────────────────────── */
 @media (max-width: 560px) {
-  .pu-game-wrap      { padding: 1rem 0.75rem; gap: 0.75rem; }
-  .pu-space          { flex: 1 0 1.8rem; min-width: 1.8rem; height: 3.4rem; }
-  .pu-piece          { width: 1.3rem; height: 1.3rem; }
-  .pu-piece--waiting { width: 1rem;   height: 1rem; }
-  .pu-offboard       { width: 3rem;   min-height: 3.4rem; }
-  .pu-stick          { width: 1.8rem; height: 0.55rem; }
-  .pu-btn            { padding: 0.4rem 0.9rem; font-size: 0.84rem; }
-  .pu-score > span   { min-width: 130px; font-size: 0.78rem; }
+  .pu-game-wrap    { padding: 1rem 0.75rem; gap: 0.75rem; }
+  .pu-board        { padding: 5px; gap: 3px; }
+  .pu-space        { height: 4.6rem; padding: 3px 1px 16px; }
+  .pu-piece        { width: 1.5rem;  height: 1.5rem; }
+  .pu-piece--prisoner { width: 1.1rem; height: 1.1rem; }
+  .pu-piece--waiting,
+  .pu-piece--scored   { width: 1.2rem; height: 1.2rem; }
+  .pu-stick        { width: 2rem;   height: 0.6rem; }
+  .pu-btn          { padding: 0.4rem 0.9rem; font-size: 0.85rem; }
+  .pu-score > span { min-width: 130px; font-size: 0.78rem; }
+  .pu-offboard     { padding: 6px 8px; }
 }
