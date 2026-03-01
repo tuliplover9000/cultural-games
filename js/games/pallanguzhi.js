@@ -184,22 +184,22 @@
       for (var j = 0; j < 7; j++) { if (state.cups[j] > 0) clickableAI.push(j); }
     }
 
-    // Turn banner
-    var bannerCls, bannerText;
-    if (state.phase === 'over') {
-      bannerCls  = 'pg-banner--over';
-      bannerText = state.endMsg || 'Game over';
-    } else if (state.turn === AI && !vsHuman) {
-      bannerCls  = 'pg-banner--ai';
-      bannerText = state.phase === 'ai-thinking'  ? 'AI is thinking\u2026'
-                 : state.phase === 'ai-selecting' ? 'AI chose a cup\u2026'
-                 : state.phase === 'sowing'       ? 'AI sowing\u2026'
-                 : 'AI\u2019s turn';
+    // Status message
+    var statusMsg;
+    if (state.phase === 'ai-thinking') {
+      statusMsg = opp + ' is thinking <span class="pg-dots"><span></span><span></span><span></span></span>';
+    } else if (state.phase === 'ai-selecting') {
+      statusMsg = opp + ' chose a cup\u2026';
+    } else if (state.phase === 'sowing') {
+      statusMsg = vsHuman
+        ? (state.turn === PLAYER ? 'Player 1' : 'Player 2') + ' sowing\u2026'
+        : (state.turn === PLAYER ? 'Sowing\u2026' : opp + ' sowing\u2026');
+    } else if (state.phase === 'over') {
+      statusMsg = state.endMsg || 'Game over.';
     } else {
-      var whose = vsHuman ? (state.turn === PLAYER ? 'Player 1' : 'Player 2') : 'Your';
-      bannerCls  = state.turn === PLAYER ? 'pg-banner--p1' : 'pg-banner--p2';
-      bannerText = state.phase === 'sowing' ? (whose) + ' sowing\u2026'
-                                            : (whose) + '\u2019s turn \u2014 click a highlighted cup';
+      statusMsg = vsHuman
+        ? (state.turn === PLAYER ? 'Player 1 \u2014 click a highlighted cup' : 'Player 2 \u2014 click a highlighted cup')
+        : 'Your turn \u2014 click a highlighted cup to sow';
     }
 
     // Board rows
@@ -235,25 +235,24 @@
       + '</div>';
 
     return '<div class="pg-game">'
-      + '<div class="pg-banner ' + bannerCls + '">' + bannerText + '</div>'
-      + '<div class="pg-score-bar">'
-        + '<div class="pg-score-block pg-score-block--ai">'
-          + '<div class="pg-score-label">' + opp + '</div>'
-          + '<div class="pg-score-val">' + state.stores[AI] + '</div>'
-        + '</div>'
-        + '<div class="pg-score-divider">vs</div>'
-        + '<div class="pg-score-block pg-score-block--player">'
-          + '<div class="pg-score-label">' + you + '</div>'
-          + '<div class="pg-score-val">' + state.stores[PLAYER] + '</div>'
-        + '</div>'
-      + '</div>'
+      + '<div class="pg-status">' + statusMsg + '</div>'
       + '<div class="pg-board-wrap">'
+        + '<div class="pg-store pg-store--ai">'
+          + '<div class="pg-store__label">' + opp + '</div>'
+          + '<div class="pg-store__val">' + state.stores[AI] + '</div>'
+          + '<div class="pg-store__sub">captured</div>'
+        + '</div>'
         + '<div class="pg-board">'
           + '<div class="pg-row-label pg-row-label--ai">' + opp + '\u2019s cups</div>'
           + '<div class="pg-row pg-row--ai">' + aiRow + '</div>'
           + '<div class="pg-divider"></div>'
           + '<div class="pg-row pg-row--player">' + playerRow + '</div>'
           + '<div class="pg-row-label pg-row-label--player">' + you + '\u2019s cups</div>'
+        + '</div>'
+        + '<div class="pg-store pg-store--player">'
+          + '<div class="pg-store__label">' + you + '</div>'
+          + '<div class="pg-store__val">' + state.stores[PLAYER] + '</div>'
+          + '<div class="pg-store__sub">captured</div>'
         + '</div>'
       + '</div>'
       + logHtml
@@ -439,9 +438,15 @@
     if (state.turn === AI && mode === 'vs-ai') {
       state.phase = 'ai-thinking';
       render();
-      await sleep(700 + Math.random() * 400);
+      // Always show "AI is thinking" for at least 350ms even if skip was pressed
+      await new Promise(function (r) { setTimeout(r, 350); });
+      // Rest of the thinking delay respects skip
+      await sleep(350 + Math.random() * 300);
       await runAI();
     } else {
+      // Reset skip when control returns to the player
+      skipSowing  = false;
+      skipResolve = null;
       render();
     }
   }
@@ -488,8 +493,7 @@
     state.aiSelectingCup = -1;
     addLog('AI picks cup ' + (cup + 1) + ' (' + state.cups[cup] + ' shells)');
     state.phase = 'sowing';
-    skipSowing  = false;
-    skipResolve = null;
+    // Don't reset skipSowing here — let it cascade so one skip gets player to their turn
     render();
 
     await sow(cup);
