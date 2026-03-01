@@ -52,41 +52,8 @@
         </p>
       </header>
 
-      <!-- Game Container -->
-      <div class="game-container" id="game-container" aria-label="Game area">
-        <div class="pg-game-wrap">
-
-          <!-- Board (14 cups: 7 AI top, 7 Player bottom) -->
-          <div id="pg-board" class="pg-board" role="img" aria-label="Pallanguzhi board"></div>
-
-          <!-- Stores row -->
-          <div class="pg-stores-row">
-            <div class="pg-store-block">
-              <div class="pg-store-label" id="pg-ai-store-label">AI Store</div>
-              <div class="pg-store" id="pg-store-ai" aria-label="AI store">0</div>
-            </div>
-            <div class="pg-store-block">
-              <div class="pg-store-label">Your Store</div>
-              <div class="pg-store" id="pg-store-player" aria-label="Your store">0</div>
-            </div>
-          </div>
-
-          <!-- Controls -->
-          <div class="pg-controls">
-            <div class="pg-mode-row">
-              <button id="pg-mode-ai"    class="pg-btn pg-btn--mode active">vs AI</button>
-              <button id="pg-mode-human" class="pg-btn pg-btn--mode">vs Player</button>
-            </div>
-            <button id="pg-new-game-btn" class="pg-btn pg-btn--secondary">New Game</button>
-          </div>
-
-          <!-- Status bar -->
-          <p id="pg-status" class="pg-status" aria-live="assertive"></p>
-
-          <!-- Log -->
-          <ol id="pg-log" class="pg-log" aria-label="Game log" reversed></ol>
-        </div>
-      </div>
+      <!-- Game Container — populated by pallanguzhi.js -->
+      <div class="game-container" id="game-container" aria-label="Game area"></div>
 
       <!-- How to Play -->
       <details class="accordion" open>

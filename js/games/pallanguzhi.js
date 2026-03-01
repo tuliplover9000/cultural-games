@@ -2,28 +2,35 @@
    Pallanguzhi — South Indian Mancala
    js/games/pallanguzhi.js  |  CSS prefix: pg-
 
+   Board layout (player's perspective, CCW sowing):
+     AI row displayed:     [0][ 1][ 2][ 3][ 4][ 5][ 6]   (cups 0–6)
+     Player row displayed: [7][ 8][ 9][10][11][12][13]   (cups 7–13)
+   Cup 6 is directly above cup 13 (both at the right end).
+   Cup 0 is directly above cup 7  (both at the left end).
+
+   CCW cycle: 7→8→9→10→11→12→13→6→5→4→3→2→1→0→7…
+
    Rules:
-   - 2 rows × 7 cups (indices 0–6: AI top row; 7–13: Player bottom row)
    - 6 shells per cup at start (84 total)
-   - Sowing: pick up all shells, distribute one-by-one counter-clockwise
-   - CCW cycle: 7→8→9→10→11→12→13→6→5→4→3→2→1→0→7…
-   - Capture-on-4: last shell makes a cup reach exactly 4 → capture, continue
-   - Continue sowing: last shell lands in non-empty cup (≠ 4) → re-pick, continue
-   - Empty-cup capture (own row): last shell lands in own empty cup →
-       if opposite cup non-empty: capture it; turn ends
-   - Win: player's entire row empty → sweep board → most shells wins
+   - Sow: pick up all shells, drop one per cup CCW
+   - Capture-on-4: last shell makes cup reach 4 → capture 4, sow from next cup
+   - Continue: last shell in non-empty cup (≠4) → re-pick and continue
+   - Empty-cup capture (own row): last shell in own empty cup →
+       if opposite cup has shells: capture them; turn ends
+   - Win: player's row all-empty → sweep → most shells wins
 ───────────────────────────────────────────────────────────────────────── */
 
 (function () {
   'use strict';
 
   // ── Constants ─────────────────────────────────────────────────────────
-  var PLAYER         = 0;   // owns cups 7–13 (bottom row)
-  var AI             = 1;   // owns cups 0–6  (top row)
-  var TOTAL_CUPS     = 14;
-  var SHELLS_PER_CUP = 6;
+  var PLAYER     = 0;   // owns cups 7–13 (bottom row)
+  var AI         = 1;   // owns cups 0–6  (top row)
+  var TOTAL_CUPS = 14;
+  var SHELLS_PER = 6;
+  var SOW_MS     = 160; // ms between shell drops
 
-  // Counter-clockwise cycle: player row left→right, then AI row right→left
+  // CCW cycle: player row L→R, then AI row R→L
   var CYCLE = [7, 8, 9, 10, 11, 12, 13, 6, 5, 4, 3, 2, 1, 0];
 
   // ── Module-level vars ─────────────────────────────────────────────────
@@ -33,41 +40,34 @@
   // ── Name helpers ──────────────────────────────────────────────────────
   function p1Name() { return 'Player 1'; }
   function p2Name() { return mode === 'vs-human' ? 'Player 2' : 'AI'; }
-  function currentName() { return state.turn === PLAYER ? p1Name() : p2Name(); }
+  function turnName() { return state.turn === PLAYER ? p1Name() : p2Name(); }
 
-  // ── Status / log ──────────────────────────────────────────────────────
-  function setStatus(msg) {
-    var el = document.getElementById('pg-status');
-    if (el) el.innerHTML = msg;
-  }
-
+  // ── Log ───────────────────────────────────────────────────────────────
   function addLog(msg) {
     state.log.unshift(msg);
-    if (state.log.length > 30) state.log.pop();
-    renderLog();
+    if (state.log.length > 14) state.log.length = 14;
   }
 
   // ── New game ──────────────────────────────────────────────────────────
   function newGame() {
     var cups = [];
-    for (var i = 0; i < TOTAL_CUPS; i++) cups.push(SHELLS_PER_CUP);
+    for (var i = 0; i < TOTAL_CUPS; i++) cups.push(SHELLS_PER);
 
     state = {
-      phase:     'idle',   // idle | sowing | ai-thinking | over
-      turn:      PLAYER,
-      cups:      cups,
-      stores:    { 0: 0, 1: 0 },   // keyed by PLAYER / AI
-      sowingCup: -1,
-      log:       [],
+      phase:          'idle',   // idle | sowing | ai-thinking | ai-selecting | over
+      turn:           PLAYER,
+      cups:           cups,
+      stores:         { 0: 0, 1: 0 },
+      sowingCup:      -1,   // cup currently receiving a shell (for glow)
+      aiSelectingCup: -1,   // cup AI chose (shown briefly before sowing)
+      log:            [],
     };
-
     render();
-    setStatus(p1Name() + ' — click a highlighted cup to sow.');
   }
 
   // ── Board helpers ─────────────────────────────────────────────────────
 
-  // Opposite cup across the board: 0↔7, 1↔8, …, 6↔13
+  // Cup directly across the board: 0↔7, 1↔8, …, 6↔13
   function oppositeCup(cup) {
     return cup < 7 ? cup + 7 : cup - 7;
   }
@@ -77,7 +77,7 @@
     return state.turn === PLAYER ? cup >= 7 : cup < 7;
   }
 
-  // Return the 14 cups in CCW order starting AFTER startCup
+  // 14 cups in CCW order starting AFTER startCup
   function sowingOrder(startCup) {
     var idx = CYCLE.indexOf(startCup);
     var result = [];
@@ -87,7 +87,7 @@
     return result;
   }
 
-  // Find the next non-empty cup in CCW order after fromCup; -1 if none
+  // Next non-empty cup in CCW order after fromCup; -1 if none
   function findNextNonEmpty(fromCup) {
     var order = sowingOrder(fromCup);
     for (var i = 0; i < order.length; i++) {
@@ -98,112 +98,185 @@
 
   // ── Rendering ─────────────────────────────────────────────────────────
   function render() {
-    renderBoard();
-    renderStores();
-    renderLog();
+    var el = document.getElementById('game-container');
+    if (!el) return;
+    el.innerHTML = buildUI();
+    wireEvents(el);
   }
 
-  function renderBoard() {
-    var el = document.getElementById('pg-board');
-    if (!el) return;
+  function buildUI() {
+    var vsHuman = mode === 'vs-human';
+    var you     = vsHuman ? 'Player 1' : 'You';
+    var opp     = vsHuman ? 'Player 2' : 'AI';
 
     var isIdle = state.phase === 'idle';
-    var html = '';
 
-    // AI row: cups 0–6, top row
-    html += '<div class="pg-row pg-row--ai">';
+    // Clickable cups this turn
+    var clickablePlayer = [];
+    var clickableAI     = [];
+    if (isIdle && state.turn === PLAYER) {
+      for (var i = 7; i < 14; i++) { if (state.cups[i] > 0) clickablePlayer.push(i); }
+    }
+    if (isIdle && state.turn === AI && vsHuman) {
+      for (var i = 0; i < 7; i++) { if (state.cups[i] > 0) clickableAI.push(i); }
+    }
+
+    // Status message
+    var statusMsg;
+    if (state.phase === 'ai-thinking') {
+      statusMsg = opp + ' is thinking <span class="pg-dots"><span></span><span></span><span></span></span>';
+    } else if (state.phase === 'ai-selecting') {
+      statusMsg = opp + ' chose a cup\u2026';
+    } else if (state.phase === 'sowing') {
+      if (vsHuman) {
+        statusMsg = (state.turn === PLAYER ? 'Player 1' : 'Player 2') + ' sowing\u2026';
+      } else {
+        statusMsg = state.turn === PLAYER ? 'Sowing\u2026' : opp + ' sowing\u2026';
+      }
+    } else if (state.phase === 'over') {
+      statusMsg = state.endMsg || 'Game over.';
+    } else {
+      statusMsg = vsHuman
+        ? (state.turn === PLAYER ? 'Player 1 \u2014 click a highlighted cup' : 'Player 2 \u2014 click a highlighted cup')
+        : 'Your turn \u2014 click a highlighted cup to sow';
+    }
+
+    // AI row: cups 0–6, left to right
+    var aiRow = '';
     for (var i = 0; i < 7; i++) {
-      var canClick = isIdle
-        && (state.turn === AI && mode === 'vs-human')
-        && state.cups[i] > 0;
-      html += cupHTML(i, canClick);
+      aiRow += pitHTML(
+        i,
+        clickableAI.indexOf(i) !== -1,
+        state.sowingCup === i,
+        state.aiSelectingCup === i
+      );
     }
-    html += '</div>';
-
-    // Player row: cups 7–13, bottom row
-    html += '<div class="pg-row pg-row--player">';
+    // Player row: cups 7–13, left to right
+    var playerRow = '';
     for (var j = 7; j < 14; j++) {
-      var canClickP = isIdle && state.turn === PLAYER && state.cups[j] > 0;
-      html += cupHTML(j, canClickP);
+      playerRow += pitHTML(
+        j,
+        clickablePlayer.indexOf(j) !== -1,
+        state.sowingCup === j,
+        false
+      );
     }
-    html += '</div>';
 
-    el.innerHTML = html;
+    // Log HTML
+    var logHtml = '';
+    if (state.log.length) {
+      var items = state.log.map(function (m) { return '<li>' + m + '</li>'; }).join('');
+      logHtml = '<div class="pg-log"><ul>' + items + '</ul></div>';
+    }
 
-    // Wire clicks
-    el.querySelectorAll('.pg-cup--clickable').forEach(function (cupEl) {
-      cupEl.addEventListener('click', function () {
-        onCupClick(parseInt(cupEl.dataset.cup, 10));
+    // Mode + new-game controls
+    var controls = '<div class="pg-actions">'
+      + '<div class="pg-mode">'
+      + '<span class="pg-mode-label">Mode:</span>'
+      + '<button class="pg-diff-btn' + (mode === 'vs-ai'    ? ' active' : '') + '" id="pg-mode-ai">vs AI</button>'
+      + '<button class="pg-diff-btn' + (mode === 'vs-human' ? ' active' : '') + '" id="pg-mode-human">vs Player</button>'
+      + '</div>'
+      + '<button class="pg-btn" id="pg-new">New Game</button>'
+      + '</div>';
+
+    return '<div class="pg-game">'
+      + '<div class="pg-status">' + statusMsg + '</div>'
+      + '<div class="pg-board-wrap">'
+        + '<div class="pg-store pg-store--ai">'
+          + '<div class="pg-store__label">' + opp + '</div>'
+          + '<div class="pg-store__val">' + state.stores[AI] + '</div>'
+          + '<div class="pg-store__sub">captured</div>'
+        + '</div>'
+        + '<div class="pg-board">'
+          + '<div class="pg-row-label pg-row-label--ai">' + opp + '\u2019s cups</div>'
+          + '<div class="pg-row pg-row--ai">' + aiRow + '</div>'
+          + '<div class="pg-divider"></div>'
+          + '<div class="pg-row pg-row--player">' + playerRow + '</div>'
+          + '<div class="pg-row-label pg-row-label--player">' + you + '\u2019s cups</div>'
+        + '</div>'
+        + '<div class="pg-store pg-store--player">'
+          + '<div class="pg-store__label">' + you + '</div>'
+          + '<div class="pg-store__val">' + state.stores[PLAYER] + '</div>'
+          + '<div class="pg-store__sub">captured</div>'
+        + '</div>'
+      + '</div>'
+      + logHtml
+      + controls
+      + '</div>';
+  }
+
+  // Deterministic rotation — no obvious patterns
+  function shellRot(cup, i) {
+    var h = ((cup + 1) * 31 + i * 79 + (cup + 1) * (i + 1) * 13) % 140;
+    return h - 70; // −70 … +69 degrees
+  }
+
+  // Cowrie shells arranged in a circle inside the cup
+  function circleShells(count, cup, lit) {
+    var show = Math.min(count, 14);
+    if (!show) return '';
+    // radius grows gently with count
+    var r = show === 1 ? 0 : 5 + show * 1.2;
+    var html = '';
+    for (var i = 0; i < show; i++) {
+      var angle = (2 * Math.PI * i / show) - Math.PI / 2; // start from top
+      var x = show === 1 ? 0 : parseFloat((r * Math.cos(angle)).toFixed(1));
+      var y = show === 1 ? 0 : parseFloat((r * Math.sin(angle)).toFixed(1));
+      var rot = shellRot(cup, i);
+      var isNew = lit && i === show - 1;
+      html += '<span class="pg-shell' + (isNew ? ' pg-shell--new' : '') + '"'
+            + ' style="--x:' + x + 'px;--y:' + y + 'px;--rot:' + rot + 'deg">'
+            + '</span>';
+    }
+    return html;
+  }
+
+  function pitHTML(cup, clickable, lit, aiSelected) {
+    var count = state.cups[cup];
+    var cls = ['pg-pit'];
+    if (clickable)  cls.push('pg-pit--clickable');
+    if (lit)        cls.push('pg-pit--lit');
+    if (aiSelected) cls.push('pg-pit--ai-select');
+
+    return '<div class="' + cls.join(' ') + '" data-cup="' + cup + '">'
+      + '<div class="pg-pit__shells">' + circleShells(count, cup, lit) + '</div>'
+      + '<div class="pg-pit__count">' + count + '</div>'
+      + '</div>';
+  }
+
+  // ── Event wiring ──────────────────────────────────────────────────────
+  function wireEvents(el) {
+    var newBtn = el.querySelector('#pg-new');
+    if (newBtn) newBtn.addEventListener('click', newGame);
+
+    var aiModeBtn  = el.querySelector('#pg-mode-ai');
+    var humModeBtn = el.querySelector('#pg-mode-human');
+    if (aiModeBtn)  aiModeBtn.addEventListener('click',  function () { mode = 'vs-ai';    newGame(); });
+    if (humModeBtn) humModeBtn.addEventListener('click', function () { mode = 'vs-human'; newGame(); });
+
+    el.querySelectorAll('.pg-pit--clickable').forEach(function (pitEl) {
+      pitEl.addEventListener('click', function () {
+        onCupClick(parseInt(pitEl.dataset.cup, 10));
       });
     });
   }
 
-  function cupHTML(idx, canClick) {
-    var count = state.cups[idx];
-    var isSowing = state.sowingCup === idx;
-    var cls = 'pg-cup';
-    if (canClick)  cls += ' pg-cup--clickable';
-    if (isSowing)  cls += ' pg-cup--sowing';
-    if (count === 0) cls += ' pg-cup--empty';
-
-    // Dot grid for small counts (≤ 9), number for larger
-    var inner;
-    if (count === 0) {
-      inner = '<span class="pg-cup-big">—</span>';
-    } else if (count <= 9) {
-      var dots = '';
-      for (var d = 0; d < count; d++) {
-        dots += '<span class="pg-shell"></span>';
-      }
-      inner = '<div class="pg-shell-grid">' + dots + '</div>';
-    } else {
-      inner = '<span class="pg-cup-big">' + count + '</span>';
-    }
-
-    return '<div class="' + cls + '" data-cup="' + idx + '">' + inner + '</div>';
-  }
-
-  function renderStores() {
-    var aiEl = document.getElementById('pg-store-ai');
-    var plEl = document.getElementById('pg-store-player');
-    var lbEl = document.getElementById('pg-ai-store-label');
-
-    if (aiEl) aiEl.textContent = state.stores[AI];
-    if (plEl) plEl.textContent = state.stores[PLAYER];
-
-    // Update label for vs-human
-    if (lbEl) lbEl.textContent = (mode === 'vs-human' ? 'Player 2' : 'AI') + ' Store';
-
-    // Update "Your Store" label
-    var playerLabel = document.querySelector('.pg-store-block:last-child .pg-store-label');
-    if (playerLabel) playerLabel.textContent = (mode === 'vs-human' ? 'Player 1' : 'You') + ' Store';
-  }
-
-  function renderLog() {
-    var el = document.getElementById('pg-log');
-    if (!el) return;
-    el.innerHTML = state.log.map(function (m) { return '<li>' + m + '</li>'; }).join('');
-  }
-
   // ── Sowing ────────────────────────────────────────────────────────────
-  function onCupClick(cupIdx) {
+  function onCupClick(cup) {
     if (state.phase !== 'idle') return;
-
-    var validPlayer = state.turn === PLAYER && cupIdx >= 7 && cupIdx <= 13 && state.cups[cupIdx] > 0;
-    var validAI     = state.turn === AI && mode === 'vs-human' && cupIdx >= 0 && cupIdx <= 6 && state.cups[cupIdx] > 0;
+    var validPlayer = state.turn === PLAYER && cup >= 7  && state.cups[cup] > 0;
+    var validAI     = state.turn === AI     && cup < 7   && state.cups[cup] > 0 && mode === 'vs-human';
     if (!validPlayer && !validAI) return;
 
-    var cupLabel = cupIdx < 7 ? (cupIdx + 1) : (cupIdx - 6); // 1-indexed label
-    addLog(currentName() + ' picks cup ' + cupLabel + ' (' + state.cups[cupIdx] + ' shells)');
+    var label = (cup < 7 ? (cup + 1) : (cup - 6)); // 1-based label within row
+    addLog(turnName() + ' picks cup ' + label + ' (' + state.cups[cup] + ' shells)');
     state.phase = 'sowing';
-    setStatus('Sowing…');
-
-    setTimeout(function () { sow(cupIdx); }, 60);
+    render();
+    setTimeout(function () { sow(cup); }, 60);
   }
 
   function sow(cupIdx) {
     if (state.cups[cupIdx] === 0) {
-      // Caller should have checked, but guard anyway
       var next = findNextNonEmpty(cupIdx);
       if (next === -1) { endTurn(); return; }
       sow(next);
@@ -212,83 +285,65 @@
 
     var shells = state.cups[cupIdx];
     state.cups[cupIdx] = 0;
-
     var order = sowingOrder(cupIdx);
-    var step = 0;
-    var lastCup = cupIdx;
+    var step  = 0;
+    var lastCup      = cupIdx;
     var lastWasEmpty = false;
 
     function dropOne() {
       if (shells === 0) {
         state.sowingCup = -1;
-        renderBoard();
+        render();
         setTimeout(function () { resolveLastDrop(lastCup, lastWasEmpty); }, 140);
         return;
       }
-      var target = order[step % order.length];
-      lastWasEmpty = (state.cups[target] === 0);
+      var target    = order[step % order.length];
+      lastWasEmpty  = (state.cups[target] === 0);
       state.cups[target]++;
       shells--;
       step++;
-      lastCup = target;
+      lastCup       = target;
       state.sowingCup = target;
-      renderBoard();
-      setTimeout(dropOne, 160);
+      render();
+      setTimeout(dropOne, SOW_MS);
     }
 
     dropOne();
   }
 
   function resolveLastDrop(lastCup, wasEmpty) {
-    // ── Capture-on-4 ────────────────────────────────────────────────────
+    // ── Capture-on-4 ──────────────────────────────────────────────────
     if (state.cups[lastCup] === 4) {
       state.stores[state.turn] += 4;
       state.cups[lastCup] = 0;
-      addLog(currentName() + ' captured 4! Store → ' + state.stores[state.turn]);
-      setStatus(currentName() + ' captured 4! Continuing…');
-      renderBoard();
-      renderStores();
-
+      addLog(turnName() + ' captured 4! Store \u2192 ' + state.stores[state.turn]);
+      render();
       setTimeout(function () {
         var next = findNextNonEmpty(lastCup);
-        if (next === -1) {
-          endTurn();
-        } else {
-          sow(next);
-        }
-      }, 320);
+        if (next === -1) { endTurn(); }
+        else             { sow(next); }
+      }, 340);
       return;
     }
 
-    // ── Empty-cup landing ────────────────────────────────────────────────
+    // ── Empty-cup landing ──────────────────────────────────────────────
     if (wasEmpty) {
-      if (isOwnCup(lastCup)) {
-        var opp = oppositeCup(lastCup);
-        if (state.cups[opp] > 0) {
-          var grabbed = state.cups[opp];
-          state.stores[state.turn] += grabbed;
-          state.cups[opp] = 0;
-          addLog(currentName() + ' landed in empty cup — captured ' + grabbed + ' from opposite!');
-          setStatus(currentName() + ' captured ' + grabbed + ' shells from across!');
-          renderBoard();
-          renderStores();
-        } else {
-          addLog(currentName() + ' landed in empty cup — no capture.');
-          setStatus('Empty cup — no capture. Turn ends.');
-          renderBoard();
-        }
+      var opp = oppositeCup(lastCup);
+      if (isOwnCup(lastCup) && state.cups[opp] > 0) {
+        var grabbed = state.cups[opp];
+        state.stores[state.turn] += grabbed;
+        state.cups[opp] = 0;
+        addLog(turnName() + ' captured ' + grabbed + ' from opposite!');
+        render();
       } else {
-        // Landed in opponent's empty cup — no capture
-        addLog(currentName() + ' landed in opponent\'s empty cup.');
-        setStatus('Turn ends.');
-        renderBoard();
+        addLog(turnName() + ' landed in empty cup \u2014 no capture.');
+        render();
       }
       setTimeout(endTurn, 500);
       return;
     }
 
-    // ── Continue sowing (non-empty, not 4) ──────────────────────────────
-    setStatus(currentName() + ' continues sowing…');
+    // ── Continue sowing (non-empty, not 4) ────────────────────────────
     setTimeout(function () { sow(lastCup); }, 220);
   }
 
@@ -301,71 +356,69 @@
 
     if (state.turn === AI && mode === 'vs-ai') {
       state.phase = 'ai-thinking';
-      setStatus('<span class="pg-thinking"><span></span><span></span><span></span></span> AI is thinking…');
-      renderBoard();
-      setTimeout(aiTurn, 700 + Math.random() * 400);
+      render();
+      setTimeout(runAI, 700 + Math.random() * 400);
     } else {
-      setStatus(currentName() + ' — click a highlighted cup to sow.');
-      renderBoard();
+      render();
     }
   }
 
   function checkGameOver() {
-    var playerEmpty = true;
+    var playerEmpty = true, aiEmpty = true;
     for (var i = 7; i < 14; i++) { if (state.cups[i] > 0) { playerEmpty = false; break; } }
-    var aiEmpty = true;
-    for (var i = 0; i < 7; i++) { if (state.cups[i] > 0) { aiEmpty = false; break; } }
-
+    for (var i = 0; i < 7;  i++) { if (state.cups[i] > 0) { aiEmpty     = false; break; } }
     if (!playerEmpty && !aiEmpty) return false;
 
-    // Sweep remaining shells: each player gets their own row's shells
-    for (var i = 0; i < 7; i++) { state.stores[AI] += state.cups[i]; state.cups[i] = 0; }
+    // Sweep remaining shells to their owners
+    for (var i = 0; i < 7;  i++) { state.stores[AI]     += state.cups[i]; state.cups[i] = 0; }
     for (var i = 7; i < 14; i++) { state.stores[PLAYER] += state.cups[i]; state.cups[i] = 0; }
 
     state.phase = 'over';
-
     var ps = state.stores[PLAYER], as = state.stores[AI];
-    var pn = (mode === 'vs-human' ? 'Player 1' : 'You');
-    var an = (mode === 'vs-human' ? 'Player 2' : 'AI');
+    var pn = mode === 'vs-human' ? 'Player 1' : 'You';
+    var an = mode === 'vs-human' ? 'Player 2' : 'AI';
 
-    var msg;
     if (ps > as) {
-      msg = '🏆 ' + pn + ' wins! ' + ps + ' vs ' + as + ' shells.';
-      addLog(pn + ' wins ' + ps + '–' + as + '!');
+      state.endMsg = '\uD83C\uDFC6 ' + pn + ' win' + (mode === 'vs-human' ? 's' : '') + '! ' + ps + ' \u2013 ' + as + ' shells.';
+      addLog(pn + ' wins ' + ps + '\u2013' + as + '!');
     } else if (as > ps) {
-      msg = '🏆 ' + an + ' wins! ' + as + ' vs ' + ps + ' shells.';
-      addLog(an + ' wins ' + as + '–' + ps + '!');
+      state.endMsg = '\uD83C\uDFC6 ' + an + ' wins! ' + as + ' \u2013 ' + ps + ' shells.';
+      addLog(an + ' wins ' + as + '\u2013' + ps + '!');
     } else {
-      msg = 'Draw — both have ' + ps + ' shells!';
-      addLog('Draw! ' + ps + '–' + as);
+      state.endMsg = 'Draw \u2014 both have ' + ps + ' shells.';
+      addLog('Draw! ' + ps + '\u2013' + as);
     }
 
-    setStatus(msg);
-    renderBoard();
-    renderStores();
+    render();
     return true;
   }
 
   // ── AI ────────────────────────────────────────────────────────────────
-  function aiTurn() {
+  function runAI() {
+    if (state.phase !== 'ai-thinking') return;
     var cup = aiChooseMove();
     if (cup === -1) { endTurn(); return; }
 
-    var cupLabel = cup + 1; // AI cups 0-6 → label 1-7
-    addLog('AI picks cup ' + cupLabel + ' (' + state.cups[cup] + ' shells)');
-    state.phase = 'sowing';
-    setTimeout(function () { sow(cup); }, 120);
+    // Briefly show which cup the AI picked
+    state.phase         = 'ai-selecting';
+    state.aiSelectingCup = cup;
+    render();
+
+    setTimeout(function () {
+      state.aiSelectingCup = -1;
+      var label = cup + 1;
+      addLog('AI picks cup ' + label + ' (' + state.cups[cup] + ' shells)');
+      state.phase = 'sowing';
+      sow(cup);
+    }, 900);
   }
 
   function aiChooseMove() {
     var candidates = [];
-    for (var i = 0; i < 7; i++) {
-      if (state.cups[i] > 0) candidates.push(i);
-    }
-    if (candidates.length === 0) return -1;
+    for (var i = 0; i < 7; i++) { if (state.cups[i] > 0) candidates.push(i); }
+    if (!candidates.length) return -1;
 
-    var best = candidates[0];
-    var bestScore = -Infinity;
+    var best = candidates[0], bestScore = -Infinity;
     for (var j = 0; j < candidates.length; j++) {
       var s = scoreAICup(candidates[j]);
       if (s > bestScore) { bestScore = s; best = candidates[j]; }
@@ -375,50 +428,22 @@
 
   function scoreAICup(cup) {
     var shells = state.cups[cup];
-    if (shells === 0) return -Infinity;
+    if (!shells) return -Infinity;
 
-    var order = sowingOrder(cup);
-
-    // Simulate first landing position (shells-1 steps, 0-indexed in order)
+    var order   = sowingOrder(cup);
     var landIdx = (shells - 1) % order.length;
     var landCup = order[landIdx];
-    var landCountAfter = state.cups[landCup] + 1;
+    var landAfter = state.cups[landCup] + 1;
 
-    // Highest priority: will capture 4
-    if (landCountAfter === 4) return 200;
-
-    // Next: will land in own empty cup with non-empty opposite
-    if (state.cups[landCup] === 0 && landCup < 7) {
+    if (landAfter === 4)              return 200;            // capture 4
+    if (state.cups[landCup] === 0 && landCup < 7) {         // own empty cup
       var opp = oppositeCup(landCup);
-      if (state.cups[opp] > 0) return 100 + state.cups[opp];
+      if (state.cups[opp] > 0)       return 100 + state.cups[opp]; // cross-capture
     }
-
-    // Next: will land in non-empty cup and continue (good — more sowing)
-    if (state.cups[landCup] > 0) return 10 + shells;
-
-    // Fallback: prefer more shells
+    if (state.cups[landCup] > 0)     return 10 + shells;    // continue sowing
     return shells;
   }
 
-  // ── Mode buttons ──────────────────────────────────────────────────────
-  function updateModeButtons() {
-    var aiBtn  = document.getElementById('pg-mode-ai');
-    var humBtn = document.getElementById('pg-mode-human');
-    if (aiBtn)  aiBtn.classList.toggle('active', mode === 'vs-ai');
-    if (humBtn) humBtn.classList.toggle('active', mode === 'vs-human');
-  }
-
   // ── Init ──────────────────────────────────────────────────────────────
-  function init() {
-    document.getElementById('pg-new-game-btn').addEventListener('click', newGame);
-
-    var aiBtn  = document.getElementById('pg-mode-ai');
-    var humBtn = document.getElementById('pg-mode-human');
-    if (aiBtn)  aiBtn.addEventListener('click',  function () { mode = 'vs-ai';    updateModeButtons(); newGame(); });
-    if (humBtn) humBtn.addEventListener('click', function () { mode = 'vs-human'; updateModeButtons(); newGame(); });
-
-    newGame();
-  }
-
-  document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('DOMContentLoaded', function () { newGame(); });
 }());

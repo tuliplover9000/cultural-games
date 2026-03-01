@@ -1,5 +1,5 @@
-/* =============================================================================
-   CULTURAL GAMES — games.css
+﻿/* =============================================================================
+   CULTURAL GAMES â€” games.css
    Styles specific to individual game pages and the shared game layout shell.
    Requires global.css and components.css to be loaded first.
    Each game's unique styles live in this file, organized by section.
@@ -75,7 +75,7 @@
 }
 
 /* =============================================================================
-   ACCORDION — "How to Play" and "Cultural Context" sections
+   ACCORDION â€” "How to Play" and "Cultural Context" sections
 ============================================================================= */
 .accordion {
   border: 1px solid var(--color-border);
@@ -152,7 +152,7 @@
 }
 
 /* =============================================================================
-   GAME CONTAINER — where the game canvas renders
+   GAME CONTAINER â€” where the game canvas renders
 ============================================================================= */
 .game-container {
   background-color: #f5efe0;
@@ -168,7 +168,7 @@
 }
 
 /* =============================================================================
-   DISCLAIMER — "virtual coins only" notice
+   DISCLAIMER â€” "virtual coins only" notice
 ============================================================================= */
 .game-disclaimer {
   margin-top: var(--space-4);
@@ -181,7 +181,7 @@
 }
 
 /* =============================================================================
-   Bầu Cua Tôm Cá — Phase 2
+   Báº§u Cua TÃ´m CÃ¡ â€” Phase 2
 ============================================================================= */
 
 /* Outer wrapper */
@@ -192,7 +192,7 @@
   gap: var(--space-4);
 }
 
-/* ── Wallet bar ── */
+/* â”€â”€ Wallet bar â”€â”€ */
 .bc-wallet-bar {
   display: flex;
   align-items: center;
@@ -219,7 +219,7 @@
   line-height: 1;
 }
 
-/* ── Bet input row ── */
+/* â”€â”€ Bet input row â”€â”€ */
 .bc-bet-row {
   display: flex;
   align-items: center;
@@ -287,7 +287,7 @@
   cursor: not-allowed;
 }
 
-/* ── Betting mat ── */
+/* â”€â”€ Betting mat â”€â”€ */
 .bc-mat {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -374,7 +374,7 @@
   pointer-events: none;
 }
 
-/* Bet chip — top-right corner of a selected zone */
+/* Bet chip â€” top-right corner of a selected zone */
 .bc-bet-chip {
   position: absolute;
   top: 6px;
@@ -392,7 +392,7 @@
   line-height: 1.5;
 }
 
-/* Match count chip — shown after roll */
+/* Match count chip â€” shown after roll */
 .bc-match-chip {
   position: absolute;
   bottom: 6px;
@@ -408,7 +408,7 @@
   line-height: 1.5;
 }
 
-/* ── Dice area ── */
+/* â”€â”€ Dice area â”€â”€ */
 .bc-dice-area {
   display: flex;
   flex-direction: column;
@@ -466,7 +466,7 @@
   100% { transform: scale(1); }
 }
 
-/* ── Action buttons row ── */
+/* â”€â”€ Action buttons row â”€â”€ */
 .bc-actions {
   display: flex;
   gap: var(--space-2);
@@ -474,7 +474,7 @@
   flex-wrap: wrap;
 }
 
-/* ── Status message ── */
+/* â”€â”€ Status message â”€â”€ */
 .bc-status {
   text-align: center;
   font-size: var(--text-sm);
@@ -483,7 +483,7 @@
   font-style: italic;
 }
 
-/* ── Results panel ── */
+/* â”€â”€ Results panel â”€â”€ */
 .bc-results {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -550,7 +550,7 @@
 .bc-net.positive { color: #0f5c0f; }
 .bc-net.negative { color: var(--color-accent-red); }
 
-/* ── Game Over ── */
+/* â”€â”€ Game Over â”€â”€ */
 .bc-gameover {
   text-align: center;
   padding: var(--space-6) var(--space-4);
@@ -608,7 +608,7 @@
   margin-top: 4px;
 }
 
-/* ── Responsive ── */
+/* â”€â”€ Responsive â”€â”€ */
 @media (max-width: 480px) {
   .bc-die {
     width: 68px;
@@ -627,7 +627,7 @@
 }
 
 /* =============================================================================
-   Ô Ăn Quan — Phase 3
+   Ã” Ä‚n Quan â€” Phase 3
    Traditional Vietnamese lacquerware aesthetic
 ============================================================================= */
 
@@ -645,7 +645,7 @@
   min-height: 420px;
 }
 
-/* ── Turn banner ── */
+/* â”€â”€ Turn banner â”€â”€ */
 .oaq-turn-banner {
   text-align: center;
   padding: 10px var(--space-4);
@@ -678,7 +678,7 @@
   box-shadow: 0 0 16px rgba(200,149,42,0.15);
 }
 
-/* ── Score bar ── */
+/* â”€â”€ Score bar â”€â”€ */
 .oaq-score-bar {
   display: flex;
   justify-content: space-between;
@@ -726,7 +726,7 @@
   color: rgba(240,216,176,0.14);
 }
 
-/* ── Board — lacquered Vietnamese wood ── */
+/* â”€â”€ Board â€” lacquered Vietnamese wood â”€â”€ */
 .oaq-board {
   display: grid;
   grid-template-columns: 88px repeat(5, 1fr) 88px;
@@ -744,7 +744,7 @@
     inset 0 -4px 16px rgba(0,0,0,0.65);
 }
 
-/* ── Quan pits (carved end stores) ── */
+/* â”€â”€ Quan pits (carved end stores) â”€â”€ */
 .oaq-quan {
   grid-row: 1 / 3;
   display: flex;
@@ -777,12 +777,12 @@
   font-weight: 700;
 }
 
-/* Seeds inside the quan — shift below the label, fill the rest of the pit */
+/* Seeds inside the quan â€” shift below the label, fill the rest of the pit */
 .oaq-quan-seeds {
   inset: 26px 0 0 0 !important;
 }
 
-/* ── Small pits (oval, carved) ── */
+/* â”€â”€ Small pits (oval, carved) â”€â”€ */
 .oaq-pit {
   display: flex;
   align-items: center;
@@ -827,7 +827,7 @@
     0 0 24px rgba(245,204,80,0.4);
 }
 
-/* ── Round pebble seeds (absolute, circular arrangement) ── */
+/* â”€â”€ Round pebble seeds (absolute, circular arrangement) â”€â”€ */
 .oaq-seeds {
   position: absolute;
   inset: 0;
@@ -889,7 +889,7 @@
   100% { box-shadow: inset 0 5px 18px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,0.35); }
 }
 
-/* ── Flying seed cluster — circular pit-like bubble of scattered seeds ── */
+/* â”€â”€ Flying seed cluster â€” circular pit-like bubble of scattered seeds â”€â”€ */
 .oaq-fly-cluster {
   width: 58px;
   height: 58px;
@@ -906,7 +906,7 @@
   /* Seeds inside use position:absolute relative to this fixed element */
 }
 
-/* ── Status ── */
+/* â”€â”€ Status â”€â”€ */
 .oaq-status {
   text-align: center;
   font-size: var(--text-sm);
@@ -915,7 +915,7 @@
   min-height: 1.4em;
 }
 
-/* ── Move log ── */
+/* â”€â”€ Move log â”€â”€ */
 .oaq-log {
   background: rgba(0,0,0,0.2);
   border: 1px solid rgba(240,216,176,0.07);
@@ -950,7 +950,7 @@
 .oaq-log__entry.p1 { color: #5bc8c0; }
 .oaq-log__entry.p2 { color: #e06060; }
 
-/* ── Actions ── */
+/* â”€â”€ Actions â”€â”€ */
 .oaq-actions {
   display: flex;
   gap: var(--space-2);
@@ -975,7 +975,7 @@
   border-color: #c8871a;
 }
 
-/* ── Game over ── */
+/* â”€â”€ Game over â”€â”€ */
 .oaq-gameover {
   text-align: center;
   padding: var(--space-5) var(--space-4);
@@ -1021,7 +1021,7 @@
 .oaq-final-score.p2 .oaq-final-score__num { color: #e06060; }
 .oaq-final-score__label { font-size: var(--text-xs); color: rgba(240,216,176,0.38); margin-top: 4px; }
 
-/* ── Responsive ── */
+/* â”€â”€ Responsive â”€â”€ */
 @media (max-width: 560px) {
   .oaq-board {
     grid-template-columns: 56px repeat(5, 1fr) 56px;
@@ -1037,10 +1037,10 @@
 }
 
 /* =============================================================================
-   Tiến Lên — Phase 4
+   Tiáº¿n LÃªn â€” Phase 4
 ============================================================================= */
 
-/* ── Outer wrapper ── */
+/* â”€â”€ Outer wrapper â”€â”€ */
 .tl-game {
   padding: var(--space-4);
   background: radial-gradient(ellipse at 50% 25%, #1d5c34 0%, #0a3018 100%);
@@ -1052,7 +1052,7 @@
   border-radius: 0 0 var(--radius-xl) var(--radius-xl);
 }
 
-/* ── Status bar ── */
+/* â”€â”€ Status bar â”€â”€ */
 .tl-status-bar {
   background: rgba(0,0,0,0.4);
   border: 1px solid rgba(255,255,255,0.08);
@@ -1076,7 +1076,7 @@
   color: #b4f0a0;
 }
 
-/* ── AI thinking dots ── */
+/* â”€â”€ AI thinking dots â”€â”€ */
 .tl-thinking-dots {
   display: inline-flex;
   gap: 4px;
@@ -1100,14 +1100,14 @@
   40%           { transform: scale(1);   opacity: 1;   }
 }
 
-/* ── Table grid: top | [left | center | right] ── */
+/* â”€â”€ Table grid: top | [left | center | right] â”€â”€ */
 .tl-table {
   display: grid;
   grid-template-columns: 88px 1fr 88px;
   gap: var(--space-2);
 }
 
-/* ── Opponent zones ── */
+/* â”€â”€ Opponent zones â”€â”€ */
 .tl-zone {
   display: flex;
   flex-direction: column;
@@ -1136,7 +1136,7 @@
   color: rgba(200,220,175,0.38);
 }
 
-/* ── Card backs ── */
+/* â”€â”€ Card backs â”€â”€ */
 .tl-card-back {
   border-radius: 5px;
   background:
@@ -1170,7 +1170,7 @@
   margin-top: -10px;
 }
 
-/* ── Center play area ── */
+/* â”€â”€ Center play area â”€â”€ */
 .tl-center {
   display: flex;
   flex-direction: column;
@@ -1214,7 +1214,7 @@
   letter-spacing: 0.08em;
 }
 
-/* ── Face-up cards ── */
+/* â”€â”€ Face-up cards â”€â”€ */
 .tl-card {
   width: 48px;
   height: 68px;
@@ -1267,7 +1267,7 @@
 .tl-play-area .tl-card__rank   { font-size: 12px; }
 .tl-play-area .tl-card__center { font-size: 19px; }
 
-/* ── Card states ── */
+/* â”€â”€ Card states â”€â”€ */
 .tl-card.selected {
   transform: translateY(-10px);
   border-color: #58d838;
@@ -1282,7 +1282,7 @@
   box-shadow: 0 6px 16px rgba(55,200,35,0.3), inset 0 1px 0 rgba(255,255,255,0.95);
 }
 
-/* ── Deal animation (first render only) ── */
+/* â”€â”€ Deal animation (first render only) â”€â”€ */
 .tl-card.dealing {
   animation: tl-deal 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: calc(var(--deal-i, 0) * 70ms);
@@ -1293,7 +1293,7 @@
   to   { opacity: 1; transform: none; }
 }
 
-/* ── Played-in animation (cards hitting the table) ── */
+/* â”€â”€ Played-in animation (cards hitting the table) â”€â”€ */
 .tl-card.played-in {
   animation: tl-play-in 500ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
   animation-delay: calc(var(--play-i, 0) * 80ms);
@@ -1304,7 +1304,7 @@
   to   { opacity: 1; transform: rotate(var(--rot, 0deg)); }
 }
 
-/* ── 2× Speed overrides ── */
+/* â”€â”€ 2Ã— Speed overrides â”€â”€ */
 .tl-fast .tl-card.dealing {
   animation-duration: 300ms;
   animation-delay: calc(var(--deal-i, 0) * 45ms);
@@ -1314,7 +1314,7 @@
   animation-delay: calc(var(--play-i, 0) * 55ms);
 }
 
-/* ── Player hand ── */
+/* â”€â”€ Player hand â”€â”€ */
 .tl-player-area {
   display: flex;
   flex-direction: column;
@@ -1336,7 +1336,7 @@
   align-items: flex-end;
 }
 
-/* ── Hand-type hint ── */
+/* â”€â”€ Hand-type hint â”€â”€ */
 .tl-hint {
   font-size: 11px;
   min-height: 1.6em;
@@ -1349,7 +1349,7 @@
 .tl-hint.valid   { color: #88e058; font-style: normal; }
 .tl-hint.invalid { color: #e06060; font-style: normal; }
 
-/* ── Actions ── */
+/* â”€â”€ Actions â”€â”€ */
 .tl-actions {
   display: flex;
   flex-direction: column;
@@ -1367,7 +1367,7 @@
   gap: var(--space-2);
 }
 
-/* ── Game-specific buttons (visible on dark felt) ── */
+/* â”€â”€ Game-specific buttons (visible on dark felt) â”€â”€ */
 .tl-btn {
   display: inline-flex;
   align-items: center;
@@ -1394,7 +1394,7 @@
   transform: none;
 }
 
-/* Play — solid green */
+/* Play â€” solid green */
 .tl-btn--play {
   background: #2a7a3a;
   color: #fff;
@@ -1406,7 +1406,7 @@
   transform: translateY(-2px);
 }
 
-/* Pass — outlined white */
+/* Pass â€” outlined white */
 .tl-btn--pass {
   background: transparent;
   color: rgba(220, 240, 210, 0.9);
@@ -1418,7 +1418,7 @@
   transform: translateY(-2px);
 }
 
-/* Ghost — subtle, clearly boxed */
+/* Ghost â€” subtle, clearly boxed */
 .tl-btn--ghost {
   background: rgba(255, 255, 255, 0.05);
   color: rgba(210, 230, 200, 0.75);
@@ -1432,14 +1432,14 @@
   color: rgba(220, 240, 210, 0.95);
 }
 
-/* 2× Speed — active/on state */
+/* 2Ã— Speed â€” active/on state */
 .tl-speed-btn.active {
   background: rgba(255, 210, 50, 0.15);
   border-color: rgba(255, 210, 50, 0.55);
   color: #ffd232;
 }
 
-/* ── Game log ── */
+/* â”€â”€ Game log â”€â”€ */
 .tl-log {
   background: rgba(0,0,0,0.3);
   border: 1px solid rgba(255,255,255,0.06);
@@ -1480,7 +1480,7 @@
 .tl-log__entry.you { color: #84e84e; }
 .tl-log__entry.sys { color: rgba(210,200,120,0.55); font-style: italic; }
 
-/* ── Game over ── */
+/* â”€â”€ Game over â”€â”€ */
 .tl-gameover {
   display: none;
   flex-direction: column;
@@ -1522,7 +1522,7 @@
   margin-bottom: var(--space-5);
 }
 
-/* ── Responsive ── */
+/* â”€â”€ Responsive â”€â”€ */
 @media (max-width: 600px) {
   .tl-table { grid-template-columns: 62px 1fr 62px; }
 
@@ -1542,7 +1542,7 @@
 }
 
 /* =============================================================================
-   Oware — Phase 5
+   Oware â€” Phase 5
 ============================================================================= */
 
 .ow-game {
@@ -1557,7 +1557,7 @@
   font-family: var(--font-body);
 }
 
-/* ── Status bar ── */
+/* â”€â”€ Status bar â”€â”€ */
 .ow-status {
   text-align: center;
   font-size: var(--text-sm);
@@ -1569,7 +1569,7 @@
   padding: 8px var(--space-4);
 }
 
-/* ── AI thinking dots ── */
+/* â”€â”€ AI thinking dots â”€â”€ */
 .ow-dots span {
   display: inline-block;
   width: 5px;
@@ -1588,7 +1588,7 @@
   40%           { opacity: 1;   transform: scale(1.3); }
 }
 
-/* ── Board layout ── */
+/* â”€â”€ Board layout â”€â”€ */
 .ow-board-wrap {
   display: flex;
   align-items: center;
@@ -1637,7 +1637,7 @@
   );
 }
 
-/* ── Score stores ── */
+/* â”€â”€ Score stores â”€â”€ */
 .ow-store {
   display: flex;
   flex-direction: column;
@@ -1669,7 +1669,7 @@
   letter-spacing: 0.08em;
 }
 
-/* ── Pits ── */
+/* â”€â”€ Pits â”€â”€ */
 .ow-pit {
   width: 84px;
   height: 88px;
@@ -1698,7 +1698,7 @@
   left: calc(50% + var(--x, 0px) - 3px);
   top:  calc(50% + var(--y, 0px) - 6px);
   transform: rotate(var(--rot, 0deg));
-  /* Warm dark-brown gradient — dried Ayo seed */
+  /* Warm dark-brown gradient â€” dried Ayo seed */
   background: linear-gradient(160deg, #c07818 0%, #7a3e08 45%, #4a2208 100%);
   box-shadow: 0 1px 3px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,200,90,0.18);
 }
@@ -1740,7 +1740,7 @@
 }
 .ow-pit--clickable .ow-pit__count { color: rgba(232,200,152,0.85); }
 
-/* Last-sown pit — glows amber */
+/* Last-sown pit â€” glows amber */
 .ow-pit--lit {
   border-color: #e8a030;
   box-shadow:
@@ -1755,7 +1755,7 @@
   100% { transform: scale(1);    }
 }
 
-/* AI-selected pit — pulsing red-orange before sowing starts */
+/* AI-selected pit â€” pulsing red-orange before sowing starts */
 .ow-pit--ai-select {
   border-color: #e04020;
   box-shadow:
@@ -1770,7 +1770,7 @@
   to   { box-shadow: inset 0 4px 14px rgba(0,0,0,0.25), 0 0 30px rgba(224,64,32,0.85); }
 }
 
-/* ── Actions ── */
+/* â”€â”€ Actions â”€â”€ */
 .ow-actions {
   display: flex;
   flex-direction: column;
@@ -1846,7 +1846,7 @@
   transform: translateY(-2px);
 }
 
-/* ── Game log ── */
+/* â”€â”€ Game log â”€â”€ */
 .ow-log {
   background: rgba(0,0,0,0.22);
   border-radius: var(--radius-md);
@@ -1870,7 +1870,7 @@
 }
 .ow-log li:first-child { color: rgba(232,200,152,0.9); }
 
-/* ── Game over ── */
+/* â”€â”€ Game over â”€â”€ */
 .ow-gameover {
   display: flex;
   flex-direction: column;
@@ -1904,7 +1904,7 @@
   margin: 0;
 }
 
-/* ── Responsive ── */
+/* â”€â”€ Responsive â”€â”€ */
 @media (max-width: 560px) {
   .ow-pit { width: 54px; height: 58px; }
   .ow-seed { width: 5px; height: 10px; left: calc(50% + var(--x, 0px) - 2.5px); top: calc(50% + var(--y, 0px) - 5px); }
@@ -1916,7 +1916,7 @@
 }
 
 /* =============================================================================
-   Patolli — Phase 6
+   Patolli â€” Phase 6
 ============================================================================= */
 
 .pt-game-wrap {
@@ -1945,7 +1945,7 @@
   box-shadow: 0 8px 32px rgba(0,0,0,0.6);
 }
 
-/* ── Board ──────────────────────────────────────────────────────────────── */
+/* â”€â”€ Board â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pt-board {
   display: grid;
   width: 100%;
@@ -2001,7 +2001,7 @@
 /* Safe cell with a piece: hide the diamond so piece is visible */
 .pt-cell--safe:not(:empty) > .pt-cell--safe::before { display: none; }
 
-/* ── Start cell (track index 0) ── */
+/* â”€â”€ Start cell (track index 0) â”€â”€ */
 .pt-cell--start {
   border-color: rgba(255,215,50,0.95) !important;
   background: linear-gradient(150deg, #2e7d45 0%, #1a4528 100%) !important;
@@ -2018,9 +2018,9 @@
   display: none;
 }
 
-/* "▶ START" label — sits behind pieces (z-index 0) */
+/* "â–¶ START" label â€” sits behind pieces (z-index 0) */
 .pt-cell--start::after {
-  content: '▶ START';
+  content: 'â–¶ START';
   position: absolute;
   top: 50%;
   left: 50%;
@@ -2043,7 +2043,7 @@
 }
 
 /* Valid: just cursor change, no persistent glow */
-/* Landing preview: pulsing blue-white glow — only on hover */
+/* Landing preview: pulsing blue-white glow â€” only on hover */
 @keyframes pt-pulse-preview {
   0%, 100% { box-shadow: 0 0 0 2px rgba(160,230,255,0.9), 0 0 10px rgba(160,230,255,0.4), inset 0 0 8px rgba(160,230,255,0.15); }
   50%      { box-shadow: 0 0 0 3px #ffffff, 0 0 20px rgba(200,240,255,0.7), inset 0 0 12px rgba(200,240,255,0.25); }
@@ -2066,7 +2066,7 @@
   width: 43%;
 }
 
-/* ── Pieces ─────────────────────────────────────────────────────────────── */
+/* â”€â”€ Pieces â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pt-piece {
   width: 65%;
   aspect-ratio: 1;
@@ -2124,7 +2124,7 @@
   cursor: pointer;
 }
 
-/* ── Beans ──────────────────────────────────────────────────────────────── */
+/* â”€â”€ Beans â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pt-dice-row {
   display: flex;
   align-items: center;
@@ -2215,7 +2215,7 @@
   text-shadow: 0 0 10px rgba(240,192,80,0.4);
 }
 
-/* ── Controls ───────────────────────────────────────────────────────────── */
+/* â”€â”€ Controls â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pt-controls {
   display: flex;
   gap: 0.75rem;
@@ -2304,7 +2304,7 @@
   background: rgba(201,149,42,0.12);
 }
 
-/* ── Status ─────────────────────────────────────────────────────────────── */
+/* â”€â”€ Status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pt-status {
   text-align: center;
   font-size: 1rem;
@@ -2314,7 +2314,7 @@
   letter-spacing: 0.01em;
 }
 
-/* ── Score ──────────────────────────────────────────────────────────────── */
+/* â”€â”€ Score â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pt-score {
   display: flex;
   gap: 0;
@@ -2344,7 +2344,7 @@
   font-weight: 700;
 }
 
-/* ── Log ────────────────────────────────────────────────────────────────── */
+/* â”€â”€ Log â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pt-log {
   max-height: 110px;
   overflow-y: auto;
@@ -2365,7 +2365,7 @@
   color: rgba(240,192,80,0.85);
 }
 
-/* ── Game over ──────────────────────────────────────────────────────────── */
+/* â”€â”€ Game over â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @keyframes pt-pop {
   0%   { transform: scale(0.5); opacity: 0; }
   65%  { transform: scale(1.06); }
@@ -2391,7 +2391,7 @@
   font-size: 0.92rem;
 }
 
-/* ── Thinking dots ──────────────────────────────────────────────────────── */
+/* â”€â”€ Thinking dots â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pt-thinking {
   display: inline-flex;
   gap: 4px;
@@ -2415,7 +2415,7 @@
   40%           { opacity: 1;   transform: scale(1.2); }
 }
 
-/* ── Responsive ─────────────────────────────────────────────────────────── */
+/* â”€â”€ Responsive â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 560px) {
   .pt-bean        { width: 2rem; height: 1.2rem; }
   .pt-btn         { padding: 0.45rem 1rem; font-size: 0.88rem; }
@@ -2425,13 +2425,13 @@
   .pt-score > span { min-width: 140px; font-size: 0.8rem; }
 }
 
-/* ════════════════════════════════════════════════════════════════════════
-   PULUC — Maya / Mesoamerica
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   PULUC â€” Maya / Mesoamerica
    Prefix: pu-
-   Theme:  deep forest green · jade · raw linen
-════════════════════════════════════════════════════════════════════════ */
+   Theme:  deep forest green Â· jade Â· raw linen
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-/* ── Design tokens ───────────────────────────────────────────────────── */
+/* â”€â”€ Design tokens â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pu-game-wrap {
   --pu-bg:          #16270d;
   --pu-board-frame: #0c1a06;
@@ -2449,7 +2449,7 @@
   --pu-text:        #cdc08a;
 }
 
-/* ── Outer wrap ──────────────────────────────────────────────────────── */
+/* â”€â”€ Outer wrap â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pu-game-wrap {
   background: var(--pu-bg);
   border-radius: 16px;
@@ -2464,7 +2464,7 @@
   box-sizing: border-box;
 }
 
-/* ── Track outer shell (column: board + entry row) ───────────────────── */
+/* â”€â”€ Track outer shell (column: board + entry row) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pu-track {
   display: flex;
   flex-direction: column;
@@ -2472,7 +2472,7 @@
   width: 100%;
 }
 
-/* ── Board strip — the 11 cells ──────────────────────────────────────── */
+/* â”€â”€ Board strip â€” the 11 cells â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pu-board {
   display: flex;
   gap: 4px;
@@ -2486,7 +2486,7 @@
   box-shadow: inset 0 2px 12px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.35);
 }
 
-/* ── Individual track spaces ─────────────────────────────────────────── */
+/* â”€â”€ Individual track spaces â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pu-space {
   flex: 1;
   min-width: 0;           /* allow shrinking below content size */
@@ -2524,11 +2524,11 @@
   user-select: none;
 }
 
-/* First and last spaces — entry/exit accent */
+/* First and last spaces â€” entry/exit accent */
 .pu-space[data-pos="0"]  { border-color: rgba(200,240,120,0.25); }
 .pu-space[data-pos="10"] { border-color: rgba(200,100,80,0.25); }
 
-/* ── Pieces ──────────────────────────────────────────────────────────── */
+/* â”€â”€ Pieces â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pu-piece {
   width: 2rem;
   height: 2rem;
@@ -2551,7 +2551,7 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.55), inset 0 1px 2px rgba(255,150,150,0.15);
 }
 
-/* Prisoner — smaller, dimmer, shown underneath lead piece */
+/* Prisoner â€” smaller, dimmer, shown underneath lead piece */
 .pu-piece--prisoner {
   width: 1.45rem;
   height: 1.45rem;
@@ -2574,7 +2574,7 @@
   border-style: dashed;
 }
 
-/* Selectable — gold glow + pointer */
+/* Selectable â€” gold glow + pointer */
 .pu-piece--selectable {
   cursor: pointer;
   animation: pu-pulse 1.3s ease-in-out infinite;
@@ -2585,7 +2585,7 @@
   50%       { box-shadow: 0 0 0 4px var(--pu-selected), 0 0 16px rgba(255,220,80,0.7); }
 }
 
-/* ── Entry zones (below board) ───────────────────────────────────────── */
+/* â”€â”€ Entry zones (below board) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pu-entry-row {
   display: flex;
   justify-content: space-between;
@@ -2648,7 +2648,7 @@
   align-items: center;
 }
 
-/* ── Stick dice ──────────────────────────────────────────────────────── */
+/* â”€â”€ Stick dice â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pu-dice-row {
   display: flex;
   flex-direction: column;
@@ -2665,7 +2665,7 @@
   gap: 10px;
 }
 
-/* A single stick — tall narrow slab, like carved wood/bone */
+/* A single stick â€” tall narrow slab, like carved wood/bone */
 .pu-stick {
   width: 1.05rem;
   height: 4rem;
@@ -2743,7 +2743,7 @@
   text-align: center;
 }
 
-/* ── Controls ────────────────────────────────────────────────────────── */
+/* â”€â”€ Controls â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pu-controls {
   display: flex;
   flex-wrap: wrap;
@@ -2801,7 +2801,7 @@
   background: rgba(200,160,80,0.14);
 }
 
-/* ── Status ──────────────────────────────────────────────────────────── */
+/* â”€â”€ Status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pu-status {
   font-size: 0.95rem;
   color: var(--pu-gold-light);
@@ -2810,7 +2810,7 @@
   font-weight: 500;
 }
 
-/* ── Score ───────────────────────────────────────────────────────────── */
+/* â”€â”€ Score â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pu-score {
   display: flex;
   gap: 0.75rem;
@@ -2831,7 +2831,7 @@
   letter-spacing: 0.02em;
 }
 
-/* ── Log ─────────────────────────────────────────────────────────────── */
+/* â”€â”€ Log â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pu-log {
   list-style: none;
   padding: 0;
@@ -2856,7 +2856,7 @@
   border-left-color: var(--pu-gold);
 }
 
-/* ── Thinking dots ───────────────────────────────────────────────────── */
+/* â”€â”€ Thinking dots â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pu-thinking {
   display: inline-flex;
   gap: 4px;
@@ -2880,7 +2880,7 @@
   40%           { opacity: 1;   transform: scale(1.2); }
 }
 
-/* ── Responsive ──────────────────────────────────────────────────────── */
+/* â”€â”€ Responsive â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 560px) {
   .pu-game-wrap    { padding: 1rem 0.75rem; gap: 0.75rem; }
   .pu-board        { padding: 5px; gap: 3px; }
@@ -2896,25 +2896,17 @@
 }
 
 
+
 /* =============================================================================
-   PALLANGUZHI (South India) � pg- prefix
-   Carved sandalwood theme: warm amber, deep brown, gold leaf
+   PALLANGUZHI (South India) — pg- prefix
+   Carved sandalwood theme: warm amber, deep brown, cowrie shells
 ============================================================================= */
 
-.pg-game-wrap {
-  --pg-wood:       #7a3b10;
-  --pg-wood-dark:  #4a1e00;
-  --pg-wood-mid:   #8b4513;
-  --pg-cup-bg:     #9c4c20;
-  --pg-cup-hover:  #c07040;
-  --pg-cup-active: #c8850a;
-  --pg-shell-col:  #f0dda0;
-  --pg-gold:       #d4a017;
-  --pg-gold-light: #f0c84a;
-  --pg-store-bg:   #311200;
-  --pg-store-rim:  #8b5a20;
-  --pg-text:       #fff2d8;
-  --pg-text-dim:   rgba(255, 242, 216, 0.55);
+.pg-game {
+  --pg-amber:    #e8a030;
+  --pg-gold:     #ffd57a;
+  --pg-text:     #f5e8c8;
+  --pg-text-dim: rgba(245, 232, 200, 0.45);
 
   display: flex;
   flex-direction: column;
@@ -2926,23 +2918,51 @@
   box-shadow: 0 4px 24px rgba(0,0,0,0.6);
   width: 100%;
   box-sizing: border-box;
+  font-family: inherit;
 }
 
-/* -- Board ------------------------------------------------------------ */
+/* ── Status ──────────────────────────────────────────────────────── */
+.pg-status {
+  font-size: 0.92rem;
+  color: var(--pg-text-dim);
+  min-height: 1.4em;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+
+/* ── Board wrap (stores on sides) ────────────────────────────────── */
+.pg-board-wrap {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  width: 100%;
+}
+
+/* ── Board ───────────────────────────────────────────────────────── */
 .pg-board {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 12px;
-  background: var(--pg-wood-dark);
+  padding: 14px 12px;
+  background: radial-gradient(ellipse at 50% 50%, #2a1105 0%, #180800 100%);
   border-radius: 18px;
-  border: 3px solid rgba(180, 110, 40, 0.45);
+  border: 2px solid rgba(160,90,30,0.5);
   box-shadow:
-    inset 0 3px 14px rgba(0,0,0,0.6),
-    0 4px 12px rgba(0,0,0,0.5);
-  width: 100%;
-  box-sizing: border-box;
+    inset 0 4px 18px rgba(0,0,0,0.7),
+    0 4px 14px rgba(0,0,0,0.5);
 }
+
+.pg-row-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pg-text-dim);
+  text-align: center;
+  padding: 2px 0;
+}
+.pg-row-label--ai     { margin-bottom: 2px; }
+.pg-row-label--player { margin-top: 2px; }
 
 .pg-row {
   display: grid;
@@ -2950,272 +2970,274 @@
   gap: 6px;
 }
 
-/* Label rows */
-.pg-row--ai::before {
-  display: none; /* handled by store labels */
+.pg-divider {
+  height: 1px;
+  background: rgba(160,90,30,0.3);
+  margin: 4px 0;
 }
 
-/* -- Cups -------------------------------------------------------------- */
-.pg-cup {
+/* ── Pit ─────────────────────────────────────────────────────────── */
+.pg-pit {
   position: relative;
+  width: 100%;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, #b86030 0%, var(--pg-cup-bg) 60%, #5a2200 100%);
-  border: 2px solid rgba(160, 90, 30, 0.55);
+  background: radial-gradient(circle at 40% 35%,
+    #2e1108 0%, #1a0a02 55%, #0d0400 100%);
+  border: 2px solid #5c2e10;
   box-shadow:
-    inset 0 3px 8px rgba(0,0,0,0.55),
-    inset 0 -1px 3px rgba(255,200,100,0.08),
-    0 2px 4px rgba(0,0,0,0.4);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  padding: 6px;
-  box-sizing: border-box;
+    inset 0 4px 14px rgba(0,0,0,0.75),
+    inset 0 -1px 4px rgba(255,180,60,0.05),
+    0 2px 4px rgba(0,0,0,0.45);
   cursor: default;
-  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
-  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
   user-select: none;
+  overflow: hidden;
 }
 
-.pg-cup--clickable {
+.pg-pit__shells {
+  position: absolute;
+  inset: 0;
+}
+
+.pg-pit__count {
+  position: absolute;
+  bottom: 3px;
+  left: 0; right: 0;
+  text-align: center;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgba(255,220,150,0.55);
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* ── Pit states ──────────────────────────────────────────────────── */
+.pg-pit--clickable {
   cursor: pointer;
-  background: radial-gradient(circle at 40% 35%, #d4803c 0%, var(--pg-cup-active) 60%, #6b2c00 100%);
+  border-color: var(--pg-amber);
+  box-shadow:
+    inset 0 4px 14px rgba(0,0,0,0.6),
+    0 0 10px rgba(232,160,48,0.4),
+    0 2px 4px rgba(0,0,0,0.45);
+}
+.pg-pit--clickable:hover {
+  transform: scale(1.06);
   border-color: var(--pg-gold);
   box-shadow:
-    inset 0 3px 8px rgba(0,0,0,0.4),
-    0 0 8px rgba(212, 160, 23, 0.35),
-    0 2px 4px rgba(0,0,0,0.4);
+    inset 0 4px 14px rgba(0,0,0,0.5),
+    0 0 18px rgba(255,213,122,0.55),
+    0 2px 6px rgba(0,0,0,0.5);
 }
 
-.pg-cup--clickable:hover {
-  transform: scale(1.06);
+.pg-pit--lit {
+  border-color: var(--pg-amber);
   box-shadow:
-    inset 0 3px 8px rgba(0,0,0,0.3),
-    0 0 14px rgba(212, 160, 23, 0.6),
-    0 4px 8px rgba(0,0,0,0.5);
+    inset 0 4px 14px rgba(0,0,0,0.55),
+    0 0 22px rgba(232,160,48,0.65),
+    0 2px 4px rgba(0,0,0,0.45);
+  animation: pg-receive 200ms ease-out;
+}
+@keyframes pg-receive {
+  0%   { transform: scale(1.12); }
+  100% { transform: scale(1); }
 }
 
-.pg-cup--sowing {
-  animation: pg-pulse 0.25s ease;
-  border-color: var(--pg-gold-light) !important;
-  box-shadow:
-    0 0 18px rgba(240, 200, 74, 0.7),
-    inset 0 2px 6px rgba(0,0,0,0.3) !important;
+.pg-pit--ai-select {
+  border-color: #e05a3a;
+  animation: pg-ai-select 0.55s ease-in-out infinite alternate;
+}
+@keyframes pg-ai-select {
+  from { box-shadow: inset 0 4px 14px rgba(0,0,0,0.6), 0 0 10px rgba(224,90,58,0.4); }
+  to   { box-shadow: inset 0 4px 14px rgba(0,0,0,0.4), 0 0 28px rgba(224,90,58,0.8); }
 }
 
-.pg-cup--empty {
-  opacity: 0.45;
-  cursor: default;
-}
-.pg-cup--empty.pg-cup--clickable {
-  opacity: 1;
-}
-
-@keyframes pg-pulse {
-  0%   { transform: scale(1);    box-shadow: 0 0 6px rgba(240,200,74,0.4); }
-  50%  { transform: scale(1.08); box-shadow: 0 0 22px rgba(240,200,74,0.9); }
-  100% { transform: scale(1);    box-shadow: 0 0 6px rgba(240,200,74,0.4); }
-}
-
-/* -- Shells (dot display inside cups) -------------------------------- */
+/* ── Shell sprite (cowrie oval) ──────────────────────────────────── */
 .pg-shell {
-  display: block;
-  width: 6px;
-  height: 6px;
+  position: absolute;
+  width: 11px;
+  height: 7px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff8e0, #d4b060 70%, #a07820);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.5);
-  flex-shrink: 0;
-}
-
-/* Shell dot grid (≤ 9 shells) */
-.pg-shell-grid {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  padding: 2px;
-  width: 100%;
-}
-
-/* Large number for high counts and empty marker */
-.pg-cup-big {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--pg-text);
-  line-height: 1;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  left:  calc(50% + var(--x, 0px) - 5.5px);
+  top:   calc(50% + var(--y, 0px) - 3.5px);
+  transform: rotate(var(--rot, 0deg));
+  background: radial-gradient(ellipse at 40% 30%,
+    #fffbf0 0%, #f0e4c0 45%, #c8a870 100%);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.4);
   pointer-events: none;
-  opacity: 0.85;
 }
 
-/* hidden legacy */
-.pg-cup-num {
-  display: none; /* hidden� shell dots are the primary display */
+.pg-shell--new {
+  animation: pg-shell-in 200ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes pg-shell-in {
+  from { transform: rotate(var(--rot, 0deg)) scale(0); opacity: 0; }
+  to   { transform: rotate(var(--rot, 0deg)) scale(1); opacity: 1; }
 }
 
-/* -- Stores row -------------------------------------------------------- */
-.pg-stores-row {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-}
-
-.pg-store-block {
+/* ── Stores (flanking the board) ─────────────────────────────────── */
+.pg-store {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.35rem;
-}
-
-.pg-store-label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--pg-text-dim);
-}
-
-.pg-store {
-  width: 72px;
-  height: 44px;
-  border-radius: 22px;
-  background: radial-gradient(ellipse at 40% 35%, #4a1e00 0%, var(--pg-store-bg) 70%);
-  border: 2px solid var(--pg-store-rim);
-  display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
+  gap: 4px;
+  width: 62px;
+  min-height: 120px;
+  padding: 10px 6px;
+  background: radial-gradient(ellipse at 50% 30%, #1c0b00 0%, #0a0400 100%);
+  border-radius: 12px;
+  border: 2px solid rgba(120,60,20,0.5);
+  box-shadow:
+    inset 0 3px 12px rgba(0,0,0,0.7),
+    0 2px 6px rgba(0,0,0,0.4);
+  flex-shrink: 0;
+}
+
+.pg-store__label {
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pg-text-dim);
+  text-align: center;
+}
+
+.pg-store__val {
+  font-size: 2rem;
   font-weight: 700;
   color: var(--pg-gold);
-  box-shadow:
-    inset 0 3px 10px rgba(0,0,0,0.7),
-    0 2px 6px rgba(0,0,0,0.4);
-  text-shadow: 0 1px 4px rgba(200,130,0,0.5);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
-/* -- Controls ---------------------------------------------------------- */
-.pg-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
+.pg-store__sub {
+  font-size: 0.58rem;
+  color: var(--pg-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
-.pg-mode-row {
-  display: flex;
-  gap: 0.4rem;
-}
-
-.pg-btn {
-  padding: 0.5rem 1.2rem;
-  border-radius: 8px;
-  border: 1.5px solid var(--pg-gold);
-  background: rgba(212, 160, 23, 0.12);
-  color: var(--pg-gold);
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s, box-shadow 0.15s;
-  font-family: inherit;
-}
-
-.pg-btn:hover {
-  background: rgba(212, 160, 23, 0.24);
-  box-shadow: 0 0 8px rgba(212, 160, 23, 0.3);
-}
-
-.pg-btn--secondary {
-  border-color: rgba(212, 160, 23, 0.35);
-  background: rgba(212, 160, 23, 0.05);
-  color: rgba(240, 200, 100, 0.7);
-}
-
-.pg-btn--mode {
-  font-size: 0.78rem;
-  padding: 0.35rem 0.9rem;
-  border-color: rgba(212, 160, 23, 0.3);
-  background: rgba(212, 160, 23, 0.05);
-  color: rgba(240, 200, 100, 0.5);
-}
-
-.pg-btn--mode.active {
-  border-color: var(--pg-gold);
-  color: var(--pg-gold);
-  background: rgba(212, 160, 23, 0.18);
-}
-
-/* -- Status ------------------------------------------------------------ */
-.pg-status {
-  font-size: 0.92rem;
-  font-weight: 500;
-  color: var(--pg-text);
-  text-align: center;
-  min-height: 1.4rem;
-  letter-spacing: 0.02em;
-}
-
-/* -- Thinking dots ----------------------------------------------------- */
-.pg-thinking {
-  display: inline-flex;
-  gap: 4px;
-  align-items: center;
-  vertical-align: middle;
-  margin-right: 6px;
-}
-
-.pg-thinking span {
-  display: block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--pg-gold);
-  animation: pg-dot 1s infinite;
-}
-
-.pg-thinking span:nth-child(2) { animation-delay: 0.2s; }
-.pg-thinking span:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes pg-dot {
-  0%, 80%, 100% { opacity: 0.2; transform: scale(0.7); }
-  40%           { opacity: 1;   transform: scale(1.2); }
-}
-
-/* -- Log --------------------------------------------------------------- */
+/* ── Log ─────────────────────────────────────────────────────────── */
 .pg-log {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  max-height: 130px;
-  overflow-y: auto;
   width: 100%;
+  max-width: 520px;
+}
+
+.pg-log ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   font-size: 0.78rem;
   color: var(--pg-text-dim);
-  border-top: 1px solid rgba(180, 110, 40, 0.2);
+  border-top: 1px solid rgba(160,90,30,0.2);
   padding-top: 0.5rem;
+  max-height: 5.5em;
+  overflow: hidden;
 }
 
 .pg-log li {
-  padding: 0.15rem 0;
-  border-bottom: 1px solid rgba(255, 242, 216, 0.04);
+  padding: 0.1rem 0;
+  border-bottom: 1px solid rgba(255,242,216,0.04);
 }
 
 .pg-log li:first-child {
   color: var(--pg-text);
 }
 
-/* -- Responsive -------------------------------------------------------- */
-@media (max-width: 560px) {
-  .pg-game-wrap { padding: 0.75rem 0.5rem; gap: 0.75rem; }
-  .pg-board { padding: 8px; gap: 4px; }
-  .pg-row { gap: 4px; }
-  .pg-shell { width: 5px; height: 5px; }
-  .pg-store { width: 58px; height: 38px; font-size: 1.1rem; }
-  .pg-btn { padding: 0.4rem 0.9rem; font-size: 0.82rem; }
+/* ── Controls ────────────────────────────────────────────────────── */
+.pg-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.pg-mode {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pg-mode-label {
+  font-size: 0.72rem;
+  color: var(--pg-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.pg-diff-btn {
+  padding: 4px 14px;
+  font-size: 0.78rem;
+  border-radius: 20px;
+  border: 1px solid rgba(200,135,26,0.3);
+  background: rgba(200,135,26,0.07);
+  color: rgba(255,213,122,0.45);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.pg-diff-btn:hover {
+  border-color: rgba(200,135,26,0.6);
+  color: rgba(255,213,122,0.8);
+  background: rgba(200,135,26,0.14);
+}
+.pg-diff-btn.active {
+  border-color: var(--pg-amber);
+  color: var(--pg-gold);
+  background: rgba(200,135,26,0.2);
+}
+
+.pg-btn {
+  padding: 0.5rem 1.4rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid rgba(160,90,30,0.55);
+  background: rgba(90,40,10,0.55);
+  color: var(--pg-text);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  font-family: inherit;
+}
+.pg-btn:hover {
+  background: rgba(120,55,15,0.7);
+  border-color: rgba(200,130,50,0.7);
+}
+
+/* ── Thinking dots ───────────────────────────────────────────────── */
+.pg-dots span {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--pg-text-dim);
+  margin: 0 2px;
+  vertical-align: middle;
+  animation: pg-dot-bounce 1.2s ease-in-out infinite;
+}
+.pg-dots span:nth-child(2) { animation-delay: 0.2s; }
+.pg-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pg-dot-bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+  40%           { transform: translateY(-5px); opacity: 1; }
+}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .pg-board-wrap { gap: 6px; }
+  .pg-store       { width: 48px; min-height: 90px; }
+  .pg-store__val  { font-size: 1.4rem; }
+  .pg-store__label,
+  .pg-store__sub  { font-size: 0.55rem; }
+  .pg-row         { gap: 4px; }
+  .pg-board       { padding: 10px 8px; gap: 4px; }
+  .pg-shell {
+    width: 8px; height: 5px;
+    left: calc(50% + var(--x,0px) - 4px);
+    top:  calc(50% + var(--y,0px) - 2.5px);
+  }
+  .pg-pit__count  { font-size: 0.58rem; }
 }
