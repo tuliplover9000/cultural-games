@@ -1,4 +1,4 @@
-﻿/* =============================================================================
+/* =============================================================================
    CULTURAL GAMES â€” games.css
    Styles specific to individual game pages and the shared game layout shell.
    Requires global.css and components.css to be loaded first.
@@ -2896,73 +2896,129 @@
 }
 
 
-
 /* =============================================================================
-   PALLANGUZHI (South India) — pg- prefix
-   Carved sandalwood theme: warm amber, deep brown, cowrie shells
+   PALLANGUZHI (South India) â€” pg- prefix
+   Temple-stone & silk: peacock teal, saffron, kumkum, carved rosewood
 ============================================================================= */
 
 .pg-game {
-  --pg-amber:    #e8a030;
+  --pg-saffron:  #e8a000;
   --pg-gold:     #ffd57a;
-  --pg-text:     #f5e8c8;
-  --pg-text-dim: rgba(245, 232, 200, 0.45);
+  --pg-kumkum:   #c62828;
+  --pg-teal:     #00897b;
+  --pg-text:     #fff3e0;
+  --pg-text-dim: rgba(255, 243, 224, 0.45);
 
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
   padding: 1.25rem 1rem;
-  background: linear-gradient(160deg, #3a1a00 0%, #200e00 100%);
+  background: radial-gradient(ellipse at 50% 10%, #0d2626 0%, #040e0e 100%);
   border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.6);
+  border: 1px solid rgba(0, 137, 123, 0.12);
+  box-shadow: 0 4px 32px rgba(0,0,0,0.7);
   width: 100%;
   box-sizing: border-box;
   font-family: inherit;
 }
 
-/* ── Status ──────────────────────────────────────────────────────── */
-.pg-status {
-  font-size: 0.92rem;
-  color: var(--pg-text-dim);
-  min-height: 1.4em;
+/* â”€â”€ Turn banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.pg-banner {
   text-align: center;
-  letter-spacing: 0.01em;
+  padding: 8px var(--space-4, 1.5rem);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: background 300ms, color 300ms, border-color 300ms;
+}
+.pg-banner--p1 {
+  background: rgba(0, 137, 123, 0.18);
+  color: #4dd0c4;
+  border: 1px solid rgba(0, 137, 123, 0.4);
+  box-shadow: 0 0 16px rgba(0,137,123,0.12);
+}
+.pg-banner--p2,
+.pg-banner--ai {
+  background: rgba(198, 40, 40, 0.14);
+  color: #ef9a9a;
+  border: 1px solid rgba(198, 40, 40, 0.35);
+  box-shadow: 0 0 16px rgba(198,40,40,0.1);
+}
+.pg-banner--over {
+  background: rgba(200, 149, 42, 0.18);
+  color: var(--pg-gold);
+  border: 1px solid rgba(200, 149, 42, 0.4);
+  box-shadow: 0 0 16px rgba(200,149,42,0.14);
 }
 
-/* ── Board wrap (stores on sides) ────────────────────────────────── */
-.pg-board-wrap {
+/* â”€â”€ Score bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.pg-score-bar {
   display: flex;
-  align-items: stretch;
-  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+.pg-score-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 64px;
+}
+.pg-score-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pg-text-dim);
+}
+.pg-score-val {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.pg-score-block--player .pg-score-val { color: #4dd0c4; text-shadow: 0 0 12px rgba(77,208,196,0.35); }
+.pg-score-block--ai     .pg-score-val { color: #ef9a9a; text-shadow: 0 0 12px rgba(239,154,154,0.3); }
+.pg-score-divider {
+  font-size: 0.72rem;
+  color: var(--pg-text-dim);
+  letter-spacing: 0.05em;
+}
+
+/* â”€â”€ Board wrap â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.pg-board-wrap {
   width: 100%;
 }
 
-/* ── Board ───────────────────────────────────────────────────────── */
+/* â”€â”€ Board â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pg-board {
-  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 14px 12px;
-  background: radial-gradient(ellipse at 50% 50%, #2a1105 0%, #180800 100%);
+  padding: 16px 14px;
+  background: radial-gradient(ellipse at 50% 50%, #150404 0%, #0a0202 100%);
   border-radius: 18px;
-  border: 2px solid rgba(160,90,30,0.5);
+  border: 2px solid rgba(120, 30, 10, 0.55);
   box-shadow:
-    inset 0 4px 18px rgba(0,0,0,0.7),
-    0 4px 14px rgba(0,0,0,0.5);
+    inset 0 4px 20px rgba(0,0,0,0.8),
+    inset 0 -2px 6px rgba(200,80,20,0.04),
+    0 4px 16px rgba(0,0,0,0.55);
 }
 
 .pg-row-label {
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--pg-text-dim);
   text-align: center;
   padding: 2px 0;
 }
 .pg-row-label--ai     { margin-bottom: 2px; }
-.pg-row-label--player { margin-top: 2px; }
+.pg-row-label--player { margin-top: 2px;    }
 
 .pg-row {
   display: grid;
@@ -2972,25 +3028,25 @@
 
 .pg-divider {
   height: 1px;
-  background: rgba(160,90,30,0.3);
+  background: rgba(200, 60, 20, 0.2);
   margin: 4px 0;
 }
 
-/* ── Pit ─────────────────────────────────────────────────────────── */
+/* â”€â”€ Pit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pg-pit {
   position: relative;
   width: 100%;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%,
-    #2e1108 0%, #1a0a02 55%, #0d0400 100%);
-  border: 2px solid #5c2e10;
+  background: radial-gradient(circle at 38% 32%,
+    #2a0606 0%, #130202 55%, #070101 100%);
+  border: 2px solid #7a1e0a;
   box-shadow:
-    inset 0 4px 14px rgba(0,0,0,0.75),
-    inset 0 -1px 4px rgba(255,180,60,0.05),
-    0 2px 4px rgba(0,0,0,0.45);
+    inset 0 4px 16px rgba(0,0,0,0.85),
+    inset 0 -1px 4px rgba(220,80,20,0.05),
+    0 2px 4px rgba(0,0,0,0.5);
   cursor: default;
-  transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.12s;
   user-select: none;
   overflow: hidden;
 }
@@ -3007,52 +3063,52 @@
   text-align: center;
   font-size: 0.65rem;
   font-weight: 600;
-  color: rgba(255,220,150,0.55);
+  color: rgba(255, 220, 150, 0.5);
   line-height: 1;
   pointer-events: none;
 }
 
-/* ── Pit states ──────────────────────────────────────────────────── */
+/* â”€â”€ Pit states â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pg-pit--clickable {
   cursor: pointer;
-  border-color: var(--pg-amber);
+  border-color: var(--pg-saffron);
   box-shadow:
-    inset 0 4px 14px rgba(0,0,0,0.6),
-    0 0 10px rgba(232,160,48,0.4),
-    0 2px 4px rgba(0,0,0,0.45);
+    inset 0 4px 16px rgba(0,0,0,0.7),
+    0 0 12px rgba(232,160,0,0.4),
+    0 2px 4px rgba(0,0,0,0.5);
 }
 .pg-pit--clickable:hover {
-  transform: scale(1.06);
+  transform: scale(1.08);
   border-color: var(--pg-gold);
   box-shadow:
-    inset 0 4px 14px rgba(0,0,0,0.5),
-    0 0 18px rgba(255,213,122,0.55),
-    0 2px 6px rgba(0,0,0,0.5);
+    inset 0 4px 16px rgba(0,0,0,0.6),
+    0 0 20px rgba(255,213,122,0.55),
+    0 2px 6px rgba(0,0,0,0.55);
 }
 
 .pg-pit--lit {
-  border-color: var(--pg-amber);
+  border-color: var(--pg-saffron);
   box-shadow:
-    inset 0 4px 14px rgba(0,0,0,0.55),
-    0 0 22px rgba(232,160,48,0.65),
-    0 2px 4px rgba(0,0,0,0.45);
-  animation: pg-receive 200ms ease-out;
+    inset 0 4px 16px rgba(0,0,0,0.65),
+    0 0 24px rgba(232,160,0,0.6),
+    0 2px 4px rgba(0,0,0,0.5);
+  animation: pg-receive 220ms ease-out;
 }
 @keyframes pg-receive {
-  0%   { transform: scale(1.12); }
+  0%   { transform: scale(1.14); }
   100% { transform: scale(1); }
 }
 
 .pg-pit--ai-select {
-  border-color: #e05a3a;
+  border-color: var(--pg-kumkum);
   animation: pg-ai-select 0.55s ease-in-out infinite alternate;
 }
 @keyframes pg-ai-select {
-  from { box-shadow: inset 0 4px 14px rgba(0,0,0,0.6), 0 0 10px rgba(224,90,58,0.4); }
-  to   { box-shadow: inset 0 4px 14px rgba(0,0,0,0.4), 0 0 28px rgba(224,90,58,0.8); }
+  from { box-shadow: inset 0 4px 16px rgba(0,0,0,0.8), 0 0 10px rgba(198,40,40,0.4); }
+  to   { box-shadow: inset 0 4px 16px rgba(0,0,0,0.5), 0 0 28px rgba(198,40,40,0.85); }
 }
 
-/* ── Shell sprite (cowrie oval) ──────────────────────────────────── */
+/* â”€â”€ Shell sprite (cowrie oval) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pg-shell {
   position: absolute;
   width: 11px;
@@ -3063,88 +3119,64 @@
   transform: rotate(var(--rot, 0deg));
   background: radial-gradient(ellipse at 40% 30%,
     #fffbf0 0%, #f0e4c0 45%, #c8a870 100%);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.4);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.55), inset 0 1px 1px rgba(255,255,255,0.45);
   pointer-events: none;
 }
-
 .pg-shell--new {
-  animation: pg-shell-in 200ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: pg-shell-in 210ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 @keyframes pg-shell-in {
   from { transform: rotate(var(--rot, 0deg)) scale(0); opacity: 0; }
   to   { transform: rotate(var(--rot, 0deg)) scale(1); opacity: 1; }
 }
 
-/* ── Stores (flanking the board) ─────────────────────────────────── */
-.pg-store {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  width: 62px;
-  min-height: 120px;
-  padding: 10px 6px;
-  background: radial-gradient(ellipse at 50% 30%, #1c0b00 0%, #0a0400 100%);
-  border-radius: 12px;
-  border: 2px solid rgba(120,60,20,0.5);
+/* â”€â”€ Flying cluster â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.pg-fly-cluster {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%,
+    rgba(30, 8, 8, 0.88) 0%, rgba(10, 2, 2, 0.93) 100%);
+  border: 1.5px solid rgba(232, 160, 0, 0.65);
   box-shadow:
-    inset 0 3px 12px rgba(0,0,0,0.7),
-    0 2px 6px rgba(0,0,0,0.4);
-  flex-shrink: 0;
+    0 0 14px rgba(232,160,0,0.35),
+    0 2px 8px rgba(0,0,0,0.6);
+}
+.pg-cluster-shell {
+  position: absolute;
+  width: 8px;
+  height: 5px;
+  border-radius: 50%;
+  left:  calc(50% + var(--x, 0px) - 4px);
+  top:   calc(50% + var(--y, 0px) - 2.5px);
+  background: radial-gradient(ellipse at 40% 30%,
+    #fffbf0 0%, #f0e4c0 50%, #c8a870 100%);
+  box-shadow: 0 1px 1px rgba(0,0,0,0.4);
 }
 
-.pg-store__label {
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--pg-text-dim);
-  text-align: center;
-}
-
-.pg-store__val {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--pg-gold);
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-
-.pg-store__sub {
-  font-size: 0.58rem;
-  color: var(--pg-text-dim);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-/* ── Log ─────────────────────────────────────────────────────────── */
+/* â”€â”€ Log â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pg-log {
   width: 100%;
   max-width: 520px;
 }
-
 .pg-log ul {
   list-style: none;
   margin: 0;
   padding: 0;
   font-size: 0.78rem;
   color: var(--pg-text-dim);
-  border-top: 1px solid rgba(160,90,30,0.2);
+  border-top: 1px solid rgba(0, 137, 123, 0.18);
   padding-top: 0.5rem;
   max-height: 5.5em;
   overflow: hidden;
 }
-
 .pg-log li {
   padding: 0.1rem 0;
-  border-bottom: 1px solid rgba(255,242,216,0.04);
+  border-bottom: 1px solid rgba(255,243,224,0.04);
 }
+.pg-log li:first-child { color: var(--pg-text); }
 
-.pg-log li:first-child {
-  color: var(--pg-text);
-}
-
-/* ── Controls ────────────────────────────────────────────────────── */
+/* â”€â”€ Controls â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pg-actions {
   display: flex;
   flex-direction: column;
@@ -3152,7 +3184,6 @@
   gap: 8px;
   width: 100%;
 }
-
 .pg-mode {
   display: flex;
   align-items: center;
@@ -3160,84 +3191,76 @@
   flex-wrap: wrap;
   justify-content: center;
 }
-
 .pg-mode-label {
   font-size: 0.72rem;
   color: var(--pg-text-dim);
   text-transform: uppercase;
   letter-spacing: 0.07em;
 }
+.pg-btn-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
 
 .pg-diff-btn {
   padding: 4px 14px;
   font-size: 0.78rem;
   border-radius: 20px;
-  border: 1px solid rgba(200,135,26,0.3);
-  background: rgba(200,135,26,0.07);
-  color: rgba(255,213,122,0.45);
+  border: 1px solid rgba(0,137,123,0.25);
+  background: rgba(0,137,123,0.06);
+  color: rgba(77,208,196,0.45);
   cursor: pointer;
   transition: all 0.15s;
   font-family: inherit;
 }
 .pg-diff-btn:hover {
-  border-color: rgba(200,135,26,0.6);
-  color: rgba(255,213,122,0.8);
-  background: rgba(200,135,26,0.14);
+  border-color: rgba(0,137,123,0.5);
+  color: rgba(77,208,196,0.85);
+  background: rgba(0,137,123,0.12);
 }
 .pg-diff-btn.active {
-  border-color: var(--pg-amber);
-  color: var(--pg-gold);
-  background: rgba(200,135,26,0.2);
+  border-color: var(--pg-teal);
+  color: #4dd0c4;
+  background: rgba(0,137,123,0.2);
 }
 
 .pg-btn {
-  padding: 0.5rem 1.4rem;
+  padding: 0.45rem 1.3rem;
   font-size: 0.88rem;
   font-weight: 600;
   border-radius: 8px;
-  border: 1px solid rgba(160,90,30,0.55);
-  background: rgba(90,40,10,0.55);
+  border: 1px solid rgba(120,30,10,0.55);
+  background: rgba(40,8,4,0.6);
   color: var(--pg-text);
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
   font-family: inherit;
 }
 .pg-btn:hover {
-  background: rgba(120,55,15,0.7);
-  border-color: rgba(200,130,50,0.7);
+  background: rgba(80,16,6,0.75);
+  border-color: rgba(200,80,20,0.65);
+}
+.pg-btn--skip {
+  border-color: rgba(0,137,123,0.4);
+  background: rgba(0,137,123,0.1);
+  color: #4dd0c4;
+}
+.pg-btn--skip:hover {
+  background: rgba(0,137,123,0.2);
+  border-color: rgba(0,137,123,0.65);
 }
 
-/* ── Thinking dots ───────────────────────────────────────────────── */
-.pg-dots span {
-  display: inline-block;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--pg-text-dim);
-  margin: 0 2px;
-  vertical-align: middle;
-  animation: pg-dot-bounce 1.2s ease-in-out infinite;
-}
-.pg-dots span:nth-child(2) { animation-delay: 0.2s; }
-.pg-dots span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes pg-dot-bounce {
-  0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
-  40%           { transform: translateY(-5px); opacity: 1; }
-}
-
-/* ── Responsive ──────────────────────────────────────────────────── */
+/* â”€â”€ Responsive â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 600px) {
-  .pg-board-wrap { gap: 6px; }
-  .pg-store       { width: 48px; min-height: 90px; }
-  .pg-store__val  { font-size: 1.4rem; }
-  .pg-store__label,
-  .pg-store__sub  { font-size: 0.55rem; }
-  .pg-row         { gap: 4px; }
-  .pg-board       { padding: 10px 8px; gap: 4px; }
+  .pg-row  { gap: 4px; }
+  .pg-board { padding: 10px 8px; gap: 4px; }
   .pg-shell {
     width: 8px; height: 5px;
     left: calc(50% + var(--x,0px) - 4px);
     top:  calc(50% + var(--y,0px) - 2.5px);
   }
   .pg-pit__count  { font-size: 0.58rem; }
+  .pg-score-val   { font-size: 1.5rem; }
 }

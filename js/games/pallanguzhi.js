@@ -28,18 +28,22 @@
   var AI         = 1;   // owns cups 0–6  (top row)
   var TOTAL_CUPS = 14;
   var SHELLS_PER = 6;
-  var SOW_MS     = 160; // ms between shell drops
 
   // CCW cycle: player row L→R, then AI row R→L
   var CYCLE = [7, 8, 9, 10, 11, 12, 13, 6, 5, 4, 3, 2, 1, 0];
 
+  // Golden angle for sunflower spiral shell placement
+  var GOLDEN_ANGLE = 2.399963;
+
   // ── Module-level vars ─────────────────────────────────────────────────
-  var mode  = 'vs-ai';   // 'vs-ai' | 'vs-human'
-  var state = {};
+  var mode        = 'vs-ai';   // 'vs-ai' | 'vs-human'
+  var state       = {};
+  var skipSowing  = false;
+  var skipResolve = null;
 
   // ── Name helpers ──────────────────────────────────────────────────────
-  function p1Name() { return 'Player 1'; }
-  function p2Name() { return mode === 'vs-human' ? 'Player 2' : 'AI'; }
+  function p1Name()   { return 'Player 1'; }
+  function p2Name()   { return mode === 'vs-human' ? 'Player 2' : 'AI'; }
   function turnName() { return state.turn === PLAYER ? p1Name() : p2Name(); }
 
   // ── Log ───────────────────────────────────────────────────────────────
@@ -50,6 +54,8 @@
 
   // ── New game ──────────────────────────────────────────────────────────
   function newGame() {
+    skipSowing  = false;
+    skipResolve = null;
     var cups = [];
     for (var i = 0; i < TOTAL_CUPS; i++) cups.push(SHELLS_PER);
 
@@ -58,26 +64,17 @@
       turn:           PLAYER,
       cups:           cups,
       stores:         { 0: 0, 1: 0 },
-      sowingCup:      -1,   // cup currently receiving a shell (for glow)
-      aiSelectingCup: -1,   // cup AI chose (shown briefly before sowing)
+      sowingCup:      -1,
+      aiSelectingCup: -1,
       log:            [],
     };
     render();
   }
 
   // ── Board helpers ─────────────────────────────────────────────────────
+  function oppositeCup(cup) { return cup < 7 ? cup + 7 : cup - 7; }
+  function isOwnCup(cup)    { return state.turn === PLAYER ? cup >= 7 : cup < 7; }
 
-  // Cup directly across the board: 0↔7, 1↔8, …, 6↔13
-  function oppositeCup(cup) {
-    return cup < 7 ? cup + 7 : cup - 7;
-  }
-
-  // Is this cup in the current player's own row?
-  function isOwnCup(cup) {
-    return state.turn === PLAYER ? cup >= 7 : cup < 7;
-  }
-
-  // 14 cups in CCW order starting AFTER startCup
   function sowingOrder(startCup) {
     var idx = CYCLE.indexOf(startCup);
     var result = [];
@@ -87,13 +84,81 @@
     return result;
   }
 
-  // Next non-empty cup in CCW order after fromCup; -1 if none
   function findNextNonEmpty(fromCup) {
     var order = sowingOrder(fromCup);
     for (var i = 0; i < order.length; i++) {
       if (state.cups[order[i]] > 0) return order[i];
     }
     return -1;
+  }
+
+  // ── Animation helpers ─────────────────────────────────────────────────
+  function sleep(ms) {
+    if (skipSowing) return Promise.resolve();
+    return new Promise(function (r) { setTimeout(r, ms); });
+  }
+
+  function requestSkip() {
+    skipSowing = true;
+    if (skipResolve) { skipResolve(); skipResolve = null; }
+  }
+
+  async function animatePickup(cup) {
+    if (skipSowing) return;
+    var el = document.querySelector('[data-cup="' + cup + '"]');
+    if (!el) return;
+    var skip = new Promise(function (res) { skipResolve = res; });
+    var anim = el.animate([
+      { transform: 'scale(1)',    boxShadow: '0 0 0 0px rgba(232,160,0,0)',    filter: 'brightness(1)'    },
+      { transform: 'scale(1.2)', boxShadow: '0 0 0 10px rgba(232,160,0,0.45)', filter: 'brightness(1.7)' },
+      { transform: 'scale(0.9)', boxShadow: '0 0 0 0px rgba(232,160,0,0)',    filter: 'brightness(0.8)'  },
+      { transform: 'scale(1)',   boxShadow: '0 0 0 0px rgba(232,160,0,0)',    filter: 'brightness(1)'    },
+    ], { duration: 360, easing: 'ease-out' });
+    await Promise.race([anim.finished, skip]);
+    anim.cancel();
+  }
+
+  function setClusterContent(cluster, count) {
+    if (count <= 0) { cluster.innerHTML = ''; return; }
+    var show = Math.min(count, 8);
+    var r = show === 1 ? 0 : 4 + show * 1.6;
+    var html = '';
+    for (var i = 0; i < show; i++) {
+      var angle = (2 * Math.PI * i / show) - Math.PI / 2;
+      var x = show === 1 ? 0 : parseFloat((r * Math.cos(angle)).toFixed(1));
+      var y = show === 1 ? 0 : parseFloat((r * Math.sin(angle)).toFixed(1));
+      html += '<span class="pg-cluster-shell" style="--x:' + x + 'px;--y:' + y + 'px"></span>';
+    }
+    cluster.innerHTML = html;
+  }
+
+  async function flyClusterTo(cluster, curX, curY, toCup, duration) {
+    var toEl = document.querySelector('[data-cup="' + toCup + '"]');
+    if (!toEl) return { x: curX, y: curY };
+    var tr      = toEl.getBoundingClientRect();
+    var targetX = tr.left + tr.width  / 2;
+    var targetY = tr.top  + tr.height / 2;
+
+    if (!skipSowing) {
+      var dx   = targetX - curX;
+      var dy   = targetY - curY;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      var arc  = Math.min(Math.max(28, dist * 0.45), 90);
+
+      var skip = new Promise(function (res) { skipResolve = res; });
+      var anim = cluster.animate([
+        { transform: 'translate(-50%,-50%) scale(1.05)' },
+        { transform: 'translate(calc(-50% + ' + (dx * 0.5) + 'px), calc(-50% + ' + (dy * 0.5 - arc) + 'px)) scale(1.18)',
+          offset: 0.4 },
+        { transform: 'translate(calc(-50% + ' + dx + 'px), calc(-50% + ' + dy + 'px)) scale(1)' },
+      ], { duration: duration, easing: 'ease-in-out', fill: 'both' });
+      await Promise.race([anim.finished, skip]);
+      anim.cancel();
+    }
+
+    cluster.style.left = targetX + 'px';
+    cluster.style.top  = targetY + 'px';
+    return { x: targetX, y: targetY };
   }
 
   // ── Rendering ─────────────────────────────────────────────────────────
@@ -108,85 +173,81 @@
     var vsHuman = mode === 'vs-human';
     var you     = vsHuman ? 'Player 1' : 'You';
     var opp     = vsHuman ? 'Player 2' : 'AI';
+    var isIdle  = state.phase === 'idle';
 
-    var isIdle = state.phase === 'idle';
-
-    // Clickable cups this turn
     var clickablePlayer = [];
     var clickableAI     = [];
     if (isIdle && state.turn === PLAYER) {
       for (var i = 7; i < 14; i++) { if (state.cups[i] > 0) clickablePlayer.push(i); }
     }
     if (isIdle && state.turn === AI && vsHuman) {
-      for (var i = 0; i < 7; i++) { if (state.cups[i] > 0) clickableAI.push(i); }
+      for (var j = 0; j < 7; j++) { if (state.cups[j] > 0) clickableAI.push(j); }
     }
 
-    // Status message
-    var statusMsg;
-    if (state.phase === 'ai-thinking') {
-      statusMsg = opp + ' is thinking <span class="pg-dots"><span></span><span></span><span></span></span>';
-    } else if (state.phase === 'ai-selecting') {
-      statusMsg = opp + ' chose a cup\u2026';
-    } else if (state.phase === 'sowing') {
-      if (vsHuman) {
-        statusMsg = (state.turn === PLAYER ? 'Player 1' : 'Player 2') + ' sowing\u2026';
-      } else {
-        statusMsg = state.turn === PLAYER ? 'Sowing\u2026' : opp + ' sowing\u2026';
-      }
-    } else if (state.phase === 'over') {
-      statusMsg = state.endMsg || 'Game over.';
+    // Turn banner
+    var bannerCls, bannerText;
+    if (state.phase === 'over') {
+      bannerCls  = 'pg-banner--over';
+      bannerText = state.endMsg || 'Game over';
+    } else if (state.turn === AI && !vsHuman) {
+      bannerCls  = 'pg-banner--ai';
+      bannerText = state.phase === 'ai-thinking'  ? 'AI is thinking\u2026'
+                 : state.phase === 'ai-selecting' ? 'AI chose a cup\u2026'
+                 : state.phase === 'sowing'       ? 'AI sowing\u2026'
+                 : 'AI\u2019s turn';
     } else {
-      statusMsg = vsHuman
-        ? (state.turn === PLAYER ? 'Player 1 \u2014 click a highlighted cup' : 'Player 2 \u2014 click a highlighted cup')
-        : 'Your turn \u2014 click a highlighted cup to sow';
+      var whose = vsHuman ? (state.turn === PLAYER ? 'Player 1' : 'Player 2') : 'Your';
+      bannerCls  = state.turn === PLAYER ? 'pg-banner--p1' : 'pg-banner--p2';
+      bannerText = state.phase === 'sowing' ? (whose) + ' sowing\u2026'
+                                            : (whose) + '\u2019s turn \u2014 click a highlighted cup';
     }
 
-    // AI row: cups 0–6, left to right
+    // Board rows
     var aiRow = '';
-    for (var i = 0; i < 7; i++) {
-      aiRow += pitHTML(
-        i,
-        clickableAI.indexOf(i) !== -1,
-        state.sowingCup === i,
-        state.aiSelectingCup === i
-      );
+    for (var a = 0; a < 7; a++) {
+      aiRow += pitHTML(a, clickableAI.indexOf(a) !== -1, state.sowingCup === a, state.aiSelectingCup === a);
     }
-    // Player row: cups 7–13, left to right
     var playerRow = '';
-    for (var j = 7; j < 14; j++) {
-      playerRow += pitHTML(
-        j,
-        clickablePlayer.indexOf(j) !== -1,
-        state.sowingCup === j,
-        false
-      );
+    for (var p = 7; p < 14; p++) {
+      playerRow += pitHTML(p, clickablePlayer.indexOf(p) !== -1, state.sowingCup === p, false);
     }
 
-    // Log HTML
+    // Log
     var logHtml = '';
     if (state.log.length) {
       var items = state.log.map(function (m) { return '<li>' + m + '</li>'; }).join('');
       logHtml = '<div class="pg-log"><ul>' + items + '</ul></div>';
     }
 
-    // Mode + new-game controls
+    // Controls
+    var skipBtn = (state.phase === 'sowing')
+      ? '<button class="pg-btn pg-btn--skip" id="pg-skip">Skip</button>' : '';
     var controls = '<div class="pg-actions">'
       + '<div class="pg-mode">'
       + '<span class="pg-mode-label">Mode:</span>'
       + '<button class="pg-diff-btn' + (mode === 'vs-ai'    ? ' active' : '') + '" id="pg-mode-ai">vs AI</button>'
       + '<button class="pg-diff-btn' + (mode === 'vs-human' ? ' active' : '') + '" id="pg-mode-human">vs Player</button>'
       + '</div>'
+      + '<div class="pg-btn-row">'
+      + skipBtn
       + '<button class="pg-btn" id="pg-new">New Game</button>'
+      + '</div>'
       + '</div>';
 
     return '<div class="pg-game">'
-      + '<div class="pg-status">' + statusMsg + '</div>'
-      + '<div class="pg-board-wrap">'
-        + '<div class="pg-store pg-store--ai">'
-          + '<div class="pg-store__label">' + opp + '</div>'
-          + '<div class="pg-store__val">' + state.stores[AI] + '</div>'
-          + '<div class="pg-store__sub">captured</div>'
+      + '<div class="pg-banner ' + bannerCls + '">' + bannerText + '</div>'
+      + '<div class="pg-score-bar">'
+        + '<div class="pg-score-block pg-score-block--ai">'
+          + '<div class="pg-score-label">' + opp + '</div>'
+          + '<div class="pg-score-val">' + state.stores[AI] + '</div>'
         + '</div>'
+        + '<div class="pg-score-divider">vs</div>'
+        + '<div class="pg-score-block pg-score-block--player">'
+          + '<div class="pg-score-label">' + you + '</div>'
+          + '<div class="pg-score-val">' + state.stores[PLAYER] + '</div>'
+        + '</div>'
+      + '</div>'
+      + '<div class="pg-board-wrap">'
         + '<div class="pg-board">'
           + '<div class="pg-row-label pg-row-label--ai">' + opp + '\u2019s cups</div>'
           + '<div class="pg-row pg-row--ai">' + aiRow + '</div>'
@@ -194,34 +255,29 @@
           + '<div class="pg-row pg-row--player">' + playerRow + '</div>'
           + '<div class="pg-row-label pg-row-label--player">' + you + '\u2019s cups</div>'
         + '</div>'
-        + '<div class="pg-store pg-store--player">'
-          + '<div class="pg-store__label">' + you + '</div>'
-          + '<div class="pg-store__val">' + state.stores[PLAYER] + '</div>'
-          + '<div class="pg-store__sub">captured</div>'
-        + '</div>'
       + '</div>'
       + logHtml
       + controls
       + '</div>';
   }
 
-  // Deterministic rotation — no obvious patterns
+  // Deterministic rotation for visual variety
   function shellRot(cup, i) {
     var h = ((cup + 1) * 31 + i * 79 + (cup + 1) * (i + 1) * 13) % 140;
-    return h - 70; // −70 … +69 degrees
+    return h - 70;
   }
 
-  // Cowrie shells arranged in a circle inside the cup
-  function circleShells(count, cup, lit) {
+  // Golden-angle sunflower spiral (matches OAQ visual)
+  function spiralShells(count, cup, lit) {
     var show = Math.min(count, 14);
     if (!show) return '';
-    // radius grows gently with count
-    var r = show === 1 ? 0 : 5 + show * 1.2;
+    var maxR = show === 1 ? 0 : 5 + show * 1.1;
     var html = '';
     for (var i = 0; i < show; i++) {
-      var angle = (2 * Math.PI * i / show) - Math.PI / 2; // start from top
-      var x = show === 1 ? 0 : parseFloat((r * Math.cos(angle)).toFixed(1));
-      var y = show === 1 ? 0 : parseFloat((r * Math.sin(angle)).toFixed(1));
+      var r   = show === 1 ? 0 : Math.sqrt((i + 0.5) / show) * maxR;
+      var ang = i * GOLDEN_ANGLE;
+      var x   = show === 1 ? 0 : parseFloat((r * Math.cos(ang)).toFixed(1));
+      var y   = show === 1 ? 0 : parseFloat((r * Math.sin(ang)).toFixed(1));
       var rot = shellRot(cup, i);
       var isNew = lit && i === show - 1;
       html += '<span class="pg-shell' + (isNew ? ' pg-shell--new' : '') + '"'
@@ -239,7 +295,7 @@
     if (aiSelected) cls.push('pg-pit--ai-select');
 
     return '<div class="' + cls.join(' ') + '" data-cup="' + cup + '">'
-      + '<div class="pg-pit__shells">' + circleShells(count, cup, lit) + '</div>'
+      + '<div class="pg-pit__shells">' + spiralShells(count, cup, lit) + '</div>'
       + '<div class="pg-pit__count">' + count + '</div>'
       + '</div>';
   }
@@ -248,6 +304,9 @@
   function wireEvents(el) {
     var newBtn = el.querySelector('#pg-new');
     if (newBtn) newBtn.addEventListener('click', newGame);
+
+    var skipBtn = el.querySelector('#pg-skip');
+    if (skipBtn) skipBtn.addEventListener('click', requestSkip);
 
     var aiModeBtn  = el.querySelector('#pg-mode-ai');
     var humModeBtn = el.querySelector('#pg-mode-human');
@@ -261,68 +320,89 @@
     });
   }
 
-  // ── Sowing ────────────────────────────────────────────────────────────
-  function onCupClick(cup) {
+  // ── Sowing (async, skippable) ─────────────────────────────────────────
+  async function onCupClick(cup) {
     if (state.phase !== 'idle') return;
     var validPlayer = state.turn === PLAYER && cup >= 7  && state.cups[cup] > 0;
     var validAI     = state.turn === AI     && cup < 7   && state.cups[cup] > 0 && mode === 'vs-human';
     if (!validPlayer && !validAI) return;
 
-    var label = (cup < 7 ? (cup + 1) : (cup - 6)); // 1-based label within row
+    var label = cup < 7 ? (cup + 1) : (cup - 6);
     addLog(turnName() + ' picks cup ' + label + ' (' + state.cups[cup] + ' shells)');
     state.phase = 'sowing';
+    skipSowing  = false;
+    skipResolve = null;
     render();
-    setTimeout(function () { sow(cup); }, 60);
+
+    await sow(cup);
   }
 
-  function sow(cupIdx) {
-    if (state.cups[cupIdx] === 0) {
-      var next = findNextNonEmpty(cupIdx);
-      if (next === -1) { endTurn(); return; }
-      sow(next);
-      return;
-    }
-
+  async function sow(cupIdx) {
     var shells = state.cups[cupIdx];
+
+    await animatePickup(cupIdx);
     state.cups[cupIdx] = 0;
-    var order = sowingOrder(cupIdx);
-    var step  = 0;
+    state.sowingCup = -1;
+    render();
+
+    // Spawn flying cluster at source pit
+    var srcEl   = document.querySelector('[data-cup="' + cupIdx + '"]');
+    var srcRect = srcEl
+      ? srcEl.getBoundingClientRect()
+      : { left: 0, top: 0, width: 70, height: 70 };
+    var curX = srcRect.left + srcRect.width  / 2;
+    var curY = srcRect.top  + srcRect.height / 2;
+
+    var cluster = document.createElement('div');
+    cluster.className = 'pg-fly-cluster';
+    cluster.style.cssText = 'position:fixed;left:' + curX + 'px;top:' + curY + 'px;'
+      + 'transform:translate(-50%,-50%);pointer-events:none;z-index:9999;';
+    setClusterContent(cluster, shells);
+    document.body.appendChild(cluster);
+
+    var order        = sowingOrder(cupIdx);
+    var step         = 0;
     var lastCup      = cupIdx;
     var lastWasEmpty = false;
 
-    function dropOne() {
-      if (shells === 0) {
-        state.sowingCup = -1;
-        render();
-        setTimeout(function () { resolveLastDrop(lastCup, lastWasEmpty); }, 140);
-        return;
-      }
-      var target    = order[step % order.length];
-      lastWasEmpty  = (state.cups[target] === 0);
+    while (shells > 0) {
+      var target   = order[step % order.length];
+      lastWasEmpty = (state.cups[target] === 0);
+
+      var pos = await flyClusterTo(cluster, curX, curY, target, 500);
+      curX = pos.x;
+      curY = pos.y;
+
       state.cups[target]++;
       shells--;
       step++;
-      lastCup       = target;
+      lastCup         = target;
       state.sowingCup = target;
       render();
-      setTimeout(dropOne, SOW_MS);
+      setClusterContent(cluster, shells);
+
+      if (shells > 0) await sleep(65);
     }
 
-    dropOne();
+    cluster.remove();
+    state.sowingCup = -1;
+    render();
+
+    await sleep(160);
+    await resolveLastDrop(lastCup, lastWasEmpty);
   }
 
-  function resolveLastDrop(lastCup, wasEmpty) {
+  async function resolveLastDrop(lastCup, wasEmpty) {
     // ── Capture-on-4 ──────────────────────────────────────────────────
     if (state.cups[lastCup] === 4) {
       state.stores[state.turn] += 4;
       state.cups[lastCup] = 0;
       addLog(turnName() + ' captured 4! Store \u2192 ' + state.stores[state.turn]);
       render();
-      setTimeout(function () {
-        var next = findNextNonEmpty(lastCup);
-        if (next === -1) { endTurn(); }
-        else             { sow(next); }
-      }, 340);
+      await sleep(340);
+      var next = findNextNonEmpty(lastCup);
+      if (next === -1) { await endTurn(); }
+      else             { await sow(next); }
       return;
     }
 
@@ -336,28 +416,31 @@
         addLog(turnName() + ' captured ' + grabbed + ' from opposite!');
         render();
       } else {
-        addLog(turnName() + ' landed in empty cup \u2014 no capture.');
+        addLog(turnName() + ' landed empty \u2014 no capture.');
         render();
       }
-      setTimeout(endTurn, 500);
+      await sleep(500);
+      await endTurn();
       return;
     }
 
     // ── Continue sowing (non-empty, not 4) ────────────────────────────
-    setTimeout(function () { sow(lastCup); }, 220);
+    await sleep(200);
+    await sow(lastCup);
   }
 
   // ── Turn management ───────────────────────────────────────────────────
-  function endTurn() {
+  async function endTurn() {
     if (checkGameOver()) return;
 
-    state.turn = 1 - state.turn;
+    state.turn  = 1 - state.turn;
     state.phase = 'idle';
 
     if (state.turn === AI && mode === 'vs-ai') {
       state.phase = 'ai-thinking';
       render();
-      setTimeout(runAI, 700 + Math.random() * 400);
+      await sleep(700 + Math.random() * 400);
+      await runAI();
     } else {
       render();
     }
@@ -366,12 +449,11 @@
   function checkGameOver() {
     var playerEmpty = true, aiEmpty = true;
     for (var i = 7; i < 14; i++) { if (state.cups[i] > 0) { playerEmpty = false; break; } }
-    for (var i = 0; i < 7;  i++) { if (state.cups[i] > 0) { aiEmpty     = false; break; } }
+    for (var j = 0; j < 7;  j++) { if (state.cups[j] > 0) { aiEmpty     = false; break; } }
     if (!playerEmpty && !aiEmpty) return false;
 
-    // Sweep remaining shells to their owners
-    for (var i = 0; i < 7;  i++) { state.stores[AI]     += state.cups[i]; state.cups[i] = 0; }
-    for (var i = 7; i < 14; i++) { state.stores[PLAYER] += state.cups[i]; state.cups[i] = 0; }
+    for (var a = 0; a < 7;  a++) { state.stores[AI]     += state.cups[a]; state.cups[a] = 0; }
+    for (var b = 7; b < 14; b++) { state.stores[PLAYER] += state.cups[b]; state.cups[b] = 0; }
 
     state.phase = 'over';
     var ps = state.stores[PLAYER], as = state.stores[AI];
@@ -379,38 +461,38 @@
     var an = mode === 'vs-human' ? 'Player 2' : 'AI';
 
     if (ps > as) {
-      state.endMsg = '\uD83C\uDFC6 ' + pn + ' win' + (mode === 'vs-human' ? 's' : '') + '! ' + ps + ' \u2013 ' + as + ' shells.';
+      state.endMsg = '\uD83C\uDFC6 ' + pn + (mode === 'vs-human' ? ' wins' : ' win') + '! ' + ps + ' \u2013 ' + as;
       addLog(pn + ' wins ' + ps + '\u2013' + as + '!');
     } else if (as > ps) {
-      state.endMsg = '\uD83C\uDFC6 ' + an + ' wins! ' + as + ' \u2013 ' + ps + ' shells.';
+      state.endMsg = '\uD83C\uDFC6 ' + an + ' wins! ' + as + ' \u2013 ' + ps;
       addLog(an + ' wins ' + as + '\u2013' + ps + '!');
     } else {
       state.endMsg = 'Draw \u2014 both have ' + ps + ' shells.';
       addLog('Draw! ' + ps + '\u2013' + as);
     }
-
     render();
     return true;
   }
 
   // ── AI ────────────────────────────────────────────────────────────────
-  function runAI() {
+  async function runAI() {
     if (state.phase !== 'ai-thinking') return;
     var cup = aiChooseMove();
-    if (cup === -1) { endTurn(); return; }
+    if (cup === -1) { await endTurn(); return; }
 
-    // Briefly show which cup the AI picked
-    state.phase         = 'ai-selecting';
+    state.phase          = 'ai-selecting';
     state.aiSelectingCup = cup;
     render();
 
-    setTimeout(function () {
-      state.aiSelectingCup = -1;
-      var label = cup + 1;
-      addLog('AI picks cup ' + label + ' (' + state.cups[cup] + ' shells)');
-      state.phase = 'sowing';
-      sow(cup);
-    }, 900);
+    await sleep(900);
+    state.aiSelectingCup = -1;
+    addLog('AI picks cup ' + (cup + 1) + ' (' + state.cups[cup] + ' shells)');
+    state.phase = 'sowing';
+    skipSowing  = false;
+    skipResolve = null;
+    render();
+
+    await sow(cup);
   }
 
   function aiChooseMove() {
@@ -430,17 +512,17 @@
     var shells = state.cups[cup];
     if (!shells) return -Infinity;
 
-    var order   = sowingOrder(cup);
-    var landIdx = (shells - 1) % order.length;
-    var landCup = order[landIdx];
+    var order    = sowingOrder(cup);
+    var landIdx  = (shells - 1) % order.length;
+    var landCup  = order[landIdx];
     var landAfter = state.cups[landCup] + 1;
 
-    if (landAfter === 4)              return 200;            // capture 4
-    if (state.cups[landCup] === 0 && landCup < 7) {         // own empty cup
+    if (landAfter === 4)             return 200;
+    if (state.cups[landCup] === 0 && landCup < 7) {
       var opp = oppositeCup(landCup);
-      if (state.cups[opp] > 0)       return 100 + state.cups[opp]; // cross-capture
+      if (state.cups[opp] > 0)       return 100 + state.cups[opp];
     }
-    if (state.cups[landCup] > 0)     return 10 + shells;    // continue sowing
+    if (state.cups[landCup] > 0)     return 10 + shells;
     return shells;
   }
 
