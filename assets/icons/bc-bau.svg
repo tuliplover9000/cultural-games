@@ -1,18 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-  <!-- Gourd / Calabash — two-lobed bottle gourd -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <!-- Gourd / Calabash -->
+  <!-- Lower bulb shadow -->
+  <ellipse cx="41" cy="58" rx="19" ry="17" fill="#4a7c2f" opacity="0.4"/>
   <!-- Lower bulb (large) -->
-  <ellipse cx="40" cy="56" rx="20" ry="18" stroke-width="3"/>
+  <ellipse cx="40" cy="56" rx="20" ry="18" fill="#6cb440"/>
+  <!-- Lower bulb highlight -->
+  <ellipse cx="34" cy="48" rx="7" ry="5" fill="#8fd45a" opacity="0.6"/>
+  <!-- Upper bulb shadow -->
+  <ellipse cx="41" cy="30" rx="12" ry="11" fill="#4a7c2f" opacity="0.4"/>
   <!-- Upper bulb (smaller) -->
-  <ellipse cx="40" cy="28" rx="13" ry="12" stroke-width="3"/>
-  <!-- Neck connecting them -->
-  <line x1="33" y1="37" x2="31" y2="40" stroke-width="3"/>
-  <line x1="47" y1="37" x2="49" y2="40" stroke-width="3"/>
-  <!-- Stem at top -->
-  <path d="M40,16 Q40,10 44,8" stroke-width="2.5"/>
-  <!-- Leaf curl on stem -->
-  <path d="M44,8 Q50,6 48,12 Q46,14 44,12" stroke-width="2" fill="none"/>
-  <!-- Vertical rib lines on lower bulb -->
-  <path d="M40,38 Q38,46 40,74" stroke-width="1.5" opacity="0.5" stroke-dasharray="2,3"/>
-  <path d="M34,41 Q30,50 34,70" stroke-width="1.5" opacity="0.4" stroke-dasharray="2,3"/>
-  <path d="M46,41 Q50,50 46,70" stroke-width="1.5" opacity="0.4" stroke-dasharray="2,3"/>
+  <ellipse cx="40" cy="28" rx="13" ry="12" fill="#7cc44a"/>
+  <!-- Upper bulb highlight -->
+  <ellipse cx="35" cy="22" rx="5" ry="4" fill="#a0e060" opacity="0.6"/>
+  <!-- Neck -->
+  <path d="M32,38 Q31,42 32,44 Q36,46 40,46 Q44,46 48,44 Q49,42 48,38" fill="#5aaa30"/>
+  <!-- Rib lines on lower bulb -->
+  <path d="M40,38 Q38,47 40,74" stroke="#4a8c2a" stroke-width="1.5" fill="none" opacity="0.5" stroke-dasharray="2,3"/>
+  <path d="M33,41 Q29,52 34,70" stroke="#4a8c2a" stroke-width="1.2" fill="none" opacity="0.4" stroke-dasharray="2,3"/>
+  <path d="M47,41 Q51,52 46,70" stroke="#4a8c2a" stroke-width="1.2" fill="none" opacity="0.4" stroke-dasharray="2,3"/>
+  <!-- Outline lower bulb -->
+  <ellipse cx="40" cy="56" rx="20" ry="18" fill="none" stroke="#3d6e22" stroke-width="2"/>
+  <!-- Outline upper bulb -->
+  <ellipse cx="40" cy="28" rx="13" ry="12" fill="none" stroke="#3d6e22" stroke-width="2"/>
+  <!-- Stem -->
+  <line x1="40" y1="16" x2="40" y2="10" stroke="#8B5E3C" stroke-width="3" stroke-linecap="round"/>
+  <!-- Leaf -->
+  <path d="M40,12 Q48,6 50,12 Q46,16 40,14 Z" fill="#6cb440" stroke="#3d6e22" stroke-width="1.5"/>
+  <path d="M40,12 Q44,9 45,12" stroke="#3d6e22" stroke-width="1" fill="none" opacity="0.6"/>
 </svg>

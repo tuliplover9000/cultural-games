@@ -1,28 +1,36 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
   <!-- Crab — top-down view -->
-  <!-- Body (oval) -->
-  <ellipse cx="40" cy="42" rx="18" ry="14" stroke-width="3"/>
-  <!-- Shell pattern on body -->
-  <path d="M28,38 Q40,34 52,38" stroke-width="1.5" opacity="0.6"/>
-  <path d="M26,44 Q40,40 54,44" stroke-width="1.5" opacity="0.6"/>
-  <!-- Left big claw -->
-  <path d="M22,36 Q12,28 8,22" stroke-width="2.5"/>
-  <path d="M8,22 Q4,16 8,14 Q12,12 12,18" stroke-width="2.5"/>
-  <path d="M8,22 Q5,22 6,27 Q8,30 12,27" stroke-width="2.5"/>
+  <!-- Shadow -->
+  <ellipse cx="41" cy="44" rx="18" ry="13" fill="#a03000" opacity="0.35"/>
+  <!-- Body -->
+  <ellipse cx="40" cy="42" rx="18" ry="14" fill="#e85010"/>
+  <!-- Shell pattern / highlight -->
+  <ellipse cx="36" cy="38" rx="8" ry="5" fill="#f47040" opacity="0.5"/>
+  <path d="M28,38 Q40,34 52,38" stroke="#c04000" stroke-width="1.5" fill="none" opacity="0.7"/>
+  <path d="M26,44 Q40,40 54,44" stroke="#c04000" stroke-width="1.5" fill="none" opacity="0.7"/>
+  <!-- Body outline -->
+  <ellipse cx="40" cy="42" rx="18" ry="14" fill="none" stroke="#b03000" stroke-width="2"/>
+  <!-- Left big claw - upper arm -->
+  <path d="M22,36 Q12,28 8,22" stroke="#c04800" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <!-- Left claw fingers -->
+  <path d="M8,22 Q3,15 8,13 Q13,11 12,18" stroke="#c04800" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M8,22 Q4,22 5,28 Q8,31 13,27" stroke="#c04800" stroke-width="3.5" fill="none" stroke-linecap="round"/>
   <!-- Right big claw -->
-  <path d="M58,36 Q68,28 72,22" stroke-width="2.5"/>
-  <path d="M72,22 Q76,16 72,14 Q68,12 68,18" stroke-width="2.5"/>
-  <path d="M72,22 Q75,22 74,27 Q72,30 68,27" stroke-width="2.5"/>
-  <!-- Left walking legs (3) -->
-  <path d="M28,50 Q20,54 14,52" stroke-width="2"/>
-  <path d="M30,54 Q22,60 16,60" stroke-width="2"/>
-  <path d="M34,57 Q28,64 22,66" stroke-width="2"/>
-  <!-- Right walking legs (3) -->
-  <path d="M52,50 Q60,54 66,52" stroke-width="2"/>
-  <path d="M50,54 Q58,60 64,60" stroke-width="2"/>
-  <!-- Eyes on stalks -->
-  <line x1="35" y1="29" x2="33" y2="22" stroke-width="2"/>
-  <circle cx="33" cy="21" r="3" stroke-width="2"/>
-  <line x1="45" y1="29" x2="47" y2="22" stroke-width="2"/>
-  <circle cx="47" cy="21" r="3" stroke-width="2"/>
+  <path d="M58,36 Q68,28 72,22" stroke="#c04800" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M72,22 Q77,15 72,13 Q67,11 68,18" stroke="#c04800" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M72,22 Q76,22 75,28 Q72,31 67,27" stroke="#c04800" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <!-- Walking legs -->
+  <path d="M28,50 Q20,54 14,52" stroke="#d04010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M30,54 Q22,60 16,60" stroke="#d04010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M34,57 Q28,64 22,66" stroke="#d04010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M52,50 Q60,54 66,52" stroke="#d04010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M50,54 Q58,60 64,60" stroke="#d04010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M46,57 Q52,64 58,66" stroke="#d04010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Eye stalks -->
+  <line x1="35" y1="29" x2="33" y2="22" stroke="#b03000" stroke-width="2.5"/>
+  <circle cx="33" cy="21" r="3.5" fill="#f0f0f0" stroke="#b03000" stroke-width="1.5"/>
+  <circle cx="33" cy="21" r="1.5" fill="#1a0800"/>
+  <line x1="45" y1="29" x2="47" y2="22" stroke="#b03000" stroke-width="2.5"/>
+  <circle cx="47" cy="21" r="3.5" fill="#f0f0f0" stroke="#b03000" stroke-width="1.5"/>
+  <circle cx="47" cy="21" r="1.5" fill="#1a0800"/>
 </svg>

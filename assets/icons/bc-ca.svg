@@ -1,24 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-  <!-- Fish — side view -->
-  <!-- Main body -->
-  <path d="M16,40 C16,28 28,18 46,18 C60,18 68,28 68,40 C68,52 60,62 46,62 C28,62 16,52 16,40 Z" stroke-width="3"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <!-- Fish — side view, facing right -->
   <!-- Tail fin -->
-  <path d="M16,40 Q4,28 6,22 Q14,32 16,40" stroke-width="2.5" fill="none"/>
-  <path d="M16,40 Q4,52 6,58 Q14,48 16,40" stroke-width="2.5" fill="none"/>
-  <!-- Dorsal fin (top) -->
-  <path d="M36,18 Q40,8 46,10 Q50,12 48,18" stroke-width="2.5"/>
+  <path d="M16,40 Q4,26 6,20 Q14,32 16,40 Q14,48 6,58 Q4,52 16,40 Z"
+        fill="#f4913a" stroke="#c06020" stroke-width="1.5"/>
+  <!-- Body -->
+  <ellipse cx="44" cy="40" rx="24" ry="18" fill="#4ab0e8"/>
+  <!-- Belly (lighter) -->
+  <ellipse cx="44" cy="46" rx="20" ry="10" fill="#a0d8f8" opacity="0.7"/>
+  <!-- Body highlight -->
+  <ellipse cx="38" cy="32" rx="10" ry="6" fill="#80c8f4" opacity="0.5"/>
+  <!-- Body outline -->
+  <ellipse cx="44" cy="40" rx="24" ry="18" fill="none" stroke="#2a80c0" stroke-width="2"/>
+  <!-- Dorsal fin -->
+  <path d="M36,22 Q40,10 48,12 Q50,14 48,22" fill="#f4913a" stroke="#c06020" stroke-width="1.5"/>
   <!-- Pectoral fin -->
-  <path d="M42,36 Q50,28 54,32 Q52,38 42,36" stroke-width="2"/>
-  <!-- Eye -->
-  <circle cx="56" cy="34" r="5" stroke-width="2.5"/>
-  <circle cx="57" cy="33" r="2" fill="currentColor" stroke="none"/>
-  <!-- Mouth -->
-  <path d="M68,40 Q72,38 72,40 Q72,42 68,42" stroke-width="2"/>
-  <!-- Scale lines -->
-  <path d="M44,26 Q46,30 42,32" stroke-width="1.5" opacity="0.5"/>
-  <path d="M38,28 Q40,32 36,34" stroke-width="1.5" opacity="0.5"/>
-  <path d="M48,34 Q50,38 46,40" stroke-width="1.5" opacity="0.5"/>
-  <path d="M42,38 Q44,42 40,44" stroke-width="1.5" opacity="0.5"/>
+  <path d="M42,38 Q52,28 56,33 Q53,40 42,38 Z" fill="#f4b060" stroke="#c06020" stroke-width="1.5"/>
+  <!-- Anal fin (bottom small) -->
+  <path d="M40,56 Q44,64 48,58" fill="#f4913a" stroke="#c06020" stroke-width="1.5"/>
+  <!-- Scale details -->
+  <path d="M44,28 Q46,32 42,34" stroke="#2a80c0" stroke-width="1.5" fill="none" opacity="0.5"/>
+  <path d="M38,30 Q40,34 36,36" stroke="#2a80c0" stroke-width="1.5" fill="none" opacity="0.5"/>
+  <path d="M50,36 Q52,40 48,42" stroke="#2a80c0" stroke-width="1.5" fill="none" opacity="0.5"/>
+  <path d="M42,40 Q44,44 40,46" stroke="#2a80c0" stroke-width="1.5" fill="none" opacity="0.5"/>
   <!-- Lateral line -->
-  <path d="M20,40 Q40,38 62,40" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.5"/>
+  <path d="M22,38 Q40,36 62,40" stroke="#2a80c0" stroke-width="1.5" stroke-dasharray="3,3" fill="none" opacity="0.5"/>
+  <!-- Eye -->
+  <circle cx="60" cy="34" r="6" fill="white" stroke="#2a80c0" stroke-width="2"/>
+  <circle cx="61" cy="33" r="3" fill="#1a0800"/>
+  <circle cx="62" cy="32" r="1" fill="white"/>
+  <!-- Mouth -->
+  <path d="M68,40 Q74,38 74,40 Q74,42 68,42" stroke="#2a80c0" stroke-width="2" fill="none"/>
 </svg>

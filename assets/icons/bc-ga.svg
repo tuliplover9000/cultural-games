@@ -1,33 +1,41 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
   <!-- Rooster — side view, facing right -->
-  <!-- Body (plump oval) -->
-  <ellipse cx="36" cy="50" rx="20" ry="18" stroke-width="3"/>
-  <!-- Head (smaller circle) -->
-  <circle cx="60" cy="26" r="11" stroke-width="3"/>
-  <!-- Neck connecting head to body -->
-  <path d="M52,32 Q46,36 40,36" stroke-width="3"/>
-  <path d="M56,34 Q52,42 46,44" stroke-width="3"/>
-  <!-- Comb (3 bumps on top of head) -->
-  <path d="M54,16 Q56,10 58,14 Q60,8 62,12 Q64,8 66,14 Q68,18 64,18" stroke-width="2.5" fill="none"/>
-  <!-- Wattle (chin flap) -->
-  <path d="M60,34 Q64,40 60,44 Q56,40 58,36" stroke-width="2" fill="none"/>
+  <!-- Tail feathers (behind body) -->
+  <path d="M18,45 Q6,30 10,20" stroke="#1a6080" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M16,46 Q4,38 6,26" stroke="#2c8040" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M18,48 Q8,48 7,40" stroke="#6040a0" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <!-- Body -->
+  <ellipse cx="36" cy="50" rx="20" ry="17" fill="#c89040"/>
+  <!-- Body sheen highlight -->
+  <ellipse cx="30" cy="44" rx="9" ry="6" fill="#e0b060" opacity="0.5"/>
+  <!-- Wing feather lines -->
+  <path d="M22,46 Q36,42 50,46" stroke="#a07030" stroke-width="1.8" fill="none" opacity="0.8"/>
+  <path d="M20,52 Q36,48 52,52" stroke="#a07030" stroke-width="1.8" fill="none" opacity="0.8"/>
+  <!-- Body outline -->
+  <ellipse cx="36" cy="50" rx="20" ry="17" fill="none" stroke="#8a6020" stroke-width="2"/>
+  <!-- Neck -->
+  <path d="M52,38 Q46,38 42,38 Q40,40 40,44" stroke="#a07030" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M52,38 Q48,44 48,48" stroke="#c89040" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <!-- Head -->
+  <circle cx="60" cy="27" r="12" fill="#c89040" stroke="#8a6020" stroke-width="2"/>
+  <!-- Head highlight -->
+  <circle cx="56" cy="23" r="5" fill="#e0b060" opacity="0.4"/>
+  <!-- Comb (red, 3 bumps) -->
+  <path d="M53,16 Q55,9 58,14 Q60,8 62,13 Q65,8 67,14 Q69,19 64,18 L53,18 Z"
+        fill="#e82020" stroke="#a01010" stroke-width="1.5"/>
+  <!-- Wattle -->
+  <path d="M60,36 Q65,42 61,46 Q57,42 58,37 Z" fill="#e82020" stroke="#a01010" stroke-width="1.5"/>
   <!-- Beak -->
-  <path d="M70,24 L76,22 L74,27 Z" stroke-width="2"/>
+  <path d="M71,25 L78,22 L76,28 Z" fill="#f0c030" stroke="#c09020" stroke-width="1.5"/>
   <!-- Eye -->
-  <circle cx="64" cy="22" r="3" stroke-width="2"/>
-  <circle cx="65" cy="22" r="1.5" fill="currentColor" stroke="none"/>
-  <!-- Wing detail on body -->
-  <path d="M24,44 Q36,40 48,44" stroke-width="2" opacity="0.7"/>
-  <path d="M22,50 Q36,46 50,50" stroke-width="2" opacity="0.7"/>
-  <!-- Tail feathers (sweeping upward) -->
-  <path d="M16,44 Q6,30 10,20" stroke-width="2.5"/>
-  <path d="M16,44 Q4,36 6,24" stroke-width="2.5"/>
-  <path d="M16,44 Q8,46 6,38" stroke-width="2.5"/>
+  <circle cx="64" cy="22" r="4" fill="white" stroke="#6a4010" stroke-width="1.5"/>
+  <circle cx="65" cy="22" r="2" fill="#1a0800"/>
+  <circle cx="66" cy="21" r="0.8" fill="white"/>
   <!-- Legs -->
-  <path d="M34,68 Q32,74 28,76" stroke-width="2.5"/>
-  <path d="M28,76 Q24,78 22,76" stroke-width="2"/>
-  <path d="M28,76 Q28,80 26,80" stroke-width="2"/>
-  <path d="M42,68 Q40,74 36,76" stroke-width="2.5"/>
-  <path d="M36,76 Q32,78 30,76" stroke-width="2"/>
-  <path d="M36,76 Q36,80 34,80" stroke-width="2"/>
+  <line x1="32" y1="67" x2="30" y2="76" stroke="#d4a030" stroke-width="3" stroke-linecap="round"/>
+  <path d="M30,76 Q26,79 24,77" stroke="#d4a030" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M30,76 Q30,80 28,80" stroke="#d4a030" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <line x1="42" y1="67" x2="40" y2="76" stroke="#d4a030" stroke-width="3" stroke-linecap="round"/>
+  <path d="M40,76 Q36,79 34,77" stroke="#d4a030" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M40,76 Q40,80 38,80" stroke="#d4a030" stroke-width="2.5" fill="none" stroke-linecap="round"/>
 </svg>

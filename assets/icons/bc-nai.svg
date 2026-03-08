@@ -1,27 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-  <!-- Deer head — front-facing with antlers -->
-  <!-- Head shape -->
-  <ellipse cx="40" cy="52" rx="14" ry="16" stroke-width="3"/>
-  <!-- Snout -->
-  <ellipse cx="40" cy="62" rx="8" ry="6" stroke-width="2.5"/>
-  <!-- Nose -->
-  <ellipse cx="40" cy="64" rx="3" ry="2" stroke-width="2"/>
-  <!-- Eyes -->
-  <circle cx="34" cy="50" r="3.5" stroke-width="2"/>
-  <circle cx="35" cy="49" r="1.5" fill="currentColor" stroke="none"/>
-  <circle cx="46" cy="50" r="3.5" stroke-width="2"/>
-  <circle cx="47" cy="49" r="1.5" fill="currentColor" stroke="none"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <!-- Deer head — front-facing -->
+  <!-- Antlers (behind head, draw first) -->
+  <!-- Left antler -->
+  <path d="M30,40 Q24,26 20,14" stroke="#7a4e20" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M24,27 Q16,22 12,18" stroke="#7a4e20" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M22,20 Q18,12 20,8" stroke="#7a4e20" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Right antler -->
+  <path d="M50,40 Q56,26 60,14" stroke="#7a4e20" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M56,27 Q64,22 68,18" stroke="#7a4e20" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M58,20 Q62,12 60,8" stroke="#7a4e20" stroke-width="2.5" fill="none" stroke-linecap="round"/>
   <!-- Ears -->
-  <path d="M28,44 Q22,36 26,30 Q30,36 32,42" stroke-width="2.5"/>
-  <path d="M52,44 Q58,36 54,30 Q50,36 48,42" stroke-width="2.5"/>
-  <!-- Left antler main beam -->
-  <path d="M30,38 Q24,26 20,14" stroke-width="3"/>
-  <!-- Left antler tines -->
-  <path d="M24,26 Q16,22 12,18" stroke-width="2.5"/>
-  <path d="M22,20 Q18,12 20,8" stroke-width="2.5"/>
-  <!-- Right antler main beam -->
-  <path d="M50,38 Q56,26 60,14" stroke-width="3"/>
-  <!-- Right antler tines -->
-  <path d="M56,26 Q64,22 68,18" stroke-width="2.5"/>
-  <path d="M58,20 Q62,12 60,8" stroke-width="2.5"/>
+  <path d="M28,44 Q20,34 24,28 Q30,36 32,42 Z" fill="#c07838" stroke="#8a5420" stroke-width="1.5"/>
+  <path d="M26,42 Q22,36 25,31" stroke="#f0b080" stroke-width="2" fill="none" opacity="0.6"/>
+  <path d="M52,44 Q60,34 56,28 Q50,36 48,42 Z" fill="#c07838" stroke="#8a5420" stroke-width="1.5"/>
+  <path d="M54,42 Q58,36 55,31" stroke="#f0b080" stroke-width="2" fill="none" opacity="0.6"/>
+  <!-- Head shape -->
+  <ellipse cx="40" cy="51" rx="14" ry="16" fill="#c8843c" stroke="#8a5420" stroke-width="2"/>
+  <!-- Face highlight -->
+  <ellipse cx="37" cy="46" rx="6" ry="5" fill="#dea060" opacity="0.5"/>
+  <!-- Snout -->
+  <ellipse cx="40" cy="61" rx="9" ry="7" fill="#d4a060" stroke="#8a5420" stroke-width="2"/>
+  <!-- Nose -->
+  <ellipse cx="40" cy="64" rx="3.5" ry="2.5" fill="#8a5420" stroke="#5a3010" stroke-width="1"/>
+  <!-- Eyes -->
+  <circle cx="34" cy="49" r="4.5" fill="white" stroke="#6a3c10" stroke-width="1.5"/>
+  <circle cx="34" cy="49" r="2.5" fill="#3a1800"/>
+  <circle cx="35" cy="48" r="1" fill="white"/>
+  <circle cx="46" cy="49" r="4.5" fill="white" stroke="#6a3c10" stroke-width="1.5"/>
+  <circle cx="46" cy="49" r="2.5" fill="#3a1800"/>
+  <circle cx="47" cy="48" r="1" fill="white"/>
+  <!-- Muzzle dots -->
+  <circle cx="37" cy="62" r="1" fill="#8a5420" opacity="0.6"/>
+  <circle cx="43" cy="62" r="1" fill="#8a5420" opacity="0.6"/>
 </svg>
