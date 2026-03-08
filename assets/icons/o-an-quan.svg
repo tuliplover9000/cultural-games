@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Mancala board outline -->
+  <rect x="6" y="20" width="52" height="24" rx="12" stroke-width="2.5"/>
+  <!-- Large quan (mandarin) pits at ends -->
+  <circle cx="14" cy="32" r="6" stroke-width="2"/>
+  <circle cx="50" cy="32" r="6" stroke-width="2"/>
+  <!-- Small pits row top -->
+  <circle cx="26" cy="26" r="4" stroke-width="2"/>
+  <circle cx="36" cy="26" r="4" stroke-width="2"/>
+  <!-- Small pits row bottom -->
+  <circle cx="26" cy="38" r="4" stroke-width="2"/>
+  <circle cx="36" cy="38" r="4" stroke-width="2"/>
+  <!-- Stones in right quan pit -->
+  <circle cx="50" cy="30" r="1.5" fill="currentColor" stroke="none"/>
+  <circle cx="50" cy="34" r="1.5" fill="currentColor" stroke="none"/>
+  <circle cx="47" cy="32" r="1.5" fill="currentColor" stroke="none"/>
+</svg>

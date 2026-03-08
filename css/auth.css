@@ -3,6 +3,43 @@
    cultural-games / css/auth.css
 ============================================================================= */
 
+/* ── SVG Game Icons ── */
+/* Banner icons (on coloured dark card backgrounds → show white) */
+.game-card__banner-icon {
+  display: block;
+  width: 80px;
+  height: 80px;
+  margin: 30px auto;
+  filter: brightness(0) invert(1);
+  opacity: 0.92;
+}
+
+/* Game page header icon (dark header background → show white) */
+.game-header__icon img {
+  display: block;
+  width: 52px;
+  height: 52px;
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+/* Account page stat card icons (light background → show dark) */
+.stat-icon {
+  display: block;
+  width: 36px;
+  height: 36px;
+  filter: brightness(0);
+  opacity: 0.7;
+}
+
+/* Hero background icons */
+.hero__bg-icon {
+  width: 9rem;
+  height: 9rem;
+  flex-shrink: 0;
+  filter: brightness(0);
+}
+
 /* ── Overlay ── */
 .auth-overlay {
   display: none;

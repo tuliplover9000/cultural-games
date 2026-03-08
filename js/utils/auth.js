@@ -13,13 +13,13 @@
 
   /* ── Game registry (order = display order on account page) ── */
   var GAMES = [
-    { id: 'bau-cua',     name: 'Bầu Cua Tôm Cá', icon: '🦐', href: 'games/bau-cua.html' },
-    { id: 'o-an-quan',   name: 'Ô Ăn Quan',       icon: '⚫', href: 'games/o-an-quan.html' },
-    { id: 'tien-len',    name: 'Tiến Lên',         icon: '🃏', href: 'games/tien-len.html' },
-    { id: 'oware',       name: 'Oware',            icon: '🟤', href: 'games/oware.html' },
-    { id: 'patolli',     name: 'Patolli',          icon: '🌿', href: 'games/patolli.html' },
-    { id: 'puluc',       name: 'Puluc',            icon: '🌲', href: 'games/puluc.html' },
-    { id: 'pallanguzhi', name: 'Pallanguzhi',      icon: '🐚', href: 'games/pallanguzhi.html' },
+    { id: 'bau-cua',     name: 'Bầu Cua Tôm Cá', iconPath: 'assets/icons/bau-cua.svg',     href: 'games/bau-cua.html' },
+    { id: 'o-an-quan',   name: 'Ô Ăn Quan',       iconPath: 'assets/icons/o-an-quan.svg',   href: 'games/o-an-quan.html' },
+    { id: 'tien-len',    name: 'Tiến Lên',         iconPath: 'assets/icons/tien-len.svg',    href: 'games/tien-len.html' },
+    { id: 'oware',       name: 'Oware',            iconPath: 'assets/icons/oware.svg',       href: 'games/oware.html' },
+    { id: 'patolli',     name: 'Patolli',          iconPath: 'assets/icons/patolli.svg',     href: 'games/patolli.html' },
+    { id: 'puluc',       name: 'Puluc',            iconPath: 'assets/icons/puluc.svg',       href: 'games/puluc.html' },
+    { id: 'pallanguzhi', name: 'Pallanguzhi',      iconPath: 'assets/icons/pallanguzhi.svg', href: 'games/pallanguzhi.html' },
   ];
 
   /* ── localStorage helpers ── */
