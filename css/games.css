@@ -2056,7 +2056,7 @@
 
 /* "Ã¢â€“Â¶ START" label Ã¢â‚¬â€ sits behind pieces (z-index 0) */
 .pt-cell--start::after {
-  content: 'Ã¢â€“Â¶ START';
+  content: 'START';
   position: absolute;
   top: 50%;
   left: 50%;
