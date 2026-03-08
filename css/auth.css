@@ -4,32 +4,35 @@
 ============================================================================= */
 
 /* ── SVG Game Icons ── */
-/* Banner icons (on coloured dark card backgrounds → show white) */
+/* Banner icons — full colour, consistent size, centred */
 .game-card__banner-icon {
   display: block;
-  width: 80px;
-  height: 80px;
-  margin: 30px auto;
-  filter: brightness(0) invert(1);
-  opacity: 0.92;
+  width: 96px;
+  height: 96px;
+  margin: 22px auto;
+  filter: drop-shadow(0 3px 8px rgba(0,0,0,0.45));
 }
 
-/* Game page header icon (dark header background → show white) */
+/* Game page header icon */
+.game-header__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-2);
+}
 .game-header__icon img {
   display: block;
-  width: 52px;
-  height: 52px;
-  filter: brightness(0) invert(1);
-  opacity: 0.9;
+  width: 72px;
+  height: 72px;
+  filter: drop-shadow(0 3px 8px rgba(0,0,0,0.5));
 }
 
-/* Account page stat card icons (light background → show dark) */
+/* Account page stat card icons */
 .stat-icon {
   display: block;
   width: 36px;
   height: 36px;
-  filter: brightness(0);
-  opacity: 0.7;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.2));
 }
 
 /* Hero background icons */
@@ -37,7 +40,8 @@
   width: 9rem;
   height: 9rem;
   flex-shrink: 0;
-  filter: brightness(0);
+  opacity: 0.12;
+  filter: drop-shadow(0 0 0 transparent);
 }
 
 /* ── Overlay ── */

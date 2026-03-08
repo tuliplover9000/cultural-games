@@ -1,18 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-  <!-- Classic dice cube — isometric 3D view -->
-  <!-- Top face -->
-  <polygon points="32,8 54,20 32,32 10,20" stroke-width="2.5" fill="none"/>
-  <!-- Right face -->
-  <polygon points="54,20 54,44 32,56 32,32" stroke-width="2.5" fill="none"/>
-  <!-- Left face -->
-  <polygon points="10,20 32,32 32,56 10,44" stroke-width="2.5" fill="none"/>
-  <!-- Top face dots (showing 3) -->
-  <circle cx="25" cy="18" r="2.2" fill="currentColor" stroke="none"/>
-  <circle cx="32" cy="14" r="2.2" fill="currentColor" stroke="none"/>
-  <circle cx="39" cy="18" r="2.2" fill="currentColor" stroke="none"/>
-  <!-- Right face dots (showing 2) -->
-  <circle cx="46" cy="30" r="2.2" fill="currentColor" stroke="none"/>
-  <circle cx="46" cy="40" r="2.2" fill="currentColor" stroke="none"/>
-  <!-- Left face dots (showing 1) -->
-  <circle cx="21" cy="37" r="2.2" fill="currentColor" stroke="none"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Isometric dice — cream faces, gold pips -->
+  <!-- Left face (darker) -->
+  <polygon points="10,20 32,32 32,56 10,44" fill="#d4b87a"/>
+  <!-- Right face (medium) -->
+  <polygon points="54,20 54,44 32,56 32,32" fill="#e8cfa0"/>
+  <!-- Top face (lightest) -->
+  <polygon points="32,8 54,20 32,32 10,20" fill="#FBF5E6"/>
+  <!-- Outlines -->
+  <polygon points="32,8 54,20 32,32 10,20" fill="none" stroke="#7a5020" stroke-width="1.8" stroke-linejoin="round"/>
+  <polygon points="54,20 54,44 32,56 32,32" fill="none" stroke="#7a5020" stroke-width="1.8" stroke-linejoin="round"/>
+  <polygon points="10,20 32,32 32,56 10,44" fill="none" stroke="#7a5020" stroke-width="1.8" stroke-linejoin="round"/>
+  <!-- Top face dots (3) — gold -->
+  <circle cx="25" cy="18" r="2.2" fill="#C89B3C"/>
+  <circle cx="32" cy="14" r="2.2" fill="#C89B3C"/>
+  <circle cx="39" cy="18" r="2.2" fill="#C89B3C"/>
+  <!-- Right face dots (2) -->
+  <circle cx="46" cy="30" r="2" fill="#9a6c20"/>
+  <circle cx="46" cy="40" r="2" fill="#9a6c20"/>
+  <!-- Left face dot (1) -->
+  <circle cx="21" cy="37" r="2" fill="#9a6c20"/>
 </svg>
