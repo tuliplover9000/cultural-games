@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Play Fanorona — the ancient Madagascan strategy board game of approach and withdrawal captures, free in your browser." />
+  <title>Fanorona — Cultural Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/components.css" />
+  <link rel="stylesheet" href="../../css/auth.css" />
+  <link rel="stylesheet" href="../../css/games.css" />
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../../index.html" class="nav-logo" aria-label="Cultural Games — Home">
+        <span class="nav-logo-icon" aria-hidden="true">🎲</span>
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="../browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="../about.html"  class="nav-link">About</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+
+      <div class="game-nav-bar">
+        <a href="../browse.html" class="back-link">Back to Browse</a>
+      </div>
+
+      <header class="game-header">
+        <div class="game-header__icon" aria-hidden="true"><img src="../../assets/icons/fanorona.svg" alt="" /></div>
+        <h1 class="game-header__title">Fanorona</h1>
+        <p class="game-header__origin">
+          Madagascar &nbsp;&middot;&nbsp;
+          <span class="badge badge--board" style="display:inline-flex; vertical-align:middle; margin-left:4px;">Strategy</span>
+        </p>
+      </header>
+
+      <!-- Game Container -->
+      <div class="game-container fn-game-container" id="game-container" aria-label="Game area">
+
+        <!-- Score + Status -->
+        <div class="fn-hud">
+          <div class="fn-score" id="fn-score"></div>
+          <p class="fn-status" id="fn-status" aria-live="polite" aria-atomic="true">Roll to begin</p>
+        </div>
+
+        <!-- Board -->
+        <div class="fn-board-wrap" id="fn-board-wrap">
+          <canvas id="fn-canvas" aria-label="Fanorona board" role="img"></canvas>
+        </div>
+
+        <!-- Controls -->
+        <div class="fn-controls">
+          <button id="fn-new-btn"  class="btn btn-secondary btn-sm">New Game</button>
+          <button id="fn-undo-btn" class="btn btn-ghost btn-sm">Undo</button>
+          <label class="fn-ai-label">
+            <input type="checkbox" id="fn-ai-toggle" checked />
+            <span>vs AI</span>
+          </label>
+        </div>
+
+      </div>
+
+      <!-- How to Play -->
+      <details class="accordion" open>
+        <summary class="accordion__trigger">
+          <span class="accordion__title">How to Play</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Fanorona is played on a <strong>5×9 intersection grid</strong>. You play <strong>dark pieces</strong>; the AI plays light. Dark moves first.
+          </p>
+          <ol>
+            <li><strong>Select</strong> one of your pieces (dark), then click an adjacent empty intersection to move it.</li>
+            <li>
+              <strong>Approach capture:</strong> move your piece <em>toward</em> an enemy — all consecutive enemy pieces in that direction are removed.
+            </li>
+            <li>
+              <strong>Withdrawal capture:</strong> move your piece <em>away</em> from an enemy — all consecutive enemy pieces behind your starting position are removed.
+            </li>
+            <li>If a capture is available anywhere on the board, you <strong>must</strong> capture. A non-capturing move (Paika) is only allowed when no captures exist.</li>
+            <li>
+              <strong>Capture chains:</strong> after capturing, the same piece may continue capturing in a new direction. You cannot revisit an intersection or reverse direction within one turn. Click anywhere non-valid to end your chain early.
+            </li>
+            <li><strong>Gold diamonds</strong> on the board mark "strong points" — pieces here can move diagonally as well as orthogonally.</li>
+            <li>The player who captures all of their opponent's pieces wins.</li>
+          </ol>
+        </div>
+      </details>
+
+      <!-- Cultural Context -->
+      <details class="accordion">
+        <summary class="accordion__trigger">
+          <span class="accordion__title">Cultural Context</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Fanorona originates from Madagascar, where it has been played for centuries as one of the island's most celebrated strategy games. According to Malagasy tradition, Fanorona was played so passionately that it distracted the Merina kingdom's warriors — legend holds that the king Ralambo's sons were playing Fanorona rather than guarding the palace gates during a key historical moment in the late 16th century.
+          </p>
+          <p>
+            The game's capture mechanics — approach and withdrawal — are unique in the world of abstract strategy games, making Fanorona distinctive among the hundreds of Mancala and capture games found across Africa. The board's 45 intersections with their web of orthogonal and diagonal connections creates extraordinary tactical depth.
+          </p>
+          <p>
+            Fanorona was formally studied by computer scientists in the 1990s as a testbed for game-tree search algorithms. It was weakly solved in 2007 by a team at the University of Alberta, who proved that the game is a draw with perfect play from both sides.
+          </p>
+        </div>
+      </details>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <span class="footer-brand">Cultural Games</span>
+      <p class="footer-mission">Preserving cultural heritage through play — one game at a time.</p>
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links" role="list">
+          <li><a href="../browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="../about.html"  class="footer-link">About</a></li>
+        </ul>
+      </nav>
+      <div class="footer-divider"></div>
+      <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
+    </div>
+  </footer>
+
+  <script src="../../js/utils/helpers.js"></script>
+  <script src="../../js/utils/navigation.js"></script>
+  <script src="../../js/utils/auth.js"></script>
+  <script src="../../js/games/fanorona.js"></script>
+</body>
+</html>

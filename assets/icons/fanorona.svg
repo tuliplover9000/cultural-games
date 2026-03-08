@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Fanorona board — 5×9 grid (simplified 5×5 for icon) with pieces -->
+  <!-- Board surface -->
+  <rect x="4" y="10" width="56" height="44" rx="5" fill="#8B5E3C" stroke="#5a3010" stroke-width="1.5"/>
+  <!-- Board highlight -->
+  <rect x="6" y="11" width="52" height="8" rx="3" fill="#c4894f" opacity="0.3"/>
+  <!-- Grid lines horizontal -->
+  <line x1="10" y1="20" x2="54" y2="20" stroke="#3a1a05" stroke-width="1.2"/>
+  <line x1="10" y1="32" x2="54" y2="32" stroke="#3a1a05" stroke-width="1.2"/>
+  <line x1="10" y1="44" x2="54" y2="44" stroke="#3a1a05" stroke-width="1.2"/>
+  <!-- Grid lines vertical -->
+  <line x1="10" y1="20" x2="10" y2="44" stroke="#3a1a05" stroke-width="1.2"/>
+  <line x1="21" y1="20" x2="21" y2="44" stroke="#3a1a05" stroke-width="1.2"/>
+  <line x1="32" y1="20" x2="32" y2="44" stroke="#3a1a05" stroke-width="1.2"/>
+  <line x1="43" y1="20" x2="43" y2="44" stroke="#3a1a05" stroke-width="1.2"/>
+  <line x1="54" y1="20" x2="54" y2="44" stroke="#3a1a05" stroke-width="1.2"/>
+  <!-- Diagonal lines (strong points) -->
+  <line x1="10" y1="20" x2="32" y2="44" stroke="#3a1a05" stroke-width="0.8" opacity="0.7"/>
+  <line x1="32" y1="20" x2="54" y2="44" stroke="#3a1a05" stroke-width="0.8" opacity="0.7"/>
+  <line x1="21" y1="20" x2="43" y2="44" stroke="#3a1a05" stroke-width="0.8" opacity="0.7"/>
+  <line x1="32" y1="20" x2="10" y2="44" stroke="#3a1a05" stroke-width="0.8" opacity="0.7"/>
+  <line x1="54" y1="20" x2="32" y2="44" stroke="#3a1a05" stroke-width="0.8" opacity="0.7"/>
+  <line x1="43" y1="20" x2="21" y2="44" stroke="#3a1a05" stroke-width="0.8" opacity="0.7"/>
+  <!-- Strong point diamonds — gold -->
+  <polygon points="10,18 12,20 10,22 8,20" fill="#C89B3C"/>
+  <polygon points="32,18 34,20 32,22 30,20" fill="#C89B3C"/>
+  <polygon points="54,18 56,20 54,22 52,20" fill="#C89B3C"/>
+  <polygon points="21,30 23,32 21,34 19,32" fill="#C89B3C"/>
+  <polygon points="43,30 45,32 43,34 41,32" fill="#C89B3C"/>
+  <polygon points="10,42 12,44 10,46 8,44" fill="#C89B3C"/>
+  <polygon points="32,42 34,44 32,46 30,44" fill="#C89B3C"/>
+  <polygon points="54,42 56,44 54,46 52,44" fill="#C89B3C"/>
+  <!-- AI pieces (light/ivory) top row -->
+  <circle cx="10" cy="20" r="4.5" fill="#FBF5E6" stroke="#9a7030" stroke-width="1"/>
+  <circle cx="21" cy="20" r="4.5" fill="#FBF5E6" stroke="#9a7030" stroke-width="1"/>
+  <circle cx="43" cy="20" r="4.5" fill="#FBF5E6" stroke="#9a7030" stroke-width="1"/>
+  <circle cx="54" cy="20" r="4.5" fill="#FBF5E6" stroke="#9a7030" stroke-width="1"/>
+  <!-- Human pieces (dark) bottom row -->
+  <circle cx="10" cy="44" r="4.5" fill="#1a0a00" stroke="#5a3010" stroke-width="1"/>
+  <circle cx="21" cy="44" r="4.5" fill="#1a0a00" stroke="#5a3010" stroke-width="1"/>
+  <circle cx="43" cy="44" r="4.5" fill="#1a0a00" stroke="#5a3010" stroke-width="1"/>
+  <circle cx="54" cy="44" r="4.5" fill="#1a0a00" stroke="#5a3010" stroke-width="1"/>
+  <!-- Middle pieces -->
+  <circle cx="32" cy="32" r="4.5" fill="#C89B3C" stroke="#7a5020" stroke-width="1"/>
+</svg>
