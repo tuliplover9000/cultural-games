@@ -284,7 +284,33 @@
       validTargets[m.to].push(m);
     });
 
-    // ── Valid move dots
+    // ── Hint mode: highlight all moveable pieces + all their targets
+    if (showHints && state.phase === 'playing' && state.capturing === null) {
+      var hintMoves = allMoves(state.board, state.turn, null, null, null);
+      var hintSources = {}, hintTargets = {};
+      hintMoves.forEach(function (m) { hintSources[m.from] = true; hintTargets[m.to] = true; });
+
+      // Glow ring around moveable pieces
+      Object.keys(hintSources).forEach(function (fi) {
+        var pt = ptXY(col(+fi), row(+fi));
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, pr + 5, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(232,200,74,0.55)';
+        ctx.lineWidth   = 2;
+        ctx.stroke();
+      });
+
+      // Soft dot on all reachable targets
+      Object.keys(hintTargets).forEach(function (tIdx) {
+        var pt = ptXY(col(+tIdx), row(+tIdx));
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, pr * 0.45, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(232,200,74,0.22)';
+        ctx.fill();
+      });
+    }
+
+    // ── Valid move dots (for selected piece)
     Object.keys(validTargets).forEach(function (tIdx) {
       var pt = ptXY(col(+tIdx), row(+tIdx));
       ctx.beginPath();
@@ -345,7 +371,8 @@
   }
 
   // ── UI helpers ───────────────────────────────────────────────────────────
-  var elStatus, elScore, elNewBtn, elUndoBtn, elAiToggle;
+  var elStatus, elScore, elNewBtn, elUndoBtn, elHintBtn, elAiToggle;
+  var showHints = false;
 
   function setStatus(msg) { if (elStatus) elStatus.textContent = msg; }
 
@@ -676,6 +703,7 @@
     elScore    = document.getElementById('fn-score');
     elNewBtn   = document.getElementById('fn-new-btn');
     elUndoBtn  = document.getElementById('fn-undo-btn');
+    elHintBtn  = document.getElementById('fn-hint-btn');
     elAiToggle = document.getElementById('fn-ai-toggle');
 
     cnv.addEventListener('click', function (e) {
@@ -690,8 +718,17 @@
       if (i !== null) humanClick(i);
     }, { passive: false });
 
-    if (elNewBtn)   elNewBtn.addEventListener('click', newGame);
-    if (elUndoBtn)  elUndoBtn.addEventListener('click', undo);
+    if (elNewBtn)  elNewBtn.addEventListener('click', newGame);
+    if (elUndoBtn) elUndoBtn.addEventListener('click', undo);
+    if (elHintBtn) {
+      elHintBtn.addEventListener('click', function () {
+        showHints = !showHints;
+        elHintBtn.textContent = showHints ? 'Hide Moves' : 'Show Moves';
+        elHintBtn.style.color       = showHints ? '#e8c87a' : '';
+        elHintBtn.style.borderColor = showHints ? '#e8c87a' : '';
+        render();
+      });
+    }
     if (elAiToggle) {
       elAiToggle.addEventListener('change', function () {
         vsAI = elAiToggle.checked;
