@@ -50,8 +50,10 @@
   let selected = new Set();   // indices into player's hand
   let gameRenderCount = 0;    // tracks first render for deal animation
   let gameSpeed = 1;          // 1 = normal, 2 = fast (persists across games)
+  let gameVersion = 0;        // incremented on new game to cancel stale AI timeouts
 
   function newGame() {
+    gameVersion++;
     const deck  = shuffle(buildDeck());
     const hands = dealDeck(deck);
     const first = hands.findIndex(h => h.some(c => c.rank === '3' && c.suit === '♠'));
@@ -251,10 +253,11 @@
   function scheduleAITurn() {
     state.aiThinking = true;
     render();
+    const id = gameVersion;
     const delay = gameSpeed === 2
       ? 300 + cryptoRandInt(300)   // fast: 300–600 ms
       : 800 + cryptoRandInt(700);  // normal: 800–1500 ms
-    setTimeout(runAI, delay);
+    setTimeout(() => { if (gameVersion === id) runAI(); }, delay);
   }
 
   function runAI() {
@@ -269,8 +272,7 @@
     }
 
     const play = findAIPlay(hand, state.pileType);
-    if (play) playCards(idx, play);
-    else      doPass(idx);
+    if (!play || !playCards(idx, play)) doPass(idx);
   }
 
   function findAIPlay(hand, pile) {
@@ -584,7 +586,8 @@
         showHint('✗ Doesn\'t beat current play — try higher or pass'); return;
       }
 
-      if (playCards(PLAYER, cards)) selected.clear();
+      selected.clear();
+      playCards(PLAYER, cards);
     });
 
     // Pass
