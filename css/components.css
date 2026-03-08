@@ -20,8 +20,10 @@
 .nav-inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: var(--space-8);
   height: 100%;
+  position: relative;
 }
 
 /* ── Logo ── */
@@ -101,6 +103,8 @@
   align-items: center;
   gap: 5px;
   width: 44px;
+  position: absolute;
+  right: var(--space-4);
   height: 44px;
   padding: 10px;
   background: none;
