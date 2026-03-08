@@ -8,7 +8,7 @@
   // ── Constants ────────────────────────────────────────────────────────────
   var COLS = 9, ROWS = 5, TOTAL = 45;
   var EMPTY = 0, BLACK = 1, WHITE = 2;
-  var PAD = 32; // canvas padding to first intersection
+  var PAD = 44; // canvas padding to first intersection
 
   // ── Board helpers ────────────────────────────────────────────────────────
   function idx(c, r)  { return r * COLS + c; }

@@ -3356,7 +3356,6 @@
 .fn-board-wrap {
   width: 100%;
   border-radius: var(--radius-lg);
-  overflow: hidden;
   box-shadow: 0 6px 24px rgba(0,0,0,0.6), 0 0 0 2px rgba(200,155,60,0.25);
   cursor: pointer;
 }
