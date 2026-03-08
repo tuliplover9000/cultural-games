@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Rooster — side view, facing right -->
+  <!-- Body (plump oval) -->
+  <ellipse cx="36" cy="50" rx="20" ry="18" stroke-width="3"/>
+  <!-- Head (smaller circle) -->
+  <circle cx="60" cy="26" r="11" stroke-width="3"/>
+  <!-- Neck connecting head to body -->
+  <path d="M52,32 Q46,36 40,36" stroke-width="3"/>
+  <path d="M56,34 Q52,42 46,44" stroke-width="3"/>
+  <!-- Comb (3 bumps on top of head) -->
+  <path d="M54,16 Q56,10 58,14 Q60,8 62,12 Q64,8 66,14 Q68,18 64,18" stroke-width="2.5" fill="none"/>
+  <!-- Wattle (chin flap) -->
+  <path d="M60,34 Q64,40 60,44 Q56,40 58,36" stroke-width="2" fill="none"/>
+  <!-- Beak -->
+  <path d="M70,24 L76,22 L74,27 Z" stroke-width="2"/>
+  <!-- Eye -->
+  <circle cx="64" cy="22" r="3" stroke-width="2"/>
+  <circle cx="65" cy="22" r="1.5" fill="currentColor" stroke="none"/>
+  <!-- Wing detail on body -->
+  <path d="M24,44 Q36,40 48,44" stroke-width="2" opacity="0.7"/>
+  <path d="M22,50 Q36,46 50,50" stroke-width="2" opacity="0.7"/>
+  <!-- Tail feathers (sweeping upward) -->
+  <path d="M16,44 Q6,30 10,20" stroke-width="2.5"/>
+  <path d="M16,44 Q4,36 6,24" stroke-width="2.5"/>
+  <path d="M16,44 Q8,46 6,38" stroke-width="2.5"/>
+  <!-- Legs -->
+  <path d="M34,68 Q32,74 28,76" stroke-width="2.5"/>
+  <path d="M28,76 Q24,78 22,76" stroke-width="2"/>
+  <path d="M28,76 Q28,80 26,80" stroke-width="2"/>
+  <path d="M42,68 Q40,74 36,76" stroke-width="2.5"/>
+  <path d="M36,76 Q32,78 30,76" stroke-width="2"/>
+  <path d="M36,76 Q36,80 34,80" stroke-width="2"/>
+</svg>

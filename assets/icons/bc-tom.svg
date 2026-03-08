@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Shrimp — curved body, side view -->
+  <!-- Main curved body -->
+  <path d="M58,14 C62,20 64,30 60,40 C56,50 48,58 38,64 C30,68 22,68 18,64" stroke-width="3.5"/>
+  <!-- Tail fan (3 blades) -->
+  <path d="M18,64 Q10,72 8,76" stroke-width="2.5"/>
+  <path d="M18,64 Q14,74 16,78" stroke-width="2.5"/>
+  <path d="M18,64 Q20,74 24,76" stroke-width="2.5"/>
+  <!-- Head/rostrum spike -->
+  <path d="M58,14 Q64,8 68,6" stroke-width="2.5"/>
+  <!-- Eye -->
+  <circle cx="60" cy="18" r="3" stroke-width="2"/>
+  <circle cx="61" cy="17" r="1" fill="currentColor" stroke="none"/>
+  <!-- Body segments / stripes -->
+  <path d="M54,26 Q50,24 46,26" stroke-width="1.8" opacity="0.7"/>
+  <path d="M50,34 Q44,32 40,34" stroke-width="1.8" opacity="0.7"/>
+  <path d="M44,43 Q38,42 34,44" stroke-width="1.8" opacity="0.7"/>
+  <path d="M36,52 Q30,52 26,54" stroke-width="1.8" opacity="0.7"/>
+  <!-- Antennae (2 long) -->
+  <path d="M58,14 Q52,4 44,2" stroke-width="1.5"/>
+  <path d="M58,14 Q56,4 50,2" stroke-width="1.5"/>
+  <!-- Swimmerets / legs -->
+  <path d="M52,30 Q48,36 44,34" stroke-width="1.5" opacity="0.6"/>
+  <path d="M46,40 Q42,46 38,44" stroke-width="1.5" opacity="0.6"/>
+  <path d="M38,50 Q34,56 30,54" stroke-width="1.5" opacity="0.6"/>
+</svg>

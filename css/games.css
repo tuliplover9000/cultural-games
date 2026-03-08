@@ -358,6 +358,35 @@
   pointer-events: none;
 }
 
+/* SVG symbol images on the betting mat (dark red bg → white) */
+.bc-symbol-img {
+  display: block;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto var(--space-1);
+  filter: brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.35));
+  pointer-events: none;
+}
+
+/* SVG images inside dice (light bg → dark) */
+.bc-die img {
+  width: 62px;
+  height: 62px;
+  display: block;
+  filter: brightness(0) opacity(0.85);
+  pointer-events: none;
+}
+
+/* SVG images in result rows */
+.bc-result-img {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  vertical-align: middle;
+  filter: brightness(0) opacity(0.75);
+  margin-right: 2px;
+}
+
 .bc-symbol-vn {
   font-family: var(--font-display);
   font-size: var(--text-sm);
@@ -617,6 +646,14 @@
   }
   .bc-symbol-emoji {
     font-size: 2rem;
+  }
+  .bc-symbol-img {
+    width: 44px;
+    height: 44px;
+  }
+  .bc-die img {
+    width: 50px;
+    height: 50px;
   }
   .bc-symbol-zone {
     min-height: 90px;

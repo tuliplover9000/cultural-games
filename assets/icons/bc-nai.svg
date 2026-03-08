@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Deer head — front-facing with antlers -->
+  <!-- Head shape -->
+  <ellipse cx="40" cy="52" rx="14" ry="16" stroke-width="3"/>
+  <!-- Snout -->
+  <ellipse cx="40" cy="62" rx="8" ry="6" stroke-width="2.5"/>
+  <!-- Nose -->
+  <ellipse cx="40" cy="64" rx="3" ry="2" stroke-width="2"/>
+  <!-- Eyes -->
+  <circle cx="34" cy="50" r="3.5" stroke-width="2"/>
+  <circle cx="35" cy="49" r="1.5" fill="currentColor" stroke="none"/>
+  <circle cx="46" cy="50" r="3.5" stroke-width="2"/>
+  <circle cx="47" cy="49" r="1.5" fill="currentColor" stroke="none"/>
+  <!-- Ears -->
+  <path d="M28,44 Q22,36 26,30 Q30,36 32,42" stroke-width="2.5"/>
+  <path d="M52,44 Q58,36 54,30 Q50,36 48,42" stroke-width="2.5"/>
+  <!-- Left antler main beam -->
+  <path d="M30,38 Q24,26 20,14" stroke-width="3"/>
+  <!-- Left antler tines -->
+  <path d="M24,26 Q16,22 12,18" stroke-width="2.5"/>
+  <path d="M22,20 Q18,12 20,8" stroke-width="2.5"/>
+  <!-- Right antler main beam -->
+  <path d="M50,38 Q56,26 60,14" stroke-width="3"/>
+  <!-- Right antler tines -->
+  <path d="M56,26 Q64,22 68,18" stroke-width="2.5"/>
+  <path d="M58,20 Q62,12 60,8" stroke-width="2.5"/>
+</svg>

@@ -12,13 +12,14 @@
   'use strict';
 
   // ── Symbols ────────────────────────────────────────────────────────────────
+  var IMG_BASE = '../../assets/icons/';
   var SYMBOLS = [
-    { key: 'bau', emoji: '🎃', vn: 'Bầu',  en: 'Gourd'   },
-    { key: 'cua', emoji: '🦀', vn: 'Cua',   en: 'Crab'    },
-    { key: 'tom', emoji: '🦐', vn: 'Tôm',   en: 'Shrimp'  },
-    { key: 'ca',  emoji: '🐟', vn: 'Cá',    en: 'Fish'    },
-    { key: 'nai', emoji: '🦌', vn: 'Nai',   en: 'Deer'    },
-    { key: 'ga',  emoji: '🐓', vn: 'Gà',    en: 'Rooster' },
+    { key: 'bau', img: IMG_BASE + 'bc-bau.svg', vn: 'Bầu',  en: 'Gourd'   },
+    { key: 'cua', img: IMG_BASE + 'bc-cua.svg', vn: 'Cua',   en: 'Crab'    },
+    { key: 'tom', img: IMG_BASE + 'bc-tom.svg', vn: 'Tôm',   en: 'Shrimp'  },
+    { key: 'ca',  img: IMG_BASE + 'bc-ca.svg',  vn: 'Cá',    en: 'Fish'    },
+    { key: 'nai', img: IMG_BASE + 'bc-nai.svg', vn: 'Nai',   en: 'Deer'    },
+    { key: 'ga',  img: IMG_BASE + 'bc-ga.svg',  vn: 'Gà',    en: 'Rooster' },
   ];
 
   // ── State ──────────────────────────────────────────────────────────────────
@@ -84,7 +85,7 @@
           return [
             '<button class="bc-symbol-zone" data-key="' + s.key + '"',
             ' aria-label="Bet on ' + s.en + ' (' + s.vn + ')" aria-pressed="false">',
-            '  <span class="bc-symbol-emoji" aria-hidden="true">' + s.emoji + '</span>',
+            '  <img class="bc-symbol-img" src="' + s.img + '" aria-hidden="true" alt="" />',
             '  <span class="bc-symbol-vn">' + s.vn + '</span>',
             '  <span class="bc-symbol-en">' + s.en + '</span>',
             '</button>',
@@ -291,7 +292,8 @@
     var ticker = setInterval(function () {
       elapsed += FRAME_MS;
       els.dice.forEach(function (die) {
-        die.textContent = SYMBOLS[Helpers.randInt(0, 5)].emoji;
+        var s = SYMBOLS[Helpers.randInt(0, 5)];
+        die.innerHTML = '<img src="' + s.img + '" alt="' + s.en + '" />';
       });
       if (elapsed >= DURATION) {
         clearInterval(ticker);
@@ -311,7 +313,8 @@
     els.dice.forEach(function (die, i) {
       die.classList.remove('rolling');
       die.classList.add('settled');
-      die.textContent = state.diceResult[i].emoji;
+      var s = state.diceResult[i];
+      die.innerHTML = '<img src="' + s.img + '" alt="' + s.en + '" />';
     });
 
     setTimeout(showResults, 400);
@@ -358,12 +361,13 @@
       var sym     = SYMBOLS.filter(function (s) { return s.key === key; })[0];
       var gain;
 
+      var symImg = '<img src="' + sym.img + '" class="bc-result-img" alt="' + sym.en + '" />';
       if (matches === 0) {
         gain = -betAmt;
-        rows.push({ label: sym.emoji + ' ' + sym.vn, gain: gain, win: false });
+        rows.push({ label: symImg + ' ' + sym.vn, gain: gain, win: false });
       } else {
         gain = betAmt * matches;
-        rows.push({ label: sym.emoji + ' ' + sym.vn + ' ×' + matches, gain: gain, win: true });
+        rows.push({ label: symImg + ' ' + sym.vn + ' ×' + matches, gain: gain, win: true });
       }
       net += gain;
     });
