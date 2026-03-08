@@ -164,6 +164,13 @@
   }
 
   function renderScore() {
+    // Don't show score until the game has actually started
+    if (state.phase === 'idle' && !state.roll && !state.rollDetail.length
+        && state.coins[PLAYER] === 0 && state.coins[AI] === 0
+        && state.pieces[PLAYER].every(function (p) { return p === null; })
+        && state.pieces[AI].every(function (p) { return p === null; })) {
+      return;
+    }
     var pDone = state.pieces[PLAYER].filter(function (p) { return p === TRACK_LENGTH; }).length;
     var aDone = state.pieces[AI].filter(function (p) { return p === TRACK_LENGTH; }).length;
     elScore.innerHTML =
@@ -519,17 +526,18 @@
     renderScore();
   }
 
-  function newGame() {
+  function newGame(silent) {
     state = freshState();
     elRollBtn.disabled = false;
     elLog.innerHTML = '';
     elDiceRow.innerHTML = '';
+    elScore.innerHTML = '';
     var startMsg = mode === 'vs-human'
       ? 'Player 1 — roll the beans!'
-      : 'Your turn — roll the beans!';
+      : 'Roll the beans to begin!';
     setStatus(startMsg);
     render();
-    addLog('New game started. ' + (mode === 'vs-human' ? 'Player 1' : 'You') + ' go first!');
+    if (!silent) addLog('New game started. ' + (mode === 'vs-human' ? 'Player 1' : 'You') + ' go first!');
   }
 
   // ── Mode button helpers ────────────────────────────────────────────────────
@@ -573,7 +581,7 @@
       });
     }
 
-    newGame();
+    newGame(true);  // silent=true: no log entry on initial load
   }
 
   if (document.readyState === 'loading') {
