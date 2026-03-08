@@ -461,6 +461,10 @@
     for (var b = 7; b < 14; b++) { state.stores[PLAYER] += state.cups[b]; state.cups[b] = 0; }
 
     state.phase = 'over';
+    if (window.Auth && Auth.isLoggedIn()) {
+      var _ps = state.stores[PLAYER], _as = state.stores[AI];
+      Auth.recordResult('pallanguzhi', _ps > _as ? 'win' : _as > _ps ? 'loss' : 'draw');
+    }
     var ps = state.stores[PLAYER], as = state.stores[AI];
     var pn = mode === 'vs-human' ? 'Player 1' : 'You';
     var an = mode === 'vs-human' ? 'Player 2' : 'AI';

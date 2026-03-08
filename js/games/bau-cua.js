@@ -427,6 +427,7 @@
 
   function showGameOver() {
     state.phase = 'gameover';
+    if (window.Auth && Auth.isLoggedIn()) Auth.recordResult('bau-cua', 'loss');
     refresh();
     els.gameover.classList.add('visible');
 

@@ -207,6 +207,8 @@
     if (!hand.length) {
       state.phase  = 'gameover';
       state.winner = playerIdx;
+      if (window.Auth && Auth.isLoggedIn())
+        Auth.recordResult('tien-len', playerIdx === PLAYER ? 'win' : 'loss');
       render();
       return true;
     }

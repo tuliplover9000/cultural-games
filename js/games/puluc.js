@@ -220,6 +220,8 @@
 
   function gameOver(winner) {
     state.phase = 'over';
+    if (window.Auth && Auth.isLoggedIn())
+      Auth.recordResult('puluc', winner === PLAYER ? 'win' : 'loss');
     elRollBtn.disabled = true;
     setStatus('🎉 ' + playerName(winner) + ' wins! All ' + PIECES + ' pieces escaped.');
     addLog('─── ' + playerName(winner) + ' wins! ───');
