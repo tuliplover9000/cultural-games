@@ -252,13 +252,12 @@
       state.winner = playerIdx;
       if (window.Auth && Auth.isLoggedIn())
         Auth.recordResult('tien-len', playerIdx === myPS() ? 'win' : 'loss');
-      if (vsOnline && (isHost || playerIdx === mySeat)) syncOnlineState();
+      if (vsOnline) syncOnlineState(); // sync game-over state before render
       render();
       return true;
     }
 
-    if (vsOnline && (isHost || playerIdx === mySeat)) syncOnlineState();
-    advanceTurn();
+    advanceTurn(); // sync happens inside advanceTurn for online
     return true;
   }
 
@@ -291,16 +290,16 @@
       return;
     }
 
-    if (vsOnline && (isHost || playerIdx === mySeat)) syncOnlineState();
-    advanceTurn();
+    advanceTurn(); // sync happens inside advanceTurn for online
   }
 
   function advanceTurn() {
     state.current = (state.current + 1) % 4;
 
     if (vsOnline) {
+      // Sync AFTER current advances so the receiver knows whose turn it now is
+      syncOnlineState();
       render();
-      // Host runs AI for seats 1 and 3; waits for guest (seat 2) to sync their move
       if (isHost && isAISeat(state.current)) {
         scheduleAITurn();
       }
