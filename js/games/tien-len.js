@@ -582,8 +582,8 @@
   <div class="tl-hand">${cards}</div>
   <div class="tl-actions">
     <div class="tl-actions__main">
-      <button class="tl-btn tl-btn--play" id="tl-play" ${canPlay ? '' : 'disabled'}>Play</button>
       <button class="tl-btn tl-btn--pass" id="tl-pass" ${canPass ? '' : 'disabled'}>Pass</button>
+      <button class="tl-btn tl-btn--play" id="tl-play" ${canPlay ? '' : 'disabled'}>Play</button>
     </div>
     <div class="tl-actions__secondary">
       <button class="tl-btn tl-btn--ghost" id="tl-new"${vsOnline ? ' disabled title="Leave room to start a new game"' : ''}>New Game</button>
