@@ -621,23 +621,35 @@
   function renderGameOver(el) {
     const w   = state.winner;
     const isP = w === myPS();
-    const btnLabel = vsOnline ? 'Leave &amp; Play Again' : 'Play Again';
+
+    let btnLabel = 'Play Again';
+    if (vsOnline && !isHost) btnLabel = 'Waiting for host…';
+
     el.innerHTML = `<div class="tl-game">
   <div class="tl-gameover visible">
     <div class="tl-gameover__icon">${isP ? '🏆' : '🃏'}</div>
     <h2>${isP ? 'Tiến Lên!' : `${pName(w)} Wins!`}</h2>
     <p>${isP ? 'You emptied your hand first. Go forward!' : `${pName(w)} played all their cards first.`}</p>
-    <button class="tl-btn tl-btn--play" id="tl-new">${btnLabel}</button>
+    <button class="tl-btn tl-btn--play" id="tl-new"${vsOnline && !isHost ? ' disabled' : ''}>${btnLabel}</button>
+    ${vsOnline ? `<button class="tl-btn tl-btn--ghost" id="tl-leave" style="margin-top:0.5rem">Leave Room</button>` : ''}
   </div>
 </div>`;
-    el.querySelector('#tl-new').addEventListener('click', () => {
+
+    el.querySelector('#tl-new')?.addEventListener('click', () => {
       if (vsOnline) {
-        // Leave the online room then start a fresh local game
-        const leaveBtn = document.getElementById('tl-leave-btn');
-        if (leaveBtn) leaveBtn.click();
+        if (isHost) {
+          // Re-deal in the same room — guest receives via subscription
+          newGameOnline();
+          syncOnlineState();
+        }
       } else {
         newGame();
       }
+    });
+
+    el.querySelector('#tl-leave')?.addEventListener('click', () => {
+      const leaveBtn = document.getElementById('tl-leave-btn');
+      if (leaveBtn) leaveBtn.click();
     });
   }
 
