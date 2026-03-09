@@ -22,16 +22,30 @@
   const PLAYER = 0;
 
   /* ── Online state ── */
-  let vsOnline = false;
-  let isHost   = false;
-  let mySeat   = 0;  // 0 = host, 2 = guest
+  let vsOnline  = false;
+  let isHost    = false;
+  let mySeat    = 0;    // 0 = host, 2 = guest
+  let twoPlayer = false; // 1v1 mode: seats 0 & 2 only, 26 cards each
+
+  // Active seats for current mode
+  function activeSeats() { return twoPlayer ? [0, 2] : [0, 1, 2, 3]; }
+  // Advance to next active seat
+  function nextSeat(s) {
+    const seats = activeSeats();
+    return seats[(seats.indexOf(s) + 1) % seats.length];
+  }
+  // How many passes trigger a new round
+  function passThreshold() { return twoPlayer ? 1 : 3; }
 
   // Visual position n (0=bottom/you, 1=left, 2=across, 3=right) → absolute seat
   function viewSeat(n) { return (mySeat + n) % 4; }
   // My effective "player" seat for interaction logic
   function myPS() { return vsOnline ? mySeat : PLAYER; }
-  // Is this an AI seat in the current online game?
-  function isAISeat(s) { return vsOnline ? (s === 1 || s === 3) : s !== PLAYER; }
+  // Is this an AI seat?
+  function isAISeat(s) {
+    if (vsOnline) return false;              // no AI online
+    return twoPlayer ? s === 2 : s !== PLAYER; // 1v1: seat 2 is AI; 4P: all non-0
+  }
   // Perspective-aware name
   function pName(idx) {
     if (idx < 0) return '—';
@@ -138,7 +152,12 @@
 
   function dealDeck(deck) {
     const hands = [[], [], [], []];
-    deck.forEach((c, i) => hands[i % 4].push(c));
+    if (twoPlayer) {
+      deck.slice(0, 26).forEach(c => hands[0].push(c));
+      deck.slice(26).forEach(c => hands[2].push(c));
+    } else {
+      deck.forEach((c, i) => hands[i % 4].push(c));
+    }
     hands.forEach(h => h.sort(cardCmp));
     return hands;
   }
@@ -266,7 +285,7 @@
     state.aiThinking = false;
     addLog(playerIdx, `${pName(playerIdx)} passes.`);
 
-    if (state.passes >= 3) {
+    if (state.passes >= passThreshold()) {
       state.pile            = [];
       state.pileType        = null;
       state.passes          = 0;
@@ -294,7 +313,7 @@
   }
 
   function advanceTurn() {
-    state.current = (state.current + 1) % 4;
+    state.current = nextSeat(state.current);
 
     if (vsOnline) {
       // Sync AFTER current advances so the receiver knows whose turn it now is
@@ -465,13 +484,13 @@
       else         { hintText = '✗ Not a valid hand';            hintCls = 'invalid'; }
     }
 
-    return `<div class="tl-game${gameSpeed === 2 ? ' tl-fast' : ''}">
+    return `<div class="tl-game${gameSpeed === 2 ? ' tl-fast' : ''}${twoPlayer ? ' tl-1v1' : ''}">
   <div class="tl-status-bar ${statusCls}">${statusInner}</div>
   <div class="tl-table">
     ${zoneTop()}
-    ${zoneSide(viewSeat(1), 'left')}
+    ${twoPlayer ? '' : zoneSide(viewSeat(1), 'left')}
     ${centerArea(justChanged)}
-    ${zoneSide(viewSeat(3), 'right')}
+    ${twoPlayer ? '' : zoneSide(viewSeat(3), 'right')}
   </div>
   ${playerArea(isYT, isFirst)}
   <div class="tl-hint ${hintCls}">${hintText}</div>
@@ -558,8 +577,6 @@
       return faceCard(c, cls, sty, String(i));
     }).join('');
 
-    const newBtnLabel = vsOnline ? 'New Game' : 'New Game';
-
     return `<div class="tl-player-area">
   <div class="tl-zone__name${isYT ? ' active' : ''}">You${isYT ? ' ●' : ''} · ${hand.length} cards</div>
   <div class="tl-hand">${cards}</div>
@@ -569,8 +586,9 @@
       <button class="tl-btn tl-btn--pass" id="tl-pass" ${canPass ? '' : 'disabled'}>Pass</button>
     </div>
     <div class="tl-actions__secondary">
-      <button class="tl-btn tl-btn--ghost" id="tl-new"${vsOnline ? ' disabled title="Leave room to start a new game"' : ''}>${newBtnLabel}</button>
-      <button class="tl-btn tl-btn--ghost tl-speed-btn${gameSpeed === 2 ? ' active' : ''}" id="tl-speed">2× Speed</button>
+      <button class="tl-btn tl-btn--ghost" id="tl-new"${vsOnline ? ' disabled title="Leave room to start a new game"' : ''}>New Game</button>
+      <button class="tl-btn tl-btn--ghost" id="tl-mode"${vsOnline ? ' disabled' : ''}>${twoPlayer ? '4-Player' : '1v1'}</button>
+      <button class="tl-btn tl-btn--ghost tl-speed-btn${gameSpeed === 2 ? ' active' : ''}" id="tl-speed">2×</button>
     </div>
   </div>
 </div>`;
@@ -671,6 +689,12 @@
       newGame();
     });
 
+    el.querySelector('#tl-mode')?.addEventListener('click', () => {
+      if (vsOnline) return;
+      twoPlayer = !twoPlayer;
+      newGame();
+    });
+
     el.querySelector('#tl-speed')?.addEventListener('click', () => {
       gameSpeed = gameSpeed === 2 ? 1 : 2;
       render();
@@ -760,9 +784,10 @@
     }
 
     function startOnlineGame(role) {
-      vsOnline = true;
-      isHost   = (role === 'host');
-      mySeat   = isHost ? 0 : 2;
+      vsOnline  = true;
+      twoPlayer = true; // online is always 1v1 — no AI
+      isHost    = (role === 'host');
+      mySeat    = isHost ? 0 : 2;
 
       if (isHost) {
         newGameOnline();
@@ -779,9 +804,10 @@
 
     function leaveRoom() {
       Multiplayer.disconnect();
-      vsOnline = false;
-      isHost   = false;
-      mySeat   = 0;
+      vsOnline  = false;
+      twoPlayer = false;
+      isHost    = false;
+      mySeat    = 0;
       showLobby();
       // Resume local game
       gameVersion++;
