@@ -219,14 +219,14 @@
     ctx.clearRect(0, 0, cnv.width, cnv.height);
 
     var cs = cellSize();
-    var pr = cs * 0.36; // piece radius
+    var pr = cs * 0.28; // piece radius
 
     // ── Board surface
     ctx.fillStyle = C.bg;
     ctx.fillRect(0, 0, cnv.width, cnv.height);
 
-    var bx = PAD - cs * 0.35, by = PAD - cs * 0.35;
-    var bw = (COLS - 1) * cs + cs * 0.7, bh = (ROWS - 1) * cs + cs * 0.7;
+    var bx = PAD - cs * 0.52, by = PAD - cs * 0.52;
+    var bw = (COLS - 1) * cs + cs * 1.04, bh = (ROWS - 1) * cs + cs * 1.04;
     ctx.fillStyle = C.board;
     drawRoundRect(bx, by, bw, bh, 8); ctx.fill();
 
