@@ -603,15 +603,24 @@
   function renderGameOver(el) {
     const w   = state.winner;
     const isP = w === myPS();
+    const btnLabel = vsOnline ? 'Leave &amp; Play Again' : 'Play Again';
     el.innerHTML = `<div class="tl-game">
   <div class="tl-gameover visible">
     <div class="tl-gameover__icon">${isP ? '🏆' : '🃏'}</div>
     <h2>${isP ? 'Tiến Lên!' : `${pName(w)} Wins!`}</h2>
     <p>${isP ? 'You emptied your hand first. Go forward!' : `${pName(w)} played all their cards first.`}</p>
-    ${vsOnline ? '' : '<button class="tl-btn tl-btn--play" id="tl-new">Play Again</button>'}
+    <button class="tl-btn tl-btn--play" id="tl-new">${btnLabel}</button>
   </div>
 </div>`;
-    if (!vsOnline) el.querySelector('#tl-new').addEventListener('click', newGame);
+    el.querySelector('#tl-new').addEventListener('click', () => {
+      if (vsOnline) {
+        // Leave the online room then start a fresh local game
+        const leaveBtn = document.getElementById('tl-leave-btn');
+        if (leaveBtn) leaveBtn.click();
+      } else {
+        newGame();
+      }
+    });
   }
 
   /* ── Event wiring ── */
