@@ -81,11 +81,15 @@
 
     joinRoom: async function (code, game, cbs) {
       _cbs = cbs || {};
+      // Look up by code only — avoids any game-name or status mismatch issues
       var res = await db().from('rooms')
-        .select().eq('code', code.toUpperCase().trim())
-        .eq('game', game).eq('status', 'waiting').limit(1);
+        .select().eq('code', code.toUpperCase().trim()).limit(1);
       if (res.error || !res.data || !res.data.length) {
-        if (_cbs.onError) _cbs.onError('Room not found or already started.');
+        if (_cbs.onError) _cbs.onError('Room not found. Check the code and try again.');
+        return null;
+      }
+      if (res.data[0].status !== 'waiting') {
+        if (_cbs.onError) _cbs.onError('That room has already started or ended. Ask the host to create a new room.');
         return null;
       }
       var res2 = await db().from('rooms')
