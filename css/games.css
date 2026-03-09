@@ -3413,3 +3413,63 @@
   .fn-hud    { flex-direction: column; align-items: flex-start; }
   .fn-status { text-align: left; }
 }
+
+/* =============================================================================
+   Online Multiplayer Panel (shared across games)
+============================================================================= */
+.mp-panel {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.mp-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.mp-label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+.mp-code-input {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-align: center;
+  text-transform: uppercase;
+  padding: var(--space-1) var(--space-2);
+  width: 7.5rem;
+  outline: none;
+  font-family: monospace;
+}
+.mp-code-input:focus {
+  border-color: var(--color-accent-gold);
+  box-shadow: 0 0 0 2px rgba(200,155,60,0.18);
+}
+.mp-code-display {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.mp-code-display strong {
+  font-size: var(--text-xl);
+  letter-spacing: 0.2em;
+  color: var(--color-accent-gold);
+  font-family: monospace;
+}
+.mp-status-text {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-style: italic;
+}

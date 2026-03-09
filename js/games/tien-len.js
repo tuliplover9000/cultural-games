@@ -1,19 +1,11 @@
 /**
  * tien-len.js — Tiến Lên (Vietnamese shedding card game)
- * Phase 4 — crypto shuffle, proper card design, animations, AI thinking.
+ * Supports local play (vs 3 AI) and 2-player online (host + guest, 2 AI fill remaining seats).
  *
- * Rules:
- *  - 4 players, 52-card deck, 13 cards each
- *  - Rank (low→high): 3 4 5 6 7 8 9 10 J Q K A 2
- *  - Suit (low→high): Spades Clubs Diamonds Hearts
- *  - Hands: single, pair, triple, four-of-a-kind,
- *           sequence (3+ consecutive, no 2s),
- *           sequence of pairs (2+ consecutive pairs, no 2s)
- *  - Beat same type + same length (for seq/seqpair) with higher value
- *  - Single 2 beaten only by four-of-a-kind or 3+ consecutive pairs
- *  - Player with 3♠ goes first and must include it in opening play
- *  - Pass: all others pass → pile owner leads new round freely
- *  - First to empty hand wins
+ * Online seat layout:
+ *   Seat 0 = host (human)   Seat 2 = guest (human)
+ *   Seat 1 = AI (left)      Seat 3 = AI (right)
+ * Host is authoritative: runs AI for seats 1 & 3, syncs state after every action.
  */
 (function () {
   'use strict';
@@ -28,6 +20,24 @@
     quad:'Four of a Kind', seq:'Sequence', seqpair:'Seq. of Pairs',
   };
   const PLAYER = 0;
+
+  /* ── Online state ── */
+  let vsOnline = false;
+  let isHost   = false;
+  let mySeat   = 0;  // 0 = host, 2 = guest
+
+  // Visual position n (0=bottom/you, 1=left, 2=across, 3=right) → absolute seat
+  function viewSeat(n) { return (mySeat + n) % 4; }
+  // My effective "player" seat for interaction logic
+  function myPS() { return vsOnline ? mySeat : PLAYER; }
+  // Is this an AI seat in the current online game?
+  function isAISeat(s) { return vsOnline ? (s === 1 || s === 3) : s !== PLAYER; }
+  // Perspective-aware name
+  function pName(idx) {
+    if (idx < 0) return '—';
+    if (vsOnline) return ['You','Left','Across','Right'][(idx - mySeat + 4) % 4];
+    return SEAT_NAMES[idx] || '?';
+  }
 
   /* ── Crypto-quality shuffle ── */
   function cryptoRandInt(max) {
@@ -47,12 +57,13 @@
 
   /* ── State ── */
   let state = {};
-  let selected = new Set();   // indices into player's hand
-  let gameRenderCount = 0;    // tracks first render for deal animation
-  let gameSpeed = 1;          // 1 = normal, 2 = fast (persists across games)
-  let gameVersion = 0;        // incremented on new game to cancel stale AI timeouts
+  let selected = new Set();
+  let gameRenderCount = 0;
+  let gameSpeed = 1;
+  let gameVersion = 0;
 
   function newGame() {
+    if (vsOnline) return; // online games are started via startOnlineGame()
     gameVersion++;
     const deck  = shuffle(buildDeck());
     const hands = dealDeck(deck);
@@ -79,6 +90,39 @@
     render();
 
     if (state.current !== PLAYER) {
+      scheduleAITurn();
+    }
+  }
+
+  function newGameOnline() {
+    // Called only by host to deal and start the game
+    gameVersion++;
+    const deck  = shuffle(buildDeck());
+    const hands = dealDeck(deck);
+    const first = hands.findIndex(h => h.some(c => c.rank === '3' && c.suit === '♠'));
+
+    state = {
+      hands,
+      current:         first,
+      leader:          first,
+      pile:            [],
+      pileOwner:       -1,
+      pileType:        null,
+      passes:          0,
+      log:             [],
+      phase:           'playing',
+      firstTurn:       true,
+      winner:          -1,
+      pileJustChanged: false,
+      aiThinking:      false,
+    };
+
+    selected.clear();
+    gameRenderCount = 0;
+    render();
+
+    // Host runs AI if AI goes first; waits if guest (seat 2) goes first
+    if (state.current !== mySeat && state.current !== 2) {
       scheduleAITurn();
     }
   }
@@ -184,7 +228,6 @@
     const info = classify(cards);
     if (!info || !beats(info, state.pileType)) return false;
 
-    // First play of the game must include 3♠
     if (state.firstTurn && playerIdx === state.leader)
       if (!cards.some(c => c.rank === '3' && c.suit === '♠')) return false;
 
@@ -208,11 +251,13 @@
       state.phase  = 'gameover';
       state.winner = playerIdx;
       if (window.Auth && Auth.isLoggedIn())
-        Auth.recordResult('tien-len', playerIdx === PLAYER ? 'win' : 'loss');
+        Auth.recordResult('tien-len', playerIdx === myPS() ? 'win' : 'loss');
+      if (vsOnline && (isHost || playerIdx === mySeat)) syncOnlineState();
       render();
       return true;
     }
 
+    if (vsOnline && (isHost || playerIdx === mySeat)) syncOnlineState();
     advanceTurn();
     return true;
   }
@@ -223,7 +268,6 @@
     addLog(playerIdx, `${pName(playerIdx)} passes.`);
 
     if (state.passes >= 3) {
-      // All others passed — pile owner leads a new round
       state.pile            = [];
       state.pileType        = null;
       state.passes          = 0;
@@ -231,6 +275,14 @@
       state.leader          = state.pileOwner;
       state.pileJustChanged = true;
       addLog(-1, `— New round — ${pName(state.pileOwner)} leads.`);
+
+      if (vsOnline) {
+        if (isHost || playerIdx === mySeat) syncOnlineState();
+        render();
+        if (isHost && isAISeat(state.current)) scheduleAITurn();
+        return;
+      }
+
       if (state.current !== PLAYER) {
         scheduleAITurn();
       } else {
@@ -239,11 +291,22 @@
       return;
     }
 
+    if (vsOnline && (isHost || playerIdx === mySeat)) syncOnlineState();
     advanceTurn();
   }
 
   function advanceTurn() {
     state.current = (state.current + 1) % 4;
+
+    if (vsOnline) {
+      render();
+      // Host runs AI for seats 1 and 3; waits for guest (seat 2) to sync their move
+      if (isHost && isAISeat(state.current)) {
+        scheduleAITurn();
+      }
+      return;
+    }
+
     if (state.current !== PLAYER) {
       scheduleAITurn();
     } else {
@@ -257,17 +320,19 @@
     render();
     const id = gameVersion;
     const delay = gameSpeed === 2
-      ? 300 + cryptoRandInt(300)   // fast: 300–600 ms
-      : 800 + cryptoRandInt(700);  // normal: 800–1500 ms
+      ? 300 + cryptoRandInt(300)
+      : 800 + cryptoRandInt(700);
     setTimeout(() => { if (gameVersion === id) runAI(); }, delay);
   }
 
   function runAI() {
-    if (state.phase !== 'playing' || state.current === PLAYER) return;
+    if (state.phase !== 'playing') return;
+    if (vsOnline && !isHost) return; // only host runs AI
+    if (!isAISeat(state.current) && !(!vsOnline && state.current !== PLAYER)) return;
+
     const idx  = state.current;
     const hand = state.hands[idx];
 
-    // First turn: leader must play 3♠
     if (state.firstTurn && idx === state.leader) {
       const s3 = hand.find(c => c.rank === '3' && c.suit === '♠');
       if (s3) { playCards(idx, [s3]); return; }
@@ -291,7 +356,6 @@
   }
 
   function leadPlay(hand) {
-    // Prefer lowest pair; fallback to lowest non-2 single
     const cands = allCandidates(hand);
     let best = null, bestVal = Infinity;
     for (const c of cands) {
@@ -320,7 +384,6 @@
     const uRanks = [...new Set(hand.filter(c => c.rank !== '2').map(c => c.rank))]
       .sort((a,b) => rankVal(a) - rankVal(b));
 
-    // Sequences (3+ cards)
     for (let s = 0; s < uRanks.length; s++) {
       let run = [uRanks[s]];
       for (let e = s + 1; e < uRanks.length; e++) {
@@ -330,7 +393,6 @@
       }
     }
 
-    // Sequence of pairs (2+ consecutive pairs)
     for (let s = 0; s < uRanks.length; s++) {
       if (!byRank[uRanks[s]] || byRank[uRanks[s]].length < 2) continue;
       let run = [uRanks[s]];
@@ -346,11 +408,6 @@
   }
 
   /* ── Helpers ── */
-  function pName(idx) {
-    if (idx < 0) return '—';
-    return SEAT_NAMES[idx] || '?';
-  }
-
   function cardsStr(cards) {
     return cards.map(c => c.rank + c.suit).join(' ');
   }
@@ -384,8 +441,9 @@
   }
 
   function buildUI(isFirst, justChanged) {
-    const isYT     = state.current === PLAYER && !state.aiThinking;
-    const thinking = state.aiThinking;
+    const ps       = myPS();
+    const isYT     = state.current === ps && !state.aiThinking;
+    const thinking = state.aiThinking && state.current !== ps;
 
     let statusInner, statusCls = '';
     if (thinking) {
@@ -399,8 +457,7 @@
       statusInner = `${pName(state.current)}'s turn`;
     }
 
-    // Hand-type hint for selected cards
-    const hand     = state.hands[PLAYER];
+    const hand     = state.hands[ps];
     const selCards = [...selected].map(i => hand[i]);
     const selInfo  = selCards.length ? classify(selCards) : null;
     let hintText = '', hintCls = '';
@@ -413,9 +470,9 @@
   <div class="tl-status-bar ${statusCls}">${statusInner}</div>
   <div class="tl-table">
     ${zoneTop()}
-    ${zoneSide(1, 'left')}
+    ${zoneSide(viewSeat(1), 'left')}
     ${centerArea(justChanged)}
-    ${zoneSide(3, 'right')}
+    ${zoneSide(viewSeat(3), 'right')}
   </div>
   ${playerArea(isYT, isFirst)}
   <div class="tl-hint ${hintCls}">${hintText}</div>
@@ -424,12 +481,13 @@
   }
 
   function zoneTop() {
-    const n      = state.hands[2].length;
-    const active = state.current === 2;
+    const abs    = viewSeat(2);
+    const n      = state.hands[abs].length;
+    const active = state.current === abs;
     const show   = Math.min(n, 11);
     const backs  = Array(show).fill('<div class="tl-card-back tl-card-back--sm"></div>').join('');
     return `<div class="tl-zone tl-zone--top">
-  <div class="tl-zone__name${active ? ' active' : ''}">Across${active ? ' ●' : ''}</div>
+  <div class="tl-zone__name${active ? ' active' : ''}">${pName(abs)}${active ? ' ●' : ''}</div>
   <div class="tl-opp-cards--top">${backs}</div>
   <div class="tl-zone__count">${n} card${n !== 1 ? 's' : ''}</div>
 </div>`;
@@ -438,7 +496,7 @@
   function zoneSide(idx, side) {
     const n      = state.hands[idx].length;
     const active = state.current === idx;
-    const name   = SEAT_NAMES[idx];
+    const name   = pName(idx);
     const show   = Math.min(n, 6);
     const backs  = Array(show).fill('<div class="tl-card-back tl-card-back--xs"></div>').join('');
     return `<div class="tl-zone tl-zone--${side}">
@@ -450,17 +508,16 @@
 
   /* ── Pile animation helpers ── */
   function fromDir(playerIdx) {
-    // Returns CSS translate offsets representing where cards fly FROM
-    switch (playerIdx) {
-      case 1:  return { x: '-260px', y:  '20px' };   // Left
-      case 2:  return { x:    '0px', y: '-160px' };  // Across / Top
-      case 3:  return { x:  '260px', y:  '20px' };   // Right
-      default: return { x:    '0px', y:  '160px' };  // You / Bottom
+    const view = (playerIdx - mySeat + 4) % 4;
+    switch (view) {
+      case 1:  return { x: '-260px', y:  '20px' };
+      case 2:  return { x:    '0px', y: '-160px' };
+      case 3:  return { x:  '260px', y:  '20px' };
+      default: return { x:    '0px', y:  '160px' };
     }
   }
 
   function pileRot(card, i) {
-    // Deterministic rotation in [-5, +5] degrees — looks like cards thrown on a table
     return ((cardVal(card) + i * 7) % 11) - 5;
   }
 
@@ -488,7 +545,7 @@
   }
 
   function playerArea(isYT, isFirst) {
-    const hand    = state.hands[PLAYER];
+    const hand    = state.hands[myPS()];
     const canPlay = isYT && selected.size > 0;
     const canPass = isYT && state.pile.length > 0;
 
@@ -502,6 +559,8 @@
       return faceCard(c, cls, sty, String(i));
     }).join('');
 
+    const newBtnLabel = vsOnline ? 'New Game' : 'New Game';
+
     return `<div class="tl-player-area">
   <div class="tl-zone__name${isYT ? ' active' : ''}">You${isYT ? ' ●' : ''} · ${hand.length} cards</div>
   <div class="tl-hand">${cards}</div>
@@ -511,7 +570,7 @@
       <button class="tl-btn tl-btn--pass" id="tl-pass" ${canPass ? '' : 'disabled'}>Pass</button>
     </div>
     <div class="tl-actions__secondary">
-      <button class="tl-btn tl-btn--ghost" id="tl-new">New Game</button>
+      <button class="tl-btn tl-btn--ghost" id="tl-new"${vsOnline ? ' disabled title="Leave room to start a new game"' : ''}>${newBtnLabel}</button>
       <button class="tl-btn tl-btn--ghost tl-speed-btn${gameSpeed === 2 ? ' active' : ''}" id="tl-speed">2× Speed</button>
     </div>
   </div>
@@ -520,7 +579,7 @@
 
   function logArea() {
     const rows = state.log.slice(0, 10).map(e => {
-      const cls = e.player === PLAYER ? ' you' : e.player < 0 ? ' sys' : '';
+      const cls = e.player === myPS() ? ' you' : e.player < 0 ? ' sys' : '';
       return `<li class="tl-log__entry${cls}">${esc(e.msg)}</li>`;
     }).join('');
     return `<div class="tl-log">
@@ -544,33 +603,34 @@
 
   function renderGameOver(el) {
     const w   = state.winner;
-    const isP = w === PLAYER;
+    const isP = w === myPS();
     el.innerHTML = `<div class="tl-game">
   <div class="tl-gameover visible">
     <div class="tl-gameover__icon">${isP ? '🏆' : '🃏'}</div>
     <h2>${isP ? 'Tiến Lên!' : `${pName(w)} Wins!`}</h2>
     <p>${isP ? 'You emptied your hand first. Go forward!' : `${pName(w)} played all their cards first.`}</p>
-    <button class="tl-btn tl-btn--play" id="tl-new">Play Again</button>
+    ${vsOnline ? '' : '<button class="tl-btn tl-btn--play" id="tl-new">Play Again</button>'}
   </div>
 </div>`;
-    el.querySelector('#tl-new').addEventListener('click', newGame);
+    if (!vsOnline) el.querySelector('#tl-new').addEventListener('click', newGame);
   }
 
   /* ── Event wiring ── */
   function wireEvents(el) {
-    // Card selection
+    const ps = myPS();
+
     el.querySelectorAll('.tl-hand .tl-card.clickable').forEach(card => {
       card.addEventListener('click', () => {
+        if (state.current !== ps || state.aiThinking) return;
         const i = +card.dataset.idx;
         selected.has(i) ? selected.delete(i) : selected.add(i);
         render();
       });
     });
 
-    // Play
     el.querySelector('#tl-play')?.addEventListener('click', () => {
-      if (state.current !== PLAYER || state.aiThinking) return;
-      const cards = [...selected].map(i => state.hands[PLAYER][i]);
+      if (state.current !== ps || state.aiThinking) return;
+      const cards = [...selected].map(i => state.hands[ps][i]);
       const info  = classify(cards);
       const hint  = el.querySelector('.tl-hint');
 
@@ -581,7 +641,7 @@
       if (!info) {
         showHint('✗ Not a valid hand type'); return;
       }
-      if (state.firstTurn && state.leader === PLAYER && !cards.some(c => c.rank === '3' && c.suit === '♠')) {
+      if (state.firstTurn && state.leader === ps && !cards.some(c => c.rank === '3' && c.suit === '♠')) {
         showHint('✗ First play must include the 3♠'); return;
       }
       if (state.pileType && !beats(info, state.pileType)) {
@@ -589,29 +649,192 @@
       }
 
       selected.clear();
-      playCards(PLAYER, cards);
+      playCards(ps, cards);
     });
 
-    // Pass
     el.querySelector('#tl-pass')?.addEventListener('click', () => {
-      if (state.current !== PLAYER || state.aiThinking) return;
+      if (state.current !== ps || state.aiThinking) return;
       selected.clear();
-      doPass(PLAYER);
+      doPass(ps);
     });
 
-    // New game
-    el.querySelector('#tl-new')?.addEventListener('click', newGame);
+    el.querySelector('#tl-new')?.addEventListener('click', () => {
+      if (vsOnline) return;
+      newGame();
+    });
 
-    // Speed toggle
     el.querySelector('#tl-speed')?.addEventListener('click', () => {
       gameSpeed = gameSpeed === 2 ? 1 : 2;
       render();
     });
   }
 
+  /* ── Online multiplayer ── */
+  function syncOnlineState() {
+    if (!window.Multiplayer) return;
+    Multiplayer.sendState({
+      hands:      state.hands,
+      current:    state.current,
+      leader:     state.leader,
+      pile:       state.pile,
+      pileOwner:  state.pileOwner,
+      pileType:   state.pileType,
+      passes:     state.passes,
+      phase:      state.phase,
+      firstTurn:  state.firstTurn,
+      winner:     state.winner,
+      log:        state.log,
+      last_actor: Multiplayer.getPlayerId(),
+    });
+  }
+
+  function receiveOnlineState(data) {
+    if (!data || !vsOnline) return;
+    if (data.last_actor === Multiplayer.getPlayerId()) return; // ignore own echo
+
+    state.hands          = data.hands;
+    state.current        = data.current;
+    state.leader         = data.leader;
+    state.pile           = data.pile;
+    state.pileOwner      = data.pileOwner;
+    state.pileType       = data.pileType;
+    state.passes         = data.passes;
+    state.phase          = data.phase;
+    state.firstTurn      = data.firstTurn;
+    state.winner         = data.winner;
+    state.log            = data.log;
+    state.pileJustChanged = true;
+    state.aiThinking     = false;
+
+    selected.clear();
+    gameRenderCount = Math.max(gameRenderCount, 1); // not a first render
+    render();
+
+    if (state.phase !== 'playing') return;
+
+    // If it's my turn, player interacts (render already called)
+    if (state.current === mySeat) return;
+
+    // Host runs AI for AI seats
+    if (isHost && isAISeat(state.current)) {
+      scheduleAITurn();
+    }
+  }
+
+  function initOnlineUI() {
+    if (!window.Multiplayer) return;
+
+    const elLobby      = document.getElementById('tl-mp-lobby');
+    const elJoinForm   = document.getElementById('tl-mp-join-form');
+    const elRoomPanel  = document.getElementById('tl-mp-room');
+    const elCreateBtn  = document.getElementById('tl-create-btn');
+    const elJoinBtn    = document.getElementById('tl-join-btn');
+    const elJoinSubmit = document.getElementById('tl-join-submit');
+    const elJoinCancel = document.getElementById('tl-join-cancel');
+    const elLeaveBtn   = document.getElementById('tl-leave-btn');
+    const elCodeInput  = document.getElementById('tl-code-input');
+    const elRoomCode   = document.getElementById('tl-room-code-display');
+    const elRoomSt     = document.getElementById('tl-mp-room-status');
+
+    if (!elLobby) return;
+
+    function showLobby() {
+      elLobby.hidden = false; elJoinForm.hidden = true; elRoomPanel.hidden = true;
+    }
+    function showJoinForm() {
+      elLobby.hidden = true; elJoinForm.hidden = false; elRoomPanel.hidden = true;
+      elCodeInput.value = ''; elCodeInput.focus();
+    }
+    function showRoom(code, status) {
+      elLobby.hidden = true; elJoinForm.hidden = true; elRoomPanel.hidden = false;
+      elRoomCode.textContent = code;
+      elRoomSt.textContent   = status;
+    }
+
+    function startOnlineGame(role) {
+      vsOnline = true;
+      isHost   = (role === 'host');
+      mySeat   = isHost ? 0 : 2;
+
+      if (isHost) {
+        newGameOnline();
+        syncOnlineState();
+      } else {
+        // Show waiting message; receiveOnlineState will start the game
+        const el = document.getElementById('game-container');
+        if (el) el.innerHTML = `<div style="padding:3rem 2rem;text-align:center;color:var(--color-text-muted)">
+          <p style="font-size:1.2rem;margin-bottom:0.5rem">Connected!</p>
+          <p>Waiting for host to deal cards…</p>
+        </div>`;
+      }
+    }
+
+    function leaveRoom() {
+      Multiplayer.disconnect();
+      vsOnline = false;
+      isHost   = false;
+      mySeat   = 0;
+      showLobby();
+      // Resume local game
+      gameVersion++;
+      const deck  = shuffle(buildDeck());
+      const hands = dealDeck(deck);
+      const first = hands.findIndex(h => h.some(c => c.rank === '3' && c.suit === '♠'));
+      state = {
+        hands, current: first, leader: first, pile: [], pileOwner: -1,
+        pileType: null, passes: 0, log: [], phase: 'playing', firstTurn: true,
+        winner: -1, pileJustChanged: false, aiThinking: false,
+      };
+      selected.clear();
+      gameRenderCount = 0;
+      render();
+      if (state.current !== PLAYER) scheduleAITurn();
+    }
+
+    elCreateBtn.addEventListener('click', async function () {
+      elCreateBtn.disabled    = true;
+      elCreateBtn.textContent = 'Creating…';
+      const result = await Multiplayer.createRoom('tien-len', {
+        onReady: function (room) {
+          showRoom(room.code, 'Opponent joined! Starting…');
+          startOnlineGame('host');
+        },
+        onRemoteState: receiveOnlineState,
+        onError: function (msg) { showLobby(); alert('Error: ' + msg); },
+      });
+      elCreateBtn.disabled    = false;
+      elCreateBtn.textContent = 'Create Room';
+      if (result) showRoom(result.code, 'Waiting for opponent to join…');
+    });
+
+    elJoinBtn.addEventListener('click', showJoinForm);
+    elJoinCancel.addEventListener('click', showLobby);
+    elCodeInput.addEventListener('keydown', e => { if (e.key === 'Enter') elJoinSubmit.click(); });
+
+    elJoinSubmit.addEventListener('click', async function () {
+      const code = elCodeInput.value.trim().toUpperCase();
+      if (code.length !== 4) { alert('Enter a 4-letter room code.'); return; }
+      elJoinSubmit.disabled    = true;
+      elJoinSubmit.textContent = 'Joining…';
+      const result = await Multiplayer.joinRoom(code, 'tien-len', {
+        onRemoteState: receiveOnlineState,
+        onError: function (msg) { alert('Error: ' + msg); },
+      });
+      elJoinSubmit.disabled    = false;
+      elJoinSubmit.textContent = 'Join';
+      if (result) {
+        showRoom(code, 'Connected! You play as Across (seat 2).');
+        startOnlineGame('guest');
+      }
+    });
+
+    elLeaveBtn.addEventListener('click', leaveRoom);
+  }
+
   /* ── Init ── */
   function init() {
     if (document.getElementById('game-container')) newGame();
+    initOnlineUI();
   }
 
   if (document.readyState === 'loading') {
