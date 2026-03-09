@@ -232,9 +232,11 @@
     const { type:mt, value:mv, len:ml, pairCount:mp } = me;
     const { type:pt, value:pv, len:pl } = pile;
 
-    // Special: single 2 beaten only by quad or 3+ seqpair
-    if (pt === 'single' && pv >= rankVal('2') * 4)
+    // Special: single 2 beaten only by quad, 3+ seqpair, or a higher 2
+    if (pt === 'single' && pv >= rankVal('2') * 4) {
+      if (mt === 'single' && mv > pv) return true; // higher 2 beats lower 2
       return mt === 'quad' || (mt === 'seqpair' && mp >= 3);
+    }
 
     if (mt !== pt) return false;
     if ((mt === 'seq' || mt === 'seqpair') && ml !== pl) return false;
