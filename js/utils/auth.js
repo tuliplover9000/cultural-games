@@ -116,11 +116,24 @@
     };
   }
 
+  function _withTimeout(promise, ms, msg) {
+    return Promise.race([
+      promise,
+      new Promise(function (_, reject) {
+        setTimeout(function () { reject(new Error(msg || 'Request timed out.')); }, ms);
+      }),
+    ]);
+  }
+
   async function signIn(email, password) {
-    var res = await getSB().auth.signInWithPassword({
-      email: email.trim().toLowerCase(),
-      password: password,
-    });
+    var res = await _withTimeout(
+      getSB().auth.signInWithPassword({
+        email: email.trim().toLowerCase(),
+        password: password,
+      }),
+      12000,
+      'Sign in timed out — check your connection and try again.'
+    );
     if (res.error) return { ok: false, error: res.error.message };
     try { await _loadUserData(res.data.user); } catch (e) { _user = res.data.user; }
     _emit();
