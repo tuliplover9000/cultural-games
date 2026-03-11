@@ -48,8 +48,8 @@
     { id: 'fanorona',    name: 'Fanorona',          iconPath: 'assets/icons/fanorona.svg',    href: 'games/fanorona.html' },
   ];
 
-  /* ── Session storage key (Supabase v2 format) ── */
-  var SB_SESSION_KEY = 'sb-pnyvlqgllrpslhgimgve-auth-token';
+  /* ── Session storage key (custom — NOT the Supabase internal key) ── */
+  var SB_SESSION_KEY = 'cg_session';
 
   /* ── In-memory state ── */
   var _sb          = null;
