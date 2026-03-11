@@ -122,7 +122,7 @@
       password: password,
     });
     if (res.error) return { ok: false, error: res.error.message };
-    await _loadUserData(res.data.user);
+    try { await _loadUserData(res.data.user); } catch (e) { _user = res.data.user; }
     _emit();
     return { ok: true };
   }
@@ -332,15 +332,21 @@
       var errEl = document.getElementById('si-error');
       errEl.hidden = true;
       _setLoading('si-submit', true, 'Sign In');
-      var result = await signIn(
-        document.getElementById('si-email').value,
-        document.getElementById('si-password').value
-      );
-      _setLoading('si-submit', false, 'Sign In');
-      if (result.ok) {
-        closeModal();
-      } else {
-        errEl.textContent = result.error;
+      try {
+        var result = await signIn(
+          document.getElementById('si-email').value,
+          document.getElementById('si-password').value
+        );
+        _setLoading('si-submit', false, 'Sign In');
+        if (result.ok) {
+          closeModal();
+        } else {
+          errEl.textContent = result.error;
+          errEl.hidden = false;
+        }
+      } catch (err) {
+        _setLoading('si-submit', false, 'Sign In');
+        errEl.textContent = 'Something went wrong. Please try again.';
         errEl.hidden = false;
       }
     });
@@ -351,16 +357,22 @@
       var errEl = document.getElementById('su-error');
       errEl.hidden = true;
       _setLoading('su-submit', true, 'Create Account');
-      var result = await signUp(
-        document.getElementById('su-username').value,
-        document.getElementById('su-email').value,
-        document.getElementById('su-password').value
-      );
-      _setLoading('su-submit', false, 'Create Account');
-      if (result.ok) {
-        closeModal();
-      } else {
-        errEl.textContent = result.error;
+      try {
+        var result = await signUp(
+          document.getElementById('su-username').value,
+          document.getElementById('su-email').value,
+          document.getElementById('su-password').value
+        );
+        _setLoading('su-submit', false, 'Create Account');
+        if (result.ok) {
+          closeModal();
+        } else {
+          errEl.textContent = result.error;
+          errEl.hidden = false;
+        }
+      } catch (err) {
+        _setLoading('su-submit', false, 'Create Account');
+        errEl.textContent = 'Something went wrong. Please try again.';
         errEl.hidden = false;
       }
     });
