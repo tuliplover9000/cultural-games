@@ -491,15 +491,21 @@
   ══════════════════════════════════════════ */
 
   async function _boot() {
-    // Restore existing session (persisted in localStorage by Supabase)
-    var sessionRes = await getSB().auth.getSession();
-    if (sessionRes.data && sessionRes.data.session) {
-      await _loadUserData(sessionRes.data.session.user);
-    }
+    _buildModal();
+    _injectNavWidget();
+    _renderFooterLink();
 
-    // Listen for auth state changes (token refresh, sign-out from another tab, etc.)
+    // onAuthStateChange fires INITIAL_SESSION on page load with the current session
+    // (or null if logged out). This is more reliable than getSession() for restoring state.
     getSB().auth.onAuthStateChange(async function (event, session) {
-      if (event === 'SIGNED_OUT') {
+      if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
+        if (session) {
+          await _loadUserData(session.user);
+        } else {
+          _user = null; _profile = null; _stats = {};
+        }
+        _emit();
+      } else if (event === 'SIGNED_OUT') {
         _user = null; _profile = null; _stats = {};
         _emit();
       } else if (event === 'TOKEN_REFRESHED' && session) {
@@ -507,11 +513,6 @@
         _emit();
       }
     });
-
-    _buildModal();
-    _injectNavWidget();
-    _renderFooterLink();
-    _emit(); // trigger initial render for account page etc.
   }
 
   function _loadSBThenBoot() {

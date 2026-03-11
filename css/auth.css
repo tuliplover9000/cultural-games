@@ -334,6 +334,14 @@
   padding: var(--space-8) 0;
   border-bottom: 3px solid var(--color-accent-gold);
 }
+.account-hero .btn-ghost {
+  color: var(--color-text-inverse);
+  border-color: rgba(255,255,255,0.4);
+}
+.account-hero .btn-ghost:hover {
+  background-color: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.7);
+}
 .account-hero__inner {
   display: flex;
   align-items: center;
