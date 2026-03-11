@@ -118,6 +118,7 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="../js/utils/navigation.js"></script>
   <script src="../js/utils/auth.js"></script>
   <script>
@@ -155,19 +156,21 @@
       }).join('');
     }
 
+    var _authSettled = false;
+
     function render() {
       var loggedIn    = window.Auth && Auth.isLoggedIn();
       var placeholder = document.getElementById('account-placeholder');
       var dashboard   = document.getElementById('account-dashboard');
 
       if (!loggedIn) {
+        // Only show the sign-in prompt once auth has finished loading
+        if (!_authSettled) return;
         placeholder.hidden = false;
         dashboard.hidden   = true;
-        if (window.Auth) setTimeout(function () { Auth.openModal('signin'); }, 200);
         return;
       }
 
-      placeholder.hidden = false; // keep in DOM but invisible behind dashboard
       placeholder.hidden = true;
       dashboard.hidden   = false;
 
@@ -184,12 +187,20 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-      render();
-      if (window.Auth) Auth.onAuthChange(render);
+      if (window.Auth) {
+        Auth.onAuthChange(function () {
+          _authSettled = true;
+          render();
+        });
+      }
+      // Fallback: if auth never fires (e.g. no session at all), show sign-in after 1.5s
+      setTimeout(function () {
+        if (!_authSettled) { _authSettled = true; render(); }
+      }, 1500);
 
       // Sign out button
       var signoutBtn = document.getElementById('acc-signout');
-      if (signoutBtn) signoutBtn.addEventListener('click', function () { Auth.signOut(); });
+      if (signoutBtn) signoutBtn.addEventListener('click', async function () { await Auth.signOut(); });
 
       // Placeholder buttons
       var pSignin  = document.getElementById('placeholder-signin-btn');
