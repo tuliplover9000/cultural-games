@@ -575,19 +575,21 @@
 
     var stored = _readStoredSession();
     if (stored) {
-      // Set user instantly from localStorage so the page renders immediately
       _accessToken = stored.access_token;
       _user        = stored.user;
       _profile     = { username: stored.user.email.split('@')[0], created_at: stored.user.created_at };
-      _emit(); // show dashboard right away
-
-      // Load full profile + stats from DB in background
-      _loadUserData(stored.user)
-        .then(function () { _emit(); })
-        .catch(function () {});
-    } else {
-      _emit(); // not logged in
     }
+
+    // Defer emit one tick so all DOMContentLoaded handlers (including account page)
+    // have registered their onAuthChange callbacks before we fire
+    setTimeout(function () {
+      _emit();
+      if (stored) {
+        _loadUserData(stored.user)
+          .then(function () { _emit(); })
+          .catch(function () {});
+      }
+    }, 0);
   }
 
   function _loadSBThenBoot() {
