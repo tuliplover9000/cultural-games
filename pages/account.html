@@ -187,16 +187,12 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-      if (window.Auth) {
-        Auth.onAuthChange(function () {
-          _authSettled = true;
-          render();
-        });
-      }
-      // Fallback: if auth never fires (e.g. no session at all), show sign-in after 1.5s
-      setTimeout(function () {
-        if (!_authSettled) { _authSettled = true; render(); }
-      }, 1500);
+      // _user is set synchronously in auth.js _boot() before this fires,
+      // so we can render immediately without waiting for any async emit.
+      _authSettled = true;
+      render();
+
+      if (window.Auth) Auth.onAuthChange(render);
 
       // Sign out button
       var signoutBtn = document.getElementById('acc-signout');
