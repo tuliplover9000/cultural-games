@@ -573,14 +573,21 @@
     _injectNavWidget();
     _renderFooterLink();
 
-    // Restore session from localStorage (no network call needed)
     var stored = _readStoredSession();
     if (stored) {
+      // Set user instantly from localStorage so the page renders immediately
       _accessToken = stored.access_token;
-      try { await _loadUserData(stored.user); } catch (e) { _user = stored.user; }
-    }
+      _user        = stored.user;
+      _profile     = { username: stored.user.email.split('@')[0], created_at: stored.user.created_at };
+      _emit(); // show dashboard right away
 
-    _emit();
+      // Load full profile + stats from DB in background
+      _loadUserData(stored.user)
+        .then(function () { _emit(); })
+        .catch(function () {});
+    } else {
+      _emit(); // not logged in
+    }
   }
 
   function _loadSBThenBoot() {
