@@ -48,16 +48,73 @@
     { id: 'fanorona',    name: 'Fanorona',          iconPath: 'assets/icons/fanorona.svg',    href: 'games/fanorona.html' },
   ];
 
-  /* ── In-memory state ── */
-  var _sb      = null;
-  var _user    = null;   // Supabase auth user object
-  var _profile = null;   // { username, created_at }
-  var _stats   = {};     // { gameId: { wins, losses, played } }
-  var _listeners = [];
+  /* ── Session storage key (Supabase v2 format) ── */
+  var SB_SESSION_KEY = 'sb-pnyvlqgllrpslhgimgve-auth-token';
 
+  /* ── In-memory state ── */
+  var _sb          = null;
+  var _accessToken = null;  // current JWT access token
+  var _user        = null;  // auth user object
+  var _profile     = null;  // { username, created_at }
+  var _stats       = {};    // { gameId: { wins, losses, played } }
+  var _listeners   = [];
+
+  // DB client for public reads (anon key, no auth needed due to public read policies)
   function getSB() {
-    if (!_sb) _sb = window.supabase.createClient(SB_URL, SB_KEY);
+    if (!_sb) _sb = window.supabase.createClient(SB_URL, SB_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    });
     return _sb;
+  }
+
+  // DB client with user JWT injected for authenticated writes (RLS)
+  function _authedSB() {
+    return window.supabase.createClient(SB_URL, SB_KEY, {
+      global: { headers: { Authorization: 'Bearer ' + _accessToken } },
+      auth:   { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    });
+  }
+
+  /* ── Session persistence ── */
+  function _saveSession(data) {
+    _accessToken = data.access_token;
+    try {
+      localStorage.setItem(SB_SESSION_KEY, JSON.stringify({
+        access_token:  data.access_token,
+        refresh_token: data.refresh_token,
+        token_type:    'bearer',
+        expires_in:    data.expires_in || 3600,
+        expires_at:    Math.floor(Date.now() / 1000) + (data.expires_in || 3600),
+        user:          data.user,
+      }));
+    } catch (e) {}
+  }
+
+  function _clearSession() {
+    _accessToken = null;
+    try { localStorage.removeItem(SB_SESSION_KEY); } catch (e) {}
+  }
+
+  function _readStoredSession() {
+    try {
+      var s = JSON.parse(localStorage.getItem(SB_SESSION_KEY));
+      if (!s || !s.access_token || !s.user) return null;
+      // Reject if expired
+      if (s.expires_at && s.expires_at * 1000 < Date.now()) { _clearSession(); return null; }
+      return s;
+    } catch (e) { return null; }
+  }
+
+  /* ── Auth REST helper (bypasses Supabase JS auth module) ── */
+  async function _authFetch(path, body, token) {
+    var headers = { 'apikey': SB_KEY, 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+    var resp = await _withTimeout(
+      fetch(SB_URL + '/auth/v1' + path, { method: 'POST', headers: headers, body: JSON.stringify(body) }),
+      12000, 'Request timed out — check your connection and try again.'
+    );
+    var data = await resp.json();
+    return { ok: resp.ok, data: data };
   }
 
   /* ── Event bus ── */
@@ -126,15 +183,11 @@
   }
 
   async function signIn(email, password) {
-    var res = await _withTimeout(
-      getSB().auth.signInWithPassword({
-        email: email.trim().toLowerCase(),
-        password: password,
-      }),
-      12000,
-      'Sign in timed out — check your connection and try again.'
-    );
-    if (res.error) return { ok: false, error: res.error.message };
+    var res = await _authFetch('/token?grant_type=password', {
+      email: email.trim().toLowerCase(), password: password,
+    });
+    if (!res.ok) return { ok: false, error: res.data.error_description || res.data.msg || 'Invalid email or password.' };
+    _saveSession(res.data);
     try { await _loadUserData(res.data.user); } catch (e) { _user = res.data.user; }
     _emit();
     return { ok: true };
@@ -160,35 +213,35 @@
     if (uCheck.data && uCheck.data.length)
       return { ok: false, error: 'That username is already taken.' };
 
-    // Create auth user
-    var res = await getSB().auth.signUp({ email: email, password: password });
-    if (res.error) return { ok: false, error: res.error.message };
+    // Create auth user via REST
+    var res = await _authFetch('/signup', { email: email, password: password });
+    if (!res.ok) return { ok: false, error: res.data.error_description || res.data.msg || 'Sign up failed.' };
+    if (!res.data.access_token) return { ok: false, error: 'Please confirm your email, then sign in.' };
 
-    // If email confirmation is required, tell the user
-    if (!res.data.session) {
-      return { ok: false, error: 'Please check your email to confirm your account, then sign in.' };
-    }
-
+    _saveSession(res.data);
     var userId = res.data.user.id;
 
-    // Create profile row
-    var pRes = await getSB().from('profiles').insert({ id: userId, username: username });
-    if (pRes.error) return { ok: false, error: 'Account created but profile save failed. Please sign in.' };
+    // Create profile + init stats using authed client
+    var db = _authedSB();
+    var pRes = await db.from('profiles').insert({ id: userId, username: username });
+    if (pRes.error) return { ok: false, error: 'Account created but profile save failed. Try signing in.' };
 
-    // Init stats rows for all games
-    await getSB().from('stats').insert(
+    await db.from('stats').insert(
       GAMES.map(function (g) {
         return { user_id: userId, game_id: g.id, wins: 0, losses: 0, played: 0 };
       })
     );
 
-    await _loadUserData(res.data.user);
+    try { await _loadUserData(res.data.user); } catch (e) { _user = res.data.user; }
     _emit();
     return { ok: true };
   }
 
   async function signOut() {
-    await getSB().auth.signOut();
+    if (_accessToken) {
+      try { await _authFetch('/logout', {}, _accessToken); } catch (e) {}
+    }
+    _clearSession();
     _user = null; _profile = null; _stats = {};
     _emit();
   }
@@ -198,13 +251,13 @@
   }
 
   function recordResult(gameId, outcome) {
-    if (!_user) return;
+    if (!_user || !_accessToken) return;
     if (!_stats[gameId]) _stats[gameId] = { wins: 0, losses: 0, played: 0 };
     _stats[gameId].played++;
     if (outcome === 'win')  _stats[gameId].wins++;
     if (outcome === 'loss') _stats[gameId].losses++;
-    // Fire-and-forget upsert to DB
-    getSB().from('stats').upsert({
+    // Fire-and-forget upsert using authed client (RLS requires JWT)
+    _authedSB().from('stats').upsert({
       user_id: _user.id,
       game_id: gameId,
       wins:    _stats[gameId].wins,
@@ -520,24 +573,14 @@
     _injectNavWidget();
     _renderFooterLink();
 
-    // onAuthStateChange fires INITIAL_SESSION on page load with the current session
-    // (or null if logged out). This is more reliable than getSession() for restoring state.
-    getSB().auth.onAuthStateChange(async function (event, session) {
-      if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
-        if (session) {
-          await _loadUserData(session.user);
-        } else {
-          _user = null; _profile = null; _stats = {};
-        }
-        _emit();
-      } else if (event === 'SIGNED_OUT') {
-        _user = null; _profile = null; _stats = {};
-        _emit();
-      } else if (event === 'TOKEN_REFRESHED' && session) {
-        _user = session.user;
-        _emit();
-      }
-    });
+    // Restore session from localStorage (no network call needed)
+    var stored = _readStoredSession();
+    if (stored) {
+      _accessToken = stored.access_token;
+      try { await _loadUserData(stored.user); } catch (e) { _user = stored.user; }
+    }
+
+    _emit();
   }
 
   function _loadSBThenBoot() {
