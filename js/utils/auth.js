@@ -359,7 +359,7 @@
         }
       } catch (err) {
         _setLoading('si-submit', false, 'Sign In');
-        errEl.textContent = 'Something went wrong. Please try again.';
+        errEl.textContent = (err && err.message) ? err.message : 'Something went wrong. Please try again.';
         errEl.hidden = false;
       }
     });
@@ -385,7 +385,7 @@
         }
       } catch (err) {
         _setLoading('su-submit', false, 'Create Account');
-        errEl.textContent = 'Something went wrong. Please try again.';
+        errEl.textContent = (err && err.message) ? err.message : 'Something went wrong. Please try again.';
         errEl.hidden = false;
       }
     });
