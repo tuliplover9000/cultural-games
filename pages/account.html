@@ -164,15 +164,14 @@
       var dashboard   = document.getElementById('account-dashboard');
 
       if (!loggedIn) {
-        // Only show the sign-in prompt once auth has finished loading
         if (!_authSettled) return;
-        placeholder.hidden = false;
-        dashboard.hidden   = true;
+        placeholder.style.display = 'flex';
+        dashboard.style.display   = 'none';
         return;
       }
 
-      placeholder.hidden = true;
-      dashboard.hidden   = false;
+      placeholder.style.display = 'none';
+      dashboard.style.display   = '';
 
       var user = Auth.getUser();
       document.getElementById('acc-initial').textContent  = user.username.charAt(0).toUpperCase();
