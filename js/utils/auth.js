@@ -1,17 +1,42 @@
 /**
- * auth.js — Cultural Games account system
- * Phase 1: localStorage-backed UI.
- * Phase 2: replace the _save/_load calls inside signIn/signUp/signOut
- *          with real API calls — everything else stays identical.
+ * auth.js — Cultural Games account system (Phase 2: Supabase Auth + DB)
+ * Real email/password auth with sessions that persist across devices.
+ *
+ * Supabase setup (run once in your Supabase SQL Editor):
+ *
+ *   create table profiles (
+ *     id uuid references auth.users(id) on delete cascade primary key,
+ *     username text unique not null,
+ *     created_at timestamptz default now()
+ *   );
+ *   alter table profiles enable row level security;
+ *   create policy "public read"   on profiles for select using (true);
+ *   create policy "own insert"    on profiles for insert with check (auth.uid() = id);
+ *   create policy "own update"    on profiles for update using (auth.uid() = id);
+ *
+ *   create table stats (
+ *     user_id uuid references auth.users(id) on delete cascade,
+ *     game_id text not null,
+ *     wins    int  not null default 0,
+ *     losses  int  not null default 0,
+ *     played  int  not null default 0,
+ *     primary key (user_id, game_id)
+ *   );
+ *   alter table stats enable row level security;
+ *   create policy "public read"   on stats for select using (true);
+ *   create policy "own insert"    on stats for insert with check (auth.uid() = user_id);
+ *   create policy "own update"    on stats for update using (auth.uid() = user_id);
+ *
+ * Also go to Supabase → Authentication → Settings and DISABLE "Enable email confirmations"
+ * so users can sign in immediately after registering.
  */
 (function () {
   'use strict';
 
-  /* ── Storage keys ── */
-  var KEY_USER   = 'cg_user';
-  var KEY_STATS  = 'cg_stats';
+  var SB_URL = 'https://pnyvlqgllrpslhgimgve.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBueXZscWdsbHJwc2xoZ2ltZ3ZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwMjQ3OTMsImV4cCI6MjA4ODYwMDc5M30.7MwZTEJuYGSLaOjfs0EP4wFAi3CanDzSRMbTvPiIasw';
 
-  /* ── Game registry (order = display order on account page) ── */
+  /* ── Game registry ── */
   var GAMES = [
     { id: 'bau-cua',     name: 'Bầu Cua Tôm Cá', iconPath: 'assets/icons/bau-cua.svg',     href: 'games/bau-cua.html' },
     { id: 'o-an-quan',   name: 'Ô Ăn Quan',       iconPath: 'assets/icons/o-an-quan.svg',   href: 'games/o-an-quan.html' },
@@ -23,16 +48,19 @@
     { id: 'fanorona',    name: 'Fanorona',          iconPath: 'assets/icons/fanorona.svg',    href: 'games/fanorona.html' },
   ];
 
-  /* ── localStorage helpers ── */
-  function _save(key, val) {
-    try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
-  }
-  function _load(key) {
-    try { return JSON.parse(localStorage.getItem(key)); } catch (e) { return null; }
+  /* ── In-memory state ── */
+  var _sb      = null;
+  var _user    = null;   // Supabase auth user object
+  var _profile = null;   // { username, created_at }
+  var _stats   = {};     // { gameId: { wins, losses, played } }
+  var _listeners = [];
+
+  function getSB() {
+    if (!_sb) _sb = window.supabase.createClient(SB_URL, SB_KEY);
+    return _sb;
   }
 
   /* ── Event bus ── */
-  var _listeners = [];
   function _emit() {
     _listeners.forEach(function (fn) { try { fn(); } catch (e) {} });
   }
@@ -58,75 +86,118 @@
     return 'pages/account.html';
   }
 
+  /* ── Load profile + stats from DB after auth ── */
+  async function _loadUserData(user) {
+    _user = user;
+    if (!user) { _profile = null; _stats = {}; return; }
+
+    var pRes = await getSB().from('profiles').select('username,created_at').eq('id', user.id).single();
+    _profile = pRes.data || { username: user.email.split('@')[0], created_at: user.created_at };
+
+    var sRes = await getSB().from('stats').select('game_id,wins,losses,played').eq('user_id', user.id);
+    _stats = {};
+    (sRes.data || []).forEach(function (row) {
+      _stats[row.game_id] = { wins: row.wins, losses: row.losses, played: row.played };
+    });
+  }
+
   /* ══════════════════════════════════════════
      PUBLIC API
   ══════════════════════════════════════════ */
 
-  function getUser()    { return _load(KEY_USER); }
-  function isLoggedIn() { return getUser() !== null; }
+  function isLoggedIn() { return _user !== null; }
 
-  /* Phase 1: compares btoa'd password against stored hash.
-     Phase 2: replace body with a POST to /api/auth/signin. */
-  function signIn(email, password) {
-    var user = _load(KEY_USER);
-    if (!user)
-      return { ok: false, error: 'No account found. Please create one.' };
-    if (user.email.toLowerCase() !== email.trim().toLowerCase())
-      return { ok: false, error: 'No account found with that email.' };
-    if (user.passwordHash !== btoa(unescape(encodeURIComponent(password))))
-      return { ok: false, error: 'Incorrect password.' };
+  function getUser() {
+    if (!_user || !_profile) return null;
+    return {
+      username:  _profile.username,
+      email:     _user.email,
+      createdAt: _profile.created_at,
+    };
+  }
+
+  async function signIn(email, password) {
+    var res = await getSB().auth.signInWithPassword({
+      email: email.trim().toLowerCase(),
+      password: password,
+    });
+    if (res.error) return { ok: false, error: res.error.message };
+    await _loadUserData(res.data.user);
     _emit();
     return { ok: true };
   }
 
-  /* Phase 1: stores user in localStorage.
-     Phase 2: replace body with a POST to /api/auth/signup. */
-  function signUp(username, email, password) {
+  async function signUp(username, email, password) {
     username = (username || '').trim();
     email    = (email    || '').trim().toLowerCase();
 
     if (username.length < 3)
       return { ok: false, error: 'Username must be at least 3 characters.' };
+    if (username.length > 20)
+      return { ok: false, error: 'Username must be 20 characters or fewer.' };
+    if (!/^[A-Za-z0-9_]+$/.test(username))
+      return { ok: false, error: 'Username can only contain letters, numbers, and underscores.' };
     if (!/\S+@\S+\.\S+/.test(email))
       return { ok: false, error: 'Please enter a valid email address.' };
     if (!password || password.length < 8)
       return { ok: false, error: 'Password must be at least 8 characters.' };
-    if (_load(KEY_USER))
-      return { ok: false, error: 'An account already exists on this device.' };
 
-    _save(KEY_USER, {
-      username:     username,
-      email:        email,
-      passwordHash: btoa(unescape(encodeURIComponent(password))), // Phase 1 only
-      createdAt:    new Date().toISOString(),
-    });
+    // Check username availability
+    var uCheck = await getSB().from('profiles').select('id').eq('username', username).limit(1);
+    if (uCheck.data && uCheck.data.length)
+      return { ok: false, error: 'That username is already taken.' };
 
-    var stats = {};
-    GAMES.forEach(function (g) { stats[g.id] = { wins: 0, losses: 0, played: 0 }; });
-    _save(KEY_STATS, stats);
+    // Create auth user
+    var res = await getSB().auth.signUp({ email: email, password: password });
+    if (res.error) return { ok: false, error: res.error.message };
 
+    // If email confirmation is required, tell the user
+    if (!res.data.session) {
+      return { ok: false, error: 'Please check your email to confirm your account, then sign in.' };
+    }
+
+    var userId = res.data.user.id;
+
+    // Create profile row
+    var pRes = await getSB().from('profiles').insert({ id: userId, username: username });
+    if (pRes.error) return { ok: false, error: 'Account created but profile save failed. Please sign in.' };
+
+    // Init stats rows for all games
+    await getSB().from('stats').insert(
+      GAMES.map(function (g) {
+        return { user_id: userId, game_id: g.id, wins: 0, losses: 0, played: 0 };
+      })
+    );
+
+    await _loadUserData(res.data.user);
     _emit();
     return { ok: true };
   }
 
-  function signOut() {
-    localStorage.removeItem(KEY_USER);
+  async function signOut() {
+    await getSB().auth.signOut();
+    _user = null; _profile = null; _stats = {};
     _emit();
   }
 
   function getStats(gameId) {
-    var stats = _load(KEY_STATS) || {};
-    return stats[gameId] || { wins: 0, losses: 0, played: 0 };
+    return _stats[gameId] || { wins: 0, losses: 0, played: 0 };
   }
 
   function recordResult(gameId, outcome) {
-    if (!isLoggedIn()) return;
-    var stats = _load(KEY_STATS) || {};
-    if (!stats[gameId]) stats[gameId] = { wins: 0, losses: 0, played: 0 };
-    stats[gameId].played++;
-    if (outcome === 'win')  stats[gameId].wins++;
-    if (outcome === 'loss') stats[gameId].losses++;
-    _save(KEY_STATS, stats);
+    if (!_user) return;
+    if (!_stats[gameId]) _stats[gameId] = { wins: 0, losses: 0, played: 0 };
+    _stats[gameId].played++;
+    if (outcome === 'win')  _stats[gameId].wins++;
+    if (outcome === 'loss') _stats[gameId].losses++;
+    // Fire-and-forget upsert to DB
+    getSB().from('stats').upsert({
+      user_id: _user.id,
+      game_id: gameId,
+      wins:    _stats[gameId].wins,
+      losses:  _stats[gameId].losses,
+      played:  _stats[gameId].played,
+    }, { onConflict: 'user_id,game_id' });
   }
 
   function onAuthChange(fn) { _listeners.push(fn); }
@@ -148,7 +219,6 @@
     document.getElementById('auth-panel-signin').hidden = (which !== 'signin');
     document.getElementById('auth-panel-signup').hidden = (which !== 'signup');
 
-    // Reset forms + errors
     overlay.querySelectorAll('form').forEach(function (f) { f.reset(); });
     overlay.querySelectorAll('.auth-error').forEach(function (e) {
       e.textContent = ''; e.hidden = true;
@@ -156,7 +226,6 @@
     var bar = document.getElementById('pw-strength-bar');
     if (bar) { bar.className = 'pw-strength__bar'; bar.style.width = '0'; }
 
-    // Focus first input
     var panel = document.getElementById('auth-panel-' + which);
     var first = panel ? panel.querySelector('input') : null;
     if (first) setTimeout(function () { first.focus(); }, 50);
@@ -200,7 +269,7 @@
               '<input class="form-input" type="password" id="si-password" autocomplete="current-password" required />' +
             '</div>' +
             '<p class="auth-error" id="si-error" hidden></p>' +
-            '<button class="btn btn-primary auth-submit" type="submit">Sign In</button>' +
+            '<button class="btn btn-primary auth-submit" type="submit" id="si-submit">Sign In</button>' +
           '</form>' +
           '<div class="auth-divider"><span>or</span></div>' +
           '<p class="auth-switch">New here? <button class="auth-switch-btn" id="to-signup">Create an account</button></p>' +
@@ -213,7 +282,7 @@
           '<form id="form-signup" novalidate>' +
             '<div class="form-group">' +
               '<label class="form-label" for="su-username">Username</label>' +
-              '<input class="form-input" type="text" id="su-username" autocomplete="username" required minlength="3" maxlength="20" placeholder="3–20 characters" />' +
+              '<input class="form-input" type="text" id="su-username" autocomplete="username" required minlength="3" maxlength="20" placeholder="Letters, numbers, underscores" />' +
             '</div>' +
             '<div class="form-group">' +
               '<label class="form-label" for="su-email">Email</label>' +
@@ -225,7 +294,7 @@
               '<div class="pw-strength" aria-label="Password strength"><div class="pw-strength__bar" id="pw-strength-bar"></div></div>' +
             '</div>' +
             '<p class="auth-error" id="su-error" hidden></p>' +
-            '<button class="btn btn-primary auth-submit" type="submit">Create Account</button>' +
+            '<button class="btn btn-primary auth-submit" type="submit" id="su-submit">Create Account</button>' +
           '</form>' +
           '<div class="auth-divider"><span>or</span></div>' +
           '<p class="auth-switch">Already have an account? <button class="auth-switch-btn" id="to-signin">Sign in</button></p>' +
@@ -234,6 +303,13 @@
 
     document.body.appendChild(el);
     _wireModal(el);
+  }
+
+  function _setLoading(btnId, loading, defaultLabel) {
+    var btn = document.getElementById(btnId);
+    if (!btn) return;
+    btn.disabled = loading;
+    btn.textContent = loading ? 'Please wait…' : defaultLabel;
   }
 
   function _wireModal(overlay) {
@@ -251,41 +327,47 @@
     document.getElementById('to-signin').addEventListener('click',  function () { openModal('signin'); });
 
     // Sign In submit
-    document.getElementById('form-signin').addEventListener('submit', function (e) {
+    document.getElementById('form-signin').addEventListener('submit', async function (e) {
       e.preventDefault();
-      var result = signIn(
+      var errEl = document.getElementById('si-error');
+      errEl.hidden = true;
+      _setLoading('si-submit', true, 'Sign In');
+      var result = await signIn(
         document.getElementById('si-email').value,
         document.getElementById('si-password').value
       );
+      _setLoading('si-submit', false, 'Sign In');
       if (result.ok) {
         closeModal();
       } else {
-        var err = document.getElementById('si-error');
-        err.textContent = result.error;
-        err.hidden = false;
+        errEl.textContent = result.error;
+        errEl.hidden = false;
       }
     });
 
     // Sign Up submit
-    document.getElementById('form-signup').addEventListener('submit', function (e) {
+    document.getElementById('form-signup').addEventListener('submit', async function (e) {
       e.preventDefault();
-      var result = signUp(
+      var errEl = document.getElementById('su-error');
+      errEl.hidden = true;
+      _setLoading('su-submit', true, 'Create Account');
+      var result = await signUp(
         document.getElementById('su-username').value,
         document.getElementById('su-email').value,
         document.getElementById('su-password').value
       );
+      _setLoading('su-submit', false, 'Create Account');
       if (result.ok) {
         closeModal();
       } else {
-        var err = document.getElementById('su-error');
-        err.textContent = result.error;
-        err.hidden = false;
+        errEl.textContent = result.error;
+        errEl.hidden = false;
       }
     });
 
     // Password strength meter
     document.getElementById('su-password').addEventListener('input', function () {
-      var pw   = this.value;
+      var pw = this.value;
       var score = 0;
       if (pw.length >= 8)  score++;
       if (pw.length >= 12) score++;
@@ -308,10 +390,9 @@
 
     var acct = _accountHref();
 
-    if (isLoggedIn()) {
-      var user  = getUser();
-      var init  = _esc(user.username.charAt(0).toUpperCase());
-      var uname = _esc(user.username);
+    if (isLoggedIn() && _profile) {
+      var init  = _esc(_profile.username.charAt(0).toUpperCase());
+      var uname = _esc(_profile.username);
 
       container.innerHTML =
         '<div class="nav-auth">' +
@@ -333,13 +414,17 @@
         dd.hidden = open;
         this.setAttribute('aria-expanded', String(!open));
       });
-      document.getElementById('nav-signout-btn').addEventListener('click', signOut);
+      document.getElementById('nav-signout-btn').addEventListener('click', async function () {
+        await signOut();
+      });
 
       if (mobileItem) {
         mobileItem.innerHTML =
           '<a href="' + acct + '" class="nav-link">My Account</a>' +
           '<button class="nav-link nav-auth-mobile-btn" id="mobile-signout-btn">Sign Out</button>';
-        document.getElementById('mobile-signout-btn').addEventListener('click', signOut);
+        document.getElementById('mobile-signout-btn').addEventListener('click', async function () {
+          await signOut();
+        });
       }
 
     } else {
@@ -358,12 +443,10 @@
     var navLinks  = document.querySelector('.nav-links');
     if (!hamburger || !navLinks) return;
 
-    // Desktop container — sits between nav-links and hamburger
     var container = document.createElement('div');
     container.id  = 'nav-auth';
     hamburger.parentNode.insertBefore(container, hamburger);
 
-    // Mobile item — appended inside the collapsible ul
     var mobileItem    = document.createElement('li');
     mobileItem.id     = 'nav-auth-mobile';
     mobileItem.className = 'nav-auth-mobile-item';
@@ -371,7 +454,6 @@
 
     _renderNavWidget();
 
-    // Close dropdown on outside click
     document.addEventListener('click', function (e) {
       var dd  = document.getElementById('nav-auth-dropdown');
       var btn = document.getElementById('nav-auth-trigger');
@@ -381,14 +463,12 @@
       }
     });
 
-    // Re-render on auth change
     onAuthChange(function () {
       _renderNavWidget();
       _renderFooterLink();
     });
   }
 
-  /* ── Footer "My Account" link ── */
   function _renderFooterLink() {
     var footerLinks = document.querySelector('.footer-links');
     if (!footerLinks) return;
@@ -406,12 +486,43 @@
     }
   }
 
-  /* ── Init ── */
-  document.addEventListener('DOMContentLoaded', function () {
+  /* ══════════════════════════════════════════
+     INIT
+  ══════════════════════════════════════════ */
+
+  async function _boot() {
+    // Restore existing session (persisted in localStorage by Supabase)
+    var sessionRes = await getSB().auth.getSession();
+    if (sessionRes.data && sessionRes.data.session) {
+      await _loadUserData(sessionRes.data.session.user);
+    }
+
+    // Listen for auth state changes (token refresh, sign-out from another tab, etc.)
+    getSB().auth.onAuthStateChange(async function (event, session) {
+      if (event === 'SIGNED_OUT') {
+        _user = null; _profile = null; _stats = {};
+        _emit();
+      } else if (event === 'TOKEN_REFRESHED' && session) {
+        _user = session.user;
+        _emit();
+      }
+    });
+
     _buildModal();
     _injectNavWidget();
     _renderFooterLink();
-  });
+    _emit(); // trigger initial render for account page etc.
+  }
+
+  function _loadSBThenBoot() {
+    if (window.supabase) { _boot(); return; }
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
+    s.onload = function () { _boot(); };
+    document.head.appendChild(s);
+  }
+
+  document.addEventListener('DOMContentLoaded', _loadSBThenBoot);
 
   /* ── Public API ── */
   window.Auth = {
