@@ -358,7 +358,9 @@
       opts.selected    ? 'mj-tile--selected'      : '',
       opts.latest      ? 'mj-tile--latest'        : '',
       opts.small       ? 'mj-tile--sm'            : '',
+      opts.hz          ? 'mj-tile--hz'            : '',
       opts.lastDiscard ? 'mj-tile--discard-last'  : '',
+      opts.claimable   ? 'mj-tile--claimable'     : '',
     ].filter(Boolean).join(' ');
 
     const content   = opts.back ? '' : buildTileContent(tile);
@@ -379,7 +381,8 @@
       const isLast = i === show.length - 1
         && state.lastDiscard
         && state.lastDiscard.fromSeat === seatIdx;
-      return tileHTML(t, { small: true, lastDiscard: isLast });
+      const isClaimable = isLast && state.claimWindow;
+      return tileHTML(t, { small: true, lastDiscard: isLast, claimable: isClaimable });
     }).join('');
   }
 
@@ -393,7 +396,8 @@
     const active = state.turnIdx === seatIdx;
     const dot    = active ? ` <span class="mj-active-dot" aria-hidden="true">●</span>` : '';
 
-    const handTiles  = hand.map(t => tileHTML(t, { back: true })).join('');
+    const isSide    = pos === 'left' || pos === 'right';
+    const handTiles = hand.map(t => tileHTML(t, { back: true, hz: isSide })).join('');
     const meldHTMLs  = melds.map(meldHTML).join('');
     const discardPool = buildDiscardPool(seatIdx);
 

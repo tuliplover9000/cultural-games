@@ -3559,7 +3559,7 @@
 
 .mj-opponent--left,
 .mj-opponent--right {
-  flex: 0 0 100px;
+  flex: 0 0 130px;
   align-items: center;
 }
 
@@ -3641,7 +3641,52 @@
   user-select: none;
   flex-shrink: 0;
   line-height: 1;
+  overflow: hidden;
 }
+/* Coloured top band — suit identity strip */
+.mj-tile:not(.mj-tile--back)::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 5px;
+  border-radius: 3px 3px 0 0;
+}
+/* Per-suit backgrounds and band colours */
+.mj-tile--char {
+  background: linear-gradient(160deg, #fff6f6 0%, #fde8e8 55%, #f5d0d0 100%);
+  border-color: #b83030;
+}
+.mj-tile--char::before    { background: #c0392b; }
+.mj-tile--bamboo {
+  background: linear-gradient(160deg, #f4fff7 0%, #e4f8ea 55%, #ceecd6 100%);
+  border-color: #1a6b3a;
+}
+.mj-tile--bamboo::before  { background: #1a6b3a; }
+.mj-tile--circle {
+  background: linear-gradient(160deg, #f4f7ff 0%, #e4eaf8 55%, #ccd4f0 100%);
+  border-color: #1a3a6b;
+}
+.mj-tile--circle::before  { background: #1a3a6b; }
+.mj-tile--wind {
+  background: linear-gradient(160deg, #fdfcf7 0%, #f0ebda 55%, #e0d5b8 100%);
+  border-color: #555;
+}
+.mj-tile--wind::before    { background: #3a3a3a; }
+.mj-tile--dragon-r {
+  background: linear-gradient(160deg, #fff6f6 0%, #fde8e8 55%, #f5d0d0 100%);
+  border-color: #b83030;
+}
+.mj-tile--dragon-r::before { background: #c0392b; }
+.mj-tile--dragon-g {
+  background: linear-gradient(160deg, #f4fff7 0%, #e4f8ea 55%, #ceecd6 100%);
+  border-color: #1a6b3a;
+}
+.mj-tile--dragon-g::before { background: #1a6b3a; }
+.mj-tile--dragon-w {
+  background: linear-gradient(160deg, #fffef6 0%, #f8f0da 55%, #ede0bc 100%);
+  border-color: #888;
+}
+.mj-tile--dragon-w::before { background: #aaa; }
 
 /* ── Tile back — jade green with diagonal weave ── */
 .mj-tile--back {
@@ -3661,20 +3706,27 @@
   display: block;
   font-weight: 900;
   line-height: 1;
-  font-size: 1.5rem;
+  font-size: 1.65rem;
+  margin-top: 4px; /* clear the suit band */
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.18));
 }
 .mj-hon--char     { color: var(--mj-char);     }
-.mj-hon--wind     { color: var(--mj-wind);     font-size: 1.4rem; }
-.mj-hon--dragon-r { color: var(--mj-dragon-r); font-size: 1.55rem; }
-.mj-hon--dragon-g { color: var(--mj-dragon-g); font-size: 1.55rem; }
-.mj-hon--dragon-w { color: var(--mj-dragon-w); font-size: 1.55rem; }
+.mj-hon--wind     { color: var(--mj-wind);     font-size: 1.55rem; }
+.mj-hon--dragon-r { color: var(--mj-dragon-r); font-size: 1.65rem; }
+.mj-hon--dragon-g { color: var(--mj-dragon-g); font-size: 1.65rem; }
+.mj-hon--dragon-w {
+  color: #222;
+  font-size: 1.65rem;
+  /* white dragon gets a visible red border-box instead of grey */
+  text-shadow: 0 0 0 #c0392b;
+}
 
 /* 萬 subscript under character numeral */
 .mj-hon-sub {
   display: block;
-  font-size: 0.58rem;
+  font-size: 0.62rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #600;
   letter-spacing: 0.02em;
   line-height: 1;
 }
@@ -3792,8 +3844,33 @@
     0 0 0 2.5px var(--mj-green-mid),
     3px 4px 9px rgba(0,0,0,0.4);
 }
+/* ── Discard pop-in animation ── */
+@keyframes mj-discard-in {
+  from { transform: scale(0.45) translateY(-14px); opacity: 0; }
+  to   { transform: scale(1);   translateY(0);    opacity: 1; }
+}
 .mj-tile--discard-last {
   box-shadow: 0 0 0 2.5px var(--mj-gold-light), 2px 3px 6px rgba(0,0,0,0.4);
+  animation: mj-discard-in 0.22s ease-out both;
+}
+
+/* ── Claimable pulse (overrides discard-in once claim window opens) ── */
+@keyframes mj-claim-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 2.5px var(--mj-gold-light), 2px 3px 6px rgba(0,0,0,0.4);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow:
+      0 0 0 4px var(--mj-gold),
+      0 0 18px rgba(212,160,23,0.7),
+      2px 3px 6px rgba(0,0,0,0.4);
+    transform: scale(1.08);
+  }
+}
+.mj-tile--claimable {
+  animation: mj-claim-pulse 0.75s ease-in-out infinite;
+  z-index: 2;
 }
 
 /* ── Drag states ── */
@@ -3829,6 +3906,24 @@
 .mj-tile--sm .mj-c1 .mj-dot { width: 10px; height: 10px; }
 .mj-tile--sm .mj-c2 .mj-dot { width: 8px; height: 8px; }
 .mj-tile--sm .mj-bird     { font-size: 0.9rem; }
+.mj-tile--sm::before      { height: 3px; }
+
+/* ── Horizontal back-tile (left/right opponents) ── */
+.mj-tile--hz {
+  width: 2.5rem;
+  height: 1.7rem;
+  box-shadow: 1px 2px 4px rgba(0,0,0,0.4), inset 1px 1px 0 rgba(255,255,255,0.55);
+}
+.mj-tile--hz .mj-hon      { font-size: 1.05rem; margin-top: 3px; }
+.mj-tile--hz .mj-hon-sub  { font-size: 0.38rem; }
+.mj-tile--hz .mj-bird     { font-size: 1rem; }
+.mj-tile--hz .mj-bamboo,
+.mj-tile--hz .mj-circles  { inset: 2px; gap: 1px; }
+.mj-tile--hz .mj-stalk    { border-radius: 2px; }
+.mj-tile--hz .mj-stalk::before,
+.mj-tile--hz .mj-stalk::after { height: 1px; }
+.mj-tile--hz .mj-dot      { width: 6px; height: 6px; box-shadow: 0 0 0 1.5px #27ae60; }
+.mj-tile--hz::before      { height: 3px; }
 
 /* ── Hand & meld containers ── */
 .mj-player-hand {
@@ -3860,6 +3955,7 @@
   display: flex;
   gap: 2px;
   flex-wrap: wrap;
+  justify-content: center;
   min-height: 1rem;
 }
 
