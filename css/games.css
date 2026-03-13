@@ -3687,10 +3687,10 @@
 
 /* ── Bamboo stalks ── */
 .mj-bamboo {
+  position: absolute;
+  inset: 6px 4px 5px 4px;
   display: grid;
   gap: 2px;
-  width: 82%;
-  height: 78%;
   align-items: stretch;
 }
 .mj-b2 { grid-template-columns: 1fr 1fr;          grid-template-rows: 1fr; }
@@ -3729,11 +3729,11 @@
 
 /* ── Circle dots ── */
 .mj-circles {
+  position: absolute;
+  inset: 5px 3px 4px 3px;
   display: grid;
   gap: 2px;
   place-items: center;
-  width: 82%;
-  height: 80%;
 }
 /* Grid templates */
 .mj-c1 { grid-template-columns: 1fr;             grid-template-rows: 1fr; }
@@ -3797,7 +3797,7 @@
 }
 
 /* ── Drag states ── */
-.mj-tile[draggable="true"] { cursor: grab; }
+.mj-tile[draggable="true"] { cursor: grab; touch-action: none; }
 .mj-tile[draggable="true"].mj-tile--selectable { cursor: pointer; }
 .mj-tile--dragging {
   opacity: 0.22;
@@ -3821,7 +3821,7 @@
 .mj-tile--sm .mj-hon      { font-size: 0.85rem; }
 .mj-tile--sm .mj-hon-sub  { font-size: 0.36rem; }
 .mj-tile--sm .mj-bamboo,
-.mj-tile--sm .mj-circles  { width: 80%; height: 75%; gap: 1px; }
+.mj-tile--sm .mj-circles  { inset: 3px 2px 2px 2px; gap: 1px; }
 .mj-tile--sm .mj-stalk    { border-radius: 2px; }
 .mj-tile--sm .mj-stalk::before,
 .mj-tile--sm .mj-stalk::after { height: 1px; }

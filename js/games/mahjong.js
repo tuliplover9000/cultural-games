@@ -590,14 +590,24 @@
         render();
       });
 
-      // HTML5 drag to reorder hand
-      handEl.addEventListener('dragstart', e => {
-        const tileEl = e.target.closest('.mj-tile[data-uid]');
-        if (!tileEl) return;
-        dragSrcUid = parseInt(tileEl.dataset.uid);
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', String(dragSrcUid));
-        setTimeout(() => { if (tileEl.isConnected) tileEl.classList.add('mj-tile--dragging'); }, 0);
+      // HTML5 drag to reorder — bind dragstart/dragend directly on each tile
+      // (dragstart delegation via container is unreliable in all browsers)
+      handEl.querySelectorAll('.mj-tile[data-uid]').forEach(tileEl => {
+        tileEl.addEventListener('dragstart', e => {
+          dragSrcUid = parseInt(tileEl.dataset.uid);
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', String(dragSrcUid));
+          setTimeout(() => tileEl.classList.add('mj-tile--dragging'), 0);
+        });
+        tileEl.addEventListener('dragend', () => {
+          tileEl.classList.remove('mj-tile--dragging');
+          handEl.querySelectorAll('.mj-tile--drag-over')
+                .forEach(t => t.classList.remove('mj-tile--drag-over'));
+          // If drop didn't fire (drag cancelled), dragSrcUid is still set — clean up
+          if (dragSrcUid !== null) {
+            dragSrcUid = null; dragOverUid = null;
+          }
+        });
       });
 
       handEl.addEventListener('dragover', e => {
@@ -622,23 +632,19 @@
       handEl.addEventListener('drop', e => {
         e.preventDefault();
         if (dragSrcUid === null) return;
-        const tgt    = e.target.closest('.mj-tile[data-uid]');
+        const tgt     = e.target.closest('.mj-tile[data-uid]');
         const overUid = tgt ? parseInt(tgt.dataset.uid) : dragOverUid;
-        if (overUid !== null && overUid !== dragSrcUid) {
+        const srcUid  = dragSrcUid;
+        dragSrcUid = null; dragOverUid = null;
+        if (overUid !== null && overUid !== srcUid) {
           const hand    = state.hands[myPS()];
-          const srcIdx  = hand.findIndex(t => t.uid === dragSrcUid);
+          const srcIdx  = hand.findIndex(t => t.uid === srcUid);
           const destIdx = hand.findIndex(t => t.uid === overUid);
           if (srcIdx !== -1 && destIdx !== -1) {
             const [moved] = hand.splice(srcIdx, 1);
             hand.splice(destIdx, 0, moved);
           }
         }
-        dragSrcUid = null; dragOverUid = null;
-        render();
-      });
-
-      handEl.addEventListener('dragend', () => {
-        dragSrcUid = null; dragOverUid = null;
         render();
       });
 
