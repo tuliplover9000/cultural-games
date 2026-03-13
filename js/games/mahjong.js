@@ -526,25 +526,49 @@
     const rightD = buildCenterDiscards(viewSeat(1));
     const botD   = buildCenterDiscards(viewSeat(0));
 
+    // Wall ring — tiles fill clockwise: top→right→bottom→left
+    // Show up to 24 tiles; each visible tile = a back-face tile
+    const W_H = 8, W_V = 4; // slots across top/bottom and down left/right
+    const TOTAL = 2 * W_H + 2 * W_V; // 24
+    const filled = Math.min(state.wall.length, TOTAL);
+    let rem = filled;
+    const wt  = () => `<div class="mj-tile mj-tile--back mj-wall-tile"></div>`;
+    const ws  = (hz) => hz
+      ? `<div class="mj-wall-slot mj-wall-slot--hz"></div>`
+      : `<div class="mj-wall-slot mj-wall-slot--vt"></div>`;
+    const wallRow = (n, hz) => {
+      let h = '';
+      for (let i = 0; i < n; i++) h += (rem-- > 0) ? wt() : ws(hz);
+      return h;
+    };
+
     return `<div class="mj-table-center" id="mj-table-center">
-  <div class="mj-discard-square">
+  <div class="mj-wall-ring">
 
-    <div class="mj-ds-top">${topD}</div>
+    <div class="mj-wall-top">${wallRow(W_H, true)}</div>
 
-    <div class="mj-ds-middle">
-      <div class="mj-ds-left">${leftD}</div>
+    <div class="mj-wall-middle-row">
+      <div class="mj-wall-left">${wallRow(W_V, false)}</div>
 
-      <div class="mj-ds-info">
-        <span class="mj-wall-count">${state.wall.length}</span>
-        <span class="mj-round-info">${esc(state.roundWind)} · R${state.round}</span>
-        <p class="mj-status" id="mj-status" aria-live="assertive">${esc(state.statusMsg)}</p>
-        <div class="mj-claim-btns" id="mj-claim-btns" aria-live="polite">${buildClaimButtons()}</div>
+      <div class="mj-discard-square">
+        <div class="mj-ds-top">${topD}</div>
+        <div class="mj-ds-middle">
+          <div class="mj-ds-left">${leftD}</div>
+          <div class="mj-ds-info">
+            <span class="mj-wall-count">${state.wall.length} tiles</span>
+            <span class="mj-round-info">${esc(state.roundWind)} · R${state.round}</span>
+            <p class="mj-status" id="mj-status" aria-live="assertive">${esc(state.statusMsg)}</p>
+            <div class="mj-claim-btns" id="mj-claim-btns" aria-live="polite">${buildClaimButtons()}</div>
+          </div>
+          <div class="mj-ds-right">${rightD}</div>
+        </div>
+        <div class="mj-ds-bottom">${botD}</div>
       </div>
 
-      <div class="mj-ds-right">${rightD}</div>
+      <div class="mj-wall-right">${wallRow(W_V, false)}</div>
     </div>
 
-    <div class="mj-ds-bottom">${botD}</div>
+    <div class="mj-wall-bottom">${wallRow(W_H, true)}</div>
 
   </div>
 </div>`;
