@@ -3731,93 +3731,16 @@
   line-height: 1;
 }
 
-/* ── 1-Bamboo peacock ── */
-.mj-bird {
-  font-size: 1.7rem;
-  line-height: 1;
-}
-
-/* ── Bamboo stalks ── */
-.mj-bamboo {
+/* ── SVG tile artwork (.mj-art) ── */
+/* Fills the tile face below the suit band; SVG handles all bamboo + circle art */
+.mj-art {
   position: absolute;
-  inset: 6px 4px 5px 4px;
-  display: grid;
-  gap: 2px;
-  align-items: stretch;
+  left: 2px; right: 2px;
+  top: 6px;   /* just below the 5px suit band */
+  bottom: 2px;
+  display: block;
+  overflow: visible;
 }
-.mj-b2 { grid-template-columns: 1fr 1fr;          grid-template-rows: 1fr; }
-.mj-b3 { grid-template-columns: 1fr 1fr 1fr;       grid-template-rows: 1fr; }
-.mj-b4 { grid-template-columns: 1fr 1fr;           grid-template-rows: 1fr 1fr; }
-.mj-b5 { grid-template-columns: 1fr 1fr;           grid-template-rows: 1fr 1fr 1fr; }
-.mj-b5 .mj-stalk:nth-child(5) { grid-column: 1 / -1; max-width: 40%; margin: 0 auto; }
-.mj-b6 { grid-template-columns: 1fr 1fr;           grid-template-rows: 1fr 1fr 1fr; }
-.mj-b7 { grid-template-columns: 1fr 1fr 1fr;       grid-template-rows: 1fr 1fr 1fr; }
-.mj-b7 .mj-stalk:nth-child(7) { grid-column: 1 / -1; max-width: 33%; margin: 0 auto; }
-.mj-b8 { grid-template-columns: repeat(4, 1fr);    grid-template-rows: 1fr 1fr; }
-.mj-b9 { grid-template-columns: 1fr 1fr 1fr;       grid-template-rows: 1fr 1fr 1fr; }
-
-.mj-stalk {
-  background: linear-gradient(
-    to right,
-    #0a4e1e 0%, #1b9a3d 22%, #34c963 42%, #4add74 52%,
-    #34c963 62%, #1b9a3d 80%, #0a4e1e 100%
-  );
-  border-radius: 3px;
-  position: relative;
-  min-height: 4px;
-}
-/* Bamboo joints */
-.mj-stalk::before,
-.mj-stalk::after {
-  content: '';
-  position: absolute;
-  left: 0; right: 0;
-  height: 2px;
-  background: rgba(0, 0, 0, 0.28);
-  border-radius: 1px;
-}
-.mj-stalk::before { top: 30%; }
-.mj-stalk::after  { top: 65%; }
-
-/* ── Circle dots ── */
-.mj-circles {
-  position: absolute;
-  inset: 5px 3px 4px 3px;
-  display: grid;
-  gap: 2px;
-  place-items: center;
-}
-/* Grid templates */
-.mj-c1 { grid-template-columns: 1fr;             grid-template-rows: 1fr; }
-.mj-c2 { grid-template-columns: 1fr;             grid-template-rows: 1fr 1fr; }
-.mj-c3 { grid-template-columns: 1fr 1fr; }
-.mj-c3 .mj-dot:first-child { grid-column: 1 / -1; }
-.mj-c4 { grid-template-columns: 1fr 1fr;         grid-template-rows: 1fr 1fr; }
-.mj-c5 { grid-template-columns: 1fr 1fr; }
-.mj-c5 .mj-dot:nth-child(3) { grid-column: 1 / -1; }
-.mj-c6 { grid-template-columns: 1fr 1fr;         grid-template-rows: 1fr 1fr 1fr; }
-.mj-c7 { grid-template-columns: 1fr 1fr 1fr; }
-.mj-c7 .mj-dot:nth-child(4) { grid-column: 1 / -1; }
-.mj-c8 { grid-template-columns: 1fr 1fr;         grid-template-rows: repeat(4, 1fr); }
-.mj-c9 { grid-template-columns: 1fr 1fr 1fr;     grid-template-rows: 1fr 1fr 1fr; }
-
-/* Dot: outer green ring → white band → blue/navy center */
-.mj-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 38% 38%,
-    #f0f0f0 0%,
-    #f0f0f0 22%,
-    #1a3a6b 30%,
-    #0d2248 70%,
-    #0a1830 100%
-  );
-  box-shadow: 0 0 0 2.5px #27ae60, 0 0 0 4px rgba(39,174,96,0.25);
-}
-.mj-c1 .mj-dot { width: 18px; height: 18px; }
-.mj-c2 .mj-dot { width: 14px; height: 14px; }
 
 /* ── Tile states ── */
 .mj-tile--selectable {
@@ -3895,18 +3818,10 @@
   height: 2.35rem;
   box-shadow: 1px 2px 4px rgba(0,0,0,0.4);
 }
-.mj-tile--sm .mj-hon      { font-size: 0.85rem; }
-.mj-tile--sm .mj-hon-sub  { font-size: 0.36rem; }
-.mj-tile--sm .mj-bamboo,
-.mj-tile--sm .mj-circles  { inset: 3px 2px 2px 2px; gap: 1px; }
-.mj-tile--sm .mj-stalk    { border-radius: 2px; }
-.mj-tile--sm .mj-stalk::before,
-.mj-tile--sm .mj-stalk::after { height: 1px; }
-.mj-tile--sm .mj-dot      { width: 6px; height: 6px; box-shadow: 0 0 0 1.5px #27ae60; }
-.mj-tile--sm .mj-c1 .mj-dot { width: 10px; height: 10px; }
-.mj-tile--sm .mj-c2 .mj-dot { width: 8px; height: 8px; }
-.mj-tile--sm .mj-bird     { font-size: 0.9rem; }
-.mj-tile--sm::before      { height: 3px; }
+.mj-tile--sm .mj-hon     { font-size: 0.85rem; margin-top: 2px; }
+.mj-tile--sm .mj-hon-sub { font-size: 0.36rem; }
+.mj-tile--sm .mj-art     { top: 3px; left: 1px; right: 1px; bottom: 1px; }
+.mj-tile--sm::before     { height: 3px; }
 
 /* ── Horizontal back-tile (left/right opponents) ── */
 .mj-tile--hz {
@@ -3914,16 +3829,7 @@
   height: 1.7rem;
   box-shadow: 1px 2px 4px rgba(0,0,0,0.4), inset 1px 1px 0 rgba(255,255,255,0.55);
 }
-.mj-tile--hz .mj-hon      { font-size: 1.05rem; margin-top: 3px; }
-.mj-tile--hz .mj-hon-sub  { font-size: 0.38rem; }
-.mj-tile--hz .mj-bird     { font-size: 1rem; }
-.mj-tile--hz .mj-bamboo,
-.mj-tile--hz .mj-circles  { inset: 2px; gap: 1px; }
-.mj-tile--hz .mj-stalk    { border-radius: 2px; }
-.mj-tile--hz .mj-stalk::before,
-.mj-tile--hz .mj-stalk::after { height: 1px; }
-.mj-tile--hz .mj-dot      { width: 6px; height: 6px; box-shadow: 0 0 0 1.5px #27ae60; }
-.mj-tile--hz::before      { height: 3px; }
+.mj-tile--hz::before { height: 3px; }
 
 /* ── Hand & meld containers ── */
 .mj-player-hand {

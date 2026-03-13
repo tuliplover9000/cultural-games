@@ -323,17 +323,101 @@
 
   /* ── Rendering ───────────────────────────────────────────────────────────── */
 
-  // ── Tile artwork generators ──────────────────────────────────────────────
+  // ── SVG tile artwork ─────────────────────────────────────────────────────
+  // All artwork uses inline SVG with preserveAspectRatio="none" so it fills
+  // the tile face at every size without distortion or letterboxing.
 
-  function bambooContent(n) {
-    if (n === 1) return '<span class="mj-bird" aria-hidden="true">🦚</span>';
-    const stk = '<span class="mj-stalk"></span>';
-    return `<div class="mj-bamboo mj-b${n}">${stk.repeat(n)}</div>`;
+  // Single bamboo stalk: rounded rect + two joint lines + left highlight
+  function mkStalk(x, y, w, h) {
+    const rx  = Math.max(1.5, w * 0.16);
+    const j1  = y + h * 0.34;
+    const j2  = y + h * 0.67;
+    const hlw = Math.max(2, w * 0.22);
+    return (
+      `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="#1b9a3d"/>` +
+      `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="none" stroke="#0a4e1e" stroke-width="1.5"/>` +
+      `<rect x="${x+rx+0.5}" y="${j1-1}" width="${w-2*rx-1}" height="2" fill="#083d18" rx="0.5"/>` +
+      `<rect x="${x+rx+0.5}" y="${j2-1}" width="${w-2*rx-1}" height="2" fill="#083d18" rx="0.5"/>` +
+      `<rect x="${x+2}" y="${y+rx}" width="${hlw}" height="${h-2*rx}" rx="${hlw*0.5}" fill="rgba(255,255,255,0.22)"/>`
+    );
   }
 
-  function circleContent(n) {
-    const dot = '<span class="mj-dot"></span>';
-    return `<div class="mj-circles mj-c${n}">${dot.repeat(n)}</div>`;
+  // Single circle "coin": outer green ring → cream band → navy centre → highlight
+  function mkCoin(cx, cy, r) {
+    return (
+      `<circle cx="${cx}" cy="${cy}" r="${r}"        fill="#165c30"/>` +
+      `<circle cx="${cx}" cy="${cy}" r="${r*0.76}"   fill="#e0d4be"/>` +
+      `<circle cx="${cx}" cy="${cy}" r="${r*0.52}"   fill="#0f2a5c"/>` +
+      `<circle cx="${cx-r*0.24}" cy="${cy-r*0.24}" r="${r*0.18}" fill="rgba(255,255,255,0.4)"/>`
+    );
+  }
+
+  function bambooSVG(n) {
+    // Stalk layouts in a 100×130 coordinate space [x, y, w, h]
+    const L = [
+      null,
+      [[34,  5, 32, 120]],                                              // 1 – wide single stalk
+      [[ 6,  5, 40, 120], [54,  5, 40, 120]],                         // 2
+      [[ 4,  5, 28, 120], [36,  5, 28, 120], [68,  5, 28, 120]],     // 3
+      [[ 7,  6, 40,  56], [53,  6, 40,  56],
+       [ 7, 68, 40,  56], [53, 68, 40,  56]],                         // 4
+      [[ 7,  6, 40,  54], [53,  6, 40,  54],                          // 5: 2 top
+       [ 4, 68, 28,  56], [36, 68, 28,  56], [68, 68, 28,  56]],     //    3 bottom
+      [[ 4,  7, 28,  54], [36,  7, 28,  54], [68,  7, 28,  54],      // 6: 3×2
+       [ 4, 69, 28,  54], [36, 69, 28,  54], [68, 69, 28,  54]],
+      [[ 4,  4, 28,  34], [36,  4, 28,  34], [68,  4, 28,  34],      // 7: 3+2+2
+       [ 7, 46, 40,  34], [53, 46, 40,  34],
+       [ 7, 88, 40,  36], [53, 88, 40,  36]],
+      [[ 7,  5, 40,  24], [53,  5, 40,  24],                          // 8: 2×4
+       [ 7, 35, 40,  24], [53, 35, 40,  24],
+       [ 7, 65, 40,  24], [53, 65, 40,  24],
+       [ 7, 95, 40,  24], [53, 95, 40,  24]],
+      [[ 4,  7, 28,  34], [36,  7, 28,  34], [68,  7, 28,  34],      // 9: 3×3
+       [ 4, 48, 28,  34], [36, 48, 28,  34], [68, 48, 28,  34],
+       [ 4, 89, 28,  34], [36, 89, 28,  34], [68, 89, 28,  34]],
+    ];
+
+    let body;
+    if (n === 1) {
+      // Traditional 1-bamboo: stylised sparrow/bird
+      body =
+        `<ellipse cx="50" cy="80" rx="20" ry="13" fill="#1a7830"/>` +
+        `<circle  cx="33" cy="62" r="11"           fill="#1e8f3a"/>` +
+        `<polygon points="24,62 32,57 32,67"        fill="#c0a020"/>` +
+        `<circle  cx="30" cy="59" r="3"             fill="white"/>` +
+        `<circle  cx="30" cy="59" r="1.5"           fill="#111"/>` +
+        `<path d="M68,74 C82,56 92,44 86,32"  stroke="#27c060" stroke-width="3.5" fill="none" stroke-linecap="round"/>` +
+        `<path d="M68,78 C88,72 98,68 94,56"  stroke="#1a8a40" stroke-width="3"   fill="none" stroke-linecap="round"/>` +
+        `<path d="M68,82 C84,90 92,100 88,114" stroke="#27c060" stroke-width="3"  fill="none" stroke-linecap="round"/>` +
+        `<line x1="42" y1="93" x2="38" y2="112" stroke="#888" stroke-width="2.5" stroke-linecap="round"/>` +
+        `<line x1="52" y1="93" x2="56" y2="112" stroke="#888" stroke-width="2.5" stroke-linecap="round"/>`;
+    } else {
+      body = L[n].map(([x,y,w,h]) => mkStalk(x,y,w,h)).join('');
+    }
+    return `<svg class="mj-art" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 130" preserveAspectRatio="none">${body}</svg>`;
+  }
+
+  function circleSVG(n) {
+    // Circle (coin) layouts [cx, cy, r]
+    const L = [
+      null,
+      [[50,  65, 40]],                                                                         // 1
+      [[50,  32, 26], [50,  98, 26]],                                                          // 2
+      [[50,  22, 20], [26,  82, 20], [74,  82, 20]],                                           // 3
+      [[28,  30, 20], [72,  30, 20], [28,  90, 20], [72,  90, 20]],                            // 4
+      [[24,  24, 17], [76,  24, 17], [50,  65, 17], [24, 106, 17], [76, 106, 17]],             // 5
+      [[28,  20, 16], [72,  20, 16], [28,  65, 16], [72,  65, 16], [28, 110, 16], [72, 110, 16]], // 6
+      [[20,  18, 14], [50,  18, 14], [80,  18, 14],
+       [50,  65, 14],
+       [20, 112, 14], [50, 112, 14], [80, 112, 14]],                                           // 7
+      [[27,  15, 13], [73,  15, 13], [27,  48, 13], [73,  48, 13],
+       [27,  82, 13], [73,  82, 13], [27, 115, 13], [73, 115, 13]],                            // 8
+      [[20,  18, 12], [50,  18, 12], [80,  18, 12],
+       [20,  65, 12], [50,  65, 12], [80,  65, 12],
+       [20, 112, 12], [50, 112, 12], [80, 112, 12]],                                           // 9
+    ];
+    const body = L[n].map(([cx,cy,r]) => mkCoin(cx,cy,r)).join('');
+    return `<svg class="mj-art" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 130" preserveAspectRatio="none">${body}</svg>`;
   }
 
   const CHAR_NUMS = ['一','二','三','四','五','六','七','八','九'];
@@ -341,8 +425,8 @@
   function buildTileContent(tile) {
     if (tile.suit === 'c')
       return `<span class="mj-hon mj-hon--char">${CHAR_NUMS[tile.num - 1]}</span><span class="mj-hon-sub">萬</span>`;
-    if (tile.suit === 'b') return bambooContent(tile.num);
-    if (tile.suit === 'o') return circleContent(tile.num);
+    if (tile.suit === 'b') return bambooSVG(tile.num);
+    if (tile.suit === 'o') return circleSVG(tile.num);
     // Winds and dragons
     return `<span class="mj-hon mj-hon--${tile.cls}">${tile.symbol}</span>`;
   }
