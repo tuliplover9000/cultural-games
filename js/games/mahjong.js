@@ -458,11 +458,12 @@
     return `<div class="mj-meld">${meld.tiles.map(t => tileHTML(t, {})).join('')}</div>`;
   }
 
-  function buildDiscardPool(seatIdx) {
+  // Renders one player's discards for the central square
+  function buildCenterDiscards(seatIdx) {
     const discards = state.discards[seatIdx];
-    const show     = discards.slice(-12);
-    return show.map((t, i) => {
-      const isLast = i === show.length - 1
+    if (!discards.length) return '';
+    return discards.map((t, i) => {
+      const isLast      = i === discards.length - 1
         && state.lastDiscard
         && state.lastDiscard.fromSeat === seatIdx;
       const isClaimable = isLast && state.claimWindow;
@@ -482,8 +483,7 @@
 
     const isSide    = pos === 'left' || pos === 'right';
     const handTiles = hand.map(t => tileHTML(t, { back: true, hz: isSide })).join('');
-    const meldHTMLs  = melds.map(meldHTML).join('');
-    const discardPool = buildDiscardPool(seatIdx);
+    const meldHTMLs = melds.map(meldHTML).join('');
 
     return `<div class="mj-opponent mj-opponent--${pos}" data-seat="${seatIdx}">
   <div class="mj-opp-info">
@@ -493,7 +493,6 @@
   </div>
   <div class="mj-opp-hand">${handTiles}<span style="font-size:0.72rem;color:#777;margin-left:4px">${hand.length}</span></div>
   <div class="mj-opp-melds">${meldHTMLs}</div>
-  <div class="mj-discard-pool">${discardPool}</div>
 </div>`;
   }
 
@@ -521,11 +520,33 @@
   }
 
   function buildTableCenter() {
+    // viewSeat(0)=bottom(player), (1)=right, (2)=top, (3)=left
+    const topD   = buildCenterDiscards(viewSeat(2));
+    const leftD  = buildCenterDiscards(viewSeat(3));
+    const rightD = buildCenterDiscards(viewSeat(1));
+    const botD   = buildCenterDiscards(viewSeat(0));
+
     return `<div class="mj-table-center" id="mj-table-center">
-  <div class="mj-wall-count">${state.wall.length} tiles left</div>
-  <div class="mj-round-info">${esc(state.roundWind)} Wind · Round ${state.round}</div>
-  <p class="mj-status" id="mj-status" aria-live="assertive">${esc(state.statusMsg)}</p>
-  <div class="mj-claim-btns" id="mj-claim-btns" aria-live="polite">${buildClaimButtons()}</div>
+  <div class="mj-discard-square">
+
+    <div class="mj-ds-top">${topD}</div>
+
+    <div class="mj-ds-middle">
+      <div class="mj-ds-left">${leftD}</div>
+
+      <div class="mj-ds-info">
+        <span class="mj-wall-count">${state.wall.length}</span>
+        <span class="mj-round-info">${esc(state.roundWind)} · R${state.round}</span>
+        <p class="mj-status" id="mj-status" aria-live="assertive">${esc(state.statusMsg)}</p>
+        <div class="mj-claim-btns" id="mj-claim-btns" aria-live="polite">${buildClaimButtons()}</div>
+      </div>
+
+      <div class="mj-ds-right">${rightD}</div>
+    </div>
+
+    <div class="mj-ds-bottom">${botD}</div>
+
+  </div>
 </div>`;
   }
 
@@ -550,7 +571,6 @@
     })).join('');
 
     const meldHTMLs  = melds.map(meldHTML).join('');
-    const discardPool = buildDiscardPool(ps);
 
     const drawDis    = !(isDraw && !state.animating);
     const discardDis = !(isDiscard && state.selectedTileUid !== null);
@@ -560,7 +580,6 @@
     return `<div class="mj-player-area" id="mj-player-area">
   <div class="mj-player-melds">${meldHTMLs}</div>
   <div class="mj-player-hand" id="mj-player-hand">${handTiles}</div>
-  <div class="mj-discard-pool mj-player-discards">${discardPool}</div>
   <div class="mj-player-info">
     <span class="mj-player-wind">You · ${WIND_SYM[wind]}</span>
     <span class="mj-player-score">${score}pt${dot}</span>

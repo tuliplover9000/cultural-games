@@ -3532,14 +3532,93 @@
 .mj-table-center {
   flex: 1;
   display: flex;
+  align-items: stretch;
+  background: var(--mj-felt);
+  border-radius: 8px;
+  padding: 0.4rem;
+  min-height: 180px;
+}
+
+/* ── Central discard square ── */
+.mj-discard-square {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Top row: opp-across discards (tiles flow left-to-right toward viewer) */
+.mj-ds-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  justify-content: center;
+  align-items: flex-end;      /* pile up from the top edge downward */
+  min-height: 2.6rem;
+  padding: 0 2px;
+  direction: rtl;             /* newest discard nearest the center */
+}
+.mj-ds-top .mj-tile--sm { transform: rotate(180deg); }
+
+/* Middle row: left discard | center info | right discard */
+.mj-ds-middle {
+  flex: 1;
+  display: flex;
+  gap: 2px;
+  align-items: stretch;
+}
+
+/* Left opp discards — column, newest at the bottom (nearest center) */
+.mj-ds-left {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap-reverse;
+  gap: 2px;
+  justify-content: flex-end;
+  align-items: flex-end;
+  min-width: 2.2rem;
+  padding: 2px 0;
+}
+.mj-ds-left .mj-tile--sm { transform: rotate(90deg); }
+
+/* Centre info panel */
+.mj-ds-info {
+  flex: 1;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: var(--mj-felt);
-  border-radius: 8px;
-  padding: 1rem;
-  gap: 0.5rem;
-  min-height: 180px;
+  gap: 4px;
+  text-align: center;
+  font-size: 0.75rem;
+  padding: 4px;
+  background: rgba(0,0,0,0.18);
+  border-radius: 4px;
+  min-width: 60px;
+}
+
+/* Right opp discards — mirror of left */
+.mj-ds-right {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap-reverse;
+  gap: 2px;
+  justify-content: flex-end;
+  align-items: flex-start;
+  min-width: 2.2rem;
+  padding: 2px 0;
+}
+.mj-ds-right .mj-tile--sm { transform: rotate(-90deg); }
+
+/* Bottom row: human player discards */
+.mj-ds-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  justify-content: center;
+  align-items: flex-start;    /* pile up from bottom edge upward */
+  min-height: 2.6rem;
+  padding: 0 2px;
 }
 
 /* ── Opponent areas ── */
@@ -3871,19 +3950,6 @@
   flex-wrap: wrap;
 }
 
-/* ── Discard pools ── */
-.mj-discard-pool {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px;
-  max-width: 180px;
-}
-
-.mj-player-discards {
-  max-width: 100%;
-  justify-content: center;
-  opacity: 0.8;
-}
 
 /* ── Controls ── */
 .mj-controls {
