@@ -47,6 +47,12 @@
 
   let gameVersion = 0;
 
+  /* ── Drag-to-reorder state ───────────────────────────────────────────────── */
+
+  let dragSrcUid       = null;
+  let dragOverUid      = null;
+  let activeTouchGhost = null; // cleaned up before every render
+
   /* ── State ──────────────────────────────────────────────────────────────── */
 
   let state = {};
@@ -317,6 +323,32 @@
 
   /* ── Rendering ───────────────────────────────────────────────────────────── */
 
+  // ── Tile artwork generators ──────────────────────────────────────────────
+
+  function bambooContent(n) {
+    if (n === 1) return '<span class="mj-bird" aria-hidden="true">🦚</span>';
+    const stk = '<span class="mj-stalk"></span>';
+    return `<div class="mj-bamboo mj-b${n}">${stk.repeat(n)}</div>`;
+  }
+
+  function circleContent(n) {
+    const dot = '<span class="mj-dot"></span>';
+    return `<div class="mj-circles mj-c${n}">${dot.repeat(n)}</div>`;
+  }
+
+  const CHAR_NUMS = ['一','二','三','四','五','六','七','八','九'];
+
+  function buildTileContent(tile) {
+    if (tile.suit === 'c')
+      return `<span class="mj-hon mj-hon--char">${CHAR_NUMS[tile.num - 1]}</span><span class="mj-hon-sub">萬</span>`;
+    if (tile.suit === 'b') return bambooContent(tile.num);
+    if (tile.suit === 'o') return circleContent(tile.num);
+    // Winds and dragons
+    return `<span class="mj-hon mj-hon--${tile.cls}">${tile.symbol}</span>`;
+  }
+
+  // ── tileHTML ────────────────────────────────────────────────────────────
+
   function tileHTML(tile, opts) {
     opts = opts || {};
     const cls = [
@@ -329,12 +361,11 @@
       opts.lastDiscard ? 'mj-tile--discard-last'  : '',
     ].filter(Boolean).join(' ');
 
-    const label     = opts.back ? '' : esc(tile.symbol);
-    const numSub    = (tile.num && !opts.back)
-      ? `<span class="mj-tile-num">${tile.num}</span>` : '';
+    const content   = opts.back ? '' : buildTileContent(tile);
     const ariaLabel = opts.back ? 'Face-down tile' : tile.name;
+    const draggable = opts.draggable ? ' draggable="true"' : '';
 
-    return `<div class="${cls}" data-uid="${tile.uid}" aria-label="${esc(ariaLabel)}" role="img">${label}${numSub}</div>`;
+    return `<div class="${cls}" data-uid="${tile.uid}" aria-label="${esc(ariaLabel)}" role="img"${draggable}>${content}</div>`;
   }
 
   function meldHTML(meld) {
@@ -427,6 +458,7 @@
       selectable:  isDiscard,
       selected:    t.uid === state.selectedTileUid,
       latest:      t.uid === state.drawnTileUid,
+      draggable:   true,
     })).join('');
 
     const meldHTMLs  = melds.map(meldHTML).join('');
@@ -505,6 +537,7 @@
   }
 
   function render() {
+    if (activeTouchGhost) { activeTouchGhost.remove(); activeTouchGhost = null; }
     const el = document.getElementById('game-container');
     if (!el) return;
     el.innerHTML = buildMahjongUI();
@@ -545,14 +578,72 @@
       declareWin(ps, 'self-draw');
     });
 
-    // Tile selection in hand
-    el.querySelector('#mj-player-hand')?.addEventListener('click', e => {
-      const tileEl = e.target.closest('.mj-tile');
-      if (!tileEl || state.phase !== 'player-discard') return;
-      const uid = parseInt(tileEl.dataset.uid);
-      state.selectedTileUid = (state.selectedTileUid === uid) ? null : uid;
-      render();
-    });
+    // Player hand — tile selection & drag-to-reorder
+    const handEl = el.querySelector('#mj-player-hand');
+    if (handEl) {
+      // Click to select tile for discard
+      handEl.addEventListener('click', e => {
+        const tileEl = e.target.closest('.mj-tile');
+        if (!tileEl || state.phase !== 'player-discard') return;
+        const uid = parseInt(tileEl.dataset.uid);
+        state.selectedTileUid = (state.selectedTileUid === uid) ? null : uid;
+        render();
+      });
+
+      // HTML5 drag to reorder hand
+      handEl.addEventListener('dragstart', e => {
+        const tileEl = e.target.closest('.mj-tile[data-uid]');
+        if (!tileEl) return;
+        dragSrcUid = parseInt(tileEl.dataset.uid);
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', String(dragSrcUid));
+        setTimeout(() => { if (tileEl.isConnected) tileEl.classList.add('mj-tile--dragging'); }, 0);
+      });
+
+      handEl.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        const tileEl = e.target.closest('.mj-tile[data-uid]');
+        if (!tileEl) return;
+        const uid = parseInt(tileEl.dataset.uid);
+        if (uid === dragSrcUid) return;
+        handEl.querySelectorAll('.mj-tile--drag-over').forEach(t => t.classList.remove('mj-tile--drag-over'));
+        tileEl.classList.add('mj-tile--drag-over');
+        dragOverUid = uid;
+      });
+
+      handEl.addEventListener('dragleave', e => {
+        if (!handEl.contains(e.relatedTarget)) {
+          handEl.querySelectorAll('.mj-tile--drag-over').forEach(t => t.classList.remove('mj-tile--drag-over'));
+          dragOverUid = null;
+        }
+      });
+
+      handEl.addEventListener('drop', e => {
+        e.preventDefault();
+        if (dragSrcUid === null) return;
+        const tgt    = e.target.closest('.mj-tile[data-uid]');
+        const overUid = tgt ? parseInt(tgt.dataset.uid) : dragOverUid;
+        if (overUid !== null && overUid !== dragSrcUid) {
+          const hand    = state.hands[myPS()];
+          const srcIdx  = hand.findIndex(t => t.uid === dragSrcUid);
+          const destIdx = hand.findIndex(t => t.uid === overUid);
+          if (srcIdx !== -1 && destIdx !== -1) {
+            const [moved] = hand.splice(srcIdx, 1);
+            hand.splice(destIdx, 0, moved);
+          }
+        }
+        dragSrcUid = null; dragOverUid = null;
+        render();
+      });
+
+      handEl.addEventListener('dragend', () => {
+        dragSrcUid = null; dragOverUid = null;
+        render();
+      });
+
+      wireTouchDrag(handEl);
+    }
 
     // Claim buttons (delegated from container)
     el.querySelector('#mj-claim-btns')?.addEventListener('click', e => {
@@ -566,6 +657,98 @@
       } else {
         recordClaimDecision(myPS(), action);
       }
+    });
+  }
+
+  /* ── Touch drag-to-reorder ───────────────────────────────────────────────── */
+
+  function wireTouchDrag(handEl) {
+    let touchSrcUid = null;
+    let hasMoved    = false;
+
+    function clearDragVisuals() {
+      if (activeTouchGhost) { activeTouchGhost.remove(); activeTouchGhost = null; }
+      handEl.querySelectorAll('.mj-tile--dragging, .mj-tile--drag-over')
+            .forEach(t => t.classList.remove('mj-tile--dragging', 'mj-tile--drag-over'));
+    }
+
+    handEl.addEventListener('touchstart', e => {
+      const tileEl = e.target.closest('.mj-tile[data-uid]');
+      if (!tileEl) return;
+      touchSrcUid = parseInt(tileEl.dataset.uid);
+      hasMoved    = false;
+    }, { passive: true });
+
+    handEl.addEventListener('touchmove', e => {
+      if (touchSrcUid === null) return;
+      e.preventDefault();
+
+      if (!hasMoved) {
+        hasMoved = true;
+        const srcTile = handEl.querySelector(`[data-uid="${touchSrcUid}"]`);
+        if (srcTile && !activeTouchGhost) {
+          activeTouchGhost = srcTile.cloneNode(true);
+          activeTouchGhost.removeAttribute('draggable');
+          activeTouchGhost.style.cssText =
+            'position:fixed;pointer-events:none;z-index:9999;' +
+            'transform:scale(1.2) translateY(-12px);transition:none;opacity:0.9;';
+          document.body.appendChild(activeTouchGhost);
+          srcTile.classList.add('mj-tile--dragging');
+        }
+      }
+
+      const touch = e.touches[0];
+      if (activeTouchGhost) {
+        activeTouchGhost.style.left = (touch.clientX - activeTouchGhost.offsetWidth  / 2) + 'px';
+        activeTouchGhost.style.top  = (touch.clientY - activeTouchGhost.offsetHeight * 1.4) + 'px';
+      }
+
+      // Find which tile is under the finger
+      const under = document.elementFromPoint(touch.clientX, touch.clientY);
+      const tgt   = under?.closest('#mj-player-hand .mj-tile[data-uid]');
+      handEl.querySelectorAll('.mj-tile--drag-over').forEach(t => t.classList.remove('mj-tile--drag-over'));
+      if (tgt && parseInt(tgt.dataset.uid) !== touchSrcUid) {
+        tgt.classList.add('mj-tile--drag-over');
+        dragOverUid = parseInt(tgt.dataset.uid);
+      } else {
+        dragOverUid = null;
+      }
+    }, { passive: false });
+
+    handEl.addEventListener('touchend', e => {
+      const srcUid = touchSrcUid;
+      touchSrcUid  = null;
+      if (srcUid === null) return;
+
+      if (!hasMoved) {
+        // Tap — treat as tile selection click
+        clearDragVisuals();
+        if (state.phase === 'player-discard') {
+          state.selectedTileUid = (state.selectedTileUid === srcUid) ? null : srcUid;
+          render();
+        }
+        return;
+      }
+
+      const dstUid = dragOverUid;
+      dragOverUid  = null;
+      clearDragVisuals();
+
+      if (dstUid !== null && dstUid !== srcUid) {
+        const hand    = state.hands[myPS()];
+        const srcIdx  = hand.findIndex(t => t.uid === srcUid);
+        const destIdx = hand.findIndex(t => t.uid === dstUid);
+        if (srcIdx !== -1 && destIdx !== -1) {
+          const [moved] = hand.splice(srcIdx, 1);
+          hand.splice(destIdx, 0, moved);
+        }
+      }
+      render();
+    });
+
+    handEl.addEventListener('touchcancel', () => {
+      touchSrcUid = null; dragOverUid = null;
+      clearDragVisuals();
     });
   }
 
