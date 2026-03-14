@@ -24,6 +24,8 @@
 
   // ── Module-level vars ─────────────────────────────────────────────────
   var mode  = 'vs-ai';       // 'vs-ai' | 'vs-human'
+  var vsRoom     = false;
+  var myRoomSeat = 0;
   var state = {};
 
   // ── DOM refs ──────────────────────────────────────────────────────────
@@ -227,6 +229,7 @@
     addLog('─── ' + playerName(winner) + ' wins! ───');
     renderScore();
     render();
+    if (vsRoom) syncRoomState();
   }
 
   // ── End turn ──────────────────────────────────────────────────────────
@@ -239,6 +242,7 @@
     state.stickDetail = [];
     state.phase       = 'idle';
     state._validMoves = null;
+    if (vsRoom) syncRoomState();
 
     if (next === AI && mode === 'vs-ai') {
       elRollBtn.disabled = true;
@@ -429,6 +433,7 @@
 
   // ── Roll handler ──────────────────────────────────────────────────────
   function onRollClick() {
+    if (vsRoom && state.turn !== myRoomSeat) return;
     if (mode === 'vs-ai' && state.turn !== PLAYER) return;
     if (state.phase !== 'idle') return;
 
@@ -471,6 +476,7 @@
 
   // ── Track click handler ───────────────────────────────────────────────
   function onTrackClick(e) {
+    if (vsRoom && state.turn !== myRoomSeat) return;
     if (state.phase !== 'choosingMove') return;
     var isHumanTurn = state.turn === PLAYER || mode === 'vs-human';
     if (!isHumanTurn) return;
@@ -515,6 +521,43 @@
     if (humanBtn) humanBtn.classList.toggle('active', mode === 'vs-human');
   }
 
+  function syncRoomState() {
+    if (!vsRoom || !window.RoomBridge) return;
+    RoomBridge.sendState({
+      stacks:   [
+        state.stacks[0].map(function(st){ return Object.assign({}, st); }),
+        state.stacks[1].map(function(st){ return Object.assign({}, st); }),
+      ],
+      offBoard: [state.offBoard[0], state.offBoard[1]],
+      captured: [state.captured[0], state.captured[1]],
+      turn:     state.turn,
+      phase:    state.phase,
+      roll:     state.roll,
+      log:      (state.log || []).slice(),
+      last_actor: 'room:' + myRoomSeat,
+    });
+    if (state.phase === 'over') RoomBridge.reportWin(state.captured[PLAYER] >= PIECES ? 0 : 1);
+  }
+
+  function receiveRoomState(data) {
+    if (!data || data.last_actor === 'room:' + myRoomSeat) return;
+    Object.assign(state, data);
+    if (data.stacks)   state.stacks   = { 0: data.stacks[0].map(function(st){ return Object.assign({}, st); }), 1: data.stacks[1].map(function(st){ return Object.assign({}, st); }) };
+    if (data.offBoard) state.offBoard = { 0: data.offBoard[0], 1: data.offBoard[1] };
+    if (data.captured) state.captured = { 0: data.captured[0], 1: data.captured[1] };
+    state.animating = false;
+    render();
+  }
+
+  function initRoomMode() {
+    if (!window.RoomBridge || !RoomBridge.isActive()) return;
+    vsRoom     = true;
+    myRoomSeat = RoomBridge.getSeat();
+    mode       = 'vs-human';
+    RoomBridge.onState(receiveRoomState);
+    if (myRoomSeat === 0) syncRoomState();
+  }
+
   // ── Init ──────────────────────────────────────────────────────────────
   function init() {
     elTrack   = document.getElementById('pu-track');
@@ -536,6 +579,7 @@
     if (humanBtn) humanBtn.addEventListener('click', function () { mode = 'vs-human'; updateModeButtons(); newGame(); });
 
     newGame();
+    initRoomMode();
   }
 
   document.addEventListener('DOMContentLoaded', init);

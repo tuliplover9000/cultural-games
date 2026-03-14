@@ -26,6 +26,8 @@
 
   // ── State ──────────────────────────────────────────────────────────────────
   let state = null;
+  var vsRoom     = false;
+  var myRoomSeat = 0;
 
   // ── Skip-animation flag ───────────────────────────────────────────────────
   // When the player clicks Skip, skipSowing is set to true and skipResolve()
@@ -274,6 +276,11 @@
         var _oaq = state.board[Q1] > state.board[Q2] ? 'win' : state.board[Q2] > state.board[Q1] ? 'loss' : 'draw';
         Auth.recordResult('o-an-quan', _oaq);
       }
+      if (vsRoom && window.RoomBridge) {
+        RoomBridge.sendState(Object.assign({}, state, { last_actor: 'room:' + myRoomSeat }));
+        var winner = state.board[Q1] > state.board[Q2] ? 0 : state.board[Q2] > state.board[Q1] ? 1 : 0;
+        RoomBridge.reportWin(winner);
+      }
       refresh();
       return;
     }
@@ -296,6 +303,9 @@
 
     state.phase = 'select';
     refresh();
+    if (vsRoom && window.RoomBridge) {
+      RoomBridge.sendState(Object.assign({}, state, { last_actor: 'room:' + myRoomSeat }));
+    }
   }
 
   // ── Log helpers ───────────────────────────────────────────────────────────
@@ -339,7 +349,10 @@
     // Wire up pit clicks
     container.querySelectorAll('.oaq-pit.clickable').forEach(el => {
       const idx = parseInt(el.dataset.pit, 10);
-      el.addEventListener('click', () => sow(idx));
+      el.addEventListener('click', () => {
+        if (vsRoom && state.currentPlayer !== myRoomSeat + 1) return;
+        sow(idx);
+      });
     });
 
     // Skip animation button (only present during sowing phase)
@@ -593,6 +606,22 @@
     refresh();
   }
 
+  function receiveRoomState(data) {
+    if (!data || data.last_actor === 'room:' + myRoomSeat) return;
+    Object.assign(state, data);
+    refresh();
+  }
+
+  function initRoomMode(container) {
+    if (!window.RoomBridge || !RoomBridge.isActive()) return;
+    vsRoom      = true;
+    myRoomSeat  = RoomBridge.getSeat();
+    RoomBridge.onState(receiveRoomState);
+    if (myRoomSeat === 0) {
+      RoomBridge.sendState(Object.assign({}, state, { last_actor: 'room:0' }));
+    }
+  }
+
   // ── Boot ──────────────────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', function () {
     const container = document.getElementById('game-container');
@@ -600,6 +629,7 @@
 
     state = initState();
     renderGame(container);
+    initRoomMode(container);
   });
 
 }());

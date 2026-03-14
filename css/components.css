@@ -97,6 +97,23 @@
   color: white !important;
 }
 
+/* Rooms nav link — teal pill */
+.nav-link--rooms {
+  background-color: rgba(44, 120, 115, 0.15);
+  color: var(--color-accent-teal) !important;
+  border-radius: var(--radius-full);
+  font-weight: var(--weight-semibold);
+}
+.nav-link--rooms:hover {
+  background-color: var(--color-accent-teal) !important;
+  color: white !important;
+}
+.nav-link--rooms.active,
+.nav-link--rooms[aria-current="page"] {
+  background-color: var(--color-accent-teal) !important;
+  color: white !important;
+}
+
 /* ── Hamburger (mobile) ── */
 .nav-hamburger {
   display: none;

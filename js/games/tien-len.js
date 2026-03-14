@@ -717,8 +717,7 @@
 
   /* ── Online multiplayer ── */
   function syncOnlineState() {
-    if (!window.Multiplayer) return;
-    Multiplayer.sendState({
+    var blob = {
       hands:      state.hands,
       current:    state.current,
       leader:     state.leader,
@@ -730,13 +729,27 @@
       firstTurn:  state.firstTurn,
       winner:     state.winner,
       log:        state.log,
-      last_actor: Multiplayer.getPlayerId(),
-    });
+    };
+    if (window.RoomBridge && RoomBridge.isActive()) {
+      blob.last_actor = 'room:' + RoomBridge.getSeat();
+      RoomBridge.sendState(blob);
+      // Report win to the room (RoomBridge deduplicates internally)
+      if (state.winner >= 0) RoomBridge.reportWin(state.winner);
+      return;
+    }
+    if (!window.Multiplayer) return;
+    blob.last_actor = Multiplayer.getPlayerId();
+    Multiplayer.sendState(blob);
   }
 
   function receiveOnlineState(data) {
     if (!data || !vsOnline) return;
-    if (data.last_actor === Multiplayer.getPlayerId()) return; // ignore own echo
+    // Echo suppression — works for both Multiplayer and RoomBridge paths
+    if (window.RoomBridge && RoomBridge.isActive()) {
+      if (data.last_actor === 'room:' + RoomBridge.getSeat()) return;
+    } else if (window.Multiplayer) {
+      if (data.last_actor === Multiplayer.getPlayerId()) return;
+    }
 
     state.hands          = data.hands;
     state.current        = data.current;
@@ -768,6 +781,22 @@
   }
 
   function initOnlineUI() {
+    // ── Room System bridge (iframe mode) ───────────────────────────────────
+    if (window.RoomBridge && RoomBridge.isActive()) {
+      var tlPanel = document.getElementById('tl-mp-panel');
+      if (tlPanel) tlPanel.hidden = true;
+      vsOnline  = true;
+      twoPlayer = false; // 4-player mode
+      mySeat    = RoomBridge.getSeat();
+      isHost    = (mySeat === 0);
+      RoomBridge.onState(receiveOnlineState);
+      if (isHost) {
+        newGameOnline();
+        syncOnlineState();
+      }
+      return;
+    }
+    // ── Legacy Multiplayer (standalone page) ───────────────────────────────
     if (!window.Multiplayer) return;
 
     const elLobby      = document.getElementById('tl-mp-lobby');

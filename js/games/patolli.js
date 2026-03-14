@@ -11,6 +11,8 @@
   var TOTAL_PIECES = 6;
   var MOVE_MS = 130;
   var mode = 'vs-ai'; // 'vs-ai' | 'vs-human' — persists across games
+  var vsRoom     = false;
+  var myRoomSeat = 0;
 
   // ── Board track ───────────────────────────────────────────────────────────
   // Cross on 13×13 grid: vertical band cols 4-8, horizontal band rows 4-8.
@@ -341,6 +343,7 @@
 
   // ── Player turn ───────────────────────────────────────────────────────────
   function onRollClick() {
+    if (vsRoom && state.turn !== myRoomSeat) return;
     if (state.phase !== 'idle' || state.animating) return;
     if (mode === 'vs-ai' && state.turn !== PLAYER) return;
 
@@ -371,6 +374,7 @@
   }
 
   function onBoardClick(e) {
+    if (vsRoom && state.turn !== myRoomSeat) return;
     if (state.phase !== 'choosingPiece' || state.animating) return;
     if (mode === 'vs-ai' && state.turn !== PLAYER) return;
 
@@ -493,6 +497,7 @@
     state.phase = 'idle';
     state.validPieces = [];
     render();
+    if (vsRoom) syncRoomState();
 
     if (next === AI && mode === 'vs-ai') {
       elRollBtn.disabled = true;
@@ -524,6 +529,7 @@
     addLog('Game over — ' + wName + ' wins! ' +
            p1Name() + ': ' + p1coins + ' coins · ' + p2Name() + ': ' + p2coins + ' coins');
     renderScore();
+    if (vsRoom) syncRoomState();
   }
 
   function newGame(silent) {
@@ -546,6 +552,40 @@
     var btnHuman = document.getElementById('pt-mode-human');
     if (btnAI)    btnAI.classList.toggle('active', mode === 'vs-ai');
     if (btnHuman) btnHuman.classList.toggle('active', mode === 'vs-human');
+  }
+
+  function syncRoomState() {
+    if (!vsRoom || !window.RoomBridge) return;
+    RoomBridge.sendState({
+      pieces:     state.pieces.map(function(a){ return a.slice(); }),
+      coins:      state.coins.slice(),
+      turn:       state.turn,
+      phase:      state.phase,
+      roll:       state.roll,
+      rollDetail: (state.rollDetail || []).slice(),
+      log:        (state.log || []).slice(),
+      last_actor: 'room:' + myRoomSeat,
+    });
+    if (state.phase === 'over') RoomBridge.reportWin(state.pieces[PLAYER].every(function(p){ return p === TRACK_LENGTH; }) ? 0 : 1);
+  }
+
+  function receiveRoomState(data) {
+    if (!data || data.last_actor === 'room:' + myRoomSeat) return;
+    Object.assign(state, data);
+    if (data.pieces) state.pieces = data.pieces.map(function(a){ return a.slice(); });
+    if (data.coins)  state.coins  = data.coins.slice();
+    state.animating   = false;
+    state.movingPiece = -1;
+    render();
+  }
+
+  function initRoomMode() {
+    if (!window.RoomBridge || !RoomBridge.isActive()) return;
+    vsRoom     = true;
+    myRoomSeat = RoomBridge.getSeat();
+    mode       = 'vs-human';
+    RoomBridge.onState(receiveRoomState);
+    if (myRoomSeat === 0) syncRoomState();
   }
 
   // ── Init ──────────────────────────────────────────────────────────────────
@@ -582,6 +622,7 @@
     }
 
     newGame(true);  // silent=true: no log entry on initial load
+    initRoomMode();
   }
 
   if (document.readyState === 'loading') {

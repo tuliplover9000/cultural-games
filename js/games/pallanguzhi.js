@@ -37,6 +37,8 @@
 
   // ── Module-level vars ─────────────────────────────────────────────────
   var mode        = 'vs-ai';   // 'vs-ai' | 'vs-human'
+  var vsRoom     = false;
+  var myRoomSeat = 0;
   var state       = {};
   var skipSowing  = false;
   var skipResolve = null;
@@ -321,6 +323,7 @@
 
   // ── Sowing (async, skippable) ─────────────────────────────────────────
   async function onCupClick(cup) {
+    if (vsRoom && state.turn !== myRoomSeat) return;
     if (state.phase !== 'idle') return;
     var validPlayer = state.turn === PLAYER && cup >= 7  && state.cups[cup] > 0;
     var validAI     = state.turn === AI     && cup < 7   && state.cups[cup] > 0 && mode === 'vs-human';
@@ -449,6 +452,15 @@
       skipResolve = null;
       render();
     }
+    if (vsRoom && window.RoomBridge) {
+      RoomBridge.sendState(Object.assign({}, state, {
+        cups:   state.cups.slice(),
+        last_actor: 'room:' + myRoomSeat,
+      }));
+      if (state.phase === 'over') {
+        RoomBridge.reportWin(state.stores[PLAYER] >= state.stores[AI] ? 0 : 1);
+      }
+    }
   }
 
   function checkGameOver() {
@@ -534,6 +546,24 @@
     return shells;
   }
 
+  function receiveRoomState(data) {
+    if (!data || data.last_actor === 'room:' + myRoomSeat) return;
+    Object.assign(state, data);
+    if (Array.isArray(data.cups)) state.cups = data.cups.slice();
+    render();
+  }
+
+  function initRoomMode() {
+    if (!window.RoomBridge || !RoomBridge.isActive()) return;
+    vsRoom     = true;
+    myRoomSeat = RoomBridge.getSeat();
+    mode       = 'vs-human';
+    RoomBridge.onState(receiveRoomState);
+    if (myRoomSeat === 0) {
+      RoomBridge.sendState(Object.assign({}, state, { cups: state.cups.slice(), last_actor: 'room:0' }));
+    }
+  }
+
   // ── Init ──────────────────────────────────────────────────────────────
-  document.addEventListener('DOMContentLoaded', function () { newGame(); });
+  document.addEventListener('DOMContentLoaded', function () { newGame(); initRoomMode(); });
 }());

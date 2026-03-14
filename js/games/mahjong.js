@@ -1294,8 +1294,7 @@
   /* ── Multiplayer ─────────────────────────────────────────────────────────── */
 
   function syncOnlineState() {
-    if (!window.Multiplayer) return;
-    Multiplayer.sendState({
+    var blob = {
       phase:         state.phase,
       round:         state.round,
       roundWind:     state.roundWind,
@@ -1309,13 +1308,31 @@
       log:           state.log,
       overlayContent:state.overlayContent,
       isDraw:        state.isDraw,
-      last_actor:    Multiplayer.getPlayerId(),
-    });
+    };
+    if (window.RoomBridge && RoomBridge.isActive()) {
+      blob.last_actor = 'room:' + RoomBridge.getSeat();
+      RoomBridge.sendState(blob);
+      // Report win when the game reaches its final phase
+      if (state.phase === 'game-over') {
+        var seats  = [0, 1, 2, 3];
+        var winner = seats.sort(function(a, b) { return (state.scores[b] || 0) - (state.scores[a] || 0); })[0];
+        RoomBridge.reportWin(winner);
+      }
+      return;
+    }
+    if (!window.Multiplayer) return;
+    blob.last_actor = Multiplayer.getPlayerId();
+    Multiplayer.sendState(blob);
   }
 
   function receiveOnlineState(data) {
     if (!data || !vsOnline) return;
-    if (data.last_actor === Multiplayer.getPlayerId()) return;
+    // Echo suppression — works for both Multiplayer and RoomBridge paths
+    if (window.RoomBridge && RoomBridge.isActive()) {
+      if (data.last_actor === 'room:' + RoomBridge.getSeat()) return;
+    } else if (window.Multiplayer) {
+      if (data.last_actor === Multiplayer.getPlayerId()) return;
+    }
 
     state.phase          = data.phase;
     state.round          = data.round;
@@ -1359,6 +1376,23 @@
   }
 
   function initOnlineUI() {
+    // ── Room System bridge (iframe mode) ───────────────────────────────────
+    if (window.RoomBridge && RoomBridge.isActive()) {
+      var mjPanel = document.getElementById('mj-mp-panel');
+      if (mjPanel) mjPanel.hidden = true;
+      vsOnline = true;
+      mySeat   = RoomBridge.getSeat();
+      isHost   = (mySeat === 0);
+      RoomBridge.onState(receiveOnlineState);
+      if (isHost) {
+        state.dealer  = 0;
+        state.turnIdx = 0;
+        dealRound();
+        syncOnlineState();
+      }
+      return;
+    }
+    // ── Legacy Multiplayer (standalone page) ───────────────────────────────
     if (!window.Multiplayer) return;
 
     const elLobby      = document.getElementById('mj-mp-lobby');

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Room — Cultural Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/auth.css" />
+  <link rel="stylesheet" href="../css/rooms.css" />
+</head>
+<body class="room-body">
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../index.html" class="nav-logo" aria-label="Cultural Games — Home">
+        <span class="nav-logo-icon" aria-hidden="true">🎲</span>
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="rooms.html"  class="nav-link nav-link--rooms active" aria-current="page">🎮 Rooms</a></li>
+        <li><a href="about.html"  class="nav-link">About</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ══ LOADING (shown while rejoinRoom fetches) ══════════════════════════ -->
+    <div id="room-loading">
+      <div class="rooms-loading">
+        <div class="rooms-loading__spinner"></div>
+        <p class="rooms-loading__msg">Connecting to room…</p>
+      </div>
+    </div>
+
+    <!-- ══ ERROR (room not found / expired) ═════════════════════════════════ -->
+    <div id="room-error" hidden>
+      <div class="rooms-loading">
+        <p style="font-size:3rem;line-height:1">🚪</p>
+        <p id="room-error-msg" class="rooms-loading__msg"></p>
+        <a href="rooms.html" class="btn btn-primary">Back to Rooms</a>
+      </div>
+    </div>
+
+    <!-- ══ LOBBY VIEW ════════════════════════════════════════════════════════ -->
+    <div id="room-lobby" class="room-lobby" hidden>
+
+      <!-- Top bar -->
+      <div class="room-topbar">
+        <span class="room-topbar__code">
+          Room <strong id="lobby-code-display"></strong>
+        </span>
+        <span class="room-topbar__status" id="lobby-status-text" aria-live="polite"></span>
+        <button id="lobby-leave-btn" class="btn btn-ghost btn-sm">Leave</button>
+      </div>
+
+      <!-- Three-column body -->
+      <div class="room-lobby__body">
+
+        <!-- LEFT: Players -->
+        <aside class="room-panel room-panel--players" aria-label="Players in this room">
+          <h2 class="room-panel__title">Players</h2>
+          <ul id="lobby-player-list" class="lobby-player-list" role="list">
+            <!-- Populated by lobby.js -->
+          </ul>
+          <button id="lobby-ready-btn" class="btn btn-teal lobby-ready-btn">
+            Ready
+          </button>
+        </aside>
+
+        <!-- CENTER: Game browser + suggestions -->
+        <main class="room-panel room-panel--games" aria-label="Game selection">
+          <h2 class="room-panel__title">Pick a Game</h2>
+
+          <div id="lobby-game-grid" class="lobby-game-grid" role="list" aria-label="Available games">
+            <!-- Populated by lobby.js (static, rendered once) -->
+          </div>
+
+          <div class="lobby-suggestions">
+            <div class="lobby-suggestions__header">
+              <h3 class="lobby-suggestions__title">Suggestions</h3>
+              <!-- Host-only mode toggle -->
+              <div id="lobby-mode-toggle" class="lobby-mode-toggle" hidden role="group" aria-label="Selection mode">
+                <button class="lobby-mode-btn active" data-mode="host-pick" aria-pressed="true">Host Pick</button>
+                <button class="lobby-mode-btn" data-mode="lottery" aria-pressed="false">Lottery</button>
+              </div>
+            </div>
+
+            <ul id="lobby-suggestions-list" class="lobby-suggestions-list" role="list" aria-label="Suggested games">
+              <!-- Populated by lobby.js -->
+            </ul>
+            <p id="lobby-suggestions-empty" class="lobby-suggestions-empty">
+              No suggestions yet — hit Suggest on a game above!
+            </p>
+
+            <!-- Lottery mode button (host only, shown in lottery mode) -->
+            <button id="lobby-lottery-btn" class="btn btn-primary lobby-lottery-btn" hidden>
+              🎰 Lottery!
+            </button>
+          </div>
+        </main>
+
+        <!-- RIGHT: Chat -->
+        <aside class="room-panel room-panel--chat" aria-label="Room chat">
+          <h2 class="room-panel__title">Chat</h2>
+          <ul
+            id="lobby-chat-list"
+            class="lobby-chat-list"
+            role="log"
+            aria-live="polite"
+            aria-label="Chat messages"
+          >
+            <!-- Populated by lobby.js -->
+          </ul>
+          <p id="lobby-chat-empty" class="lobby-chat-empty">No messages yet.</p>
+          <form id="lobby-chat-form" class="lobby-chat-form" autocomplete="off" novalidate>
+            <input
+              id="lobby-chat-input"
+              class="rooms-text-input lobby-chat-input"
+              type="text"
+              maxlength="200"
+              placeholder="Say something…"
+              aria-label="Chat message"
+            />
+            <button type="submit" class="btn btn-primary btn-sm">Send</button>
+          </form>
+        </aside>
+
+      </div><!-- /.room-lobby__body -->
+    </div><!-- /#room-lobby -->
+
+    <!-- ══ IN-GAME VIEW ══════════════════════════════════════════════════════ -->
+    <div id="room-ingame" class="room-ingame" hidden>
+
+      <!-- Persistent slim strip -->
+      <div class="ingame-strip">
+        <span class="ingame-strip__code">
+          <span class="ingame-strip__code-label">Room</span>
+          <strong id="ingame-code" class="ingame-strip__code-val"></strong>
+        </span>
+        <div class="ingame-strip__players" id="ingame-player-chips" role="list" aria-label="Players"></div>
+        <button
+          id="ingame-chat-toggle"
+          class="btn btn-ghost btn-sm ingame-chat-btn"
+          aria-label="Toggle chat"
+          aria-pressed="false"
+        >💬 Chat</button>
+        <button id="ingame-leave-btn" class="btn btn-ghost btn-sm" style="color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.2);">Leave</button>
+      </div>
+
+      <!-- Game iframe(s) -->
+      <div class="ingame-boards" id="ingame-boards"></div>
+
+      <!-- Sliding chat sidebar -->
+      <div class="ingame-chat-panel" id="ingame-chat-panel" aria-hidden="true">
+        <div class="ingame-chat-panel__header">
+          <h3>Chat</h3>
+          <button id="ingame-chat-close" class="btn btn-ghost btn-sm">✕</button>
+        </div>
+        <ul id="ingame-chat-list" class="lobby-chat-list" role="log" aria-live="polite"></ul>
+        <p id="ingame-chat-empty" class="lobby-chat-empty" hidden>No messages yet.</p>
+        <form id="ingame-chat-form" class="lobby-chat-form" autocomplete="off" novalidate>
+          <input
+            id="ingame-chat-input"
+            class="rooms-text-input lobby-chat-input"
+            type="text"
+            maxlength="200"
+            placeholder="Say something…"
+            aria-label="Chat message"
+          />
+          <button type="submit" class="btn btn-primary btn-sm">Send</button>
+        </form>
+      </div>
+
+    </div><!-- /#room-ingame -->
+
+    <!-- ══ END SCREEN ════════════════════════════════════════════════════════ -->
+    <div id="room-endscreen" class="room-endscreen" hidden>
+      <div class="endscreen-inner">
+
+        <!-- Single-instance result -->
+        <div id="endscreen-single">
+          <div class="endscreen-winner">
+            <div class="endscreen-winner__avatar" id="endscreen-avatar"></div>
+            <h2 class="endscreen-winner__name" id="endscreen-name"></h2>
+            <p class="endscreen-winner__label">wins this round!</p>
+            <p class="endscreen-winner__score" id="endscreen-score"></p>
+          </div>
+        </div>
+
+        <!-- Dual-instance result (hidden by default) -->
+        <div id="endscreen-dual" hidden>
+          <div class="endscreen-dual">
+            <div class="endscreen-dual-half" id="endscreen-dual-a"></div>
+            <div class="endscreen-dual-divider">vs</div>
+            <div class="endscreen-dual-half" id="endscreen-dual-b"></div>
+          </div>
+        </div>
+
+        <!-- Session leaderboard -->
+        <div class="endscreen-leaderboard">
+          <h3 class="endscreen-leaderboard__title">Session Leaderboard</h3>
+          <ul id="endscreen-lb-list" class="endscreen-lb-list" role="list"></ul>
+        </div>
+
+        <!-- Actions -->
+        <div class="endscreen-actions">
+          <button id="endscreen-rematch-btn" class="btn btn-primary btn-lg">Rematch?</button>
+          <button id="endscreen-lobby-btn"   class="btn btn-secondary btn-lg">Back to Lobby</button>
+        </div>
+
+      </div>
+    </div><!-- /#room-endscreen -->
+
+  </main>
+
+  <!-- ══ PLAYER ASSIGNMENT MODAL ══════════════════════════════════════════════ -->
+  <div
+    id="room-assign-modal"
+    class="rooms-modal-backdrop"
+    hidden
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="assign-modal-title"
+  >
+    <div class="rooms-modal rooms-assign-modal">
+      <h2 id="assign-modal-title" class="rooms-modal__title">Assign Players</h2>
+      <p class="assign-desc" id="assign-desc"></p>
+      <ul id="assign-player-list" class="assign-player-list" role="list"></ul>
+      <div id="assign-dual-option" class="assign-dual-option" hidden>
+        <label class="assign-dual-label">
+          <input type="checkbox" id="assign-dual-cb" />
+          Run 2 simultaneous matches (2 players each)
+        </label>
+      </div>
+      <div class="rooms-modal__actions">
+        <button id="assign-cancel-btn" class="btn btn-ghost">Cancel</button>
+        <button id="assign-confirm-btn" class="btn btn-primary">Start Game</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../js/utils/navigation.js"></script>
+  <script src="../js/utils/auth.js"></script>
+  <script src="../js/utils/room.js"></script>
+  <script src="../js/rooms/lobby.js"></script>
+  <script src="../js/rooms/ingame.js"></script>
+  <script src="../js/rooms/endscreen.js"></script>
+</body>
+</html>

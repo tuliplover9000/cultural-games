@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Create or join a multiplayer room to play cultural games with friends — free, no account required." />
+  <title>Game Rooms — Cultural Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/auth.css" />
+  <link rel="stylesheet" href="../css/rooms.css" />
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../index.html" class="nav-logo" aria-label="Cultural Games — Home">
+        <span class="nav-logo-icon" aria-hidden="true">🎲</span>
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="rooms.html"  class="nav-link nav-link--rooms active" aria-current="page">🎮 Rooms</a></li>
+        <li><a href="about.html"  class="nav-link">About</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="rooms-page">
+    <div class="container">
+
+      <!-- ══ LANDING STATE ══════════════════════════════════════════════════ -->
+      <div id="rooms-landing">
+
+        <header class="rooms-hero">
+          <p class="rooms-hero__label">Multiplayer</p>
+          <h1 class="rooms-hero__title">Game Rooms</h1>
+          <p class="rooms-hero__desc">
+            Play cultural games together — create a private room, share the code,
+            and let the games begin.
+          </p>
+        </header>
+
+        <div class="rooms-entry-cards">
+
+          <!-- Create card -->
+          <div class="rooms-entry-card">
+            <div class="rooms-entry-card__icon" aria-hidden="true">🎲</div>
+            <h2 class="rooms-entry-card__title">Create Room</h2>
+            <p class="rooms-entry-card__desc">
+              Start a new room and invite up to 3 friends with a short code.
+            </p>
+
+            <div class="rooms-entry-card__opts">
+              <span class="rooms-opt-label">Max players</span>
+              <div class="rooms-player-toggle" role="group" aria-label="Max players">
+                <button class="rooms-player-btn" data-n="2" aria-pressed="false">2</button>
+                <button class="rooms-player-btn active" data-n="4" aria-pressed="true">4</button>
+              </div>
+            </div>
+
+            <button id="rooms-create-btn" class="btn btn-primary btn-lg rooms-action-btn">
+              Create Room
+            </button>
+            <p id="rooms-create-error" class="rooms-error" hidden></p>
+          </div>
+
+          <!-- Join card -->
+          <div class="rooms-entry-card">
+            <div class="rooms-entry-card__icon" aria-hidden="true">🚪</div>
+            <h2 class="rooms-entry-card__title">Join Room</h2>
+            <p class="rooms-entry-card__desc">
+              Enter the 6-character code shared by your host.
+            </p>
+
+            <input
+              id="rooms-join-code"
+              class="rooms-code-input"
+              type="text"
+              maxlength="6"
+              placeholder="BIRD42"
+              autocomplete="off"
+              spellcheck="false"
+              aria-label="Room code"
+            />
+
+            <button id="rooms-join-btn" class="btn btn-secondary btn-lg rooms-action-btn">
+              Join Room
+            </button>
+            <p id="rooms-join-error" class="rooms-error" hidden></p>
+          </div>
+
+        </div><!-- /.rooms-entry-cards -->
+      </div><!-- /#rooms-landing -->
+
+      <!-- ══ LOADING STATE ══════════════════════════════════════════════════ -->
+      <div id="rooms-loading" hidden>
+        <div class="rooms-loading">
+          <div class="rooms-loading__spinner"></div>
+          <p id="rooms-loading-msg" class="rooms-loading__msg">Creating room…</p>
+        </div>
+      </div>
+
+    </div><!-- /.container -->
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <span class="footer-brand">Cultural Games</span>
+      <p class="footer-mission">Preserving cultural heritage through play — one game at a time.</p>
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links" role="list">
+          <li><a href="browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="rooms.html"  class="footer-link">Rooms</a></li>
+          <li><a href="about.html"  class="footer-link">About</a></li>
+        </ul>
+      </nav>
+      <div class="footer-divider"></div>
+      <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
+    </div>
+  </footer>
+
+  <!-- ══ GUEST NAME MODAL (Phase D) ════════════════════════════════════════ -->
+  <div
+    id="rooms-name-modal"
+    class="rooms-modal-backdrop"
+    hidden
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="rooms-name-title"
+  >
+    <div class="rooms-modal">
+      <h2 id="rooms-name-title" class="rooms-modal__title">What's your name?</h2>
+      <p class="rooms-modal__desc">
+        This is how other players will see you in the room. No account needed.
+      </p>
+      <input
+        id="rooms-name-input"
+        class="rooms-text-input"
+        type="text"
+        maxlength="20"
+        placeholder="e.g. Alex"
+        autocomplete="off"
+        autocorrect="off"
+        aria-label="Display name"
+      />
+      <p id="rooms-name-error" class="rooms-error" hidden>Please enter a name to continue.</p>
+      <div class="rooms-modal__actions">
+        <button id="rooms-name-cancel" class="btn btn-ghost">Cancel</button>
+        <button id="rooms-name-submit" class="btn btn-primary">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../js/utils/navigation.js"></script>
+  <script src="../js/utils/auth.js"></script>
+  <script src="../js/utils/room.js"></script>
+  <script src="../js/rooms/entry.js"></script>
+</body>
+</html>

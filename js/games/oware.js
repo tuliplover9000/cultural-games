@@ -30,6 +30,8 @@
   let state = {};
   let difficulty = 'hard'; // 'easy' | 'hard' — persists across games
   let mode = 'vs-ai';      // 'vs-ai' | 'vs-human' — persists across games
+  let vsRoom     = false;
+  let myRoomSeat = 0;
 
   function newGame() {
     state = {
@@ -257,6 +259,7 @@
       addLog(state.winner === PLAYER ? `Game over — ${gp1}`
            : state.winner === AI     ? `Game over — ${gp2}`
                                      : 'Game over — it\'s a draw!');
+      if (vsRoom) syncRoomState();
       render();
       return;
     }
@@ -268,6 +271,7 @@
       state.current = AI;
       if (mode === 'vs-human') {
         state.phase = 'idle';
+        if (vsRoom) syncRoomState();
         render();
       } else {
         state.phase = 'ai-thinking';
@@ -277,6 +281,7 @@
     } else {
       state.phase   = 'idle';
       state.current = PLAYER;
+      if (vsRoom) syncRoomState();
       render();
     }
   }
@@ -498,8 +503,9 @@
     el.querySelectorAll('.ow-pit--clickable').forEach(pitEl => {
       pitEl.addEventListener('click', () => {
         if (state.phase !== 'idle') return;
-        const validCurrent = state.current === PLAYER
-          || (mode === 'vs-human' && state.current === AI);
+        const validCurrent = vsRoom
+          ? state.current === myRoomSeat
+          : (state.current === PLAYER || (mode === 'vs-human' && state.current === AI));
         if (!validCurrent) return;
         const pit  = +pitEl.dataset.pit;
         const snap = { pits: [...state.pits], scores: [...state.scores], phase: state.phase };
@@ -528,9 +534,44 @@
     });
   }
 
+  function syncRoomState() {
+    if (!vsRoom || !window.RoomBridge) return;
+    RoomBridge.sendState({
+      pits:       state.pits.slice(),
+      scores:     state.scores.slice(),
+      phase:      state.phase,
+      current:    state.current,
+      winner:     state.winner,
+      log:        (state.log || []).slice(),
+      last_actor: 'room:' + myRoomSeat,
+    });
+    if (state.winner >= 0) RoomBridge.reportWin(state.winner === 2 ? 0 : state.winner);
+  }
+
+  function receiveRoomState(data) {
+    if (!data || data.last_actor === 'room:' + myRoomSeat) return;
+    state.pits    = data.pits    || state.pits;
+    state.scores  = data.scores  || state.scores;
+    state.phase   = data.phase   || state.phase;
+    state.current = data.current !== undefined ? data.current : state.current;
+    state.winner  = data.winner  !== undefined ? data.winner  : state.winner;
+    state.log     = data.log     || [];
+    render();
+  }
+
+  function initRoomMode() {
+    if (!window.RoomBridge || !RoomBridge.isActive()) return;
+    vsRoom      = true;
+    myRoomSeat  = RoomBridge.getSeat();
+    mode        = 'vs-human';
+    RoomBridge.onState(receiveRoomState);
+    if (myRoomSeat === 0) syncRoomState();
+  }
+
   /* ── Init ── */
   function init() {
     if (document.getElementById('game-container')) newGame();
+    initRoomMode();
   }
 
   if (document.readyState === 'loading') {

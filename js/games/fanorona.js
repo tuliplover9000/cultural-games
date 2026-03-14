@@ -61,6 +61,9 @@
 
   // ── State ────────────────────────────────────────────────────────────────
   var vsAI = true;
+  var vsRoom     = false;
+  var myRoomSeat = 0;
+  var myFanColor = 0; // BLACK or WHITE, set in initRoomMode
   var gameVersion = 0;
   var state;
 
@@ -529,6 +532,7 @@
     } else {
       setStatus(state.turn === BLACK ? 'Your turn — select a piece.' : 'Player 2 — select a piece.');
     }
+    if (vsRoom) syncRoomState();
   }
 
   // ── AI ───────────────────────────────────────────────────────────────────
@@ -694,6 +698,43 @@
     };
   }
 
+  function syncRoomState() {
+    if (!vsRoom || !window.RoomBridge) return;
+    RoomBridge.sendState({
+      board:    state.board.slice(),
+      turn:     state.turn,
+      phase:    state.phase,
+      winner:   state.winner,
+      last_actor: 'room:' + myRoomSeat,
+    });
+    if (state.winner !== null && state.winner !== undefined) {
+      RoomBridge.reportWin(state.winner === BLACK ? 0 : 1);
+    }
+  }
+
+  function receiveRoomState(data) {
+    if (!data || data.last_actor === 'room:' + myRoomSeat) return;
+    state.board    = data.board  || state.board;
+    state.turn     = data.turn   !== undefined ? data.turn   : state.turn;
+    state.phase    = data.phase  || state.phase;
+    state.winner   = data.winner !== undefined ? data.winner : state.winner;
+    state.selected = null;
+    state.capturing = null;
+    state.visitedThisTurn = [];
+    state.aiThinking = false;
+    render();
+  }
+
+  function initRoomMode() {
+    if (!window.RoomBridge || !RoomBridge.isActive()) return;
+    vsRoom      = true;
+    myRoomSeat  = RoomBridge.getSeat();
+    myFanColor  = myRoomSeat === 0 ? BLACK : WHITE;
+    vsAI        = false;
+    RoomBridge.onState(receiveRoomState);
+    if (myRoomSeat === 0) syncRoomState();
+  }
+
   function init() {
     cnv = document.getElementById('fn-canvas');
     if (!cnv) return;
@@ -707,11 +748,13 @@
     elAiToggle = document.getElementById('fn-ai-toggle');
 
     cnv.addEventListener('click', function (e) {
+      if (vsRoom && state.turn !== myFanColor) return;
       var xy = getCanvasXY(e);
       var i  = hitTest(xy.x, xy.y);
       if (i !== null) humanClick(i);
     });
     cnv.addEventListener('touchend', function (e) {
+      if (vsRoom && state.turn !== myFanColor) return;
       e.preventDefault();
       var xy = getCanvasXY(e);
       var i  = hitTest(xy.x, xy.y);
@@ -741,6 +784,7 @@
     resizeCanvas();
     updateScore();
     setStatus('Your turn — select a dark piece.');
+    initRoomMode();
   }
 
   if (document.readyState === 'loading') {

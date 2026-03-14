@@ -3484,16 +3484,19 @@
 .mj-wrap {
   --mj-red:         #c0392b;
   --mj-red-light:   #e74c3c;
-  --mj-gold:        #d4a017;
-  --mj-gold-light:  #f0c040;
+  --mj-gold:        #c8960c;
+  --mj-gold-light:  #f2c94c;
+  --mj-gold-dim:    #a07820;
   --mj-green:       #1a6b3a;
   --mj-green-mid:   #27ae60;
   --mj-ivory:       #fdf8ed;
   --mj-ivory-dark:  #e8dfc0;
-  --mj-felt:        #1a4a2a;
-  --mj-felt-dark:   #0f2d19;
-  --mj-tile-bg:     #fdf8ed;
-  --mj-tile-border: #c8a050;
+  --mj-felt:        #14602e;
+  --mj-felt-mid:    #1a7838;
+  --mj-felt-dark:   #0a2e16;
+  --mj-wood:        #2c1608;
+  --mj-wood-light:  #4a2c14;
+  --mj-tile-border: #b89040;
   --mj-char:        #c0392b;
   --mj-bamboo:      #1a6b3a;
   --mj-circle:      #1a3a6b;
@@ -3501,22 +3504,46 @@
   --mj-dragon-r:    #c0392b;
   --mj-dragon-g:    #1a6b3a;
   --mj-dragon-w:    #888;
-  --mj-shadow:      rgba(0,0,0,0.4);
 }
 
-/* ── Layout ── */
+/* ── Outer wrap — rich mahogany table frame ── */
 .mj-wrap {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  max-width: 900px;
+  gap: 0.6rem;
+  max-width: 920px;
   margin: 0 auto;
-  padding: 1rem;
-  background: var(--mj-felt-dark);
+  padding: 0.85rem;
+  /* Dark walnut/mahogany wood grain */
+  background:
+    repeating-linear-gradient(
+      92deg,
+      rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px,
+      transparent 1px, transparent 18px
+    ),
+    linear-gradient(175deg, #3a1e0a 0%, #2c1608 35%, #3d2010 65%, #2a1406 100%);
+  border: 3px solid #5a3010;
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 1px rgba(200,150,12,0.25),        /* gold inner rim */
+    0 12px 40px rgba(0,0,0,0.75),
+    inset 0 1px 0 rgba(255,220,100,0.1);
   color: var(--mj-ivory);
   font-family: inherit;
-  border-radius: 8px;
+  position: relative;
 }
+
+/* Gold inlay inner rim */
+.mj-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border-radius: 10px;
+  border: 1px solid rgba(200,150,12,0.18);
+  pointer-events: none;
+  z-index: 0;
+}
+.mj-wrap > * { position: relative; z-index: 1; }
 
 .mj-start-area {
   padding: 3rem 1rem;
@@ -3528,15 +3555,18 @@
   align-items: stretch;
 }
 
-/* ── Table center ── */
+/* ── Table center — deep casino felt with radial vignette ── */
 .mj-table-center {
   flex: 1;
   display: flex;
   align-items: stretch;
-  background: var(--mj-felt);
+  background:
+    radial-gradient(ellipse at 50% 50%, #1e7a40 0%, #14602e 55%, #0a3c1c 100%);
   border-radius: 8px;
   padding: 0.35rem;
   min-height: 200px;
+  border: 2px solid #0a3018;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.5), inset 0 0 30px rgba(0,0,0,0.25);
 }
 
 /* ── Wall ring — ring of face-down tiles around the discard square ── */
@@ -3574,7 +3604,11 @@
 .mj-wall-tile {
   width: 2.1rem;
   height: 1.5rem;
-  box-shadow: 1px 2px 4px rgba(0,0,0,0.55), inset 1px 1px 0 rgba(255,255,255,0.12);
+  box-shadow:
+    1px 2px 0 #071e0f,
+    2px 4px 0 rgba(0,0,0,0.3),
+    3px 6px 8px rgba(0,0,0,0.6),
+    inset 1px 1px 0 rgba(255,255,255,0.15);
   border-color: #0a3018;
   flex-shrink: 0;
 }
@@ -3629,7 +3663,7 @@
 }
 .mj-ds-left .mj-tile--sm { transform: rotate(90deg); }
 
-/* Centre info panel */
+/* Centre info panel — lacquered dark wood with gold inlay */
 .mj-ds-info {
   flex: 1;
   display: flex;
@@ -3639,9 +3673,14 @@
   gap: 4px;
   text-align: center;
   font-size: 0.75rem;
-  padding: 4px;
-  background: rgba(0,0,0,0.18);
-  border-radius: 4px;
+  padding: 6px 4px;
+  background:
+    linear-gradient(160deg, #2a1206 0%, #1a0a02 50%, #2a1206 100%);
+  border-radius: 5px;
+  border: 1px solid rgba(200,150,12,0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255,220,100,0.08),
+    0 2px 8px rgba(0,0,0,0.5);
   min-width: 60px;
 }
 
@@ -3675,8 +3714,11 @@
   flex-direction: column;
   gap: 0.25rem;
   padding: 0.4rem;
-  background: rgba(255,255,255,0.03);
+  background:
+    linear-gradient(180deg, rgba(60,30,10,0.85) 0%, rgba(30,12,4,0.9) 100%);
   border-radius: 6px;
+  border: 1px solid rgba(200,150,12,0.2);
+  box-shadow: inset 0 1px 0 rgba(255,220,100,0.06);
   min-width: 0;
 }
 
@@ -3701,15 +3743,17 @@
 .mj-opp-name {
   font-weight: 600;
   color: var(--mj-ivory);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
 }
 
 .mj-opp-wind {
   color: var(--mj-gold-light);
   font-size: 1rem;
+  text-shadow: 0 0 6px rgba(242,201,76,0.4);
 }
 
 .mj-opp-score {
-  color: #aaa;
+  color: #9a8060;
   font-size: 0.75rem;
 }
 
@@ -3718,16 +3762,20 @@
   margin-left: 2px;
 }
 
-/* ── Player area ── */
+/* ── Player area — premium felt shelf with gold inlay border ── */
 .mj-player-area {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 0.5rem;
-  background: var(--mj-felt);
+  background:
+    radial-gradient(ellipse at 50% 0%, #1e7a40 0%, #14602e 60%, #0d4a22 100%);
   border-radius: 8px;
   border-top: 2px solid var(--mj-gold);
+  border-left: 1px solid rgba(200,150,12,0.25);
+  border-right: 1px solid rgba(200,150,12,0.25);
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,220,100,0.08);
 }
 
 .mj-player-info {
@@ -3739,10 +3787,12 @@
 
 .mj-player-wind {
   color: var(--mj-gold-light);
+  text-shadow: 0 0 6px rgba(242,201,76,0.4);
+  font-size: 1rem;
 }
 
 .mj-player-score {
-  color: #ccc;
+  color: #9a8060;
 }
 
 /* ── Tile base — 3-D bevel, ivory face ── */
@@ -3978,10 +4028,11 @@
 .mj-meld {
   display: flex;
   gap: 2px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.25);
   border-radius: 4px;
   padding: 2px 4px;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(200,150,12,0.2);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
 }
 
 .mj-opp-hand {
@@ -4007,22 +4058,25 @@
   justify-content: center;
 }
 
-/* ── Buttons ── */
+/* ── Buttons — dark lacquer with gold border ── */
 .mj-btn {
   padding: 0.45rem 1rem;
   border-radius: 4px;
   font-weight: bold;
   cursor: pointer;
-  border: 2px solid var(--mj-gold);
-  background: var(--mj-felt);
+  border: 1.5px solid var(--mj-gold);
+  background: linear-gradient(180deg, #2e1a08 0%, #1c0e04 100%);
   color: var(--mj-gold-light);
-  transition: background 0.15s;
+  transition: background 0.15s, box-shadow 0.15s;
   font-size: 0.9rem;
   white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,220,100,0.1);
+  letter-spacing: 0.02em;
 }
 
 .mj-btn:hover:not(:disabled) {
-  background: var(--mj-green);
+  background: linear-gradient(180deg, #3a2210 0%, #26140a 100%);
+  box-shadow: 0 0 0 1px var(--mj-gold), 0 4px 10px rgba(0,0,0,0.5);
 }
 
 .mj-btn:focus-visible {
@@ -4057,21 +4111,25 @@
 
 /* ── Center info ── */
 .mj-wall-count {
-  font-size: 0.82rem;
-  color: #888;
+  font-size: 0.8rem;
+  color: #a08050;
+  letter-spacing: 0.03em;
 }
 
 .mj-round-info {
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: var(--mj-gold-light);
   font-weight: bold;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+  letter-spacing: 0.04em;
 }
 
 .mj-status {
   text-align: center;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   min-height: 1.4em;
   color: var(--mj-gold-light);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
 }
 
 /* ── Claim buttons ── */
@@ -4105,16 +4163,21 @@
   max-height: 100px;
   overflow-y: auto;
   font-size: 0.76rem;
-  color: #777;
+  color: #8a7050;
   list-style: none;
   padding: 0.3rem 0.5rem;
   margin: 0;
-  background: rgba(0,0,0,0.2);
+  background:
+    linear-gradient(180deg, rgba(20,8,2,0.7) 0%, rgba(10,4,1,0.85) 100%);
   border-radius: 4px;
+  border: 1px solid rgba(200,150,12,0.12);
+  scrollbar-width: thin;
+  scrollbar-color: #5a3010 transparent;
 }
 
 .mj-log .mj-log-latest {
   color: var(--mj-gold-light);
+  font-weight: 500;
 }
 
 /* ── Win overlay ── */
@@ -4133,14 +4196,19 @@
 }
 
 .mj-overlay-card {
-  background: var(--mj-ivory);
+  background:
+    linear-gradient(175deg, #fdf8ed 0%, #f2e9cc 60%, #ede0bc 100%);
   color: #222;
   border-radius: 12px;
   padding: 2rem;
   max-width: 500px;
   width: 92%;
   text-align: center;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.7);
+  box-shadow:
+    0 0 0 2px rgba(200,150,12,0.5),
+    0 0 0 5px rgba(44,22,8,0.8),
+    0 16px 50px rgba(0,0,0,0.8);
+  border: 1px solid #c8960c;
 }
 
 .mj-overlay-card h2 {
