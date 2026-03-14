@@ -64,7 +64,7 @@
     var dual      = room.dual_instance && instances.length >= 2;
 
     elEndscreen.hidden = false;
-    document.getElementById('room-ingame').hidden = true;
+    if (window.Ingame && window.Ingame.hideBoardFrame) window.Ingame.hideBoardFrame();
 
     if (dual) {
       elSingle.hidden = true;

@@ -355,6 +355,24 @@
 .room-panel--games   { overflow-y: auto; background: var(--color-bg); }
 .room-panel--chat    { background: var(--color-surface); }
 
+/* When a game is active, the center panel becomes the game viewport */
+.room-panel--games.is-playing {
+  overflow: hidden;
+  padding: 0;
+  gap: 0;
+}
+.room-panel--games.is-playing #center-panel-title {
+  padding: 8px var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  margin: 0;
+  flex-shrink: 0;
+  font-size: var(--text-base);
+}
+.room-panel--games.is-playing #ingame-boards {
+  flex: 1;
+  min-height: 0;
+}
+
 .room-panel__title {
   font-family: var(--font-display);
   font-size: var(--text-lg);

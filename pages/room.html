@@ -82,36 +82,43 @@
           </button>
         </aside>
 
-        <!-- CENTER: Game browser + suggestions -->
+        <!-- CENTER: Game browser + suggestions / active game -->
         <main class="room-panel room-panel--games" aria-label="Game selection">
-          <h2 class="room-panel__title">Pick a Game</h2>
+          <h2 class="room-panel__title" id="center-panel-title">Pick a Game</h2>
 
-          <div id="lobby-game-grid" class="lobby-game-grid" role="list" aria-label="Available games">
-            <!-- Populated by lobby.js (static, rendered once) -->
-          </div>
-
-          <div class="lobby-suggestions">
-            <div class="lobby-suggestions__header">
-              <h3 class="lobby-suggestions__title">Suggestions</h3>
-              <!-- Host-only mode toggle -->
-              <div id="lobby-mode-toggle" class="lobby-mode-toggle" hidden role="group" aria-label="Selection mode">
-                <button class="lobby-mode-btn active" data-mode="host-pick" aria-pressed="true">Host Pick</button>
-                <button class="lobby-mode-btn" data-mode="lottery" aria-pressed="false">Lottery</button>
-              </div>
+          <!-- Lobby state: game selector (hidden while a game is active) -->
+          <div id="lobby-games-section">
+            <div id="lobby-game-grid" class="lobby-game-grid" role="list" aria-label="Available games">
+              <!-- Populated by lobby.js -->
             </div>
 
-            <ul id="lobby-suggestions-list" class="lobby-suggestions-list" role="list" aria-label="Suggested games">
-              <!-- Populated by lobby.js -->
-            </ul>
-            <p id="lobby-suggestions-empty" class="lobby-suggestions-empty">
-              No suggestions yet — hit Suggest on a game above!
-            </p>
+            <div class="lobby-suggestions">
+              <div class="lobby-suggestions__header">
+                <h3 class="lobby-suggestions__title">Suggestions</h3>
+                <!-- Host-only mode toggle -->
+                <div id="lobby-mode-toggle" class="lobby-mode-toggle" hidden role="group" aria-label="Selection mode">
+                  <button class="lobby-mode-btn active" data-mode="host-pick" aria-pressed="true">Host Pick</button>
+                  <button class="lobby-mode-btn" data-mode="lottery" aria-pressed="false">Lottery</button>
+                </div>
+              </div>
 
-            <!-- Lottery mode button (host only, shown in lottery mode) -->
-            <button id="lobby-lottery-btn" class="btn btn-primary lobby-lottery-btn" hidden>
-              🎰 Lottery!
-            </button>
+              <ul id="lobby-suggestions-list" class="lobby-suggestions-list" role="list" aria-label="Suggested games">
+                <!-- Populated by lobby.js -->
+              </ul>
+              <p id="lobby-suggestions-empty" class="lobby-suggestions-empty">
+                No suggestions yet — hit Suggest on a game above!
+              </p>
+
+              <!-- Lottery mode button (host only, shown in lottery mode) -->
+              <button id="lobby-lottery-btn" class="btn btn-primary lobby-lottery-btn" hidden>
+                🎰 Lottery!
+              </button>
+            </div>
           </div>
+
+          <!-- Playing state: game iframe(s) fill the center panel -->
+          <div id="ingame-boards" class="ingame-boards" hidden></div>
+
         </main>
 
         <!-- RIGHT: Chat -->
@@ -162,8 +169,7 @@
         <button id="ingame-leave-btn" class="btn btn-ghost btn-sm" style="color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.2);">Leave</button>
       </div>
 
-      <!-- Game iframe(s) -->
-      <div class="ingame-boards" id="ingame-boards"></div>
+      <!-- (game iframes now render inline in the lobby center panel) -->
 
       <!-- Sliding chat sidebar -->
       <div class="ingame-chat-panel" id="ingame-chat-panel" aria-hidden="true">

@@ -8,57 +8,22 @@
 (function () {
   'use strict';
 
-  var elIngame      = document.getElementById('room-ingame');
-  var elStrip       = elIngame ? elIngame.querySelector('.ingame-strip') : null;
-  var elCode        = document.getElementById('ingame-code');
-  var elChips       = document.getElementById('ingame-player-chips');
-  var elBoards      = document.getElementById('ingame-boards');
-  var elChatToggle  = document.getElementById('ingame-chat-toggle');
-  var elChatPanel   = document.getElementById('ingame-chat-panel');
-  var elChatClose   = document.getElementById('ingame-chat-close');
-  var elChatList    = document.getElementById('ingame-chat-list');
-  var elChatEmpty   = document.getElementById('ingame-chat-empty');
-  var elChatForm    = document.getElementById('ingame-chat-form');
-  var elChatInput   = document.getElementById('ingame-chat-input');
-  var elLeaveBtn    = document.getElementById('ingame-leave-btn');
+  // #ingame-boards now lives inside the lobby center panel
+  var elBoards       = document.getElementById('ingame-boards');
+  var elGamesSection = document.getElementById('lobby-games-section');
+  var elCenterTitle  = document.getElementById('center-panel-title');
+  var elCenterPanel  = document.querySelector('.room-panel--games');
 
-  var lastChatLen  = 0;
   var _winHandled  = {};   // instanceId → true, prevents double-processing
 
-  // ── Helpers ────────────────────────────────────────────────────────────────
-  function esc(s) {
-    return String(s)
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  function fmtTime(ts) {
-    var d = new Date(ts);
-    return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
-  }
-
-  // ── Player chips ───────────────────────────────────────────────────────────
-  function renderChips(room) {
-    if (!elChips) return;
-    var wins   = room.player_wins  || {};
-    var names  = room.player_names || {};
-    var ids    = room.player_ids   || [];
-    var myPid  = Room.getPlayerId();
-    var maxW   = ids.reduce(function(m,p){ return Math.max(m, wins[p]||0); }, 0);
-    var showT  = maxW > 0;
-
-    elChips.innerHTML = ids.map(function(pid) {
-      var name = names[pid] || 'Player';
-      var w    = wins[pid]  || 0;
-      var top  = showT && w === maxW;
-      return '<div class="ingame-chip" role="listitem">' +
-        '<div class="ingame-chip__avatar" aria-hidden="true">' + esc(name[0].toUpperCase()) + '</div>' +
-        '<span class="ingame-chip__name">' + esc(name) + (pid === myPid ? ' ·' : '') + '</span>' +
-        '<span class="ingame-chip__wins">' + w + '</span>' +
-        (top ? '<span class="ingame-chip__trophy" aria-label="Leading">🏆</span>' : '') +
-      '</div>';
-    }).join('');
-  }
+  // ── Game name lookup ───────────────────────────────────────────────────────
+  var GAME_NAMES = {
+    'tien-len': 'Tiến Lên', 'mahjong': 'Hong Kong Mahjong',
+    'oware': 'Oware', 'o-an-quan': 'Ô Ăn Quan', 'fanorona': 'Fanorona',
+    'pallanguzhi': 'Pallanguzhi', 'patolli': 'Patolli', 'puluc': 'Puluc',
+    'bau-cua': 'Bầu Cua Tôm Cá',
+  };
+  function gameLabel(key) { return GAME_NAMES[key] || key; }
 
   // ── Build game URL ─────────────────────────────────────────────────────────
   function buildSrc(room, instanceId) {
@@ -93,34 +58,6 @@
     });
 
     return 'games/' + game + '.html?' + params.toString();
-  }
-
-  // ── Chat ───────────────────────────────────────────────────────────────────
-  function renderChat(messages) {
-    if (!elChatList) return;
-    if (!messages || !messages.length) {
-      if (elChatEmpty) elChatEmpty.hidden = false;
-      return;
-    }
-    if (elChatEmpty) elChatEmpty.hidden = true;
-
-    var myPid = Room.getPlayerId();
-    if (messages.length > lastChatLen) {
-      messages.slice(lastChatLen).forEach(function(m) {
-        var isOwn = m.pid === myPid;
-        var li = document.createElement('li');
-        li.className = 'lobby-chat-msg' + (isOwn ? ' lobby-chat-msg--own' : '');
-        li.innerHTML =
-          '<div class="lobby-chat-msg__header">' +
-            '<span class="lobby-chat-msg__name">' + esc(m.name || 'Player') + '</span>' +
-            '<span class="lobby-chat-msg__time">' + fmtTime(m.ts) + '</span>' +
-          '</div>' +
-          '<p class="lobby-chat-msg__text">' + esc(m.text) + '</p>';
-        elChatList.appendChild(li);
-      });
-      lastChatLen = messages.length;
-      elChatList.scrollTop = elChatList.scrollHeight;
-    }
   }
 
   // ── postMessage bridge ─────────────────────────────────────────────────────
@@ -188,19 +125,20 @@
     Room.endGame(instanceId, winnerPid);
   }
 
-  // ── Launch ─────────────────────────────────────────────────────────────────
+  // ── Launch — shows game inline in the lobby center panel ──────────────────
   function launch(room) {
-    if (!elIngame) return;
+    if (!elBoards) return;
 
-    elIngame.hidden = false;
-    document.getElementById('room-lobby').hidden = true;
+    // Swap center panel: hide game selector, show board frame
+    if (elGamesSection) elGamesSection.hidden = true;
+    if (elCenterTitle)  elCenterTitle.textContent = gameLabel(room.selected_game);
+    if (elCenterPanel)  elCenterPanel.classList.add('is-playing');
+    elBoards.hidden = false;
+
+    // Hide endscreen if it was showing
     document.getElementById('room-endscreen').hidden = true;
-    lastChatLen = 0; // reset so chat re-renders
 
-    if (elCode) elCode.textContent = room.code;
-    renderChips(room);
-
-    // Reset per-game state
+    // Reset per-game win tracking
     _winHandled = {};
 
     // Clear old frames
@@ -231,49 +169,16 @@
       fr.setAttribute('allow', 'autoplay');
       elBoards.appendChild(fr);
     }
-
-    // Render existing chat
-    if (room.chat_messages) renderChat(room.chat_messages);
   }
 
-  // ── Chat sidebar toggle ────────────────────────────────────────────────────
-  if (elChatToggle) {
-    elChatToggle.addEventListener('click', function() {
-      var open = elChatPanel.classList.toggle('is-open');
-      elBoards.classList.toggle('chat-open', open);
-      elChatToggle.setAttribute('aria-pressed', String(open));
-      elChatPanel.setAttribute('aria-hidden', String(!open));
-      if (open) elChatInput && elChatInput.focus();
-    });
-  }
-  if (elChatClose) {
-    elChatClose.addEventListener('click', function() {
-      elChatPanel.classList.remove('is-open');
-      elBoards.classList.remove('chat-open');
-      elChatToggle && elChatToggle.setAttribute('aria-pressed', 'false');
-      elChatPanel.setAttribute('aria-hidden', 'true');
-    });
-  }
-
-  // In-game chat form
-  if (elChatForm) {
-    elChatForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      var text = elChatInput.value.trim();
-      if (!text) return;
-      elChatInput.value = '';
-      Room.sendChatMessage(text);
-    });
-  }
-
-  // Leave from in-game
-  if (elLeaveBtn) {
-    elLeaveBtn.addEventListener('click', function() {
-      if (!confirm('Leave this room?')) return;
-      Room.leaveRoom().then(function() {
-        window.location.href = 'rooms.html';
-      });
-    });
+  // ── hideBoardFrame — restore game selector in center panel ─────────────────
+  function hideBoardFrame() {
+    if (!elBoards) return;
+    elBoards.hidden = true;
+    elBoards.innerHTML = '';
+    if (elGamesSection) elGamesSection.hidden = false;
+    if (elCenterTitle)  elCenterTitle.textContent = 'Pick a Game';
+    if (elCenterPanel)  elCenterPanel.classList.remove('is-playing');
   }
 
   // ── Sync board state to existing iframes (called on Supabase game updates) ──
@@ -285,15 +190,13 @@
         frames[idx].contentWindow.postMessage({ type: 'room-state', data: inst.board_state }, '*');
       }
     });
-    renderChips(room);
   }
 
   // ── Expose ─────────────────────────────────────────────────────────────────
   window.Ingame = {
     launch:         launch,
-    renderChat:     renderChat,
+    hideBoardFrame: hideBoardFrame,
     syncBoardState: syncBoardState,
-    renderChips:    renderChips,
   };
 
 }());

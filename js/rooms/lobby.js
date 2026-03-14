@@ -380,8 +380,9 @@
     elLoading.hidden   = true;
     elError.hidden     = true;
     elLobby.hidden     = false;
-    document.getElementById('room-ingame').hidden    = true;
     document.getElementById('room-endscreen').hidden = true;
+    // Restore center panel to game-selector view
+    if (window.Ingame && window.Ingame.hideBoardFrame) window.Ingame.hideBoardFrame();
   }
 
   // ── Initialise ─────────────────────────────────────────────────────────────
@@ -411,25 +412,19 @@
       },
       onGameUpdate: function(room) {
         elAssignModal.hidden = true;
-        var ingameEl = document.getElementById('room-ingame');
-        if (ingameEl && !ingameEl.hidden) {
-          // Already in-game — just push board state to iframes
+        var boardsEl = document.getElementById('ingame-boards');
+        if (boardsEl && !boardsEl.hidden) {
+          // Already showing game — just push latest board state to iframes
           if (window.Ingame && window.Ingame.syncBoardState) window.Ingame.syncBoardState(room);
         } else {
-          elLobby.hidden = true;
           if (window.Ingame) window.Ingame.launch(room);
         }
       },
       onEndscreen: function(room) {
-        document.getElementById('room-ingame').hidden = true;
         if (window.Endscreen) window.Endscreen.show(room);
       },
       onChatUpdate: function(messages) {
         renderChat(messages);
-        // Also update in-game chat if visible
-        if (window.Ingame && window.Ingame.renderChat) {
-          window.Ingame.renderChat(messages);
-        }
       },
       onError: function(msg) {
         showError(msg);
