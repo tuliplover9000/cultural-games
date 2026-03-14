@@ -355,6 +355,9 @@
 .room-panel--games   { overflow-y: auto; background: var(--color-bg); }
 .room-panel--chat    { background: var(--color-surface); }
 
+/* ingame-boards uses display:flex which overrides the UA [hidden] rule — be explicit */
+.ingame-boards[hidden] { display: none; }
+
 /* When a game is active, the center panel becomes the game viewport */
 .room-panel--games.is-playing {
   overflow: hidden;
