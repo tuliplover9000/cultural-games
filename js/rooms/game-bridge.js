@@ -22,6 +22,9 @@
     return;
   }
 
+  // Hide site chrome (nav, back link, footer) — only the game should show.
+  document.documentElement.classList.add('room-mode');
+
   var seat     = parseInt(params.get('seat') || '-1', 10);
   var role     = params.get('role')     || 'player';
   var instance = params.get('instance') || '0';

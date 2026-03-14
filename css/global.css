@@ -250,3 +250,21 @@ main {
   background-color: var(--color-accent-gold);
   color: var(--color-primary);
 }
+
+/* =============================================================================
+   ROOM MODE — strip site chrome when a game runs inside a room iframe
+   game-bridge.js adds .room-mode to <html> when ?roomId= is present.
+============================================================================= */
+.room-mode .site-nav,
+.room-mode .game-nav-bar,
+.room-mode .site-footer,
+.room-mode #mp-panel,
+.room-mode .mp-panel {
+  display: none !important;
+}
+.room-mode body {
+  background: var(--color-bg);
+}
+.room-mode .game-page {
+  padding-top: var(--space-4);
+}
