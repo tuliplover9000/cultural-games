@@ -15,6 +15,7 @@
   background-color: var(--color-primary);
   border-bottom: 3px solid var(--color-accent-gold);
   box-shadow: var(--shadow-md);
+  overflow: visible; /* allow mobile dropdown to extend below nav height */
 }
 
 .nav-inner {
@@ -163,25 +164,31 @@
 }
 
 /* ── Mobile Nav ── */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .nav-hamburger {
     display: flex;
+    /* Ensure the button is comfortably tappable */
+    min-width: 44px;
+    min-height: 44px;
   }
 
   .nav-links {
-    /* Hidden by default on mobile; shown when .nav-links--open is added by JS */
+    /* Hidden by default; shown when .nav-links--open is added by JS */
     display: none;
     flex-direction: column;
     align-items: stretch;
+    /* Override desktop absolute-centering */
     position: absolute;
     top: var(--nav-height);
     left: 0;
     right: 0;
+    transform: none;           /* reset translateX(-50%) from desktop */
+    z-index: 200;              /* above all page content */
     background-color: var(--color-primary);
-    padding: var(--space-1) var(--space-2) var(--space-2);
+    padding: var(--space-1) var(--space-2) var(--space-3);
     border-bottom: 3px solid var(--color-accent-gold);
     box-shadow: var(--shadow-lg);
-    gap: 2px;
+    gap: 4px;
   }
 
   .nav-links.nav-links--open {
@@ -189,7 +196,7 @@
   }
 
   .nav-link {
-    padding: var(--space-1) var(--space-2);
+    padding: 12px var(--space-3);
     font-size: var(--text-base);
     border-radius: var(--radius-md);
   }
@@ -197,6 +204,11 @@
   .nav-link--cta {
     text-align: center;
     margin-top: 4px;
+  }
+
+  /* Rooms pill needs a bit more padding in the dropdown */
+  .nav-link--rooms {
+    justify-content: center;
   }
 }
 
