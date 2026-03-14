@@ -92,7 +92,7 @@
       instance: instanceId,
     });
 
-    return '../games/' + game + '.html?' + params.toString();
+    return 'games/' + game + '.html?' + params.toString();
   }
 
   // ── Chat ───────────────────────────────────────────────────────────────────
