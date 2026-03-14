@@ -586,6 +586,12 @@
     mode       = 'vs-human';
     RoomBridge.onState(receiveRoomState);
     if (myRoomSeat === 0) syncRoomState();
+    // Hide non-room UI
+    if (elNewGameBtn) elNewGameBtn.style.display = 'none';
+    var btnAI    = document.getElementById('pt-mode-ai');
+    var btnHuman = document.getElementById('pt-mode-human');
+    if (btnAI)    btnAI.style.display    = 'none';
+    if (btnHuman) btnHuman.style.display = 'none';
   }
 
   // ── Init ──────────────────────────────────────────────────────────────────

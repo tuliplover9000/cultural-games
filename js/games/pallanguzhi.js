@@ -225,14 +225,16 @@
     var skipBtn = (state.phase === 'sowing')
       ? '<button class="pg-btn pg-btn--skip" id="pg-skip">Skip</button>' : '';
     var controls = '<div class="pg-actions">'
-      + '<div class="pg-mode">'
-      + '<span class="pg-mode-label">Mode:</span>'
-      + '<button class="pg-diff-btn' + (mode === 'vs-ai'    ? ' active' : '') + '" id="pg-mode-ai">vs AI</button>'
-      + '<button class="pg-diff-btn' + (mode === 'vs-human' ? ' active' : '') + '" id="pg-mode-human">vs Player</button>'
-      + '</div>'
+      + (!vsRoom
+        ? '<div class="pg-mode">'
+          + '<span class="pg-mode-label">Mode:</span>'
+          + '<button class="pg-diff-btn' + (mode === 'vs-ai'    ? ' active' : '') + '" id="pg-mode-ai">vs AI</button>'
+          + '<button class="pg-diff-btn' + (mode === 'vs-human' ? ' active' : '') + '" id="pg-mode-human">vs Player</button>'
+          + '</div>'
+        : '')
       + '<div class="pg-btn-row">'
       + skipBtn
-      + '<button class="pg-btn" id="pg-new">New Game</button>'
+      + (!vsRoom ? '<button class="pg-btn" id="pg-new">New Game</button>' : '')
       + '</div>'
       + '</div>';
 

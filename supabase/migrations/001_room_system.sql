@@ -39,6 +39,9 @@ ALTER TABLE rooms
   -- Game instance state(s): [{instance_id, player_assignments, board_state, status, winner_pid}]
   ADD COLUMN IF NOT EXISTS game_instances jsonb        DEFAULT '[]'::jsonb,
 
+  -- Game mode selected by host: 'normal' | '1v1'
+  ADD COLUMN IF NOT EXISTS game_mode      text,
+
   -- Chat log (capped at 200 entries): [{pid, name, text, ts}]
   ADD COLUMN IF NOT EXISTS chat_messages  jsonb        DEFAULT '[]'::jsonb,
 

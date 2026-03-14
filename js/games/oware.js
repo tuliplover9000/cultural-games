@@ -349,11 +349,12 @@
     const snap    = { pits: [...state.pits], scores: [...state.scores], phase: state.phase };
     const vsHuman = mode === 'vs-human';
 
-    // Clickable pits
-    const botIdle  = state.phase === 'idle' && state.current === PLAYER;
-    const topIdle  = vsHuman && state.phase === 'idle' && state.current === AI;
-    const botMoves = botIdle ? validMoves(snap, PLAYER) : [];
-    const topMoves = topIdle ? validMoves(snap, AI)     : [];
+    // Clickable pits — in room mode only highlight the LOCAL player's pits on their turn
+    const myTurn   = vsRoom ? state.current === myRoomSeat : true;
+    const botIdle  = state.phase === 'idle' && state.current === PLAYER && (!vsRoom || myRoomSeat === PLAYER);
+    const topIdle  = vsHuman && state.phase === 'idle' && state.current === AI && (!vsRoom || myRoomSeat === AI);
+    const botMoves = (botIdle && myTurn) ? validMoves(snap, PLAYER) : [];
+    const topMoves = (topIdle && myTurn) ? validMoves(snap, AI)     : [];
     const aiSel    = state.phase === 'ai-selecting' ? state.aiSelectedPit : -1;
 
     // Status message
@@ -386,12 +387,20 @@
       .map(p => pitHTML(p, botMoves.includes(p), p === state.lastSown, false))
       .join('');
 
-    // Difficulty row (hidden in vs-human mode)
-    const diffHTML = vsHuman ? '' : `
+    // Difficulty row (hidden in vs-human/room mode)
+    const diffHTML = (vsHuman || vsRoom) ? '' : `
     <div class="ow-difficulty">
       <span class="ow-difficulty__label">Difficulty:</span>
       <button class="ow-diff-btn${difficulty === 'easy' ? ' active' : ''}" id="ow-easy">Easy</button>
       <button class="ow-diff-btn${difficulty === 'hard' ? ' active' : ''}" id="ow-hard">Hard</button>
+    </div>`;
+
+    // Mode selector hidden in room mode
+    const modeHTML = vsRoom ? '' : `
+    <div class="ow-mode">
+      <span class="ow-difficulty__label">Mode:</span>
+      <button class="ow-diff-btn${mode === 'vs-ai'    ? ' active' : ''}" id="ow-mode-ai">vs AI</button>
+      <button class="ow-diff-btn${mode === 'vs-human' ? ' active' : ''}" id="ow-mode-human">vs Player</button>
     </div>`;
 
     return `<div class="ow-game">
@@ -417,12 +426,8 @@
   </div>
   ${buildLog()}
   <div class="ow-actions">
-    <div class="ow-mode">
-      <span class="ow-difficulty__label">Mode:</span>
-      <button class="ow-diff-btn${mode === 'vs-ai'    ? ' active' : ''}" id="ow-mode-ai">vs AI</button>
-      <button class="ow-diff-btn${mode === 'vs-human' ? ' active' : ''}" id="ow-mode-human">vs Player</button>
-    </div>${diffHTML}
-    <button class="ow-btn" id="ow-new">New Game</button>
+    ${modeHTML}${diffHTML}
+    ${!vsRoom ? `<button class="ow-btn" id="ow-new">New Game</button>` : ''}
   </div>
 </div>`;
   }

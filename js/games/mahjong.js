@@ -44,6 +44,9 @@
   let mySeat      = 0;
   let aiSeatsRoom = []; // AI-controlled seats in room mode
 
+  // Track which discard tile uid triggered the last claim window on host side
+  let _lastClaimWindowDiscardUid = null;
+
   /* ── Stale-timeout guard ────────────────────────────────────────────────── */
 
   let gameVersion = 0;
@@ -585,8 +588,9 @@
     const active   = state.turnIdx === ps;
     const dot      = active ? ` <span class="mj-active-dot" aria-hidden="true">●</span>` : '';
 
-    const isDiscard = phase === 'player-discard';
-    const isDraw    = phase === 'player-draw';
+    const isMyTurn  = state.turnIdx === ps;
+    const isDiscard = phase === 'player-discard' && isMyTurn;
+    const isDraw    = phase === 'player-draw'    && isMyTurn;
 
     const handTiles = hand.map(t => tileHTML(t, {
       selectable:  isDiscard,
@@ -610,10 +614,10 @@
     <span class="mj-player-score">${score}pt${dot}</span>
   </div>
   <div class="mj-controls" id="mj-controls">
-    <button id="mj-draw-btn"     class="mj-btn"             ${drawDis    ? 'disabled' : ''}>Draw</button>
+    <button id="mj-draw-btn" class="mj-btn" ${drawDis ? 'disabled' : ''}>Draw</button>
     <button id="mj-discard-btn"  class="mj-btn"             ${discardDis ? 'disabled' : ''}>Discard</button>
     <button id="mj-win-btn"      class="mj-btn mj-btn--win" ${winDis     ? 'disabled' : ''}>Win (糊)</button>
-    <button id="mj-new-game-btn" class="mj-btn mj-btn--secondary">New Game</button>
+    ${!vsOnline ? `<button id="mj-new-game-btn" class="mj-btn mj-btn--secondary">New Game</button>` : ''}
   </div>
 </div>`;
   }
@@ -629,7 +633,7 @@
   function buildWinOverlay() {
     if (state.phase !== 'round-over' && state.phase !== 'game-over') return '';
     const nextBtn = state.phase === 'round-over'
-      ? `<button class="mj-btn" id="mj-next-round-btn">Next Round</button>` : '';
+      ? `<button class="mj-btn" id="mj-next-round-btn"${vsOnline && !isHost ? ' disabled title="Waiting for host…"' : ''}>Next Round</button>` : '';
     return `<div class="mj-overlay" id="mj-overlay">
   <div class="mj-overlay-card">
     ${state.overlayContent}
@@ -685,19 +689,31 @@
     });
 
     el.querySelector('#mj-new-game-btn')?.addEventListener('click', newGame);
-    el.querySelector('#mj-new-game-overlay-btn')?.addEventListener('click', newGame);
-    el.querySelector('#mj-next-round-btn')?.addEventListener('click', startNextRound);
+    el.querySelector('#mj-new-game-overlay-btn')?.addEventListener('click', () => {
+      if (vsOnline && !isHost) return; // only host can start new game
+      newGame();
+      if (vsOnline) syncOnlineState();
+    });
+    el.querySelector('#mj-next-round-btn')?.addEventListener('click', () => {
+      if (vsOnline && !isHost) return; // only host advances rounds
+      startNextRound();
+    });
 
     // Draw
     el.querySelector('#mj-draw-btn')?.addEventListener('click', () => {
       if (state.phase !== 'player-draw' || state.animating) return;
+      if (state.turnIdx !== myPS()) return; // not my turn
       const tile = drawTile(myPS());
-      if (tile) startPlayerDiscard();
+      if (tile) {
+        startPlayerDiscard();
+        if (vsOnline) syncOnlineState(); // sync the drawn tile to others
+      }
     });
 
     // Discard button
     el.querySelector('#mj-discard-btn')?.addEventListener('click', () => {
       if (state.phase !== 'player-discard') return;
+      if (state.turnIdx !== myPS()) return; // not my turn
       if (state.selectedTileUid === null) { setStatus('Select a tile first.'); render(); return; }
       discardTile(myPS(), state.selectedTileUid);
     });
@@ -706,6 +722,7 @@
     el.querySelector('#mj-win-btn')?.addEventListener('click', () => {
       const ps = myPS();
       if (state.phase !== 'player-discard') return;
+      if (state.turnIdx !== ps) return; // not my turn
       if (!isWinningHand(state.hands[ps], state.melds[ps])) return;
       declareWin(ps, 'self-draw');
     });
@@ -717,6 +734,7 @@
       handEl.addEventListener('click', e => {
         const tileEl = e.target.closest('.mj-tile');
         if (!tileEl || state.phase !== 'player-discard') return;
+        if (state.turnIdx !== myPS()) return; // not my turn
         const uid = parseInt(tileEl.dataset.uid);
         state.selectedTileUid = (state.selectedTileUid === uid) ? null : uid;
         render();
@@ -861,7 +879,7 @@
       if (!hasMoved) {
         // Tap — treat as tile selection click
         clearDragVisuals();
-        if (state.phase === 'player-discard') {
+        if (state.phase === 'player-discard' && state.turnIdx === myPS()) {
           state.selectedTileUid = (state.selectedTileUid === srcUid) ? null : srcUid;
           render();
         }
@@ -923,9 +941,17 @@
     if (state.dealer === myPS()) {
       state.turnIdx = myPS();
       startPlayerDiscard();
+      if (vsOnline) syncOnlineState(); // share full deal (hands + wall) with others
+    } else if (vsOnline && !isAISeat(state.dealer)) {
+      // Remote human dealer — host deals, signals them to discard
+      state.turnIdx = state.dealer;
+      state.phase   = 'player-discard';
+      render();
+      syncOnlineState();
     } else {
       state.turnIdx = state.dealer;
       startAiTurn(state.dealer, true); // skip draw — dealer already has 14
+      if (vsOnline) syncOnlineState();
     }
   }
 
@@ -972,8 +998,12 @@
     addLog(`${seatName(seatIdx)} discards ${tile.id}.`);
     render();
 
-    if (vsOnline && seatIdx === myPS()) syncOnlineState();
+    if (vsOnline) {
+      syncOnlineState(); // always sync in room mode (covers AI discards by host too)
+      if (!isHost) return; // only host runs claim window
+    }
 
+    _lastClaimWindowDiscardUid = state.lastDiscard ? state.lastDiscard.tile.uid : null;
     openClaimWindow(seatIdx);
   }
 
@@ -1001,14 +1031,18 @@
       recordClaimDecision(ps, 'pass');
     }
 
-    // AI decisions — slight stagger so they don't all fire simultaneously
+    // Decisions for all other seats — slight stagger so they don't all fire simultaneously
     [1, 2, 3].forEach(s => {
-      const absSeat = vsOnline ? s : s; // in solo, abs seat === s
+      const absSeat = s;
       if (absSeat !== discardingSeat) {
         setTimeout(() => {
           if (gameVersion !== ver) return;
-          if (!isAISeat(absSeat) && absSeat !== ps) return;
-          if (absSeat === ps) return; // human already handled
+          if (absSeat === ps) return; // human already handled above
+          if (!isAISeat(absSeat)) {
+            // In room mode, auto-pass remote human seats (claim sync not yet supported)
+            if (vsOnline) { recordClaimDecision(absSeat, 'pass'); return; }
+            return; // solo without AI: shouldn't reach here
+          }
           const action = aiClaimDecision(absSeat, tile, discardingSeat);
           recordClaimDecision(absSeat, action);
         }, 60 * s);
@@ -1055,6 +1089,18 @@
       state.phase = 'player-draw';
       setStatus('Your turn — draw a tile.');
       render();
+    } else if (vsOnline && !isAISeat(nextSeat)) {
+      // Remote human's turn — host draws their tile, then signals them to discard
+      const tile = drawTile(nextSeat);
+      if (!tile) return; // wall exhausted
+      if (isWinningHand(state.hands[nextSeat], state.melds[nextSeat])) {
+        declareWin(nextSeat, 'self-draw');
+        if (vsOnline) syncOnlineState();
+        return;
+      }
+      state.phase = 'player-discard';
+      render();
+      syncOnlineState(); // guest sees their new tile and can discard
     } else {
       startAiTurn(nextSeat, false);
     }
@@ -1089,8 +1135,15 @@
         declareWin(claimingSeat, 'self-draw');
         return;
       }
-      if (claimingSeat === myPS()) startPlayerDiscard();
-      else startAiDiscard(claimingSeat);
+      if (claimingSeat === myPS()) {
+        startPlayerDiscard();
+      } else if (vsOnline && !isAISeat(claimingSeat)) {
+        state.phase = 'player-discard';
+        render();
+        syncOnlineState();
+      } else {
+        startAiDiscard(claimingSeat);
+      }
       return;
     }
 
@@ -1106,8 +1159,16 @@
     }
 
     render();
-    if (claimingSeat === myPS()) startPlayerDiscard();
-    else startAiDiscard(claimingSeat);
+    if (claimingSeat === myPS()) {
+      startPlayerDiscard();
+    } else if (vsOnline && !isAISeat(claimingSeat)) {
+      // Remote human claimed — signal them to discard
+      state.phase = 'player-discard';
+      render();
+      syncOnlineState();
+    } else {
+      startAiDiscard(claimingSeat);
+    }
   }
 
   function declareWin(winningSeat, winType) {
@@ -1146,6 +1207,7 @@
 <p style="font-size:1.1rem"><strong>${fan} fan</strong> &rarr; <strong>${payout} points</strong></p>`;
 
     render();
+    if (vsOnline) syncOnlineState();
   }
 
   function startNextRound() {
@@ -1164,7 +1226,7 @@
     }
 
     state.turnIdx = state.dealer;
-    dealRound();
+    dealRound(); // dealRound syncs if vsOnline
   }
 
   function gameOver() {
@@ -1312,6 +1374,8 @@
       log:           state.log,
       overlayContent:state.overlayContent,
       isDraw:        state.isDraw,
+      wall:          state.wall,
+      deadWall:      state.deadWall,
     };
     if (window.RoomBridge && RoomBridge.isActive()) {
       blob.last_actor = 'room:' + RoomBridge.getSeat();
@@ -1351,6 +1415,8 @@
     state.log            = data.log;
     state.overlayContent = data.overlayContent;
     state.isDraw         = data.isDraw;
+    if (data.wall)     state.wall     = data.wall;
+    if (data.deadWall) state.deadWall = data.deadWall;
     state.claimWindow    = false;
     state.selectedTileUid = null;
 
@@ -1358,15 +1424,27 @@
 
     if (state.phase === 'round-over' || state.phase === 'game-over') return;
 
-    // Host triggers AI turns in room mode
-    if (isHost && isAISeat(state.turnIdx)) {
-      if (state.phase === 'player-draw') {
-        startAiTurn(state.turnIdx);
-        return;
+    // Host triggers AI turns, OR opens claim window after a remote human discards
+    if (isHost) {
+      // Remote human discarded → host opens claim window
+      if (state.lastDiscard && state.lastDiscard.tile.uid !== _lastClaimWindowDiscardUid) {
+        const fromSeat = state.lastDiscard.fromSeat;
+        if (fromSeat !== myPS() && !isAISeat(fromSeat) && state.phase === 'player-discard') {
+          _lastClaimWindowDiscardUid = state.lastDiscard.tile.uid;
+          openClaimWindow(fromSeat);
+          return;
+        }
       }
-      if (state.phase === 'player-discard') {
-        startAiDiscard(state.turnIdx);
-        return;
+      // AI turn
+      if (isAISeat(state.turnIdx)) {
+        if (state.phase === 'player-draw') {
+          startAiTurn(state.turnIdx);
+          return;
+        }
+        if (state.phase === 'player-discard') {
+          startAiDiscard(state.turnIdx);
+          return;
+        }
       }
     }
 
@@ -1377,16 +1455,6 @@
         render();
       } else if (state.phase === 'player-discard') {
         startPlayerDiscard();
-      }
-    }
-
-    // Check if opponent discarded and human can claim
-    if (state.lastDiscard && state.lastDiscard.fromSeat !== mySeat) {
-      const claims = getValidClaims(mySeat, state.lastDiscard.tile, state.lastDiscard.fromSeat);
-      if (claims.length > 0) {
-        state.claimWindow = true;
-        setStatus('Claim this tile?');
-        render();
       }
     }
   }
@@ -1404,8 +1472,7 @@
       if (isHost) {
         state.dealer  = 0;
         state.turnIdx = 0;
-        dealRound();
-        syncOnlineState();
+        dealRound(); // dealRound calls syncOnlineState internally in room mode
       }
       return;
     }

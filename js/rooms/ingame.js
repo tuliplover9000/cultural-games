@@ -10,6 +10,7 @@
 
   // #ingame-boards now lives inside the lobby center panel
   var elBoards       = document.getElementById('ingame-boards');
+  var elQuitBtn      = document.getElementById('ingame-quit-btn');
   var elGamesSection = document.getElementById('lobby-games-section');
   var elCenterTitle  = document.getElementById('center-panel-title');
   var elCenterPanel  = document.querySelector('.room-panel--games');
@@ -157,6 +158,19 @@
     if (elCenterPanel)  elCenterPanel.classList.add('is-playing');
     elBoards.hidden = false;
 
+    // Show "← Game Selection" button in topbar for host only
+    if (elQuitBtn) {
+      if (Room.amHost()) {
+        elQuitBtn.hidden = false;
+        elQuitBtn.onclick = function () {
+          if (!confirm('End the game and return everyone to the lobby?')) return;
+          Room.backToLobby();
+        };
+      } else {
+        elQuitBtn.hidden = true;
+      }
+    }
+
     // Hide endscreen if it was showing
     document.getElementById('room-endscreen').hidden = true;
 
@@ -198,6 +212,7 @@
     if (!elBoards) return;
     elBoards.hidden = true;
     elBoards.innerHTML = '';
+    if (elQuitBtn) elQuitBtn.hidden = true;
     if (elGamesSection) elGamesSection.hidden = false;
     if (elCenterTitle)  elCenterTitle.textContent = 'Pick a Game';
     if (elCenterPanel)  elCenterPanel.classList.remove('is-playing');

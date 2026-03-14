@@ -278,8 +278,8 @@
       }
       if (vsRoom && window.RoomBridge) {
         RoomBridge.sendState(Object.assign({}, state, { last_actor: 'room:' + myRoomSeat }));
-        var winner = state.board[Q1] > state.board[Q2] ? 0 : state.board[Q2] > state.board[Q1] ? 1 : 0;
-        RoomBridge.reportWin(winner);
+        var winner = state.board[Q1] > state.board[Q2] ? 0 : state.board[Q2] > state.board[Q1] ? 1 : -1;
+        if (winner >= 0) RoomBridge.reportWin(winner);
       }
       refresh();
       return;
@@ -293,6 +293,11 @@
       const other = state.currentPlayer === 1 ? 2 : 1;
       if (!hasMoves(other)) {
         state.phase = 'gameover';
+        if (vsRoom && window.RoomBridge) {
+          RoomBridge.sendState(Object.assign({}, state, { last_actor: 'room:' + myRoomSeat }));
+          var noMoveWinner = state.board[Q1] > state.board[Q2] ? 0 : state.board[Q2] > state.board[Q1] ? 1 : -1;
+          if (noMoveWinner >= 0) RoomBridge.reportWin(noMoveWinner);
+        }
         refresh();
         return;
       }

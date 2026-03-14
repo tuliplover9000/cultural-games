@@ -30,7 +30,6 @@
   var elStatusText      = document.getElementById('lobby-status-text');
   var elLeaveBtn        = document.getElementById('lobby-leave-btn');
   var elPlayerList      = document.getElementById('lobby-player-list');
-  var elReadyBtn        = document.getElementById('lobby-ready-btn');
   var elGameGrid        = document.getElementById('lobby-game-grid');
   var elModeToggle      = document.getElementById('lobby-mode-toggle');
   var elSuggList        = document.getElementById('lobby-suggestions-list');
@@ -56,7 +55,6 @@
 
   // ── State ──────────────────────────────────────────────────────────────────
   var myPid        = null;
-  var isReady      = false;
   var lotteryRunning = false;
 
   // ── Helpers ────────────────────────────────────────────────────────────────
@@ -85,7 +83,6 @@
   function renderPlayerList(room) {
     var wins  = room.player_wins  || {};
     var names = room.player_names || {};
-    var ready = room.player_ready || {};
     var ids   = room.player_ids   || [];
     var maxW  = ids.reduce(function(m,p){ return Math.max(m, wins[p]||0); }, 0);
     var showTrophy = maxW > 0;
@@ -100,7 +97,6 @@
       var w     = wins[pid] || 0;
       var isMe  = pid === myPid;
       var isTop = showTrophy && w === maxW;
-      var rdy   = ready[pid];
       return '<li class="lobby-player' + (isMe ? ' lobby-player--me' : '') + '" data-pid="' + esc(pid) + '">' +
         '<div class="lobby-player__avatar" aria-hidden="true">' + name[0].toUpperCase() + '</div>' +
         '<div class="lobby-player__info">' +
@@ -108,25 +104,13 @@
           '<span class="lobby-player__wins">' + w + ' win' + (w !== 1 ? 's' : '') + '</span>' +
         '</div>' +
         (isTop ? '<span class="lobby-player__trophy" title="Leading!">🏆</span>' : '') +
-        '<span class="lobby-player__ready ' + (rdy ? 'ready--yes' : 'ready--no') + '" aria-label="' + (rdy ? 'Ready' : 'Not ready') + '">' + (rdy ? '✓' : '·') + '</span>' +
       '</li>';
     }).join('');
 
-    // Update ready button state
-    var myReady = ready[myPid];
-    elReadyBtn.textContent = myReady ? 'Not Ready' : 'Ready';
-    elReadyBtn.classList.toggle('is-ready', !!myReady);
-    isReady = !!myReady;
-
     // Status text
-    var readyCount = ids.filter(function(p){ return ready[p]; }).length;
-    if (Room.amHost()) {
-      elStatusText.textContent = ids.length < 2
-        ? 'Waiting for players to join… share the room code!'
-        : readyCount + '/' + ids.length + ' ready — pick a game to start';
-    } else {
-      elStatusText.textContent = readyCount + '/' + ids.length + ' ready';
-    }
+    elStatusText.textContent = Room.amHost()
+      ? (ids.length < 2 ? 'Waiting for players to join… share the room code!' : 'Pick a game to start')
+      : 'Waiting for host to start a game…';
   }
 
   // ── Game grid ─────────────────────────────────────────────────────────────
@@ -478,11 +462,6 @@
     });
   });
 
-  // Ready toggle
-  elReadyBtn.addEventListener('click', function() {
-    isReady = !isReady;
-    Room.setPlayerReady(isReady);
-  });
 
   // Mode toggle (host only)
   elModeToggle.addEventListener('click', function(e) {

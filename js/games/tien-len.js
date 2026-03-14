@@ -136,8 +136,8 @@
     gameRenderCount = 0;
     render();
 
-    // Host runs AI if AI goes first; waits if guest (seat 2) goes first
-    if (state.current !== mySeat && state.current !== 2) {
+    // Host runs AI if an AI seat goes first
+    if (isAISeat(state.current)) {
       scheduleAITurn();
     }
   }
@@ -589,8 +589,8 @@
       <button class="tl-btn tl-btn--play" id="tl-play" ${canPlay ? '' : 'disabled'}>Play</button>
     </div>
     <div class="tl-actions__secondary">
-      <button class="tl-btn tl-btn--ghost" id="tl-new"${vsOnline ? ' disabled title="Leave room to start a new game"' : ''}>New Game</button>
-      <button class="tl-btn tl-btn--ghost" id="tl-mode"${vsOnline ? ' disabled' : ''}>${twoPlayer ? '4-Player' : '1v1'}</button>
+      ${!vsOnline ? `<button class="tl-btn tl-btn--ghost" id="tl-new">New Game</button>` : ''}
+      ${!vsOnline ? `<button class="tl-btn tl-btn--ghost" id="tl-mode">${twoPlayer ? '4-Player' : '1v1'}</button>` : ''}
       ${!vsOnline || isHost ? `<button class="tl-btn tl-btn--ghost tl-speed-btn${gameSpeed === 2 ? ' active' : ''}" id="tl-speed">2×</button>` : ''}
     </div>
   </div>

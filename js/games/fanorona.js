@@ -733,6 +733,13 @@
     vsAI        = false;
     RoomBridge.onState(receiveRoomState);
     if (myRoomSeat === 0) syncRoomState();
+    // Hide non-room UI
+    if (elNewBtn)   elNewBtn.style.display   = 'none';
+    if (elAiToggle) {
+      var aiToggleWrap = elAiToggle.closest('.fn-ai-toggle-wrap') || elAiToggle.parentElement;
+      if (aiToggleWrap) aiToggleWrap.style.display = 'none';
+      else elAiToggle.style.display = 'none';
+    }
   }
 
   function init() {
