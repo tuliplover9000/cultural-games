@@ -364,6 +364,7 @@
 
     elAssignCancel.onclick = function() {
       elAssignModal.hidden = true;
+      renderGameGrid(); // immediately re-enable play buttons
       // Revert status to lobby
       if (Room.amHost()) {
         var db = window.supabase && window.supabase.createClient(
