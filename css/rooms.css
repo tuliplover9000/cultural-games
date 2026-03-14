@@ -473,6 +473,11 @@
   transition: box-shadow var(--transition-fast);
 }
 .lobby-game-card:hover { box-shadow: var(--shadow-sm); }
+.lobby-game-card.lottery-highlight {
+  background: rgba(200,155,60,0.12);
+  border-color: var(--color-accent-gold);
+  box-shadow: 0 0 0 2px var(--color-accent-gold);
+}
 /* Host sees a Play button; non-hosts see Suggest */
 .lobby-game-card .lobby-play-direct-btn { flex-shrink: 0; }
 .lobby-game-card__icon { font-size: 1.5rem; flex-shrink: 0; line-height: 1; }

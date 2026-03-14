@@ -167,7 +167,7 @@
     }
 
     // Lottery button
-    elLotteryBtn.hidden = !(isHost && mode === 'lottery' && list.length > 0);
+    elLotteryBtn.hidden = !(isHost && mode === 'lottery');
 
     if (!list.length) {
       elSuggList.innerHTML = '';
@@ -209,37 +209,42 @@
   // ── Lottery animation ──────────────────────────────────────────────────────
   function runLottery() {
     if (lotteryRunning) return;
-    var room = Room.currentRoom();
-    var list = (room && room.suggestions) || [];
-    if (!list.length) return;
-
     lotteryRunning = true;
     elLotteryBtn.disabled = true;
 
-    var items  = elSuggList.querySelectorAll('.lobby-suggestion');
-    var pool   = list.map(function(s){ return s.game; });
-    var idx    = 0;
-    var delay  = 80;
+    // Pick a random game from the full catalogue
+    var winnerGame = GAMES[Math.floor(Math.random() * GAMES.length)];
+
+    // Animate through the game grid cards
+    var cards   = elGameGrid.querySelectorAll('.lobby-game-card');
+    var pool    = GAMES;
+    var idx     = 0;
+    var delay   = 80;
     var elapsed = 0;
     var maxTime = 2400;
 
+    // Decide which card index the winner lands on
+    var winnerIdx = GAMES.indexOf(winnerGame);
+
     function tick() {
-      items.forEach(function(el){ el.classList.remove('lobby-suggestion--highlight'); });
-      var item = items[idx % items.length];
-      if (item) item.classList.add('lobby-suggestion--highlight');
+      cards.forEach(function(el){ el.classList.remove('lottery-highlight'); });
+      var card = cards[idx % cards.length];
+      if (card) card.classList.add('lottery-highlight');
       idx++;
       elapsed += delay;
       if (elapsed < maxTime) {
         delay = Math.min(delay + 12, 380);
         setTimeout(tick, delay);
       } else {
-        // Land on final item
-        var winner = pool[idx % pool.length];
+        // Make sure we land on the winner card
+        cards.forEach(function(el){ el.classList.remove('lottery-highlight'); });
+        if (cards[winnerIdx]) cards[winnerIdx].classList.add('lottery-highlight');
         setTimeout(function() {
+          cards.forEach(function(el){ el.classList.remove('lottery-highlight'); });
           lotteryRunning = false;
           elLotteryBtn.disabled = false;
-          Room.selectGame(winner);
-        }, 500);
+          Room.selectGame(winnerGame.key);
+        }, 800);
       }
     }
     tick();
