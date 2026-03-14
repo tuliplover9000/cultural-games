@@ -247,6 +247,20 @@
       <h2 id="assign-modal-title" class="rooms-modal__title">Assign Players</h2>
       <p class="assign-desc" id="assign-desc"></p>
       <ul id="assign-player-list" class="assign-player-list" role="list"></ul>
+      <!-- Game mode: shown when room has fewer players than the game's max -->
+      <div id="assign-mode-section" class="assign-mode-section" hidden>
+        <p class="assign-mode-label">Game Mode</p>
+        <div class="assign-mode-toggle" role="group" aria-label="Game mode">
+          <button class="assign-mode-btn active" data-mode="normal" id="assign-mode-normal">
+            Normal
+            <span class="assign-mode-hint">AI fills empty seats</span>
+          </button>
+          <button class="assign-mode-btn" data-mode="1v1" id="assign-mode-1v1" hidden>
+            1v1
+            <span class="assign-mode-hint">Modified 2-player rules</span>
+          </button>
+        </div>
+      </div>
       <div id="assign-dual-option" class="assign-dual-option" hidden>
         <label class="assign-dual-label">
           <input type="checkbox" id="assign-dual-cb" />

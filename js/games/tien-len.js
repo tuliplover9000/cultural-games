@@ -22,10 +22,11 @@
   const PLAYER = 0;
 
   /* ── Online state ── */
-  let vsOnline  = false;
-  let isHost    = false;
-  let mySeat    = 0;    // 0 = host, 2 = guest
-  let twoPlayer = false; // 1v1 mode: seats 0 & 2 only, 26 cards each
+  let vsOnline    = false;
+  let isHost      = false;
+  let mySeat      = 0;    // 0 = host, 2 = guest
+  let twoPlayer   = false; // 1v1 mode: seats 0 & 2 only, 26 cards each
+  let aiSeatsRoom = [];    // AI-controlled seats in room mode
 
   // Active seats for current mode
   function activeSeats() { return twoPlayer ? [0, 2] : [0, 1, 2, 3]; }
@@ -43,7 +44,7 @@
   function myPS() { return vsOnline ? mySeat : PLAYER; }
   // Is this an AI seat?
   function isAISeat(s) {
-    if (vsOnline) return false;              // no AI online
+    if (vsOnline) return aiSeatsRoom.indexOf(s) !== -1; // room AI seats
     return twoPlayer ? s === 2 : s !== PLAYER; // 1v1: seat 2 is AI; 4P: all non-0
   }
   // Perspective-aware name
@@ -590,7 +591,7 @@
     <div class="tl-actions__secondary">
       <button class="tl-btn tl-btn--ghost" id="tl-new"${vsOnline ? ' disabled title="Leave room to start a new game"' : ''}>New Game</button>
       <button class="tl-btn tl-btn--ghost" id="tl-mode"${vsOnline ? ' disabled' : ''}>${twoPlayer ? '4-Player' : '1v1'}</button>
-      <button class="tl-btn tl-btn--ghost tl-speed-btn${gameSpeed === 2 ? ' active' : ''}" id="tl-speed">2×</button>
+      ${!vsOnline || isHost ? `<button class="tl-btn tl-btn--ghost tl-speed-btn${gameSpeed === 2 ? ' active' : ''}" id="tl-speed">2×</button>` : ''}
     </div>
   </div>
 </div>`;
@@ -785,10 +786,11 @@
     if (window.RoomBridge && RoomBridge.isActive()) {
       var tlPanel = document.getElementById('tl-mp-panel');
       if (tlPanel) tlPanel.hidden = true;
-      vsOnline  = true;
-      twoPlayer = false; // 4-player mode
-      mySeat    = RoomBridge.getSeat();
-      isHost    = (mySeat === 0);
+      vsOnline    = true;
+      mySeat      = RoomBridge.getSeat();
+      isHost      = RoomBridge.isRoomHost ? RoomBridge.isRoomHost() : (mySeat === 0);
+      aiSeatsRoom = RoomBridge.getAiSeats ? RoomBridge.getAiSeats() : [];
+      twoPlayer   = RoomBridge.getMode && RoomBridge.getMode() === '1v1';
       RoomBridge.onState(receiveOnlineState);
       if (isHost) {
         newGameOnline();

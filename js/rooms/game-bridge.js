@@ -25,9 +25,15 @@
   // Hide site chrome (nav, back link, footer) — only the game should show.
   document.documentElement.classList.add('room-mode');
 
-  var seat     = parseInt(params.get('seat') || '-1', 10);
-  var role     = params.get('role')     || 'player';
-  var instance = params.get('instance') || '0';
+  var seat       = parseInt(params.get('seat') || '-1', 10);
+  var role       = params.get('role')     || 'player';
+  var instance   = params.get('instance') || '0';
+  var mode       = params.get('mode')     || 'normal';
+  var isRoomHost = params.get('isHost')   === '1';
+  var aiSeatsStr = params.get('aiSeats')  || '';
+  var aiSeats    = aiSeatsStr
+    ? aiSeatsStr.split(',').map(function(x){ return parseInt(x, 10); }).filter(function(n){ return !isNaN(n); })
+    : [];
 
   var _onStateFn    = null;
   var _winReported  = false;
@@ -43,10 +49,13 @@
 
   window.RoomBridge = {
 
-    isActive: function ()       { return true; },
-    getSeat:  function ()       { return seat; },
-    getRole:  function ()       { return role; },
-    getInstanceId: function ()  { return instance; },
+    isActive:      function () { return true; },
+    getSeat:       function () { return seat; },
+    getRole:       function () { return role; },
+    getInstanceId: function () { return instance; },
+    getMode:       function () { return mode; },
+    getAiSeats:    function () { return aiSeats; },
+    isRoomHost:    function () { return isRoomHost; },
 
     /**
      * Send a full game-state blob to the parent.

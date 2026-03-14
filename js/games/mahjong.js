@@ -39,9 +39,10 @@
 
   /* ── Online state ───────────────────────────────────────────────────────── */
 
-  let vsOnline = false;
-  let isHost   = false;
-  let mySeat   = 0;
+  let vsOnline    = false;
+  let isHost      = false;
+  let mySeat      = 0;
+  let aiSeatsRoom = []; // AI-controlled seats in room mode
 
   /* ── Stale-timeout guard ────────────────────────────────────────────────── */
 
@@ -169,7 +170,7 @@
   function myPS() { return vsOnline ? mySeat : 0; }
 
   function isAISeat(s) {
-    if (vsOnline) return false; // no AI online (host handles nothing online for now)
+    if (vsOnline) return aiSeatsRoom.indexOf(s) !== -1; // room AI seats
     return s !== 0;
   }
 
@@ -1180,6 +1181,7 @@
   /* ── AI logic ────────────────────────────────────────────────────────────── */
 
   function aiClaimDecision(seatIdx, tile, discardingSeat) {
+    if (vsOnline) return 'pass'; // room mode: AI only draws/discards, no claiming
     if (canWinWithTile(seatIdx, tile)) return 'win';
 
     const hand     = state.hands[seatIdx];
@@ -1248,6 +1250,7 @@
   }
 
   function startAiTurn(seatIdx, skipDraw) {
+    if (vsOnline && !isHost) return; // only host runs AI in room mode
     state.phase   = 'ai-turn';
     state.turnIdx = seatIdx;
     setStatus(`${seatName(seatIdx)} is thinking…`);
@@ -1278,6 +1281,7 @@
   }
 
   function startAiDiscard(seatIdx) {
+    if (vsOnline && !isHost) return; // only host runs AI in room mode
     state.phase   = 'ai-turn';
     state.turnIdx = seatIdx;
     setStatus(`${seatName(seatIdx)} is discarding…`);
@@ -1354,6 +1358,18 @@
 
     if (state.phase === 'round-over' || state.phase === 'game-over') return;
 
+    // Host triggers AI turns in room mode
+    if (isHost && isAISeat(state.turnIdx)) {
+      if (state.phase === 'player-draw') {
+        startAiTurn(state.turnIdx);
+        return;
+      }
+      if (state.phase === 'player-discard') {
+        startAiDiscard(state.turnIdx);
+        return;
+      }
+    }
+
     // If it's my turn after opponent's move
     if (state.turnIdx === mySeat) {
       if (state.phase === 'player-draw') {
@@ -1380,9 +1396,10 @@
     if (window.RoomBridge && RoomBridge.isActive()) {
       var mjPanel = document.getElementById('mj-mp-panel');
       if (mjPanel) mjPanel.hidden = true;
-      vsOnline = true;
-      mySeat   = RoomBridge.getSeat();
-      isHost   = (mySeat === 0);
+      vsOnline    = true;
+      mySeat      = RoomBridge.getSeat();
+      isHost      = RoomBridge.isRoomHost ? RoomBridge.isRoomHost() : (mySeat === 0);
+      aiSeatsRoom = RoomBridge.getAiSeats ? RoomBridge.getAiSeats() : [];
       RoomBridge.onState(receiveOnlineState);
       if (isHost) {
         state.dealer  = 0;

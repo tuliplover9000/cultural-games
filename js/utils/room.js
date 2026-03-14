@@ -156,6 +156,7 @@
           selected_game: null,
           dual_instance: false,
           game_instances: [],
+          game_mode:      null,
           chat_messages:  [],
           max_players:    max,
           expires_at:     new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
@@ -290,11 +291,12 @@
       await db().from('rooms').update({ dual_instance: !!dual }).eq('id', _room.id);
     },
 
-    startGame: async function () {
+    startGame: async function (gameMode) {
       if (!_room) return;
       await db().from('rooms').update({
         status:         'playing',
         game_instances: [],
+        game_mode:      gameMode || 'normal',
       }).eq('id', _room.id);
     },
 
@@ -348,6 +350,7 @@
         status:         'lobby',
         selected_game:  null,
         game_instances: [],
+        game_mode:      null,
         player_roles:   {},
         player_ready:   {},
         dual_instance:  false,

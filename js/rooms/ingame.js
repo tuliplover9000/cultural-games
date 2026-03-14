@@ -25,6 +25,13 @@
   };
   function gameLabel(key) { return GAME_NAMES[key] || key; }
 
+  // Max players per game (for AI seat calculation)
+  var GAME_MAX_PLAYERS = {
+    'tien-len': 4, 'mahjong': 4,
+    'oware': 2, 'o-an-quan': 2, 'fanorona': 2,
+    'pallanguzhi': 2, 'patolli': 2, 'puluc': 2,
+  };
+
   // ── Build game URL ─────────────────────────────────────────────────────────
   function buildSrc(room, instanceId) {
     var game    = room.selected_game;
@@ -32,6 +39,7 @@
     var ids     = room.player_ids   || [];
     var myPid   = Room.getPlayerId();
     var myRole  = roles[myPid] || 'player';
+    var mode    = room.game_mode || 'normal';
 
     // Work out which players are in this instance
     var allPlayers = ids.filter(function(p){ return roles[p] !== 'spectator'; });
@@ -49,12 +57,26 @@
     // Spectators have seatIdx = -1
     if (myRole === 'spectator') seatIdx = -1;
 
+    // 1v1 mode: second player maps to game seat 2 (tien-len twoPlayer convention: seats 0 & 2)
+    var gameSeat = seatIdx;
+    if (mode === '1v1' && seatIdx === 1) gameSeat = 2;
+
+    // AI seats: fill remaining slots up to game max when mode=normal
+    var aiSeats = [];
+    var maxP = GAME_MAX_PLAYERS[game] || 2;
+    if (mode === 'normal' && instancePlayers.length < maxP) {
+      for (var i = instancePlayers.length; i < maxP; i++) aiSeats.push(i);
+    }
+
     var params = new URLSearchParams({
       roomId:   room.id,
       roomCode: room.code,
-      seat:     seatIdx,
+      seat:     gameSeat,
       role:     myRole,
       instance: instanceId,
+      mode:     mode,
+      aiSeats:  aiSeats.join(','),
+      isHost:   (myPid === room.host_id) ? '1' : '0',
     });
 
     return 'games/' + game + '.html?' + params.toString();

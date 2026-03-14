@@ -862,6 +862,56 @@
   font-size: var(--text-sm);
 }
 
+/* Mode selection (1v1 vs Normal) */
+.assign-mode-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+.assign-mode-section[hidden] { display: none; }
+.assign-mode-label {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+.assign-mode-toggle {
+  display: flex;
+  gap: var(--space-2);
+}
+.assign-mode-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-bg);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+  transition: all var(--transition-fast);
+}
+.assign-mode-btn[hidden] { display: none; }
+.assign-mode-btn.active {
+  border-color: var(--color-accent-gold);
+  background: rgba(200,155,60,0.08);
+  color: var(--color-text);
+}
+.assign-mode-hint {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-normal);
+  color: var(--color-text-muted);
+}
+
 
 /* =============================================================================
    END SCREEN (room.html)

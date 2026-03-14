@@ -48,6 +48,11 @@
   var elAssignDualCb    = document.getElementById('assign-dual-cb');
   var elAssignCancel    = document.getElementById('assign-cancel-btn');
   var elAssignConfirm   = document.getElementById('assign-confirm-btn');
+  var elAssignModeSection = document.getElementById('assign-mode-section');
+  var elAssignMode1v1     = document.getElementById('assign-mode-1v1');
+
+  // Games that support a true 1v1 (2-player) variant
+  var SUPPORTS_1V1 = { 'tien-len': true };
 
   // ── State ──────────────────────────────────────────────────────────────────
   var myPid        = null;
@@ -299,6 +304,7 @@
     var players = room.player_ids || [];
     var names   = room.player_names || {};
     var seats   = meta.maxPlayers;
+    var selectedMode = 'normal';
 
     elAssignDesc.innerHTML = '<strong>' + esc(meta.name) + '</strong> supports up to <strong>' + seats + ' player' + (seats !== 1 ? 's' : '') + '</strong>. Assign roles below.';
 
@@ -333,6 +339,25 @@
       });
     });
 
+    // Mode selection: show when room has fewer players than game max
+    var underPopulated = players.length < seats;
+    elAssignModeSection.hidden = !underPopulated;
+    if (underPopulated) {
+      // 1v1 option only for games with a true 2-player variant
+      elAssignMode1v1.hidden = !SUPPORTS_1V1[game];
+      selectedMode = 'normal';
+      // Wire mode buttons
+      elAssignModeSection.querySelectorAll('.assign-mode-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.mode === selectedMode);
+        btn.onclick = function() {
+          selectedMode = btn.dataset.mode;
+          elAssignModeSection.querySelectorAll('.assign-mode-btn').forEach(function(b) {
+            b.classList.toggle('active', b.dataset.mode === selectedMode);
+          });
+        };
+      });
+    }
+
     // Dual instance option: only for 2P games with 4+ players
     var showDual = seats === 2 && players.length >= 4;
     elAssignDualOpt.hidden = !showDual;
@@ -346,7 +371,7 @@
       Room.setDualInstance(dual).then(function() {
         return Room.setPlayerRoles(roles);
       }).then(function() {
-        return Room.startGame();
+        return Room.startGame(underPopulated ? selectedMode : 'normal');
       }).then(function() {
         elAssignModal.hidden = true;
         elAssignConfirm.disabled = false;
