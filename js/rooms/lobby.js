@@ -18,7 +18,7 @@
     { key: 'pallanguzhi', name: 'Pallanguzhi',         icon: '🐚', badge: 'Board · 2P', maxPlayers: 2 },
     { key: 'patolli',     name: 'Patolli',             icon: '🟩', badge: 'Dice · 2P',  maxPlayers: 2 },
     { key: 'puluc',       name: 'Puluc',               icon: '🪵', badge: 'Dice · 2P',  maxPlayers: 2 },
-    { key: 'bau-cua',     name: 'Bầu Cua Tôm Cá',     icon: '🎲', badge: 'Dice · 1P',  maxPlayers: 1 },
+    { key: 'bau-cua',     name: 'Bầu Cua Tôm Cá',     icon: '🎲', badge: 'Dice · Group', maxPlayers: 8 },
   ];
 
   // ── DOM refs ───────────────────────────────────────────────────────────────

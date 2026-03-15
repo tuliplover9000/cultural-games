@@ -24,6 +24,9 @@
     'pallanguzhi': 'Pallanguzhi', 'patolli': 'Patolli', 'puluc': 'Puluc',
     'bau-cua': 'Bầu Cua Tôm Cá',
   };
+
+  // Games where AI fill doesn't apply (group/betting games)
+  var NO_AI_GAMES = { 'bau-cua': true };
   function gameLabel(key) { return GAME_NAMES[key] || key; }
 
   // Max players per game (for AI seat calculation)
@@ -63,10 +66,13 @@
     if (mode === '1v1' && seatIdx === 1) gameSeat = 2;
 
     // AI seats: fill remaining slots up to game max when mode=normal
+    // Group/betting games (like bau-cua) never use AI fill
     var aiSeats = [];
-    var maxP = GAME_MAX_PLAYERS[game] || 2;
-    if (mode === 'normal' && instancePlayers.length < maxP) {
-      for (var i = instancePlayers.length; i < maxP; i++) aiSeats.push(i);
+    if (!NO_AI_GAMES[game]) {
+      var maxP = GAME_MAX_PLAYERS[game] || 2;
+      if (mode === 'normal' && instancePlayers.length < maxP) {
+        for (var i = instancePlayers.length; i < maxP; i++) aiSeats.push(i);
+      }
     }
 
     var params = new URLSearchParams({

@@ -36,6 +36,10 @@
     },
   };
 
+  // ── Room / group-play mode ──────────────────────────────────────────────────
+  var vsRoom   = !!(window.RoomBridge && window.RoomBridge.isActive());
+  var roomHost = vsRoom && window.RoomBridge.isRoomHost();
+
   // ── DOM cache (populated by cacheDOMRefs) ──────────────────────────────────
   var els = {};
 
@@ -46,6 +50,7 @@
     renderGame(container);
     cacheDOMRefs();
     bindEvents();
+    if (vsRoom) initRoomMode();
     refresh();
   }
 
@@ -317,6 +322,15 @@
       die.innerHTML = '<img src="' + s.img + '" alt="' + s.en + '" />';
     });
 
+    // In group play, host syncs the result to all guests
+    if (vsRoom && roomHost) {
+      RoomBridge.sendState({
+        type:     'results',
+        diceKeys: state.diceResult.map(function(s){ return s.key; }),
+        round:    state.stats.rounds + 1,
+      });
+    }
+
     setTimeout(showResults, 400);
   }
 
@@ -405,9 +419,13 @@
   // ── New round ──────────────────────────────────────────────────────────────
 
   function newRound() {
-    state.phase    = 'betting';
-    state.bets     = {};
+    state.phase      = 'betting';
+    state.bets       = {};
     state.diceResult = [];
+    // Host tells all guests a new round is starting
+    if (vsRoom && roomHost) {
+      RoomBridge.sendState({ type: 'newround', round: state.stats.rounds + 1 });
+    }
 
     // Reset dice
     els.dice.forEach(function (die) {
@@ -491,25 +509,74 @@
     // Bet input cap
     els.betInput.max = state.wallet;
 
-    // Buttons
-    els.clearBtn.disabled = !(isBetting && hasBets);
-    els.placeBtn.disabled = !(isBetting && hasBets);
-    els.rollBtn.disabled  = !isLocked;
-
-    // Input + quick bets
-    els.betInput.disabled = !isBetting;
-    document.querySelectorAll('.bc-quick').forEach(function (b) {
-      b.disabled = !isBetting;
-    });
-
-    // Zones
-    els.zones.forEach(function (zone) {
-      zone.disabled = !isBetting;
-    });
+    if (vsRoom && !roomHost) {
+      // Guests: freely bet during betting phase; host controls rolling
+      var canBet = (state.phase === 'betting');
+      els.clearBtn.disabled  = !(canBet && hasBets);
+      els.betInput.disabled  = !canBet;
+      document.querySelectorAll('.bc-quick').forEach(function(b){ b.disabled = !canBet; });
+      els.zones.forEach(function(zone){ zone.disabled = !canBet; });
+    } else {
+      // Solo or host: full control
+      els.clearBtn.disabled = !(isBetting && hasBets);
+      if (els.placeBtn) els.placeBtn.disabled = !(isBetting && hasBets);
+      if (els.rollBtn)  els.rollBtn.disabled  = !isLocked;
+      els.betInput.disabled = !isBetting;
+      document.querySelectorAll('.bc-quick').forEach(function(b){ b.disabled = !isBetting; });
+      els.zones.forEach(function(zone){ zone.disabled = !isBetting; });
+    }
   }
 
   function setStatus(msg) {
     if (els.status) els.status.textContent = msg;
+  }
+
+  // ── Group play (room mode) ─────────────────────────────────────────────────
+
+  function initRoomMode() {
+    if (!roomHost) {
+      // Guests: hide host-only controls
+      if (els.placeBtn) els.placeBtn.style.display = 'none';
+      if (els.rollBtn)  els.rollBtn.style.display  = 'none';
+      if (els.againBtn) els.againBtn.style.display = 'none';
+      setStatus('Place your bets and wait for the host to roll!');
+    } else {
+      setStatus('Everyone place your bets, then click Place Bet → Roll Dice!');
+    }
+    RoomBridge.onState(receiveGroupState);
+  }
+
+  function receiveGroupState(blob) {
+    if (!blob || roomHost) return; // host is the source of truth
+
+    if (blob.type === 'results' && blob.diceKeys && blob.diceKeys.length === 3) {
+      // Resolve each guest's local bets against the shared dice result
+      state.diceResult = blob.diceKeys.map(function(k) {
+        return SYMBOLS.filter(function(s){ return s.key === k; })[0];
+      }).filter(Boolean);
+
+      if (state.diceResult.length !== 3) return;
+
+      // Only lock if still in betting (so results work correctly)
+      state.phase = 'locked';
+
+      // Brief roll animation then snap to result
+      els.dice.forEach(function(die){ die.classList.add('rolling'); });
+      setTimeout(function() {
+        els.dice.forEach(function(die, i) {
+          die.classList.remove('rolling');
+          die.classList.add('settled');
+          var s = state.diceResult[i];
+          die.innerHTML = '<img src="' + s.img + '" alt="' + s.en + '" />';
+        });
+        setTimeout(showResults, 400);
+      }, 600);
+
+    } else if (blob.type === 'newround') {
+      // Host started a new round — reset guest back to betting
+      newRound();
+      setStatus('Place your bets and wait for the host to roll!');
+    }
   }
 
   // ── Boot ───────────────────────────────────────────────────────────────────
