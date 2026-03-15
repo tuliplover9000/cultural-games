@@ -40,6 +40,21 @@
   var vsRoom   = !!(window.RoomBridge && window.RoomBridge.isActive());
   var roomHost = vsRoom && window.RoomBridge.isRoomHost();
 
+  // Per-seat color palette (up to 8 players)
+  var SEAT_COLORS = ['#60a5fa','#4ade80','#f472b6','#fb923c','#a78bfa','#34d399','#fbbf24','#f87171'];
+
+  // Group-play peer tracking: { seat: { name, wallet, bets } }
+  var peerStates = {};
+  var mySeat     = -1;
+  var myName     = '';
+  var _syncTimer = null;
+
+  function getLocalPlayerName() {
+    var u = window._user;
+    if (u && u.display_name) return u.display_name;
+    return localStorage.getItem('cg_name') || 'Player';
+  }
+
   // ── DOM cache (populated by cacheDOMRefs) ──────────────────────────────────
   var els = {};
 
@@ -235,6 +250,7 @@
 
     renderChips();
     refresh();
+    if (vsRoom) syncMyState();
   }
 
   function clearBets() {
@@ -242,6 +258,7 @@
     renderChips();
     refresh();
     setStatus('Bets cleared. Click a symbol to start again.');
+    if (vsRoom) syncMyState();
   }
 
   function lockBets() {
@@ -388,6 +405,7 @@
 
     // Update wallet
     state.wallet = Math.max(0, state.wallet + net);
+    if (vsRoom) syncMyState(); // broadcast updated wallet + empty bets to leaderboard
 
     // Track stats
     if (net > state.stats.biggestWin)  state.stats.biggestWin  = net;
@@ -422,6 +440,11 @@
     state.phase      = 'betting';
     state.bets       = {};
     state.diceResult = [];
+    // Clear peer bets from mat at start of new round
+    if (vsRoom) {
+      Object.keys(peerStates).forEach(function(s) { peerStates[s].bets = {}; });
+      renderPeerBetsOnMat();
+    }
     // Host tells all guests a new round is starting
     if (vsRoom && roomHost) {
       RoomBridge.sendState({ type: 'newround', round: state.stats.rounds + 1 });
@@ -534,8 +557,22 @@
   // ── Group play (room mode) ─────────────────────────────────────────────────
 
   function initRoomMode() {
+    mySeat = RoomBridge.getSeat();
+    myName = getLocalPlayerName();
+    peerStates[mySeat] = { name: myName, wallet: state.wallet, bets: {} };
+
+    // Insert leaderboard panel after the wallet bar
+    var bcGame    = document.getElementById('bc-game');
+    var walletBar = bcGame && bcGame.querySelector('.bc-wallet-bar');
+    if (walletBar) {
+      var lb = document.createElement('div');
+      lb.className = 'bc-leaderboard';
+      lb.id = 'bc-leaderboard';
+      lb.innerHTML = '<h4 class="bc-leaderboard__title">🏆 Leaderboard</h4><ul id="bc-lb-list" class="bc-lb-list"></ul>';
+      walletBar.parentNode.insertBefore(lb, walletBar.nextSibling);
+    }
+
     if (!roomHost) {
-      // Guests: hide host-only controls
       if (els.placeBtn) els.placeBtn.style.display = 'none';
       if (els.rollBtn)  els.rollBtn.style.display  = 'none';
       if (els.againBtn) els.againBtn.style.display = 'none';
@@ -543,24 +580,101 @@
     } else {
       setStatus('Everyone place your bets, then click Place Bet → Roll Dice!');
     }
+
     RoomBridge.onState(receiveGroupState);
+    renderLeaderboard();
+    syncMyState();
+  }
+
+  function syncMyState() {
+    if (!vsRoom) return;
+    peerStates[mySeat] = { name: myName, wallet: state.wallet, bets: Object.assign({}, state.bets) };
+    clearTimeout(_syncTimer);
+    _syncTimer = setTimeout(function() {
+      RoomBridge.sendState({
+        type:   'playerstate',
+        seat:   mySeat,
+        name:   myName,
+        wallet: state.wallet,
+        bets:   state.bets,
+      });
+    }, 150);
+  }
+
+  function renderPeerBetsOnMat() {
+    if (!vsRoom) return;
+    els.zones.forEach(function(zone) {
+      var key = zone.dataset.key;
+      var existing = zone.querySelector('.bc-peer-bets');
+      if (existing) existing.remove();
+
+      var chips = [];
+      Object.keys(peerStates).forEach(function(seatStr) {
+        var seat = parseInt(seatStr, 10);
+        if (seat === mySeat) return; // own bets shown by regular chips
+        var ps = peerStates[seatStr];
+        if (ps.bets && ps.bets[key]) {
+          var color   = SEAT_COLORS[seat % SEAT_COLORS.length];
+          var initial = (ps.name || 'P')[0].toUpperCase();
+          chips.push('<span class="bc-peer-chip" style="background:' + color + '" title="' + ps.name + ': ' + ps.bets[key] + ' coins">' + initial + '</span>');
+        }
+      });
+
+      if (chips.length) {
+        var div = document.createElement('div');
+        div.className = 'bc-peer-bets';
+        div.innerHTML = chips.join('');
+        zone.appendChild(div);
+      }
+    });
+  }
+
+  function renderLeaderboard() {
+    var lbList = document.getElementById('bc-lb-list');
+    if (!lbList) return;
+
+    var entries = Object.keys(peerStates).map(function(seatStr) {
+      var ps = peerStates[seatStr];
+      return { seat: parseInt(seatStr, 10), name: ps.name || 'Player', wallet: ps.wallet || 0 };
+    });
+    entries.sort(function(a, b) { return b.wallet - a.wallet; });
+
+    var medals = ['🥇', '🥈', '🥉'];
+    lbList.innerHTML = entries.map(function(e, i) {
+      var color   = SEAT_COLORS[e.seat % SEAT_COLORS.length];
+      var initial = e.name[0].toUpperCase();
+      var rank    = medals[i] || ('#' + (i + 1));
+      var isMe    = e.seat === mySeat;
+      return '<li class="bc-lb-item' + (isMe ? ' bc-lb-item--me' : '') + '">' +
+        '<span class="bc-lb-rank">' + rank + '</span>' +
+        '<span class="bc-lb-avatar" style="background:' + color + '">' + initial + '</span>' +
+        '<span class="bc-lb-name">' + esc(e.name) + (isMe ? ' <em style="font-weight:400;opacity:.6">(you)</em>' : '') + '</span>' +
+        '<span class="bc-lb-coins">🪙 ' + e.wallet + '</span>' +
+      '</li>';
+    }).join('');
   }
 
   function receiveGroupState(blob) {
-    if (!blob || roomHost) return; // host is the source of truth
+    if (!blob) return;
+
+    // Peer state update — all players (including host) track this for UI
+    if (blob.type === 'playerstate' && blob.seat !== undefined && blob.seat !== mySeat) {
+      peerStates[blob.seat] = { name: blob.name || 'Player', wallet: blob.wallet || 0, bets: blob.bets || {} };
+      renderPeerBetsOnMat();
+      renderLeaderboard();
+      return;
+    }
+
+    // Game-control messages: only guests process (host is the source of truth)
+    if (roomHost) return;
 
     if (blob.type === 'results' && blob.diceKeys && blob.diceKeys.length === 3) {
-      // Resolve each guest's local bets against the shared dice result
       state.diceResult = blob.diceKeys.map(function(k) {
         return SYMBOLS.filter(function(s){ return s.key === k; })[0];
       }).filter(Boolean);
-
       if (state.diceResult.length !== 3) return;
 
-      // Only lock if still in betting (so results work correctly)
       state.phase = 'locked';
-
-      // Brief roll animation then snap to result
       els.dice.forEach(function(die){ die.classList.add('rolling'); });
       setTimeout(function() {
         els.dice.forEach(function(die, i) {
@@ -573,7 +687,6 @@
       }, 600);
 
     } else if (blob.type === 'newround') {
-      // Host started a new round — reset guest back to betting
       newRound();
       setStatus('Place your bets and wait for the host to roll!');
     }
