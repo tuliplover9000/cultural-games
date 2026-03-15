@@ -446,7 +446,11 @@
                 var progress = Math.min((now - start) / duration, 1);
                 var eased    = 1 - Math.pow(1 - progress, 3);
                 countEl.textContent = Math.round(eased * target);
-                if (progress < 1) requestAnimationFrame(tick);
+                if (progress < 1) {
+                  requestAnimationFrame(tick);
+                } else {
+                  el.classList.add('stat-pop');
+                }
               })(start);
             }
           });

@@ -45,6 +45,7 @@
       <div id="rooms-landing">
 
         <header class="rooms-hero">
+          <canvas id="rooms-bg-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0.3;" aria-hidden="true"></canvas>
           <p class="rooms-hero__label">Multiplayer</p>
           <h1 class="rooms-hero__title">Game Rooms</h1>
           <p class="rooms-hero__desc">
@@ -199,6 +200,68 @@
       </div>
     </div>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
+  <script>
+(function () {
+  var canvas = document.getElementById('rooms-bg-canvas');
+  if (!canvas || !window.THREE) return;
+  var W = canvas.parentElement.offsetWidth;
+  var H = canvas.parentElement.offsetHeight || 280;
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+  renderer.setSize(W, H);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(55, W / H, 0.1, 100);
+  camera.position.z = 9;
+  var matGold  = new THREE.MeshBasicMaterial({ color: 0xC89B3C, wireframe: true });
+  var matTeal  = new THREE.MeshBasicMaterial({ color: 0x4ecdc4, wireframe: true });
+  var matFaint = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.25 });
+  var group = new THREE.Group();
+  scene.add(group);
+  var defs = [
+    { geo: new THREE.IcosahedronGeometry(1.1),        mat: matGold,  orbit: 0,   selfSpin: [0.008, 0.012] },
+    { geo: new THREE.TorusGeometry(0.55, 0.18, 8, 16),mat: matTeal,  orbit: 2.6, speed: 0.011, angle: 0 },
+    { geo: new THREE.OctahedronGeometry(0.75),         mat: matFaint, orbit: 1.9, speed: -0.009, angle: Math.PI / 2 },
+    { geo: new THREE.TetrahedronGeometry(0.65),        mat: matTeal,  orbit: 3.1, speed: 0.008,  angle: Math.PI },
+    { geo: new THREE.BoxGeometry(0.65, 0.65, 0.65),   mat: matGold,  orbit: 2.2, speed: -0.013, angle: Math.PI * 1.5 },
+    { geo: new THREE.IcosahedronGeometry(0.45),        mat: matFaint, orbit: 3.6, speed: 0.015,  angle: Math.PI * 0.75 },
+  ];
+  var meshes = defs.map(function (d) {
+    var m = new THREE.Mesh(d.geo, d.mat);
+    group.add(m);
+    return m;
+  });
+  var t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.012;
+    group.rotation.y += 0.004;
+    defs.forEach(function (d, i) {
+      if (d.orbit === 0) {
+        meshes[i].rotation.x += 0.006;
+        meshes[i].rotation.y += 0.009;
+      } else {
+        var a = (d.angle || 0) + t * d.speed * 80;
+        meshes[i].position.x = Math.cos(a) * d.orbit;
+        meshes[i].position.y = Math.sin(a * 0.6) * d.orbit * 0.35;
+        meshes[i].position.z = Math.sin(a) * d.orbit * 0.5;
+        meshes[i].rotation.x += 0.01;
+        meshes[i].rotation.y += 0.008;
+      }
+    });
+    renderer.render(scene, camera);
+  }
+  animate();
+  window.addEventListener('resize', function () {
+    W = canvas.parentElement.offsetWidth;
+    H = canvas.parentElement.offsetHeight || 280;
+    camera.aspect = W / H;
+    camera.updateProjectionMatrix();
+    renderer.setSize(W, H);
+  });
+}());
+  </script>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="../js/utils/games-data.js"></script>

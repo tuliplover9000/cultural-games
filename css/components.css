@@ -395,11 +395,12 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  transition: box-shadow var(--transition-base);
+  transform-style: preserve-3d;
+  will-change: transform;
 }
 
 .game-card:hover {
-  transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
 }
 
@@ -742,6 +743,18 @@
   to   { transform: translateX(-50%); }
 }
 
+@keyframes statPop {
+  0%   { transform: perspective(400px) scale(1) rotateY(0deg); }
+  40%  { transform: perspective(400px) scale(1.2) rotateY(12deg); }
+  75%  { transform: perspective(400px) scale(0.97) rotateY(-4deg); }
+  100% { transform: perspective(400px) scale(1) rotateY(0deg); }
+}
+
+.stat-pop {
+  display: inline-block;
+  animation: statPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
 .game-ticker__track {
   display: inline-block;
   animation: tickerScroll 28s linear infinite;
@@ -940,6 +953,23 @@
   background-color: var(--color-primary);
   padding: var(--space-10) 0 var(--space-8);
   border-bottom: 3px solid var(--color-accent-gold);
+  position: relative;
+  overflow: hidden;
+}
+
+.browse-hero__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.28;
+  z-index: 0;
+}
+
+.browse-hero > .container {
+  position: relative;
+  z-index: 1;
 }
 
 .browse-hero__label {
@@ -1069,6 +1099,10 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-4);
+}
+
+.game-card-wrapper {
+  perspective: 900px;
 }
 
 .game-card-wrapper[hidden] {
