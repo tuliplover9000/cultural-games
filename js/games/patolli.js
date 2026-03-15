@@ -372,7 +372,6 @@
     elRollBtn.disabled = true;
     setStatus('Choose a piece to move ' + result.value + ' space' + (result.value !== 1 ? 's' : '') + '.');
     render();
-    if (vsRoom) syncRoomState(); // let opponent see the dice roll
   }
 
   function onBoardClick(e) {
@@ -591,7 +590,13 @@
     myRoomSeat = RoomBridge.getSeat();
     mode       = 'vs-human';
     RoomBridge.onState(receiveRoomState);
-    if (myRoomSeat === 0) syncRoomState();
+    if (myRoomSeat === 0) {
+      syncRoomState();
+    } else {
+      // newGame() enabled the roll button for everyone — fix it for non-P1 seats.
+      elRollBtn.disabled = true;
+      setStatus('Waiting for Player 1 to roll the beans…');
+    }
     // Hide non-room UI
     if (elNewGameBtn) elNewGameBtn.style.display = 'none';
     var btnAI    = document.getElementById('pt-mode-ai');
