@@ -449,7 +449,7 @@
                 if (progress < 1) {
                   requestAnimationFrame(tick);
                 } else {
-                  el.classList.add('stat-pop');
+                  countEl.textContent = target;
                 }
               })(start);
             }

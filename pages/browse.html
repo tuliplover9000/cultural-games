@@ -463,10 +463,10 @@
       var y = e.clientY - rect.top;
       var cx = rect.width  / 2;
       var cy = rect.height / 2;
-      var rotX = ((y - cy) / cy) * -7;
-      var rotY = ((x - cx) / cx) *  7;
+      var rotX = ((y - cy) / cy) * -4;
+      var rotY = ((x - cx) / cx) *  4;
       card.style.transition = 'box-shadow var(--transition-base)';
-      card.style.transform = 'perspective(900px) rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg) translateZ(6px)';
+      card.style.transform = 'perspective(900px) rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg) translateZ(4px)';
       card.style.boxShadow = '0 16px 40px rgba(0,0,0,0.3)';
     });
     card.addEventListener('mouseleave', function () {
