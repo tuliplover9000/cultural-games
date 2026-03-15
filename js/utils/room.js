@@ -133,9 +133,10 @@
     // ── createRoom ───────────────────────────────────────────────────────────
     createRoom: async function (opts, cbs) {
       _cbs = cbs || {};
-      var pid  = getPlayerId();
-      var name = getPlayerName();
-      var max  = (opts && opts.maxPlayers) || 4;
+      var pid     = getPlayerId();
+      var name    = getPlayerName();
+      var max     = (opts && opts.maxPlayers) || 4;
+      var preGame = (opts && opts.game) || null;
 
       var room = null;
       for (var i = 0; i < 8 && !room; i++) {
@@ -153,7 +154,7 @@
           player_ready: { [pid]: false },
           suggestions:  [],
           lobby_mode:   'host-pick',
-          selected_game: null,
+          selected_game: preGame,
           dual_instance: false,
           game_instances: [],
           game_mode:      null,

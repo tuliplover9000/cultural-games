@@ -53,6 +53,26 @@
           </p>
         </header>
 
+        <!-- ══ GAME PICKER ═══════════════════════════════════════════════════ -->
+        <div class="rooms-game-picker">
+          <p class="rooms-picker-section-label">Pick a game to play <span>(optional)</span></p>
+          <div class="rooms-picker-controls">
+            <input
+              id="rooms-game-search"
+              class="rooms-picker-search"
+              type="search"
+              placeholder="Search games…"
+              autocomplete="off"
+              aria-label="Search games"
+            />
+            <select id="rooms-culture-filter" class="rooms-picker-select" aria-label="Filter by culture">
+              <option value="">All Cultures</option>
+            </select>
+          </div>
+          <div id="rooms-game-list" class="rooms-game-list" role="listbox" aria-label="Select a game to play"></div>
+          <p id="rooms-game-hint" class="rooms-game-hint" hidden></p>
+        </div>
+
         <div class="rooms-entry-cards">
 
           <!-- Create card -->
@@ -167,6 +187,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../js/utils/games-data.js"></script>
   <script src="../js/utils/navigation.js"></script>
   <script src="../js/utils/auth.js"></script>
   <script src="../js/utils/room.js"></script>
