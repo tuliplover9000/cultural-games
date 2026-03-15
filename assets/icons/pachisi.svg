@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Board background (ivory) -->
+  <rect x="2" y="2" width="60" height="60" rx="3" fill="#F5EDD6"/>
+
+  <!-- Cross arms -->
+  <!-- South arm (saffron) -->
+  <rect x="20" y="38" width="24" height="22" fill="#E8A020"/>
+  <!-- North arm (crimson) -->
+  <rect x="20" y="4" width="24" height="22" fill="#C0392B"/>
+  <!-- West arm (forest green) -->
+  <rect x="2" y="20" width="22" height="24" fill="#2E7D32"/>
+  <!-- East arm (charcoal) -->
+  <rect x="40" y="20" width="22" height="24" fill="#2C2C2C"/>
+
+  <!-- Center Charkoni (deep purple) -->
+  <rect x="20" y="20" width="24" height="24" fill="#4A148C"/>
+  <!-- Gold border on charkoni -->
+  <rect x="20" y="20" width="24" height="24" fill="none" stroke="#C8960C" stroke-width="1.5"/>
+
+  <!-- Piece cones -->
+  <!-- Yellow piece (south arm) -->
+  <ellipse cx="29" cy="52" rx="4" ry="2.5" fill="#F4C430" opacity="0.9"/>
+  <polygon points="29,44 25.5,52 32.5,52" fill="#F4C430"/>
+
+  <!-- Red piece (west arm) -->
+  <ellipse cx="12" cy="32" rx="4" ry="2.5" fill="#C0392B" opacity="0.9"/>
+  <polygon points="12,24 8.5,32 15.5,32" fill="#C0392B"/>
+
+  <!-- Green piece (north arm) -->
+  <ellipse cx="35" cy="12" rx="4" ry="2.5" fill="#2E7D32" opacity="0.9"/>
+  <polygon points="35,4 31.5,12 38.5,12" fill="#2E7D32"/>
+
+  <!-- Cross outlines -->
+  <rect x="20" y="2" width="24" height="60" fill="none" stroke="#8B6914" stroke-width="1"/>
+  <rect x="2" y="20" width="60" height="24" fill="none" stroke="#8B6914" stroke-width="1"/>
+</svg>

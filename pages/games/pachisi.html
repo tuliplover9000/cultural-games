@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Play Pachisi — the ancient Indian cross-and-circle race game played with cowrie shells. The ancestor of Ludo and Parcheesi." />
+  <title>Pachisi — Cultural Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="../../js/rooms/room-mode.js"></script>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/components.css" />
+  <link rel="stylesheet" href="../../css/auth.css" />
+  <link rel="stylesheet" href="../../css/games.css" />
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../../index.html" class="nav-logo" aria-label="Cultural Games — Home">
+        <span class="nav-logo-icon" aria-hidden="true">🎲</span>
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="../browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="../rooms.html"  class="nav-link nav-link--rooms">🎮 Rooms</a></li>
+        <li><a href="../about.html"  class="nav-link">About</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+
+      <div class="game-nav-bar">
+        <a href="../browse.html" class="back-link">Back to Browse</a>
+      </div>
+
+      <header class="game-header">
+        <div class="game-header__icon" aria-hidden="true"><img src="../../assets/icons/pachisi.svg" alt="" /></div>
+        <h1 class="game-header__title">Pachisi</h1>
+        <p class="game-header__origin">
+          Indian Subcontinent &nbsp;&middot;&nbsp;
+          <span class="badge badge--dice" style="display:inline-flex; vertical-align:middle; margin-left:4px;">Dice · 4P</span>
+        </p>
+      </header>
+
+      <!-- Game Container -->
+      <div class="game-container pc-game-container" id="pc-game-container" aria-label="Pachisi game area">
+
+        <!-- Pre-game lobby -->
+        <div id="pc-lobby" class="pc-lobby">
+          <h2 class="pc-lobby__title">Pachisi</h2>
+          <p class="pc-lobby__subtitle">Choose your game mode</p>
+          <div class="pc-lobby__btns">
+            <button id="pc-btn-2p" class="btn btn-primary pc-mode-btn">
+              <span class="pc-mode-btn__icon">👥</span>
+              <span class="pc-mode-btn__label">2 Players</span>
+              <span class="pc-mode-btn__sub">You vs AI</span>
+            </button>
+            <button id="pc-btn-4p" class="btn btn-secondary pc-mode-btn">
+              <span class="pc-mode-btn__icon">👥👥</span>
+              <span class="pc-mode-btn__label">4 Players</span>
+              <span class="pc-mode-btn__sub">Teams A &amp; B</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Main game area (hidden until mode selected) -->
+        <div id="pc-game" class="pc-game" hidden>
+
+          <!-- HUD top bar -->
+          <div class="pc-hud">
+            <div class="pc-hud__info">
+              <span class="pc-hud__label">Move</span>
+              <span class="pc-hud__val" id="pc-move-count">0</span>
+            </div>
+            <p class="pc-status" id="pc-status" aria-live="polite" aria-atomic="true">Roll the shells</p>
+            <div class="pc-hud__info">
+              <span class="pc-hud__label">Turn</span>
+              <span class="pc-hud__val pc-hud__player" id="pc-player-label">Yellow</span>
+            </div>
+          </div>
+
+          <!-- Board + sidebar layout -->
+          <div class="pc-layout">
+
+            <!-- Canvas board -->
+            <div class="pc-board-wrap">
+              <canvas id="pc-board" width="630" height="630" aria-label="Pachisi board — 9×9 cross grid" role="img"></canvas>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="pc-sidebar">
+
+              <!-- Cowrie dice display -->
+              <div class="pc-cowrie-panel">
+                <p class="pc-cowrie-label">Cowrie Shells</p>
+                <div id="pc-cowries" class="pc-cowries" aria-label="Cowrie shell dice">
+                  <!-- 6 shell canvases rendered by JS -->
+                </div>
+                <div class="pc-roll-result" id="pc-roll-result" hidden>
+                  <span class="pc-roll-result__num" id="pc-roll-num">0</span>
+                  <span class="pc-roll-result__note" id="pc-roll-note"></span>
+                </div>
+              </div>
+
+              <!-- Controls -->
+              <div class="pc-controls">
+                <button id="pc-roll-btn" class="btn btn-primary pc-roll-btn">Roll Shells</button>
+                <button id="pc-new-btn" class="btn btn-secondary btn-sm pc-new-btn">New Game</button>
+              </div>
+
+              <!-- Score panel -->
+              <div class="pc-score-panel">
+                <p class="pc-score-label">Home Pieces</p>
+                <div class="pc-scores" id="pc-scores">
+                  <!-- rendered by JS -->
+                </div>
+              </div>
+
+              <!-- Teams panel (4-player only) -->
+              <div class="pc-teams-panel" id="pc-teams-panel" hidden>
+                <p class="pc-score-label">Teams</p>
+                <div class="pc-team-row">
+                  <span class="pc-team-dot" style="background:#F4C430;"></span>
+                  <span>Yellow</span>
+                  <span style="margin-left:auto;opacity:0.6">+</span>
+                  <span class="pc-team-dot" style="background:#2C2C2C;"></span>
+                  <span>Black</span>
+                  <span class="pc-team-badge">Team A</span>
+                </div>
+                <div class="pc-team-row">
+                  <span class="pc-team-dot" style="background:#C0392B;"></span>
+                  <span>Red</span>
+                  <span style="margin-left:auto;opacity:0.6">+</span>
+                  <span class="pc-team-dot" style="background:#2E7D32;"></span>
+                  <span>Green</span>
+                  <span class="pc-team-badge">Team B</span>
+                </div>
+              </div>
+
+            </div><!-- /.pc-sidebar -->
+          </div><!-- /.pc-layout -->
+        </div><!-- /#pc-game -->
+
+      </div><!-- /.pc-game-container -->
+
+      <!-- How to Play -->
+      <details class="accordion" open>
+        <summary class="accordion__trigger">
+          <span class="accordion__title">How to Play</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Pachisi is a cross-and-circle race game played on a cloth board. Race all four of your pieces from the outer yard, around the board, and into the central <strong>Charkoni</strong> (home) square before your opponents.
+          </p>
+          <ol>
+            <li><strong>Roll:</strong> Click "Roll Shells" to throw 6 cowrie shells. The number landing mouth-up is your move value (0 up = move 25).</li>
+            <li><strong>Enter the board:</strong> A piece leaves the yard only on a roll of <strong>6 or 25</strong>.</li>
+            <li><strong>Move a piece:</strong> After rolling, click a highlighted piece to move it forward by the roll value.</li>
+            <li><strong>Capture:</strong> Landing on an enemy piece on a non-castle square sends it back to their yard.</li>
+            <li><strong>Castle squares</strong> (chequered gold) are safe — no captures, any piece may coexist.</li>
+            <li><strong>Blockade:</strong> Two or more same-colour pieces on a square form a blockade — enemies cannot land or pass through.</li>
+            <li><strong>Bonus roll:</strong> Rolling 6 or 25 grants an extra roll. Make use of it!</li>
+            <li><strong>Home:</strong> A piece must enter the Charkoni exactly — it becomes home and cannot be captured.</li>
+            <li><strong>Win (2P):</strong> First player to bring all 4 pieces home wins. <strong>Win (4P):</strong> First team with BOTH players' all-4 home wins.</li>
+          </ol>
+        </div>
+      </details>
+
+      <!-- Cultural Context -->
+      <details class="accordion">
+        <summary class="accordion__trigger">
+          <span class="accordion__title">Cultural Context</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Pachisi (from the Hindi word for "twenty-five," the highest throw) is one of India's most ancient and celebrated board games, with evidence of play dating to at least the 4th century CE and possible roots stretching back to the 6th century BCE. The Mughal Emperor Akbar the Great famously played a life-sized version in the courtyards of his palace at Fatehpur Sikri, using slave girls as living game pieces.
+          </p>
+          <p>
+            The game was played on a cloth board (<em>ashtāpada</em>) shaped like a cross, with cowrie shells as dice. Each player raced four pieces — shaped as conical or dome-topped pawns — around the board counterclockwise, attempting to capture opponents and reach the central <em>Charkoni</em> before all others.
+          </p>
+          <p>
+            Pachisi spread globally through British colonialism in the 19th century, spawning simplified derivatives like <strong>Parcheesi</strong> (USA), <strong>Ludo</strong> (UK/Germany), and <strong>Sorry!</strong>. The original four-player team variant, played with cowrie dice and the full rule set including blockades and castle squares, preserves the strategic depth of the authentic Mughal-era game.
+          </p>
+        </div>
+      </details>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <span class="footer-brand">Cultural Games</span>
+      <p class="footer-mission">Preserving cultural heritage through play — one game at a time.</p>
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links" role="list">
+          <li><a href="../browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="../about.html"  class="footer-link">About</a></li>
+        </ul>
+      </nav>
+      <div class="footer-divider"></div>
+      <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
+    </div>
+  </footer>
+
+  <script src="../../js/utils/helpers.js"></script>
+  <script src="../../js/utils/navigation.js"></script>
+  <script src="../../js/utils/auth.js"></script>
+  <script src="../../js/rooms/game-bridge.js"></script>
+  <script src="../../js/games/pachisi.js"></script>
+</body>
+</html>
