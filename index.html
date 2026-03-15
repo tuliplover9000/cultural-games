@@ -119,37 +119,37 @@
       <div class="container mission__inner">
 
         <div class="mission__content">
-          <p class="mission__label">Why we built this</p>
-          <h2 class="mission__heading">Games are living history.</h2>
-          <p class="mission__text">
+          <p class="mission__label" data-anim data-anim-delay="0">Why we built this</p>
+          <h2 class="mission__heading" data-anim data-anim-delay="100">Games are living history.</h2>
+          <p class="mission__text" data-anim data-anim-delay="200">
             Too many traditional games that defined childhoods, bonded families,
             and carried cultural wisdom have no home online. Cultural Games exists
             to change that — one game at a time.
           </p>
-          <p class="mission__text">
+          <p class="mission__text" data-anim data-anim-delay="300">
             Every game here is playable in your browser, free, with no account required.
             We write the rules and the history so you understand not just how to play,
             but why the game matters.
           </p>
-          <a href="pages/about.html" class="btn btn-ghost" style="margin-top: 0.5rem;">
+          <a href="pages/about.html" class="btn btn-ghost" style="margin-top: 0.5rem;" data-anim data-anim-delay="400">
             Read our full story →
           </a>
         </div>
 
         <div class="mission__stats" role="list" aria-label="Site stats">
-          <div class="stat" role="listitem">
-            <div class="stat__number" data-stat="games">11</div>
+          <div class="stat" role="listitem" data-anim data-anim-delay="0">
+            <div class="stat__number" data-stat="games" data-countup="11">11</div>
             <div class="stat__label">Traditional Games</div>
           </div>
-          <div class="stat" role="listitem">
-            <div class="stat__number" data-stat="cultures">8</div>
+          <div class="stat" role="listitem" data-anim data-anim-delay="100">
+            <div class="stat__number" data-stat="cultures" data-countup="8">8</div>
             <div class="stat__label">Cultures</div>
           </div>
-          <div class="stat" role="listitem">
+          <div class="stat" role="listitem" data-anim data-anim-delay="200">
             <div class="stat__number">Free</div>
             <div class="stat__label">Always, no account</div>
           </div>
-          <div class="stat" role="listitem">
+          <div class="stat" role="listitem" data-anim data-anim-delay="300">
             <div class="stat__number">∞</div>
             <div class="stat__label">Heritage Preserved</div>
           </div>
@@ -164,7 +164,7 @@
     <section class="featured" aria-label="Featured games">
       <div class="container">
 
-        <div class="featured__header">
+        <div class="featured__header" data-anim data-anim-delay="0">
           <h2 class="featured__title">Featured Games</h2>
           <a href="pages/browse.html" class="featured__link" id="featured-link">Browse all 11 games →</a>
         </div>
@@ -172,7 +172,7 @@
         <div class="featured__grid">
 
           <!-- Bầu Cua — hero card (spans 2 rows) -->
-          <article class="game-card">
+          <article class="game-card" data-anim data-anim-delay="0">
             <div class="game-card__banner game-card__banner--red" aria-hidden="true">
               <img src="assets/icons/bau-cua.svg" class="game-card__banner-icon" alt="" />
             </div>
@@ -190,7 +190,7 @@
           </article>
 
           <!-- Oware -->
-          <article class="game-card">
+          <article class="game-card" data-anim data-anim-delay="120">
             <div class="game-card__banner game-card__banner--warm" aria-hidden="true">
               <img src="assets/icons/oware.svg" class="game-card__banner-icon" alt="" />
             </div>
@@ -208,7 +208,7 @@
           </article>
 
           <!-- Patolli -->
-          <article class="game-card">
+          <article class="game-card" data-anim data-anim-delay="240">
             <div class="game-card__banner game-card__banner--green" aria-hidden="true">
               <img src="assets/icons/patolli.svg" class="game-card__banner-icon" alt="" />
             </div>
@@ -226,7 +226,7 @@
           </article>
 
           <!-- Pallanguzhi — wide bottom card -->
-          <article class="game-card">
+          <article class="game-card" data-anim data-anim-delay="360">
             <div class="game-card__banner game-card__banner--warm" aria-hidden="true">
               <img src="assets/icons/pallanguzhi.svg" class="game-card__banner-icon" alt="" />
             </div>
@@ -418,6 +418,44 @@
         renderer.render(scene, camera);
       }
       animate();
+    }());
+  </script>
+
+  <!-- Scroll animations + count-up -->
+  <script>
+    (function () {
+      // ── Intersection Observer: fade-up on scroll ──────────────
+      var animEls = document.querySelectorAll('[data-anim]');
+      if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            var el    = entry.target;
+            var delay = el.dataset.animDelay || '0';
+            el.style.transitionDelay = delay + 'ms';
+            el.classList.add('anim-in');
+            observer.unobserve(el);
+
+            // ── Count-up for numeric stats ──────────────────────
+            var countEl = el.querySelector('[data-countup]');
+            if (countEl) {
+              var target   = parseInt(countEl.dataset.countup, 10);
+              var duration = 900;
+              var start    = performance.now();
+              (function tick(now) {
+                var progress = Math.min((now - start) / duration, 1);
+                var eased    = 1 - Math.pow(1 - progress, 3);
+                countEl.textContent = Math.round(eased * target);
+                if (progress < 1) requestAnimationFrame(tick);
+              })(start);
+            }
+          });
+        }, { threshold: 0.12 });
+        animEls.forEach(function (el) { observer.observe(el); });
+      } else {
+        // Fallback: show everything immediately
+        animEls.forEach(function (el) { el.classList.add('anim-in'); });
+      }
     }());
   </script>
 
