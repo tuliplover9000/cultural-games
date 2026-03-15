@@ -1,36 +1,91 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Board background (ivory) -->
-  <rect x="2" y="2" width="60" height="60" rx="3" fill="#F5EDD6"/>
 
-  <!-- Cross arms -->
-  <!-- South arm (saffron) -->
-  <rect x="20" y="38" width="24" height="22" fill="#E8A020"/>
-  <!-- North arm (crimson) -->
-  <rect x="20" y="4" width="24" height="22" fill="#C0392B"/>
-  <!-- West arm (forest green) -->
-  <rect x="2" y="20" width="22" height="24" fill="#2E7D32"/>
-  <!-- East arm (charcoal) -->
-  <rect x="40" y="20" width="22" height="24" fill="#2C2C2C"/>
+  <!-- Cream board background -->
+  <rect width="64" height="64" rx="3" fill="#F0EAD6"/>
 
-  <!-- Center Charkoni (deep purple) -->
-  <rect x="20" y="20" width="24" height="24" fill="#4A148C"/>
-  <!-- Gold border on charkoni -->
-  <rect x="20" y="20" width="24" height="24" fill="none" stroke="#C8960C" stroke-width="1.5"/>
+  <!-- ── White cross arms (path cells) ── -->
+  <rect x="21" y="2"  width="22" height="19" fill="#FAFAF5"/>
+  <rect x="21" y="43" width="22" height="19" fill="#FAFAF5"/>
+  <rect x="2"  y="21" width="19" height="22" fill="#FAFAF5"/>
+  <rect x="43" y="21" width="19" height="22" fill="#FAFAF5"/>
 
-  <!-- Piece cones -->
-  <!-- Yellow piece (south arm) -->
-  <ellipse cx="29" cy="52" rx="4" ry="2.5" fill="#F4C430" opacity="0.9"/>
-  <polygon points="29,44 25.5,52 32.5,52" fill="#F4C430"/>
+  <!-- ── Colored home columns (final approach lanes) ── -->
+  <!-- North → green -->
+  <rect x="28" y="2"  width="8" height="19" fill="#27AE60"/>
+  <!-- South → yellow -->
+  <rect x="28" y="43" width="8" height="19" fill="#F5C518"/>
+  <!-- West → red -->
+  <rect x="2"  y="28" width="19" height="8"  fill="#E03030"/>
+  <!-- East → black/indigo -->
+  <rect x="43" y="28" width="19" height="8"  fill="#3A3A8C"/>
 
-  <!-- Red piece (west arm) -->
-  <ellipse cx="12" cy="32" rx="4" ry="2.5" fill="#C0392B" opacity="0.9"/>
-  <polygon points="12,24 8.5,32 15.5,32" fill="#C0392B"/>
+  <!-- ── Colored yard corners ── -->
+  <rect x="2"  y="2"  width="19" height="19" fill="#E03030"/>
+  <rect x="43" y="2"  width="19" height="19" fill="#27AE60"/>
+  <rect x="2"  y="43" width="19" height="19" fill="#F5C518"/>
+  <rect x="43" y="43" width="19" height="19" fill="#3A3A8C"/>
 
-  <!-- Green piece (north arm) -->
-  <ellipse cx="35" cy="12" rx="4" ry="2.5" fill="#2E7D32" opacity="0.9"/>
-  <polygon points="35,4 31.5,12 38.5,12" fill="#2E7D32"/>
+  <!-- Yard white inner areas -->
+  <rect x="4"  y="4"  width="15" height="15" rx="2" fill="white" opacity="0.88"/>
+  <rect x="45" y="4"  width="15" height="15" rx="2" fill="white" opacity="0.88"/>
+  <rect x="4"  y="45" width="15" height="15" rx="2" fill="white" opacity="0.88"/>
+  <rect x="45" y="45" width="15" height="15" rx="2" fill="white" opacity="0.88"/>
 
-  <!-- Cross outlines -->
-  <rect x="20" y="2" width="24" height="60" fill="none" stroke="#8B6914" stroke-width="1"/>
-  <rect x="2" y="20" width="60" height="24" fill="none" stroke="#8B6914" stroke-width="1"/>
+  <!-- Yard piece spots: 4 per corner -->
+  <!-- NW (red) -->
+  <circle cx="8"  cy="8"  r="2.8" fill="#E03030"/><circle cx="15" cy="8"  r="2.8" fill="#E03030"/>
+  <circle cx="8"  cy="15" r="2.8" fill="#E03030"/><circle cx="15" cy="15" r="2.8" fill="#E03030"/>
+  <!-- NE (green) -->
+  <circle cx="49" cy="8"  r="2.8" fill="#27AE60"/><circle cx="56" cy="8"  r="2.8" fill="#27AE60"/>
+  <circle cx="49" cy="15" r="2.8" fill="#27AE60"/><circle cx="56" cy="15" r="2.8" fill="#27AE60"/>
+  <!-- SW (yellow) -->
+  <circle cx="8"  cy="49" r="2.8" fill="#F5C518"/><circle cx="15" cy="49" r="2.8" fill="#F5C518"/>
+  <circle cx="8"  cy="56" r="2.8" fill="#F5C518"/><circle cx="15" cy="56" r="2.8" fill="#F5C518"/>
+  <!-- SE (black) -->
+  <circle cx="49" cy="49" r="2.8" fill="#3A3A8C"/><circle cx="56" cy="49" r="2.8" fill="#3A3A8C"/>
+  <circle cx="49" cy="56" r="2.8" fill="#3A3A8C"/><circle cx="56" cy="56" r="2.8" fill="#3A3A8C"/>
+
+  <!-- ── Center 4-colour triangle pinwheel ── -->
+  <polygon points="21,43 43,43 32,32" fill="#F5C518"/>
+  <polygon points="21,21 43,21 32,32" fill="#27AE60"/>
+  <polygon points="21,21 21,43 32,32" fill="#E03030"/>
+  <polygon points="43,21 43,43 32,32" fill="#3A3A8C"/>
+
+  <!-- White center circle -->
+  <circle cx="32" cy="32" r="6.5" fill="white"/>
+
+  <!-- Gold 5-point star at center -->
+  <polygon
+    points="32,28 33.1,30.5 35.8,30.8 33.7,32.6 34.4,35.2 32,33.8 29.6,35.2 30.3,32.6 28.2,30.8 30.9,30.5"
+    fill="#DAA520"/>
+
+  <!-- ── Subtle arm grid lines ── -->
+  <line x1="28" y1="2"  x2="28" y2="21" stroke="rgba(0,0,0,0.18)" stroke-width="0.6"/>
+  <line x1="36" y1="2"  x2="36" y2="21" stroke="rgba(0,0,0,0.18)" stroke-width="0.6"/>
+  <line x1="28" y1="43" x2="28" y2="62" stroke="rgba(0,0,0,0.18)" stroke-width="0.6"/>
+  <line x1="36" y1="43" x2="36" y2="62" stroke="rgba(0,0,0,0.18)" stroke-width="0.6"/>
+  <line x1="2"  y1="28" x2="21" y2="28" stroke="rgba(0,0,0,0.18)" stroke-width="0.6"/>
+  <line x1="2"  y1="36" x2="21" y2="36" stroke="rgba(0,0,0,0.18)" stroke-width="0.6"/>
+  <line x1="43" y1="28" x2="62" y2="28" stroke="rgba(0,0,0,0.18)" stroke-width="0.6"/>
+  <line x1="43" y1="36" x2="62" y2="36" stroke="rgba(0,0,0,0.18)" stroke-width="0.6"/>
+
+  <!-- ── Playing pieces (one per arm, mid-journey) ── -->
+  <!-- Yellow on south arm -->
+  <circle cx="24" cy="53" r="4"   fill="white"/>
+  <circle cx="24" cy="53" r="3"   fill="#F5C518"/>
+  <circle cx="22.5" cy="51.5" r="1" fill="rgba(255,255,255,0.6)"/>
+  <!-- Red on west arm -->
+  <circle cx="11" cy="26" r="4"   fill="white"/>
+  <circle cx="11" cy="26" r="3"   fill="#E03030"/>
+  <circle cx="9.5" cy="24.5" r="1" fill="rgba(255,255,255,0.6)"/>
+  <!-- Green on north arm -->
+  <circle cx="38" cy="11" r="4"   fill="white"/>
+  <circle cx="38" cy="11" r="3"   fill="#27AE60"/>
+  <circle cx="36.5" cy="9.5" r="1" fill="rgba(255,255,255,0.6)"/>
+
+  <!-- ── Outer cross outline & board border ── -->
+  <rect x="21" y="2"  width="22" height="60" fill="none" stroke="rgba(0,0,0,0.3)" stroke-width="0.75"/>
+  <rect x="2"  y="21" width="60" height="22" fill="none" stroke="rgba(0,0,0,0.3)" stroke-width="0.75"/>
+  <rect x="0.5" y="0.5" width="63" height="63" rx="3" fill="none" stroke="#2a1805" stroke-width="1.5"/>
+
 </svg>
