@@ -11,7 +11,7 @@
   // ── Game catalogue ─────────────────────────────────────────────────────────
   var GAMES = [
     { key: 'tien-len',    name: 'Tiến Lên',          icon: '🃏', svg: '../assets/icons/tien-len.svg',    badge: 'Card · 4P',    maxPlayers: 4 },
-    { key: 'mahjong',     name: 'Hong Kong Mahjong',  icon: '🀄', svg: '../assets/icons/mahjong.svg',     badge: 'Tile · 4P',    maxPlayers: 4 },
+    { key: 'mahjong',     name: 'Hong Kong Mahjong',  icon: '🀄', svg: '../assets/icons/mahjong.svg?v=3', badge: 'Tile · 4P',    maxPlayers: 4 },
     { key: 'oware',       name: 'Oware',              icon: '🟤', svg: '../assets/icons/oware.svg',       badge: 'Board · 2P',   maxPlayers: 2 },
     { key: 'o-an-quan',   name: 'Ô Ăn Quan',          icon: '⚫', svg: '../assets/icons/o-an-quan.svg',  badge: 'Board · 2P',   maxPlayers: 2 },
     { key: 'fanorona',    name: 'Fanorona',            icon: '⬡',  svg: '../assets/icons/fanorona.svg',   badge: 'Board · 2P',   maxPlayers: 2 },
@@ -119,7 +119,7 @@
     var isHost = Room.amHost();
     elGameGrid.innerHTML = GAMES.map(function(g) {
       var iconInner = g.svg
-        ? '<img src="' + g.svg + '" class="lobby-game-card__icon-img" alt="" aria-hidden="true">'
+        ? '<img src="' + g.svg + '" class="lobby-game-card__icon-img" alt="" aria-hidden="true" onerror="this.style.display=\'none\';this.parentNode.textContent=\'' + g.icon + '\'">'
         : g.icon;
       return '<div class="lobby-game-card" role="listitem">' +
         '<span class="lobby-game-card__icon" aria-hidden="true">' + iconInner + '</span>' +
