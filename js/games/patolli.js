@@ -498,9 +498,12 @@
     state.phase = 'idle';
     state.validPieces = [];
     render();
-    if (vsRoom) syncRoomState();
-
-    if (next === AI && mode === 'vs-ai') {
+    if (vsRoom) {
+      syncRoomState();
+      // Disable own button and show waiting status — receiveRoomState re-enables when it's our turn
+      elRollBtn.disabled = true;
+      setStatus('Waiting for ' + playerName(next) + ' to roll the beans…');
+    } else if (next === AI && mode === 'vs-ai') {
       elRollBtn.disabled = true;
       setTimeout(aiTurn, 500);
     } else {
@@ -558,7 +561,7 @@
   function syncRoomState() {
     if (!vsRoom || !window.RoomBridge) return;
     RoomBridge.sendState({
-      pieces:     state.pieces.map(function(a){ return a.slice(); }),
+      pieces:     [state.pieces[0].slice(), state.pieces[1].slice()],
       coins:      state.coins.slice(),
       turn:       state.turn,
       phase:      state.phase,
@@ -573,7 +576,10 @@
   function receiveRoomState(data) {
     if (!data || data.last_actor === 'room:' + myRoomSeat) return;
     Object.assign(state, data);
-    if (data.pieces) state.pieces = data.pieces.map(function(a){ return a.slice(); });
+    if (data.pieces) {
+      var p = Array.isArray(data.pieces) ? data.pieces : [data.pieces[0], data.pieces[1]];
+      state.pieces = { 0: p[0].slice(), 1: p[1].slice() };
+    }
     if (data.coins)  state.coins  = data.coins.slice();
     state.animating   = false;
     state.movingPiece = -1;
@@ -581,7 +587,11 @@
     // Enable/disable roll button based on whose turn it is
     var myTurn = state.turn === myRoomSeat && state.phase === 'idle';
     elRollBtn.disabled = !myTurn;
-    if (myTurn) setStatus(playerName(myRoomSeat) + ' — roll the beans!');
+    if (myTurn) {
+      setStatus(playerName(myRoomSeat) + ' — roll the beans!');
+    } else {
+      setStatus('Waiting for ' + playerName(state.turn) + ' to roll the beans…');
+    }
   }
 
   function initRoomMode() {
