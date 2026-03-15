@@ -843,41 +843,8 @@
 
 .featured__grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  grid-template-rows: auto auto;
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-4);
-}
-
-/* First card spans both rows — the "hero" card */
-.featured__grid > article:first-child {
-  grid-row: 1 / 3;
-}
-
-/* Taller banner on the hero card */
-.featured__grid > article:first-child .game-card__banner {
-  height: 240px;
-}
-
-/* Fourth card spans the bottom of cols 2–3 */
-.featured__grid > article:nth-child(4) {
-  grid-column: 2 / 4;
-}
-
-@media (max-width: 900px) {
-  .featured__grid {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: unset;
-  }
-  .featured__grid > article:first-child {
-    grid-row: unset;
-    grid-column: unset;
-  }
-  .featured__grid > article:first-child .game-card__banner {
-    height: 140px;
-  }
-  .featured__grid > article:nth-child(4) {
-    grid-column: unset;
-  }
 }
 
 @media (max-width: 560px) {
