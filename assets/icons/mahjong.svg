@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Back tile (left, fanned slightly) -->
+  <g transform="rotate(-14 20 29)">
+    <rect x="8" y="14" width="22" height="30" rx="3" fill="#c8a46e" stroke="#7a5020" stroke-width="1.5"/>
+    <rect x="11" y="17" width="16" height="24" rx="1.5" fill="none" stroke="#b08040" stroke-width="0.8"/>
+    <!-- Simple circle dot on back tile -->
+    <circle cx="19" cy="29" r="4" fill="none" stroke="#b08040" stroke-width="0.8"/>
+    <circle cx="19" cy="29" r="1.5" fill="#b08040"/>
+  </g>
+
+  <!-- Front tile drop shadow -->
+  <rect x="24" y="22" width="22" height="30" rx="3" fill="#1a0800" opacity="0.18"/>
+
+  <!-- Front tile -->
+  <rect x="22" y="19" width="22" height="30" rx="3" fill="#FBF5E6" stroke="#5a3010" stroke-width="2"/>
+  <!-- Inner gold border -->
+  <rect x="25" y="22" width="16" height="24" rx="1.5" fill="none" stroke="#C89B3C" stroke-width="1.2"/>
+  <!-- 中 Red Dragon character -->
+  <text x="33" y="35" text-anchor="middle" dominant-baseline="middle"
+        font-size="16" fill="#cc2200" font-family="Georgia,serif" font-weight="bold">中</text>
+</svg>
