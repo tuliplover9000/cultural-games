@@ -108,24 +108,25 @@
 
   // ── Colours ───────────────────────────────────────────────────────────────
   var PIECE_COLORS = {
-    yellow: '#F4C430',
-    red:    '#C0392B',
-    green:  '#2E7D32',
+    yellow: '#F5C518',
+    red:    '#E03030',
+    green:  '#27AE60',
     black:  '#2C2C2C'
   };
 
   var PIECE_STROKE = {
     yellow: '#8B6914',
-    red:    '#7a1010',
-    green:  '#1a4a1a',
-    black:  '#111'
+    red:    '#7a0a0a',
+    green:  '#1a5c1a',
+    black:  '#667788'
   };
 
-  var ARM_COLORS = {
-    south: '#E8A020',
-    north: '#C0392B',
-    west:  '#2E7D32',
-    east:  '#2C2C2C'
+  // Board arm/yard palette (used in drawBoard)
+  var BOARD_COLORS = {
+    yellow: '#F5C518',
+    red:    '#E03030',
+    green:  '#27AE60',
+    black:  '#3A3A8C'
   };
 
   // ── Canvas ────────────────────────────────────────────────────────────────
@@ -482,171 +483,171 @@
     ctx.restore();
   }
 
+  // Draw a star polygon at (cx, cy)
+  function drawStar(scx, scy, points, outerR, innerR, color) {
+    ctx.beginPath();
+    for (var i = 0; i < points * 2; i++) {
+      var sr = i % 2 === 0 ? outerR : innerR;
+      var sa = (i * Math.PI / points) - Math.PI / 2;
+      if (i === 0) ctx.moveTo(scx + sr * Math.cos(sa), scy + sr * Math.sin(sa));
+      else         ctx.lineTo(scx + sr * Math.cos(sa), scy + sr * Math.sin(sa));
+    }
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+
+  // Yard spot pixel positions for a given player (fractional cell coords within 3×3 yard)
+  var YARD_SPOT_OFFSETS = [[0.82, 0.82],[2.18, 0.82],[0.82, 2.18],[2.18, 2.18]]; // [col,row] offsets
+
+  function yardSpotPx(player, spotIdx) {
+    var yc = YARD_CORNERS[player]; // [baseRow, baseCol]
+    var off = YARD_SPOT_OFFSETS[spotIdx];
+    return { x: (yc[1] + off[0]) * CELL, y: (yc[0] + off[1]) * CELL };
+  }
+
   function drawBoard() {
     if (!ctx) return;
     ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
-    // ── Outer border (carved wood frame) ─────────────────────────────────────
-    ctx.fillStyle = '#2a1805';
+    var BC = BOARD_COLORS;
+
+    // ── Board background: cream ───────────────────────────────────────────────
+    ctx.fillStyle = '#F0EAD6';
     ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
-    // Warm inner frame
-    var PAD = 4;
-    ctx.fillStyle = '#5a3315';
-    ctx.fillRect(PAD, PAD, CANVAS_SIZE - PAD * 2, CANVAS_SIZE - PAD * 2);
-
-    // ── Yard corners: colored home areas ─────────────────────────────────────
+    // ── Yard corners: solid player color, white inner area, 4 colored spots ──
     var yardDefs = [
-      { player: 'yellow', rows: [6,7,8], cols: [0,1,2], color: '#c8860a', light: '#f5d080' },
-      { player: 'red',    rows: [0,1,2], cols: [0,1,2], color: '#8b1a1a', light: '#e88080' },
-      { player: 'green',  rows: [0,1,2], cols: [6,7,8], color: '#1a5c1a', light: '#80d080' },
-      { player: 'black',  rows: [6,7,8], cols: [6,7,8], color: '#222228', light: '#888898' },
+      { player: 'yellow', row: 6, col: 0, color: BC.yellow },
+      { player: 'red',    row: 0, col: 0, color: BC.red    },
+      { player: 'green',  row: 0, col: 6, color: BC.green  },
+      { player: 'black',  row: 6, col: 6, color: BC.black  },
     ];
     yardDefs.forEach(function (yd) {
-      // Yard background
-      var x0 = yd.cols[0] * CELL + PAD, y0 = yd.rows[0] * CELL + PAD;
-      var yw = yd.cols.length * CELL - PAD * 2, yh = yd.rows.length * CELL - PAD * 2;
-      var grad = ctx.createLinearGradient(x0, y0, x0 + yw, y0 + yh);
-      grad.addColorStop(0, yd.color);
-      grad.addColorStop(1, yd.light);
-      ctx.fillStyle = grad;
+      var x0 = yd.col * CELL, y0 = yd.row * CELL;
+      var w  = 3 * CELL,      h  = 3 * CELL;
+
+      // Solid colored fill
+      ctx.fillStyle = yd.color;
+      ctx.fillRect(x0, y0, w, h);
+
+      // White inner rounded rectangle
+      var ip = CELL * 0.18;
+      ctx.fillStyle = '#FFFFFF';
       ctx.beginPath();
-      ctx.roundRect(x0, y0, yw, yh, 6);
+      ctx.roundRect(x0 + ip, y0 + ip, w - ip * 2, h - ip * 2, CELL * 0.18);
       ctx.fill();
-      // Decorative inner border
-      ctx.strokeStyle = 'rgba(255,220,100,0.5)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.roundRect(x0 + 4, y0 + 4, yw - 8, yh - 8, 4);
-      ctx.stroke();
-      // Yard label
-      ctx.save();
-      ctx.font = 'bold ' + Math.round(CELL * 0.22) + 'px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-      ctx.fillStyle = 'rgba(255,255,255,0.55)';
-      ctx.fillText(yd.player.toUpperCase(), x0 + yw / 2, y0 + 5);
-      ctx.restore();
+
+      // 4 colored circle spots
+      var spotR = CELL * 0.35;
+      YARD_SPOT_OFFSETS.forEach(function (off, si) {
+        var sx = x0 + off[0] * CELL;
+        var sy = y0 + off[1] * CELL;
+        ctx.beginPath();
+        ctx.arc(sx, sy, spotR, 0, Math.PI * 2);
+        ctx.fillStyle = yd.color;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0,0,0,0.18)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      });
+
+      // Border outline
+      ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x0 + 1, y0 + 1, w - 2, h - 2);
     });
 
-    // ── Cross cells ──────────────────────────────────────────────────────────
-    var ARM_BG = {
-      south: { base: '#d4860e', stripe: '#c07a0a' },
-      north: { base: '#a81818', stripe: '#901010' },
-      west:  { base: '#1c6b1c', stripe: '#155815' },
-      east:  { base: '#252525', stripe: '#1a1a1a' },
-    };
+    // ── Arm & cross cells ─────────────────────────────────────────────────────
+    // Home column mapping: which cells get player color (the final approach lane)
+    var homeCells = {};
+    // South (yellow): col 4, rows 6–8
+    for (var r2 = 6; r2 <= 8; r2++) homeCells[r2 + ',' + 4] = BC.yellow;
+    // North (green): col 4, rows 0–2
+    for (var r3 = 0; r3 <= 2; r3++) homeCells[r3 + ',' + 4] = BC.green;
+    // West (red): row 4, cols 0–2
+    for (var c2 = 0; c2 <= 2; c2++) homeCells['4,' + c2] = BC.red;
+    // East (black): row 4, cols 6–8
+    for (var c3 = 6; c3 <= 8; c3++) homeCells['4,' + c3] = BC.black;
 
     for (var r = 0; r < GRID; r++) {
       for (var c = 0; c < GRID; c++) {
         if (!isCross(r, c)) continue;
-
-        var x = c * CELL;
-        var y = r * CELL;
         var isCenter = (r >= 3 && r <= 5 && c >= 3 && c <= 5);
+        if (isCenter) continue; // drawn separately below
 
-        // Base arm color
-        var armKey = null;
-        if (r >= 6 && c >= 3 && c <= 5) armKey = 'south';
-        else if (r <= 2 && c >= 3 && c <= 5) armKey = 'north';
-        else if (c <= 2 && r >= 3 && r <= 5) armKey = 'west';
-        else if (c >= 6 && r >= 3 && r <= 5) armKey = 'east';
+        var cx2 = c * CELL, cy2 = r * CELL;
+        var homeColor = homeCells[r + ',' + c];
 
-        if (isCenter) {
-          // Charkoni: ivory with gold vein
-          ctx.fillStyle = (r + c) % 2 === 0 ? '#EDE0C4' : '#E0D0A8';
-          ctx.fillRect(x, y, CELL, CELL);
-        } else if (armKey) {
-          var arm = ARM_BG[armKey];
-          ctx.fillStyle = arm.base;
-          ctx.fillRect(x, y, CELL, CELL);
-          // Alternating stripe for texture
-          if ((r + c) % 2 === 0) {
-            ctx.fillStyle = arm.stripe;
-            ctx.fillRect(x, y, CELL, CELL);
+        if (homeColor) {
+          ctx.fillStyle = homeColor;
+          ctx.fillRect(cx2, cy2, CELL, CELL);
+        } else {
+          ctx.fillStyle = '#FAFAF5';
+          ctx.fillRect(cx2, cy2, CELL, CELL);
+
+          // Castle squares: gold tint + star
+          if (isCastle(r, c)) {
+            ctx.fillStyle = 'rgba(255,210,0,0.22)';
+            ctx.fillRect(cx2, cy2, CELL, CELL);
           }
         }
 
-        // Castle square: gold star marker
+        // Castle star marker on all castle squares (including home column ones)
         if (isCastle(r, c)) {
-          ctx.fillStyle = isCenter ? '#c8960c' : 'rgba(255,220,80,0.18)';
-          ctx.fillRect(x, y, CELL, CELL);
-          // Cross marker
-          ctx.strokeStyle = '#C8960C';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(x + CELL * 0.5, y + CELL * 0.18);
-          ctx.lineTo(x + CELL * 0.5, y + CELL * 0.82);
-          ctx.moveTo(x + CELL * 0.18, y + CELL * 0.5);
-          ctx.lineTo(x + CELL * 0.82, y + CELL * 0.5);
-          ctx.stroke();
-          // Circle around cross
-          ctx.beginPath();
-          ctx.arc(x + CELL * 0.5, y + CELL * 0.5, CELL * 0.3, 0, Math.PI * 2);
-          ctx.strokeStyle = 'rgba(200,150,12,0.5)';
-          ctx.lineWidth = 1;
-          ctx.stroke();
+          var starColor = homeColor ? 'rgba(255,255,255,0.7)' : '#C8960C';
+          drawStar(cx2 + CELL / 2, cy2 + CELL / 2, 5, CELL * 0.3, CELL * 0.13, starColor);
         }
 
-        // Cell border
-        ctx.strokeStyle = isCenter ? 'rgba(180,140,20,0.5)' : 'rgba(0,0,0,0.25)';
-        ctx.lineWidth = 0.5;
-        ctx.strokeRect(x + 0.5, y + 0.5, CELL - 1, CELL - 1);
+        // Grid line
+        ctx.strokeStyle = 'rgba(0,0,0,0.28)';
+        ctx.lineWidth = 0.75;
+        ctx.strokeRect(cx2 + 0.5, cy2 + 0.5, CELL - 1, CELL - 1);
       }
     }
 
-    // ── Charkoni center: lotus / star motif ───────────────────────────────────
-    var ccx = cx(4), ccy = cy(4);
-    var cr = CELL * 1.3; // outer radius covering the 3×3 center
+    // ── Center 3×3: 4-color triangle pinwheel ────────────────────────────────
+    var cx0 = 3 * CELL, cy0 = 3 * CELL, cw = 3 * CELL;
+    var mid = cx0 + cw / 2, midy = cy0 + cw / 2;
 
-    // Deep purple overlay for full center block
-    ctx.fillStyle = 'rgba(60,10,100,0.82)';
-    ctx.fillRect(3 * CELL, 3 * CELL, 3 * CELL, 3 * CELL);
-
-    // Gold border ring around center
-    ctx.strokeStyle = '#C8960C';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(3 * CELL + 3, 3 * CELL + 3, 3 * CELL - 6, 3 * CELL - 6);
-
-    // Inner lotus petals
-    ctx.save();
-    ctx.translate(ccx, ccy);
-    for (var petal = 0; petal < 8; petal++) {
-      ctx.save();
-      ctx.rotate(petal * Math.PI / 4);
-      ctx.fillStyle = petal % 2 === 0 ? 'rgba(200,150,12,0.55)' : 'rgba(255,255,255,0.12)';
+    // 4 triangles meeting at center point
+    var tris = [
+      { color: BC.yellow, pts: [[cx0, cy0+cw],[cx0+cw, cy0+cw],[mid, midy]] }, // bottom → yellow
+      { color: BC.green,  pts: [[cx0, cy0],[cx0+cw, cy0],[mid, midy]] },        // top → green
+      { color: BC.red,    pts: [[cx0, cy0],[cx0, cy0+cw],[mid, midy]] },        // left → red
+      { color: BC.black,  pts: [[cx0+cw, cy0],[cx0+cw, cy0+cw],[mid, midy]] }, // right → black
+    ];
+    tris.forEach(function (tri) {
       ctx.beginPath();
-      ctx.ellipse(0, -CELL * 0.55, CELL * 0.18, CELL * 0.42, 0, 0, Math.PI * 2);
+      ctx.moveTo(tri.pts[0][0], tri.pts[0][1]);
+      ctx.lineTo(tri.pts[1][0], tri.pts[1][1]);
+      ctx.lineTo(tri.pts[2][0], tri.pts[2][1]);
+      ctx.closePath();
+      ctx.fillStyle = tri.color;
       ctx.fill();
-      ctx.restore();
-    }
-    // Center circle
+    });
+
+    // White circle at center
     ctx.beginPath();
-    ctx.arc(0, 0, CELL * 0.28, 0, Math.PI * 2);
-    ctx.fillStyle = '#C8960C';
+    ctx.arc(mid, midy, CELL * 0.48, 0, Math.PI * 2);
+    ctx.fillStyle = '#FFFFFF';
     ctx.fill();
-    ctx.restore();
+    ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
 
-    // HOME label
-    ctx.save();
-    ctx.font = 'bold ' + Math.round(CELL * 0.2) + 'px serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'bottom';
-    ctx.fillStyle = 'rgba(255,220,80,0.7)';
-    ctx.fillText('HOME', ccx, ccy + CELL * 1.25);
-    ctx.restore();
+    // Gold star in center circle
+    drawStar(mid, midy, 6, CELL * 0.34, CELL * 0.15, '#DAA520');
 
-    // ── Arm separator lines ───────────────────────────────────────────────────
-    ctx.strokeStyle = 'rgba(0,0,0,0.45)';
+    // Center border
+    ctx.strokeStyle = 'rgba(0,0,0,0.4)';
     ctx.lineWidth = 2;
-    // South arm top edge
-    ctx.beginPath(); ctx.moveTo(3*CELL,6*CELL); ctx.lineTo(6*CELL,6*CELL); ctx.stroke();
-    // North arm bottom edge
-    ctx.beginPath(); ctx.moveTo(3*CELL,3*CELL); ctx.lineTo(6*CELL,3*CELL); ctx.stroke();
-    // West arm right edge
-    ctx.beginPath(); ctx.moveTo(3*CELL,3*CELL); ctx.lineTo(3*CELL,6*CELL); ctx.stroke();
-    // East arm left edge
-    ctx.beginPath(); ctx.moveTo(6*CELL,3*CELL); ctx.lineTo(6*CELL,6*CELL); ctx.stroke();
+    ctx.strokeRect(cx0, cy0, cw, cw);
+
+    // ── Outer border ──────────────────────────────────────────────────────────
+    ctx.strokeStyle = '#2a1805';
+    ctx.lineWidth = 5;
+    ctx.strokeRect(2.5, 2.5, CANVAS_SIZE - 5, CANVAS_SIZE - 5);
   }
 
   // Collect all board pieces keyed by "row,col" for stacking
@@ -669,21 +670,13 @@
   function drawPieces() {
     if (!state) return;
 
-    // Draw yard pieces
+    // Draw yard pieces — placed on the 4 circular spots
     state.players.forEach(function (pl) {
-      var yc = YARD_CORNERS[pl];
       var pieces = playerPieces(pl).filter(function (p) { return p.state === 'yard'; });
-      var positions = [
-        [yc[0],   yc[1]  ],
-        [yc[0],   yc[1]+1],
-        [yc[0]+1, yc[1]  ],
-        [yc[0]+1, yc[1]+1]
-      ];
       pieces.forEach(function (piece, idx) {
         if (idx >= 4) return;
-        var pr = positions[idx][0];
-        var pc2 = positions[idx][1];
-        drawPiece(cx(pc2), cy(pr), PIECE_COLORS[pl], PIECE_STROKE[pl], 0.75);
+        var sp = yardSpotPx(pl, idx);
+        drawPiece(sp.x, sp.y, PIECE_COLORS[pl], PIECE_STROKE[pl], 0.8);
       });
     });
 
@@ -741,18 +734,12 @@
 
       var hx, hy;
       if (piece.state === 'yard') {
-        var yc = YARD_CORNERS[piece.owner];
         var yardPcsH = playerPieces(piece.owner).filter(function (p) { return p.state === 'yard'; });
         var idxInYard = yardPcsH.indexOf(piece);
-        var positions = [
-          [yc[0],   yc[1]  ],
-          [yc[0],   yc[1]+1],
-          [yc[0]+1, yc[1]  ],
-          [yc[0]+1, yc[1]+1]
-        ];
-        if (idxInYard < positions.length) {
-          hx = cx(positions[idxInYard][1]);
-          hy = cy(positions[idxInYard][0]);
+        if (idxInYard >= 0) {
+          var sp = yardSpotPx(piece.owner, idxInYard);
+          hx = sp.x;
+          hy = sp.y;
         }
       } else if (piece.state === 'board') {
         var pos = piecePos(piece);
