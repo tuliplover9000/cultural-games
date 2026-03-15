@@ -473,12 +473,13 @@
     const { board, currentPlayer, phase } = state;
     const isSelecting = phase === 'select';
 
-    // Top row (P2 pits): displayed left-to-right as indices 10,9,8,7,6
-    // (counterclockwise from viewer left = index 10, viewer right = index 6)
-    const topPits = [10, 9, 8, 7, 6];
+    // Flip board for seat 1 so each player sees their own pits at the bottom
+    const flip = vsRoom && myRoomSeat === 1;
 
-    // Bottom row (P1 pits): displayed left-to-right as indices 0,1,2,3,4
-    const bottomPits = [0, 1, 2, 3, 4];
+    // Top row: P2 pits normally, P1 pits (reversed) when flipped
+    const topPits    = flip ? [4, 3, 2, 1, 0]   : [10, 9, 8, 7, 6];
+    // Bottom row: P1 pits normally, P2 pits when flipped
+    const bottomPits = flip ? [6, 7, 8, 9, 10]  : [0, 1, 2, 3, 4];
 
     // colOffset: top pits [10,9,8,7,6] → columns 2,3,4,5,6; bottom pits [0..4] → columns 2..6
     function pitHTML(idx, row, col) {
@@ -509,16 +510,16 @@
         </button>`;
     }
 
-    // Q2: column 1, rows 1-2  (data-pit="11" lets animateSeedFly target it)
+    // Q2: column 1 normally, column 7 when flipped
     const q2 = `
-      <div class="oaq-quan oaq-quan--p2" data-pit="11" style="grid-column:1;grid-row:1/3;" aria-label="Player 2 quan: ${board[Q2]} seeds">
+      <div class="oaq-quan oaq-quan--p2" data-pit="11" style="grid-column:${flip ? 7 : 1};grid-row:1/3;" aria-label="Player 2 quan: ${board[Q2]} seeds">
         <span class="oaq-quan__label">P2</span>
         ${quanSeeds(board[Q2], Q2)}
       </div>`;
 
-    // Q1: column 7, rows 1-2  (data-pit="5")
+    // Q1: column 7 normally, column 1 when flipped
     const q1 = `
-      <div class="oaq-quan oaq-quan--p1" data-pit="5" style="grid-column:7;grid-row:1/3;" aria-label="Player 1 quan: ${board[Q1]} seeds">
+      <div class="oaq-quan oaq-quan--p1" data-pit="5" style="grid-column:${flip ? 1 : 7};grid-row:1/3;" aria-label="Player 1 quan: ${board[Q1]} seeds">
         <span class="oaq-quan__label">P1</span>
         ${quanSeeds(board[Q1], Q1)}
       </div>`;

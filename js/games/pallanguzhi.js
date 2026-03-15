@@ -204,13 +204,18 @@
         : 'Your turn \u2014 click a highlighted cup to sow';
     }
 
-    // Board rows
+    // Board rows — flip for seat 1 so each player sees their cups at the bottom
+    var flip = vsRoom && myRoomSeat === 1;
     var aiRow = '';
-    for (var a = 0; a < 7; a++) {
+    var aiOrder = flip ? [6,5,4,3,2,1,0] : [0,1,2,3,4,5,6];
+    for (var ai = 0; ai < 7; ai++) {
+      var a = aiOrder[ai];
       aiRow += pitHTML(a, clickableAI.indexOf(a) !== -1, state.sowingCup === a, state.aiSelectingCup === a);
     }
     var playerRow = '';
-    for (var p = 7; p < 14; p++) {
+    var plOrder = flip ? [13,12,11,10,9,8,7] : [7,8,9,10,11,12,13];
+    for (var pi = 0; pi < 7; pi++) {
+      var p = plOrder[pi];
       playerRow += pitHTML(p, clickablePlayer.indexOf(p) !== -1, state.sowingCup === p, false);
     }
 
@@ -247,11 +252,11 @@
           + '<div class="pg-store__sub">captured</div>'
         + '</div>'
         + '<div class="pg-board">'
-          + '<div class="pg-row-label pg-row-label--ai">' + opp + '\u2019s cups</div>'
-          + '<div class="pg-row pg-row--ai">' + aiRow + '</div>'
+          + '<div class="pg-row-label pg-row-label--ai">' + (flip ? you : opp) + '\u2019s cups</div>'
+          + '<div class="pg-row pg-row--ai">' + (flip ? playerRow : aiRow) + '</div>'
           + '<div class="pg-divider"></div>'
-          + '<div class="pg-row pg-row--player">' + playerRow + '</div>'
-          + '<div class="pg-row-label pg-row-label--player">' + you + '\u2019s cups</div>'
+          + '<div class="pg-row pg-row--player">' + (flip ? aiRow : playerRow) + '</div>'
+          + '<div class="pg-row-label pg-row-label--player">' + (flip ? opp : you) + '\u2019s cups</div>'
         + '</div>'
         + '<div class="pg-store pg-store--player">'
           + '<div class="pg-store__label">' + you + '</div>'

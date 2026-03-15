@@ -194,7 +194,12 @@
   };
 
   function cellSize()        { return (cnv.width - PAD * 2) / (COLS - 1); }
-  function ptXY(c, r)        { var cs = cellSize(); return { x: PAD + c * cs, y: PAD + r * cs }; }
+  function ptXY(c, r) {
+    var cs = cellSize();
+    var dc = (vsRoom && myRoomSeat === 1) ? (COLS - 1 - c) : c;
+    var dr = (vsRoom && myRoomSeat === 1) ? (ROWS - 1 - r) : r;
+    return { x: PAD + dc * cs, y: PAD + dr * cs };
+  }
   function hitTest(x, y) {
     var cs = cellSize(), snap = cs * 0.52, best = null, bestD = Infinity;
     for (var r = 0; r < ROWS; r++) {
