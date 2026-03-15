@@ -79,14 +79,12 @@
     }
 
     // AI seats: fill remaining slots up to game max.
-    // Group/betting games (like bau-cua) never use AI fill.
-    // 1v1 mode never gets AI fill. Games with explicit mode choices (Pachisi)
-    // use that mode to determine effective max players.
+    // Group/betting games (like bau-cua) and Pachisi (human-only in rooms)
+    // never use AI fill. 1v1 mode never gets AI fill.
+    var NO_AI_ROOM = { 'bau-cua': true, 'pachisi': true };
     var aiSeats = [];
-    if (!NO_AI_GAMES[game] && mode !== '1v1') {
+    if (!NO_AI_ROOM[game] && mode !== '1v1') {
       var maxP = GAME_MAX_PLAYERS[game] || 2;
-      // Pachisi: '2player' caps at 2, '4player' keeps 4
-      if (game === 'pachisi' && mode === '2player') maxP = 2;
       if (instancePlayers.length < maxP) {
         for (var i = instancePlayers.length; i < maxP; i++) aiSeats.push(i);
       }
