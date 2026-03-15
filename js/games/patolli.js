@@ -371,6 +371,7 @@
     elRollBtn.disabled = true;
     setStatus('Choose a piece to move ' + result.value + ' space' + (result.value !== 1 ? 's' : '') + '.');
     render();
+    if (vsRoom) syncRoomState(); // let opponent see the dice roll
   }
 
   function onBoardClick(e) {
@@ -577,6 +578,10 @@
     state.animating   = false;
     state.movingPiece = -1;
     render();
+    // Enable/disable roll button based on whose turn it is
+    var myTurn = state.turn === myRoomSeat && state.phase === 'idle';
+    elRollBtn.disabled = !myTurn;
+    if (myTurn) setStatus(playerName(myRoomSeat) + ' — roll the beans!');
   }
 
   function initRoomMode() {

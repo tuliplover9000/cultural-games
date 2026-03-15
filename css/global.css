@@ -259,7 +259,9 @@ main {
 .room-mode .game-nav-bar,
 .room-mode .site-footer,
 .room-mode #mp-panel,
-.room-mode .mp-panel {
+.room-mode .mp-panel,
+.room-mode .pt-mode-row,
+.room-mode #pt-new-game-btn {
   display: none !important;
 }
 .room-mode body {

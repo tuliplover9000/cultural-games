@@ -1090,17 +1090,10 @@
       setStatus('Your turn — draw a tile.');
       render();
     } else if (vsOnline && !isAISeat(nextSeat)) {
-      // Remote human's turn — host draws their tile, then signals them to discard
-      const tile = drawTile(nextSeat);
-      if (!tile) return; // wall exhausted
-      if (isWinningHand(state.hands[nextSeat], state.melds[nextSeat])) {
-        declareWin(nextSeat, 'self-draw');
-        if (vsOnline) syncOnlineState();
-        return;
-      }
-      state.phase = 'player-discard';
+      // Remote human's turn — let them draw themselves from their synced wall
+      state.phase = 'player-draw';
       render();
-      syncOnlineState(); // guest sees their new tile and can discard
+      syncOnlineState(); // guest receives player-draw phase and draws their own tile
     } else {
       startAiTurn(nextSeat, false);
     }
