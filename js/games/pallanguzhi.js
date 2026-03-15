@@ -388,6 +388,9 @@
       lastCup         = target;
       state.sowingCup = target;
       render();
+      if (vsRoom && window.RoomBridge) {
+        RoomBridge.sendState(Object.assign({}, state, { cups: state.cups.slice(), last_actor: 'room:' + myRoomSeat }));
+      }
       setClusterContent(cluster, shells);
 
       if (shells > 0) await sleep(65);

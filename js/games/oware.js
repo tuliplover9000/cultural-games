@@ -218,6 +218,7 @@
     state.sowHand--;
     state.lastSown = state.sowPos;
     render();
+    if (vsRoom) syncRoomState(); // sync each sow step so opponent sees the animation
     setTimeout(sowStep, SOW_MS);
   }
 
