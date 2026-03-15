@@ -591,12 +591,10 @@
     peerStates[mySeat] = { name: myName, wallet: state.wallet, bets: Object.assign({}, state.bets) };
     clearTimeout(_syncTimer);
     _syncTimer = setTimeout(function() {
+      // Send ALL known player states so every recipient can update their full leaderboard.
       RoomBridge.sendState({
-        type:   'playerstate',
-        seat:   mySeat,
-        name:   myName,
-        wallet: state.wallet,
-        bets:   state.bets,
+        type:    'groupstate',
+        players: peerStates,
       });
     }, 150);
   }
@@ -657,7 +655,20 @@
   function receiveGroupState(blob) {
     if (!blob) return;
 
-    // Peer state update — all players (including host) track this for UI
+    // Full group-state: update all peer entries except our own seat
+    if (blob.type === 'groupstate' && blob.players) {
+      Object.keys(blob.players).forEach(function(seatStr) {
+        var seat = parseInt(seatStr, 10);
+        if (seat !== mySeat) {
+          peerStates[seat] = blob.players[seatStr];
+        }
+      });
+      renderPeerBetsOnMat();
+      renderLeaderboard();
+      return;
+    }
+
+    // Legacy per-player state (backwards compat)
     if (blob.type === 'playerstate' && blob.seat !== undefined && blob.seat !== mySeat) {
       peerStates[blob.seat] = { name: blob.name || 'Player', wallet: blob.wallet || 0, bets: blob.bets || {} };
       renderPeerBetsOnMat();

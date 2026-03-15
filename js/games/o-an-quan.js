@@ -184,9 +184,6 @@
       state.board[next]++;
       remaining--;
       renderBoard();
-      if (vsRoom && window.RoomBridge) {
-        RoomBridge.sendState(Object.assign({}, state, { last_actor: 'room:' + myRoomSeat }));
-      }
       setClusterContent(cluster, remaining);
       cur = next;
       if (remaining > 0) await sleep(90);

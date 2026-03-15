@@ -218,7 +218,6 @@
     state.sowHand--;
     state.lastSown = state.sowPos;
     render();
-    if (vsRoom) syncRoomState(); // sync each sow step so opponent sees the animation
     setTimeout(sowStep, SOW_MS);
   }
 
@@ -374,14 +373,14 @@
         : 'Your turn — click a highlighted pit to sow';
     }
 
+    // Board rows — flip for seat 1 so each player sees their pits at the bottom
+    const flip = vsRoom && myRoomSeat === 1;
+
     // Store / row labels
     const topLabel    = vsHuman ? 'Player 2'       : 'Opponent';
     const botLabel    = vsHuman ? 'Player 1'       : 'You';
     const topRowLabel = flip ? "Player 1's pits" : (vsHuman ? "Player 2's pits" : "Opponent's pits");
     const botRowLabel = flip ? "Player 2's pits" : (vsHuman ? "Player 1's pits" : 'Your pits');
-
-    // Board rows — flip for seat 1 so each player sees their pits at the bottom
-    const flip = vsRoom && myRoomSeat === 1;
     const topRow = (flip ? [5, 4, 3, 2, 1, 0] : [11, 10, 9, 8, 7, 6])
       .map(p => pitHTML(p, (flip ? botMoves : topMoves).includes(p), p === state.lastSown, p === aiSel))
       .join('');
