@@ -53,9 +53,9 @@
     ════════════════════════════════════════════════════════ -->
     <header class="browse-hero">
       <div class="container">
-        <p class="browse-hero__label">Game Library</p>
-        <h1 class="browse-hero__title">Browse All Games</h1>
-        <p class="browse-hero__desc">
+        <p class="browse-hero__label" data-anim data-anim-delay="0">Game Library</p>
+        <h1 class="browse-hero__title" data-anim data-anim-delay="120">Browse All Games</h1>
+        <p class="browse-hero__desc" data-anim data-anim-delay="240">
           Ten traditional games from five cultures — playable in your browser, free, no account required.
         </p>
       </div>
@@ -68,7 +68,7 @@
       <div class="container">
 
         <!-- Filter bar -->
-        <div class="filter-bar" role="group" aria-label="Filter games by type">
+        <div class="filter-bar" role="group" aria-label="Filter games by type" data-anim data-anim-delay="360">
           <span class="filter-bar__label">Filter:</span>
           <button class="filter-btn active" data-filter="all"   aria-pressed="true">All Games</button>
           <button class="filter-btn"        data-filter="dice"  aria-pressed="false">Dice</button>
@@ -336,6 +336,26 @@
       <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
     </div>
   </footer>
+
+  <script>
+    (function () {
+      var animEls = document.querySelectorAll('[data-anim]');
+      if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            var el = entry.target;
+            el.style.transitionDelay = (el.dataset.animDelay || '0') + 'ms';
+            el.classList.add('anim-in');
+            observer.unobserve(el);
+          });
+        }, { threshold: 0.12 });
+        animEls.forEach(function (el) { observer.observe(el); });
+      } else {
+        animEls.forEach(function (el) { el.classList.add('anim-in'); });
+      }
+    }());
+  </script>
 
   <script src="../js/utils/navigation.js"></script>
   <script src="../js/utils/auth.js"></script>
