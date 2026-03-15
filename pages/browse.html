@@ -67,20 +67,56 @@
     <div class="browse-body">
       <div class="container">
 
-        <!-- Filter bar -->
-        <div class="filter-bar" role="group" aria-label="Filter games by type" data-anim data-anim-delay="360">
-          <span class="filter-bar__label">Filter:</span>
-          <button class="filter-btn active" data-filter="all"   aria-pressed="true">All Games</button>
-          <button class="filter-btn"        data-filter="dice"  aria-pressed="false">Dice</button>
-          <button class="filter-btn"        data-filter="board" aria-pressed="false">Board</button>
-          <button class="filter-btn"        data-filter="card"  aria-pressed="false">Card</button>
+        <!-- Search + filters -->
+        <div class="browse-controls" data-anim data-anim-delay="360">
+
+          <!-- Search -->
+          <div class="browse-search">
+            <svg class="browse-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input
+              type="search"
+              id="browse-search-input"
+              class="browse-search__input"
+              placeholder="Search games..."
+              aria-label="Search games"
+              autocomplete="off"
+            />
+          </div>
+
+          <!-- Dropdowns -->
+          <div class="browse-dropdowns">
+            <div class="browse-select-wrap">
+              <select id="filter-type" class="browse-select" aria-label="Filter by type">
+                <option value="all">All types</option>
+                <option value="dice">Dice</option>
+                <option value="board">Board</option>
+                <option value="card">Card</option>
+              </select>
+            </div>
+            <div class="browse-select-wrap">
+              <select id="filter-region" class="browse-select" aria-label="Filter by region">
+                <option value="all">All regions</option>
+                <option value="vietnam">Vietnam</option>
+                <option value="west-africa">West Africa</option>
+                <option value="mesoamerica">Mesoamerica</option>
+                <option value="south-india">South India</option>
+                <option value="madagascar">Madagascar</option>
+                <option value="china">China</option>
+                <option value="norse">Norse / Viking Age</option>
+                <option value="india">Indian Subcontinent</option>
+              </select>
+            </div>
+          </div>
+
         </div>
 
         <!-- Game grid -->
         <div class="games-grid" id="games-grid">
 
           <!-- Bầu Cua Tôm Cá -->
-          <div class="game-card-wrapper" data-category="dice">
+          <div class="game-card-wrapper" data-category="dice" data-region="vietnam">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--red" aria-hidden="true">
                 <img src="../assets/icons/bau-cua.svg" class="game-card__banner-icon" alt="" />
@@ -100,7 +136,7 @@
           </div>
 
           <!-- Ô Ăn Quan -->
-          <div class="game-card-wrapper" data-category="board">
+          <div class="game-card-wrapper" data-category="board" data-region="vietnam">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--teal" aria-hidden="true">
                 <img src="../assets/icons/o-an-quan.svg" class="game-card__banner-icon" alt="" />
@@ -120,7 +156,7 @@
           </div>
 
           <!-- Tiến Lên -->
-          <div class="game-card-wrapper" data-category="card">
+          <div class="game-card-wrapper" data-category="card" data-region="vietnam">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--gold" aria-hidden="true">
                 <img src="../assets/icons/tien-len.svg" class="game-card__banner-icon" alt="" />
@@ -140,7 +176,7 @@
           </div>
 
           <!-- Oware -->
-          <div class="game-card-wrapper" data-category="board">
+          <div class="game-card-wrapper" data-category="board" data-region="west-africa">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--warm" aria-hidden="true">
                 <img src="../assets/icons/oware.svg" class="game-card__banner-icon" alt="" />
@@ -160,7 +196,7 @@
           </div>
 
           <!-- Patolli -->
-          <div class="game-card-wrapper" data-category="dice">
+          <div class="game-card-wrapper" data-category="dice" data-region="mesoamerica">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--green" aria-hidden="true">
                 <img src="../assets/icons/patolli.svg" class="game-card__banner-icon" alt="" />
@@ -180,7 +216,7 @@
           </div>
 
           <!-- Puluc -->
-          <div class="game-card-wrapper" data-category="dice">
+          <div class="game-card-wrapper" data-category="dice" data-region="mesoamerica">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--green" aria-hidden="true">
                 <img src="../assets/icons/puluc.svg" class="game-card__banner-icon" alt="" />
@@ -200,7 +236,7 @@
           </div>
 
           <!-- Pallanguzhi -->
-          <div class="game-card-wrapper" data-category="board">
+          <div class="game-card-wrapper" data-category="board" data-region="south-india">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--warm" aria-hidden="true">
                 <img src="../assets/icons/pallanguzhi.svg" class="game-card__banner-icon" alt="" />
@@ -220,7 +256,7 @@
           </div>
 
           <!-- Fanorona -->
-          <div class="game-card-wrapper" data-category="board">
+          <div class="game-card-wrapper" data-category="board" data-region="madagascar">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--ochre" aria-hidden="true">
                 <img src="../assets/icons/fanorona.svg" class="game-card__banner-icon" alt="" />
@@ -240,7 +276,7 @@
           </div>
 
           <!-- Hnefatafl -->
-          <div class="game-card-wrapper" data-category="board">
+          <div class="game-card-wrapper" data-category="board" data-region="norse">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--slate" aria-hidden="true">
                 <img src="../assets/icons/hnefatafl.svg" class="game-card__banner-icon" alt="" />
@@ -260,7 +296,7 @@
           </div>
 
           <!-- Hong Kong Mahjong -->
-          <div class="game-card-wrapper" data-category="board">
+          <div class="game-card-wrapper" data-category="board" data-region="china">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--red" aria-hidden="true">
                 <img src="../assets/icons/mahjong.svg" class="game-card__banner-icon" alt="" />
@@ -280,7 +316,7 @@
           </div>
 
           <!-- Pachisi -->
-          <div class="game-card-wrapper" data-category="dice">
+          <div class="game-card-wrapper" data-category="dice" data-region="india">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--pachisi" aria-hidden="true">
                 <img src="../assets/icons/pachisi.svg" class="game-card__banner-icon" alt="" />
@@ -360,39 +396,41 @@
   <script src="../js/utils/navigation.js"></script>
   <script src="../js/utils/auth.js"></script>
   <script>
-    // ── Filter logic ─────────────────────────────────────────
+    // ── Search + filter logic ─────────────────────────────────
     (function () {
-      var filterBtns = document.querySelectorAll('.filter-btn');
-      var cards      = document.querySelectorAll('.game-card-wrapper');
-      var noResults  = document.getElementById('no-results');
+      var searchInput  = document.getElementById('browse-search-input');
+      var typeSelect   = document.getElementById('filter-type');
+      var regionSelect = document.getElementById('filter-region');
+      var cards        = document.querySelectorAll('.game-card-wrapper');
+      var noResults    = document.getElementById('no-results');
 
-      filterBtns.forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          var filter = btn.dataset.filter;
+      function applyFilters() {
+        var query  = searchInput.value.trim().toLowerCase();
+        var type   = typeSelect.value;
+        var region = regionSelect.value;
+        var visible = 0;
 
-          // Update button states
-          filterBtns.forEach(function (b) {
-            b.classList.remove('active');
-            b.setAttribute('aria-pressed', 'false');
-          });
-          btn.classList.add('active');
-          btn.setAttribute('aria-pressed', 'true');
+        cards.forEach(function (card) {
+          var name       = (card.querySelector('.game-card__name')   || {}).textContent || '';
+          var origin     = (card.querySelector('.game-card__origin') || {}).textContent || '';
+          var matchSearch = !query || name.toLowerCase().includes(query) || origin.toLowerCase().includes(query);
+          var matchType   = type   === 'all' || card.dataset.category === type;
+          var matchRegion = region === 'all' || card.dataset.region   === region;
 
-          // Show / hide cards
-          var visible = 0;
-          cards.forEach(function (card) {
-            if (filter === 'all' || card.dataset.category === filter) {
-              card.hidden = false;
-              visible++;
-            } else {
-              card.hidden = true;
-            }
-          });
-
-          // Show empty state if no cards visible
-          noResults.hidden = visible > 0;
+          if (matchSearch && matchType && matchRegion) {
+            card.hidden = false;
+            visible++;
+          } else {
+            card.hidden = true;
+          }
         });
-      });
+
+        noResults.hidden = visible > 0;
+      }
+
+      searchInput.addEventListener('input',  applyFilters);
+      typeSelect.addEventListener('change',  applyFilters);
+      regionSelect.addEventListener('change', applyFilters);
     }());
   </script>
 </body>
