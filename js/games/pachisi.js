@@ -766,6 +766,7 @@
     if (state) {
       drawPieces();
       drawHighlights();
+      drawHoverPreview();
     }
   }
 
@@ -888,6 +889,108 @@
     }).join('');
   }
 
+  // ── Hover preview ─────────────────────────────────────────────────────────
+
+  var _hoveredPiece = null;
+
+  // Find which valid piece (if any) is under canvas pixel (x, y)
+  function pieceAtPx(x, y) {
+    if (!state || state.gameOver || state.rollResult === null || state.rollUsed) return null;
+    if (isAIPlayer(state.currentPlayer)) return null;
+    var roll  = state.rollResult;
+    var valid = validMoves(state.currentPlayer, roll);
+    if (!valid.length) return null;
+
+    // Yard pieces — distance to spot center
+    var yardPcs = playerPieces(state.currentPlayer).filter(function (p) { return p.state === 'yard'; });
+    for (var i = 0; i < yardPcs.length; i++) {
+      var yp = yardPcs[i];
+      if (!valid.some(function (v) { return v.id === yp.id; })) continue;
+      var sp = yardSpotPx(state.currentPlayer, i);
+      var dx = x - sp.x, dy = y - sp.y;
+      if (Math.sqrt(dx*dx + dy*dy) < CELL * 0.42) return yp;
+    }
+
+    // Board pieces — cell hit test
+    var cell = cellFromPx(x, y);
+    if (cell) {
+      var r = cell[0], c = cell[1];
+      for (var vi = 0; vi < valid.length; vi++) {
+        var vp = valid[vi];
+        if (vp.state !== 'board') continue;
+        var pos = piecePos(vp);
+        if (pos && pos[0] === r && pos[1] === c) return vp;
+      }
+    }
+    return null;
+  }
+
+  function drawHoverPreview() {
+    if (!_hoveredPiece || !state || state.rollResult === null) return;
+    var roll  = state.rollResult;
+    var piece = _hoveredPiece;
+
+    // Compute destination position
+    var destPos;
+    if (piece.state === 'yard') {
+      destPos = PATHS[piece.owner][0];
+    } else {
+      var newIdx = piece.pathIndex + roll;
+      if (newIdx >= PATH_LENGTH) {
+        destPos = [4, 4]; // Charkoni home
+      } else {
+        destPos = PATHS[piece.owner][newIdx];
+      }
+    }
+    if (!destPos) return;
+
+    var dhx = cx(destPos[1]);
+    var dhy = cy(destPos[0]);
+
+    // Outer pulsing ring
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(dhx, dhy, CELL * 0.44, 0, Math.PI * 2);
+    ctx.strokeStyle = PIECE_COLORS[piece.owner];
+    ctx.lineWidth = 3;
+    ctx.globalAlpha = 0.85;
+    ctx.stroke();
+
+    // Ghost fill
+    ctx.beginPath();
+    ctx.arc(dhx, dhy, CELL * 0.44, 0, Math.PI * 2);
+    ctx.fillStyle = PIECE_COLORS[piece.owner];
+    ctx.globalAlpha = 0.22;
+    ctx.fill();
+
+    // Ghost piece
+    ctx.globalAlpha = 0.5;
+    drawPiece(dhx, dhy, PIECE_COLORS[piece.owner], PIECE_STROKE[piece.owner]);
+    ctx.restore();
+  }
+
+  function handleCanvasMouseMove(e) {
+    if (!canvas) return;
+    var rect   = canvas.getBoundingClientRect();
+    var scaleX = CANVAS_SIZE / rect.width;
+    var scaleY = CANVAS_SIZE / rect.height;
+    var x = (e.clientX - rect.left) * scaleX;
+    var y = (e.clientY - rect.top)  * scaleY;
+
+    var prev = _hoveredPiece;
+    _hoveredPiece = pieceAtPx(x, y);
+    canvas.style.cursor = _hoveredPiece ? 'pointer' : '';
+    if (prev !== _hoveredPiece) redraw();
+  }
+
+  function handleCanvasMouseLeave() {
+    if (_hoveredPiece) {
+      _hoveredPiece = null;
+      canvas.style.cursor = '';
+      redraw();
+    }
+  }
+
   // ── Click handling ────────────────────────────────────────────────────────
 
   function handleCanvasClick(e) {
@@ -901,50 +1004,12 @@
     var x = (e.clientX - rect.left) * scaleX;
     var y = (e.clientY - rect.top)  * scaleY;
 
-    var roll = state.rollResult;
-    var valid = validMoves(state.currentPlayer, roll);
-    if (!valid.length) return;
-
-    var clicked = null;
-
-    // Check if clicked on a yard piece
-    var yc = YARD_CORNERS[state.currentPlayer];
-    var yardPieces = playerPieces(state.currentPlayer).filter(function (p) { return p.state === 'yard'; });
-    var yardPositions = [
-      [yc[0],   yc[1]  ],
-      [yc[0],   yc[1]+1],
-      [yc[0]+1, yc[1]  ],
-      [yc[0]+1, yc[1]+1]
-    ];
-    yardPieces.forEach(function (piece, idx) {
-      if (clicked) return;
-      if (!valid.some(function (v) { return v.id === piece.id; })) return;
-      if (idx >= yardPositions.length) return;
-      var pr = yardPositions[idx][0];
-      var pc2 = yardPositions[idx][1];
-      if (x >= pc2 * CELL && x < (pc2 + 1) * CELL && y >= pr * CELL && y < (pr + 1) * CELL) {
-        clicked = piece;
-      }
-    });
-
-    // Check if clicked on a board piece
-    if (!clicked) {
-      var cell = cellFromPx(x, y);
-      if (cell) {
-        var r = cell[0], c = cell[1];
-        valid.forEach(function (piece) {
-          if (clicked) return;
-          if (piece.state !== 'board') return;
-          var pos = piecePos(piece);
-          if (pos && pos[0] === r && pos[1] === c) {
-            clicked = piece;
-          }
-        });
-      }
-    }
-
+    var clicked = pieceAtPx(x, y);
     if (!clicked) return;
 
+    _hoveredPiece = null; // clear hover on click
+
+    var roll = state.rollResult;
     applyMove(clicked, roll);
     state.moveCount++;
     state.rollUsed = true;
@@ -968,7 +1033,11 @@
     } else {
       nextPlayer();
       setStatus(state.currentPlayer.charAt(0).toUpperCase() + state.currentPlayer.slice(1) + "'s turn — roll the shells.");
-      checkAutoPass();
+      if (isAIPlayer(state.currentPlayer)) {
+        triggerAITurn();
+      } else {
+        checkAutoPass();
+      }
     }
 
     redraw();
@@ -1148,6 +1217,7 @@
     var teamsPanel = document.getElementById('pc-teams-panel');
     if (teamsPanel) teamsPanel.hidden = (mode !== '4player');
 
+    _hoveredPiece = null;
     renderCowries(null, false);
     setStatus("Yellow's turn — roll the shells.");
     redraw();
@@ -1158,6 +1228,7 @@
     if (!state) return;
     var mode = state.mode;
     state = freshState(mode, true);
+    _hoveredPiece = null;
     renderCowries(null, false);
     setStatus("Yellow's turn — roll the shells.");
     redraw();
@@ -1196,8 +1267,10 @@
     var newBtn = document.getElementById('pc-new-btn');
     if (newBtn) newBtn.addEventListener('click', newGame);
 
-    // Canvas click
+    // Canvas interaction
     canvas.addEventListener('click', handleCanvasClick);
+    canvas.addEventListener('mousemove', handleCanvasMouseMove);
+    canvas.addEventListener('mouseleave', handleCanvasMouseLeave);
 
     // Resize
     var resizeTimer = null;
