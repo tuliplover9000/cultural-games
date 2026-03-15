@@ -179,10 +179,10 @@
 
     var clickablePlayer = [];
     var clickableAI     = [];
-    if (isIdle && state.turn === PLAYER) {
+    if (isIdle && state.turn === PLAYER && (!vsRoom || myRoomSeat === PLAYER)) {
       for (var i = 7; i < 14; i++) { if (state.cups[i] > 0) clickablePlayer.push(i); }
     }
-    if (isIdle && state.turn === AI && vsHuman) {
+    if (isIdle && state.turn === AI && vsHuman && (!vsRoom || myRoomSeat === AI)) {
       for (var j = 0; j < 7; j++) { if (state.cups[j] > 0) clickableAI.push(j); }
     }
 

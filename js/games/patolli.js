@@ -109,8 +109,9 @@
     });
 
     // Determine which track indices are selectable (current player's valid pieces)
+    // In room mode only highlight when it is this player's own turn.
     var selectableIdx = new Set();
-    if (state.phase === 'choosingPiece') {
+    if (state.phase === 'choosingPiece' && (!vsRoom || state.turn === myRoomSeat)) {
       state.validPieces.forEach(function (pi) {
         var pos = state.pieces[state.turn][pi];
         selectableIdx.add(pos === null ? 0 : pos);

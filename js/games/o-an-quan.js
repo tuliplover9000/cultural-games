@@ -35,6 +35,13 @@
   let skipSowing  = false;
   let skipResolve = null;
 
+  // ── Animation-replay flags (room mode) ────────────────────────────────────
+  // When the opponent's move arrives, we replay their sow animation locally.
+  // _isSowingAsReplay prevents the receiver from sending state back.
+  // _pendingFinalState buffers a final state that arrived during replay.
+  var _isSowingAsReplay  = false;
+  var _pendingFinalState = null;
+
   function requestSkip() {
     skipSowing = true;
     if (skipResolve) { skipResolve(); skipResolve = null; }
@@ -201,6 +208,17 @@
     skipSowing  = false;
     skipResolve = null;
 
+    // Broadcast move intent so opponent can replay the animation in parallel.
+    // Send BEFORE modifying state so board still has the pre-sow seed counts.
+    if (vsRoom && window.RoomBridge && !_isSowingAsReplay) {
+      RoomBridge.sendState(Object.assign({}, state, {
+        board:      state.board.slice(),
+        sowFrom:    startIdx,
+        phase:      'sowing',
+        last_actor: 'room:' + myRoomSeat,
+      }));
+    }
+
     state.phase = 'sowing';
     refresh();
 
@@ -275,7 +293,7 @@
         var _oaq = state.board[Q1] > state.board[Q2] ? 'win' : state.board[Q2] > state.board[Q1] ? 'loss' : 'draw';
         Auth.recordResult('o-an-quan', _oaq);
       }
-      if (vsRoom && window.RoomBridge) {
+      if (vsRoom && window.RoomBridge && !_isSowingAsReplay) {
         RoomBridge.sendState(Object.assign({}, state, { last_actor: 'room:' + myRoomSeat }));
         var winner = state.board[Q1] > state.board[Q2] ? 0 : state.board[Q2] > state.board[Q1] ? 1 : -1;
         if (winner >= 0) RoomBridge.reportWin(winner);
@@ -292,7 +310,7 @@
       const other = state.currentPlayer === 1 ? 2 : 1;
       if (!hasMoves(other)) {
         state.phase = 'gameover';
-        if (vsRoom && window.RoomBridge) {
+        if (vsRoom && window.RoomBridge && !_isSowingAsReplay) {
           RoomBridge.sendState(Object.assign({}, state, { last_actor: 'room:' + myRoomSeat }));
           var noMoveWinner = state.board[Q1] > state.board[Q2] ? 0 : state.board[Q2] > state.board[Q1] ? 1 : -1;
           if (noMoveWinner >= 0) RoomBridge.reportWin(noMoveWinner);
@@ -307,7 +325,7 @@
 
     state.phase = 'select';
     refresh();
-    if (vsRoom && window.RoomBridge) {
+    if (vsRoom && window.RoomBridge && !_isSowingAsReplay) {
       RoomBridge.sendState(Object.assign({}, state, { last_actor: 'room:' + myRoomSeat }));
     }
   }
@@ -420,7 +438,7 @@
 
       <div class="oaq-actions">
         ${phase === 'sowing' ? '<button class="btn btn--outline" id="oaq-skip">Skip Animation</button>' : ''}
-        <button class="btn btn--outline" id="oaq-restart">Restart Game</button>
+        ${!vsRoom ? '<button class="btn btn--outline" id="oaq-restart">Restart Game</button>' : ''}
       </div>
 
       ${gameoverHTML}
@@ -485,7 +503,8 @@
       const count = board[idx];
       const isEmpty = count === 0;
       const mine = isMyPit(idx, currentPlayer);
-      const canClick = isSelecting && mine && count > 0;
+      const canClick = isSelecting && mine && count > 0 &&
+                       (!vsRoom || state.currentPlayer === myRoomSeat + 1);
       const gridRow = row === 'top' ? 1 : 2;
       const classes = [
         'oaq-pit',
@@ -613,7 +632,36 @@
 
   function receiveRoomState(data) {
     if (!data || data.last_actor === 'room:' + myRoomSeat) return;
+
+    // Opponent started sowing — replay their animation locally in parallel.
+    if (data.sowFrom !== undefined && data.phase === 'sowing') {
+      if (_isSowingAsReplay) return; // already animating
+      state.board = Array.isArray(data.board) ? data.board.slice() : state.board;
+      state.currentPlayer = data.currentPlayer || state.currentPlayer;
+      state.log  = data.log || state.log;
+      state.phase = 'select'; // sow() requires phase==='select' to start
+      _isSowingAsReplay = true;
+      sow(data.sowFrom).finally(function () {
+        _isSowingAsReplay = false;
+        if (_pendingFinalState) {
+          var p = _pendingFinalState;
+          _pendingFinalState = null;
+          Object.assign(state, p);
+          if (Array.isArray(p.board)) state.board = p.board.slice();
+          refresh();
+        }
+      });
+      return;
+    }
+
+    // Final state arrived while replaying — buffer it; apply after animation.
+    if (_isSowingAsReplay) {
+      _pendingFinalState = data;
+      return;
+    }
+
     Object.assign(state, data);
+    if (Array.isArray(data.board)) state.board = data.board.slice();
     refresh();
   }
 

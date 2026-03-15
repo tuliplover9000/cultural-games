@@ -361,7 +361,7 @@
         for (var pr = 0; pr < stack.prisoners; pr++) {
           piecesHtml += '<div class="pu-piece pu-piece--player pu-piece--prisoner"></div>';
         }
-        var sel = state.phase === 'choosingMove' && curTurn === AI && selectIdx[idx];
+        var sel = state.phase === 'choosingMove' && curTurn === AI && selectIdx[idx] && (!vsRoom || state.turn === myRoomSeat);
         piecesHtml +=
           '<div class="pu-piece pu-piece--ai' + (sel ? ' pu-piece--selectable' : '') +
           '" data-who="1" data-stack-idx="' + idx + '"></div>';
@@ -373,7 +373,7 @@
         for (var pr = 0; pr < stack.prisoners; pr++) {
           piecesHtml += '<div class="pu-piece pu-piece--ai pu-piece--prisoner"></div>';
         }
-        var sel = state.phase === 'choosingMove' && curTurn === PLAYER && selectIdx[idx];
+        var sel = state.phase === 'choosingMove' && curTurn === PLAYER && selectIdx[idx] && (!vsRoom || state.turn === myRoomSeat);
         piecesHtml +=
           '<div class="pu-piece pu-piece--player' + (sel ? ' pu-piece--selectable' : '') +
           '" data-who="0" data-stack-idx="' + idx + '"></div>';
@@ -388,8 +388,9 @@
     boardHtml += '</div>';
 
     // ── Entry zones row (below board) ─────────────────────────────────
-    var playerEnterable = state.phase === 'choosingMove' && curTurn === PLAYER && hasEnter;
-    var aiEnterable     = state.phase === 'choosingMove' && curTurn === AI     && hasEnter;
+    var myTurn          = !vsRoom || state.turn === myRoomSeat;
+    var playerEnterable = state.phase === 'choosingMove' && curTurn === PLAYER && hasEnter && myTurn;
+    var aiEnterable     = state.phase === 'choosingMove' && curTurn === AI     && hasEnter && myTurn;
     var p2Label         = mode === 'vs-human' ? 'P2' : 'AI';
 
     function pieceDots(who, waiting, scored) {
