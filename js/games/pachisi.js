@@ -454,31 +454,36 @@
 
   // ── Rendering ─────────────────────────────────────────────────────────────
 
-  // Draw a piece shape (stylised dome/cone)
+  // Draw a piece shape (dome/cone with halo for contrast)
   function drawPiece(x, y, color, stroke, size) {
     size = size || 1;
-    var r = CELL * 0.22 * size;
+    var r = CELL * 0.26 * size;
     ctx.save();
-    // Base ellipse
+    // White halo ring — ensures piece is visible on any background colour
     ctx.beginPath();
-    ctx.ellipse(x, y + r * 0.5, r, r * 0.45, 0, 0, Math.PI * 2);
-    ctx.fillStyle = stroke;
+    ctx.arc(x, y, r * 1.38, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.fill();
+    // Drop shadow ellipse
+    ctx.beginPath();
+    ctx.ellipse(x, y + r * 0.6, r * 0.9, r * 0.35, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,0,0,0.4)';
     ctx.fill();
     // Body dome
     ctx.beginPath();
     ctx.arc(x, y, r, Math.PI, 0);
     ctx.lineTo(x + r, y + r * 0.6);
-    ctx.quadraticCurveTo(x, y + r * 1.2, x - r, y + r * 0.6);
+    ctx.quadraticCurveTo(x, y + r * 1.22, x - r, y + r * 0.6);
     ctx.closePath();
     ctx.fillStyle = color;
     ctx.fill();
     ctx.strokeStyle = stroke;
-    ctx.lineWidth = 1.5 * size;
+    ctx.lineWidth = 2 * size;
     ctx.stroke();
-    // Highlight
+    // Bright gloss highlight
     ctx.beginPath();
-    ctx.arc(x - r * 0.25, y - r * 0.25, r * 0.3, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.arc(x - r * 0.27, y - r * 0.28, r * 0.33, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
     ctx.fill();
     ctx.restore();
   }
@@ -597,6 +602,37 @@
         if (isCastle(r, c)) {
           var starColor = homeColor ? 'rgba(255,255,255,0.7)' : '#C8960C';
           drawStar(cx2 + CELL / 2, cy2 + CELL / 2, 5, CELL * 0.3, CELL * 0.13, starColor);
+        }
+
+        // ── Path indicators ───────────────────────────────────────────────
+        var midX = cx2 + CELL / 2, midY = cy2 + CELL / 2;
+        if (homeColor) {
+          // Directional chevron on home-column cells showing final approach
+          // yellow home (col 4 rows 6-8): UP; green (col 4 rows 0-2): DOWN
+          // red home (row 4 cols 0-2): RIGHT; black (row 4 cols 6-8): LEFT
+          var chAngle = 0;
+          if (c === 4 && r >= 6) chAngle = -Math.PI / 2;
+          else if (c === 4 && r <= 2) chAngle = Math.PI / 2;
+          else if (r === 4 && c <= 2) chAngle = 0;
+          else if (r === 4 && c >= 6) chAngle = Math.PI;
+          var aw = CELL * 0.17;
+          ctx.save();
+          ctx.translate(midX, midY);
+          ctx.rotate(chAngle);
+          ctx.beginPath();
+          ctx.moveTo(aw, 0);
+          ctx.lineTo(-aw * 0.55, -aw * 0.7);
+          ctx.lineTo(-aw * 0.55,  aw * 0.7);
+          ctx.closePath();
+          ctx.fillStyle = 'rgba(255,255,255,0.45)';
+          ctx.fill();
+          ctx.restore();
+        } else if (!isCastle(r, c)) {
+          // Small dot marker on regular path cells
+          ctx.beginPath();
+          ctx.arc(midX, midY, CELL * 0.07, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(80,60,30,0.3)';
+          ctx.fill();
         }
 
         // Grid line

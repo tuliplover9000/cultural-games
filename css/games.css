@@ -4440,11 +4440,18 @@
 
 /* Outer game container */
 .pc-game-container {
-  background: #3B2507;
+  background:
+    radial-gradient(ellipse at 15% 15%, rgba(240,120,20,0.28) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 85%, rgba(180,30,80,0.24) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 15%, rgba(40,80,200,0.2)  0%, transparent 50%),
+    radial-gradient(ellipse at 15% 85%, rgba(30,160,80,0.2)  0%, transparent 50%),
+    radial-gradient(circle at center, rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(145deg, #1a0820 0%, #2e0f12 35%, #0e1830 70%, #1a0820 100%);
+  background-size: auto, auto, auto, auto, 22px 22px, auto;
   border-radius: var(--radius-xl);
   overflow: hidden;
   min-height: 420px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,200,100,0.12);
 }
 
 /* ── Pre-game lobby ── */
