@@ -911,6 +911,8 @@
 
     updateRollResult();
     updateScores();
+    // Broadcast state to other room players (guarded so received updates don't echo back)
+    if (!_receivingState) sendRoomState();
   }
 
   function updateRollResult() {
@@ -946,7 +948,8 @@
 
   // ── Hover preview ─────────────────────────────────────────────────────────
 
-  var _hoveredPiece = null;
+  var _hoveredPiece    = null;
+  var _receivingState  = false; // prevents echo when applying remote state
 
   // Find which valid piece (if any) is under canvas pixel (x, y)
   function pieceAtPx(x, y) {
@@ -1263,11 +1266,11 @@
     var vsAI = true; // always vs AI for local play
     state = freshState(mode, vsAI);
 
-    // Show game, hide lobby
+    // Show game, hide lobby (use style.display — CSS display:flex overrides [hidden])
     var lobby = document.getElementById('pc-lobby');
     var game  = document.getElementById('pc-game');
-    if (lobby) lobby.hidden = true;
-    if (game)  game.hidden  = false;
+    if (lobby) lobby.style.display = 'none';
+    if (game)  game.style.display  = 'flex';
 
     var teamsPanel = document.getElementById('pc-teams-panel');
     if (teamsPanel) teamsPanel.hidden = (mode !== '4player');
@@ -1292,29 +1295,45 @@
 
   // ── Room mode integration ─────────────────────────────────────────────────
 
+  // Send current game state to all other players in the room
+  function sendRoomState() {
+    if (!RoomBridge || !RoomBridge.isActive()) return;
+    RoomBridge.sendState({
+      pieces:        state.pieces,
+      currentPlayer: state.currentPlayer,
+      rollResult:    state.rollResult,
+      rollUsed:      state.rollUsed,
+      bonusRoll:     state.bonusRoll,
+      gameOver:      state.gameOver,
+      winner:        state.winner,
+      moveCount:     state.moveCount,
+      mode:          state.mode,
+      players:       state.players,
+      teams:         state.teams,
+    });
+  }
+
   function initRoomMode() {
-    if (typeof RoomBridge === 'undefined' || !RoomBridge.isActive()) return;
+    if (!RoomBridge || !RoomBridge.isActive()) return;
 
-    var mode        = RoomBridge.getMode();     // '2player' or '4player'
-    var seat        = RoomBridge.getSeat();     // this browser's player seat (0-3)
-    var aiSeatsList = RoomBridge.getAiSeats();  // seats the AI controls
+    var mode        = RoomBridge.getMode();
+    var seat        = RoomBridge.getSeat();
+    var aiSeatsList = RoomBridge.getAiSeats();
 
-    // Normalise: fall back to 2player if mode wasn't set
     if (mode !== '2player' && mode !== '4player') mode = '2player';
 
-    // Start game state — vsAI=false, AI controlled via state.aiSeats instead
     state = freshState(mode, false);
     state.humanSeat = seat;
     state.aiSeats   = aiSeatsList;
 
-    // Skip the pre-game lobby
+    // Skip the pre-game lobby (use style.display — CSS display:flex overrides [hidden])
     var lobbyEl = document.getElementById('pc-lobby');
     var gameEl  = document.getElementById('pc-game');
-    if (lobbyEl) lobbyEl.hidden = true;
-    if (gameEl)  gameEl.hidden  = false;
+    if (lobbyEl) lobbyEl.style.display = 'none';
+    if (gameEl)  gameEl.style.display  = 'flex';
 
     var teamsPanel = document.getElementById('pc-teams-panel');
-    if (teamsPanel) teamsPanel.hidden = (mode !== '4player');
+    if (teamsPanel) teamsPanel.style.display = (mode === '4player') ? '' : 'none';
 
     _hoveredPiece = null;
     renderCowries(null, false);
@@ -1322,8 +1341,34 @@
     redraw();
     updateHUD();
 
-    // If the first player is AI, kick off the AI turn immediately
-    if (isAIPlayer(state.currentPlayer)) triggerAITurn();
+    // Receive state updates from other players and apply them locally
+    RoomBridge.onState(function (blob) {
+      if (!blob || !blob.pieces || !state) return;
+      var humanSeat = state.humanSeat;
+      var aiSeats   = state.aiSeats;
+
+      state.pieces        = blob.pieces;
+      state.currentPlayer = blob.currentPlayer;
+      state.rollResult    = blob.rollResult;
+      state.rollUsed      = blob.rollUsed;
+      state.bonusRoll     = blob.bonusRoll;
+      state.gameOver      = blob.gameOver;
+      state.winner        = blob.winner;
+      state.moveCount     = blob.moveCount;
+      state.humanSeat     = humanSeat;
+      state.aiSeats       = aiSeats;
+
+      _hoveredPiece   = null;
+      _receivingState = true;
+      renderCowries(null, false);
+      redraw();
+      updateHUD();
+      _receivingState = false;
+
+      if (state.gameOver) {
+        setStatus((state.winner.charAt(0).toUpperCase() + state.winner.slice(1)) + ' wins!');
+      }
+    });
   }
 
   // ── Bootstrap ─────────────────────────────────────────────────────────────
