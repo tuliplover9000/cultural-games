@@ -10,15 +10,15 @@
 
   // ── Game catalogue ─────────────────────────────────────────────────────────
   var GAMES = [
-    { key: 'tien-len',    name: 'Tiến Lên',          icon: '🃏', badge: 'Card · 4P',  maxPlayers: 4 },
-    { key: 'mahjong',     name: 'Hong Kong Mahjong',  icon: '🀄', badge: 'Tile · 4P',  maxPlayers: 4 },
-    { key: 'oware',       name: 'Oware',              icon: '🟤', badge: 'Board · 2P', maxPlayers: 2 },
-    { key: 'o-an-quan',   name: 'Ô Ăn Quan',          icon: '⚫', badge: 'Board · 2P', maxPlayers: 2 },
-    { key: 'fanorona',    name: 'Fanorona',            icon: '⬡',  badge: 'Board · 2P', maxPlayers: 2 },
-    { key: 'pallanguzhi', name: 'Pallanguzhi',         icon: '🐚', badge: 'Board · 2P', maxPlayers: 2 },
-    { key: 'patolli',     name: 'Patolli',             icon: '🟩', badge: 'Dice · 2P',  maxPlayers: 2 },
-    { key: 'puluc',       name: 'Puluc',               icon: '🪵', badge: 'Dice · 2P',  maxPlayers: 2 },
-    { key: 'bau-cua',     name: 'Bầu Cua Tôm Cá',     icon: '🎲', badge: 'Dice · Group', maxPlayers: 8 },
+    { key: 'tien-len',    name: 'Tiến Lên',          icon: '🃏', svg: '../assets/icons/tien-len.svg',    badge: 'Card · 4P',    maxPlayers: 4 },
+    { key: 'mahjong',     name: 'Hong Kong Mahjong',  icon: '🀄', svg: null,                              badge: 'Tile · 4P',    maxPlayers: 4 },
+    { key: 'oware',       name: 'Oware',              icon: '🟤', svg: '../assets/icons/oware.svg',       badge: 'Board · 2P',   maxPlayers: 2 },
+    { key: 'o-an-quan',   name: 'Ô Ăn Quan',          icon: '⚫', svg: '../assets/icons/o-an-quan.svg',  badge: 'Board · 2P',   maxPlayers: 2 },
+    { key: 'fanorona',    name: 'Fanorona',            icon: '⬡',  svg: '../assets/icons/fanorona.svg',   badge: 'Board · 2P',   maxPlayers: 2 },
+    { key: 'pallanguzhi', name: 'Pallanguzhi',         icon: '🐚', svg: '../assets/icons/pallanguzhi.svg',badge: 'Board · 2P',   maxPlayers: 2 },
+    { key: 'patolli',     name: 'Patolli',             icon: '🟩', svg: '../assets/icons/patolli.svg',    badge: 'Dice · 2P',    maxPlayers: 2 },
+    { key: 'puluc',       name: 'Puluc',               icon: '🪵', svg: '../assets/icons/puluc.svg',      badge: 'Dice · 2P',    maxPlayers: 2 },
+    { key: 'bau-cua',     name: 'Bầu Cua Tôm Cá',     icon: '🎲', svg: '../assets/icons/bau-cua.svg',    badge: 'Dice · Group', maxPlayers: 8 },
   ];
 
   // ── DOM refs ───────────────────────────────────────────────────────────────
@@ -118,8 +118,11 @@
   function renderGameGrid() {
     var isHost = Room.amHost();
     elGameGrid.innerHTML = GAMES.map(function(g) {
+      var iconInner = g.svg
+        ? '<img src="' + g.svg + '" class="lobby-game-card__icon-img" alt="" aria-hidden="true">'
+        : g.icon;
       return '<div class="lobby-game-card" role="listitem">' +
-        '<span class="lobby-game-card__icon" aria-hidden="true">' + g.icon + '</span>' +
+        '<span class="lobby-game-card__icon" aria-hidden="true">' + iconInner + '</span>' +
         '<div class="lobby-game-card__info">' +
           '<span class="lobby-game-card__name">' + esc(g.name) + '</span>' +
           '<span class="badge badge--board" style="font-size:0.65rem;padding:2px 7px">' + esc(g.badge) + '</span>' +
