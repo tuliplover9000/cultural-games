@@ -18,7 +18,8 @@
     { key: 'pallanguzhi', name: 'Pallanguzhi',         icon: '🐚', svg: '../assets/icons/pallanguzhi.svg',badge: 'Board · 2P',   maxPlayers: 2 },
     { key: 'patolli',     name: 'Patolli',             icon: '🟩', svg: '../assets/icons/patolli.svg',    badge: 'Dice · 2P',    maxPlayers: 2 },
     { key: 'puluc',       name: 'Puluc',               icon: '🪵', svg: '../assets/icons/puluc.svg',      badge: 'Dice · 2P',    maxPlayers: 2 },
-    { key: 'bau-cua',     name: 'Bầu Cua Tôm Cá',     icon: '🎲', svg: '../assets/icons/bau-cua.svg',    badge: 'Dice · Group', maxPlayers: 8 },
+    { key: 'bau-cua',     name: 'Bầu Cua Tôm Cá',     icon: '🎲', svg: '../assets/icons/bau-cua.svg',      badge: 'Dice · Group', maxPlayers: 8 },
+    { key: 'hnefatafl',  name: 'Hnefatafl',           icon: '♟',  svg: '../assets/icons/hnefatafl.svg',    badge: 'Strategy · 2P', maxPlayers: 2 },
   ];
 
   // ── DOM refs ───────────────────────────────────────────────────────────────

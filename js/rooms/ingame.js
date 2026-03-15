@@ -22,7 +22,7 @@
     'tien-len': 'Tiến Lên', 'mahjong': 'Hong Kong Mahjong',
     'oware': 'Oware', 'o-an-quan': 'Ô Ăn Quan', 'fanorona': 'Fanorona',
     'pallanguzhi': 'Pallanguzhi', 'patolli': 'Patolli', 'puluc': 'Puluc',
-    'bau-cua': 'Bầu Cua Tôm Cá',
+    'bau-cua': 'Bầu Cua Tôm Cá', 'hnefatafl': 'Hnefatafl',
   };
 
   // Games where AI fill doesn't apply (group/betting games)
@@ -33,7 +33,7 @@
   var GAME_MAX_PLAYERS = {
     'tien-len': 4, 'mahjong': 4,
     'oware': 2, 'o-an-quan': 2, 'fanorona': 2,
-    'pallanguzhi': 2, 'patolli': 2, 'puluc': 2,
+    'pallanguzhi': 2, 'patolli': 2, 'puluc': 2, 'hnefatafl': 2,
   };
 
   // ── Build game URL ─────────────────────────────────────────────────────────

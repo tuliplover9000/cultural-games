@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Board background -->
+  <rect x="6" y="6" width="52" height="52" rx="4" fill="#3D3228"/>
+  <!-- Board cells (2x2 grid suggestion) -->
+  <rect x="10" y="10" width="11" height="11" rx="1" fill="#C4A265" opacity="0.9"/>
+  <rect x="22" y="10" width="11" height="11" rx="1" fill="#A8845A" opacity="0.9"/>
+  <rect x="34" y="10" width="11" height="11" rx="1" fill="#C4A265" opacity="0.9"/>
+  <rect x="10" y="22" width="11" height="11" rx="1" fill="#A8845A" opacity="0.9"/>
+  <rect x="22" y="22" width="11" height="11" rx="1" fill="#5C1A1A" opacity="0.95"/>
+  <rect x="34" y="22" width="11" height="11" rx="1" fill="#A8845A" opacity="0.9"/>
+  <rect x="10" y="34" width="11" height="11" rx="1" fill="#C4A265" opacity="0.9"/>
+  <rect x="22" y="34" width="11" height="11" rx="1" fill="#A8845A" opacity="0.9"/>
+  <rect x="34" y="34" width="11" height="11" rx="1" fill="#C4A265" opacity="0.9"/>
+  <!-- Corner markers -->
+  <rect x="46" y="10" width="11" height="11" rx="1" fill="#2a201a"/>
+  <rect x="46" y="46" width="11" height="11" rx="1" fill="#2a201a"/>
+  <rect x="7"  y="46" width="11" height="11" rx="1" fill="#2a201a"/>
+  <!-- Attacker piece (red) -->
+  <circle cx="15" cy="43" r="5" fill="#8B2020" stroke="#3a0808" stroke-width="1.2"/>
+  <!-- Defender piece (white) -->
+  <circle cx="39" cy="43" r="5" fill="#F0E6C8" stroke="#7a5020" stroke-width="1.2"/>
+  <!-- King piece (gold, center throne) -->
+  <circle cx="27.5" cy="27.5" r="6.5" fill="#D4A017" stroke="#5a3010" stroke-width="1.5"/>
+  <!-- Crown cross on king -->
+  <line x1="27.5" y1="23.5" x2="27.5" y2="31.5" stroke="#5a3010" stroke-width="1.8" stroke-linecap="round"/>
+  <line x1="23.5" y1="27.5" x2="31.5" y2="27.5" stroke="#5a3010" stroke-width="1.8" stroke-linecap="round"/>
+</svg>

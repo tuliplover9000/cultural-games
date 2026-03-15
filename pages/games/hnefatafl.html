@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Play Hnefatafl — the ancient Viking asymmetric board game. Escort the king to a corner or capture him before he escapes." />
+  <title>Hnefatafl — Cultural Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="../../js/rooms/room-mode.js"></script>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/components.css" />
+  <link rel="stylesheet" href="../../css/auth.css" />
+  <link rel="stylesheet" href="../../css/games.css" />
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../../index.html" class="nav-logo" aria-label="Cultural Games — Home">
+        <span class="nav-logo-icon" aria-hidden="true">🎲</span>
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="../browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="../rooms.html"  class="nav-link nav-link--rooms">🎮 Rooms</a></li>
+        <li><a href="../about.html"  class="nav-link">About</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+
+      <div class="game-nav-bar">
+        <a href="../browse.html" class="back-link">Back to Browse</a>
+      </div>
+
+      <header class="game-header">
+        <div class="game-header__icon" aria-hidden="true"><img src="../../assets/icons/hnefatafl.svg" alt="" /></div>
+        <h1 class="game-header__title">Hnefatafl</h1>
+        <p class="game-header__origin">
+          Norse / Viking Age &nbsp;&middot;&nbsp;
+          <span class="badge badge--board" style="display:inline-flex; vertical-align:middle; margin-left:4px;">Strategy</span>
+        </p>
+      </header>
+
+      <!-- Game Container -->
+      <div class="game-container ht-game-container" id="game-container" aria-label="Game area">
+
+        <!-- HUD -->
+        <div class="ht-hud">
+          <div class="ht-captures">
+            <span class="ht-cap ht-cap--att">⚔ <span id="ht-att-cap">0</span> captured</span>
+            <span class="ht-cap ht-cap--def">🛡 <span id="ht-def-cap">0</span> captured</span>
+            <span class="ht-cap ht-cap--moves">Move <span id="ht-moves">0</span></span>
+          </div>
+          <p class="ht-status" id="ht-status" aria-live="polite" aria-atomic="true">Attackers to move</p>
+        </div>
+
+        <!-- Board -->
+        <div class="ht-board-wrap">
+          <canvas id="ht-canvas" aria-label="Hnefatafl board — 11×11 grid" role="img"></canvas>
+        </div>
+
+        <!-- Controls -->
+        <div class="ht-controls">
+          <div class="ht-mode-row">
+            <button id="ht-new-btn" class="btn btn-secondary btn-sm">New Game</button>
+            <label class="ht-label">
+              <input type="checkbox" id="ht-ai-toggle" checked />
+              <span>vs AI</span>
+            </label>
+            <label class="ht-label">
+              Play as
+              <select id="ht-side-toggle" class="ht-select">
+                <option value="attacker">Attackers</option>
+                <option value="defender">Defenders</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <!-- Move log -->
+        <div class="ht-log-wrap">
+          <p class="ht-log-title">Move log</p>
+          <ol id="ht-log" class="ht-log" reversed></ol>
+        </div>
+
+      </div>
+
+      <!-- How to Play -->
+      <details class="accordion" open>
+        <summary class="accordion__trigger">
+          <span class="accordion__title">How to Play</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Hnefatafl is an <strong>asymmetric</strong> game — one side defends, one side attacks. You choose which side to play.
+          </p>
+          <ol>
+            <li><strong>Defenders</strong> control 12 pieces and the <strong>King</strong> (gold). Their goal: escort the King to any corner square to escape.</li>
+            <li><strong>Attackers</strong> control 24 red pieces surrounding the board. Their goal: capture the King before he escapes.</li>
+            <li>All pieces move like chess rooks — any number of squares orthogonally, blocked by other pieces.</li>
+            <li><strong>Capture:</strong> sandwich an enemy piece between two of your own (or between your piece and a hostile square). Captured pieces are removed.</li>
+            <li><strong>Hostile squares:</strong> the center throne and all 4 corner squares act as capture partners for both sides — even when empty.</li>
+            <li><strong>King capture:</strong> the King is only captured when surrounded on all 4 sides by attackers (or 3 sides + throne).</li>
+            <li><strong>Only the King</strong> may land on corner or throne squares.</li>
+            <li><strong>Shieldwall:</strong> a row of pieces against an edge, flanked at both ends, is captured all at once.</li>
+          </ol>
+        </div>
+      </details>
+
+      <!-- Cultural Context -->
+      <details class="accordion">
+        <summary class="accordion__trigger">
+          <span class="accordion__title">Cultural Context</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Hnefatafl (pronounced roughly <em>"NEFA-tah-fel"</em>, meaning "King's Table") is a family of asymmetric Norse board games played across Scandinavia, Iceland, Britain, and Ireland from approximately 400–1000 AD. The game appears in multiple Norse sagas and Eddic poems, and boards and pieces have been found in Viking Age burial sites across Northern Europe.
+          </p>
+          <p>
+            The asymmetry of the game — a small defending force escorting a king to safety against a numerically superior attacking force — directly mirrors the political and military reality of Viking Age raid-and-defend dynamics. The game was eventually displaced by chess as it spread through medieval Europe, nearly disappearing from history.
+          </p>
+          <p>
+            This implementation uses the <strong>Copenhagen ruleset</strong>, the most rigorously reconstructed and playtested modern interpretation of the historical game, including the shieldwall capture mechanic documented in historical sources.
+          </p>
+        </div>
+      </details>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <span class="footer-brand">Cultural Games</span>
+      <p class="footer-mission">Preserving cultural heritage through play — one game at a time.</p>
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links" role="list">
+          <li><a href="../browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="../about.html"  class="footer-link">About</a></li>
+        </ul>
+      </nav>
+      <div class="footer-divider"></div>
+      <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
+    </div>
+  </footer>
+
+  <script src="../../js/utils/helpers.js"></script>
+  <script src="../../js/utils/navigation.js"></script>
+  <script src="../../js/utils/auth.js"></script>
+  <script src="../../js/rooms/game-bridge.js"></script>
+  <script src="../../js/games/hnefatafl.js"></script>
+</body>
+</html>
