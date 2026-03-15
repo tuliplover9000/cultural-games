@@ -86,6 +86,30 @@
 
           <!-- Lobby state: game selector (hidden while a game is active) -->
           <div id="lobby-games-section">
+
+            <!-- Search + filters -->
+            <div class="lobby-filter-wrap">
+              <input
+                id="lobby-game-search"
+                class="lobby-filter-search"
+                type="search"
+                placeholder="Search games…"
+                autocomplete="off"
+                aria-label="Search games"
+              />
+              <select id="lobby-culture-filter" class="lobby-filter-select" aria-label="Filter by culture">
+                <option value="">All Cultures</option>
+              </select>
+              <select id="lobby-type-filter" class="lobby-filter-select" aria-label="Filter by type">
+                <option value="">All Types</option>
+                <option value="Board">Board</option>
+                <option value="Card">Card</option>
+                <option value="Dice">Dice</option>
+                <option value="Tile">Tile</option>
+                <option value="Strategy">Strategy</option>
+              </select>
+            </div>
+
             <div id="lobby-game-grid" class="lobby-game-grid" role="list" aria-label="Available games">
               <!-- Populated by lobby.js -->
             </div>
