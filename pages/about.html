@@ -226,7 +226,7 @@
           Ready to play?
         </h2>
         <p style="color: var(--color-text-muted); font-size: var(--text-lg); margin-bottom: var(--space-5);">
-          Eleven traditional games. Eight cultures. All free.
+          <span id="cta-stats">Eleven traditional games. Eight cultures.</span> All free.
         </p>
         <a href="browse.html" class="btn btn-primary btn-lg">Browse All Games</a>
       </div>
@@ -254,6 +254,16 @@
     </div>
   </footer>
 
+  <script src="../js/utils/games-data.js"></script>
+  <script>
+    (function () {
+      var games        = window.GAMES_DATA || [];
+      var gameCount    = games.length;
+      var cultureCount = new Set(games.map(function (g) { return g.culture; })).size;
+      var el = document.getElementById('cta-stats');
+      if (el) el.textContent = gameCount + ' traditional games. ' + cultureCount + ' cultures.';
+    }());
+  </script>
   <script src="../js/utils/navigation.js"></script>
   <script src="../js/utils/auth.js"></script>
 </body>

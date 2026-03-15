@@ -62,7 +62,7 @@
         <img src="assets/icons/pallanguzhi.svg" class="hero__bg-icon" alt="" />
       </div>
       <div class="container hero__inner">
-        <span class="hero__eyebrow">11 Games &middot; 8 Cultures &middot; Free to Play</span>
+        <span class="hero__eyebrow" id="hero-eyebrow">11 Games &middot; 8 Cultures &middot; Free to Play</span>
 
         <h1 class="hero__title">
           Play the games
@@ -107,11 +107,11 @@
 
         <div class="mission__stats" role="list" aria-label="Site stats">
           <div class="stat" role="listitem">
-            <div class="stat__number">11</div>
+            <div class="stat__number" data-stat="games">11</div>
             <div class="stat__label">Traditional Games</div>
           </div>
           <div class="stat" role="listitem">
-            <div class="stat__number">8</div>
+            <div class="stat__number" data-stat="cultures">8</div>
             <div class="stat__label">Cultures</div>
           </div>
           <div class="stat" role="listitem">
@@ -135,7 +135,7 @@
 
         <div class="featured__header">
           <h2 class="featured__title">Featured Games</h2>
-          <a href="pages/browse.html" class="featured__link">Browse all 11 games →</a>
+          <a href="pages/browse.html" class="featured__link" id="featured-link">Browse all 11 games →</a>
         </div>
 
         <div class="featured__grid">
@@ -238,6 +238,23 @@
     </div>
   </footer>
 
+  <script src="js/utils/games-data.js"></script>
+  <script>
+    (function () {
+      var games        = window.GAMES_DATA || [];
+      var gameCount    = games.length;
+      var cultureCount = new Set(games.map(function (g) { return g.culture; })).size;
+
+      var eyebrow = document.getElementById('hero-eyebrow');
+      if (eyebrow) eyebrow.textContent = gameCount + ' Games \u00b7 ' + cultureCount + ' Cultures \u00b7 Free to Play';
+
+      document.querySelectorAll('[data-stat="games"]').forEach(function (el) { el.textContent = gameCount; });
+      document.querySelectorAll('[data-stat="cultures"]').forEach(function (el) { el.textContent = cultureCount; });
+
+      var featLink = document.getElementById('featured-link');
+      if (featLink) featLink.textContent = 'Browse all ' + gameCount + ' games \u2192';
+    }());
+  </script>
   <script src="js/utils/navigation.js"></script>
   <script src="js/utils/auth.js"></script>
 </body>
