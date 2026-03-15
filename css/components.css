@@ -692,6 +692,7 @@
 .hero__title-accent {
   color: var(--color-accent-gold);
   display: block;
+  min-height: 2.2em;
   transition: opacity 0.35s ease;
 }
 
