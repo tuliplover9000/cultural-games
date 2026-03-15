@@ -20,7 +20,11 @@
     { key: 'puluc',       name: 'Puluc',               icon: '🪵', svg: '../assets/icons/puluc.svg',      badge: 'Dice · 2P',    maxPlayers: 2 },
     { key: 'bau-cua',     name: 'Bầu Cua Tôm Cá',     icon: '🎲', svg: '../assets/icons/bau-cua.svg',      badge: 'Dice · Group', maxPlayers: 8 },
     { key: 'hnefatafl',  name: 'Hnefatafl',           icon: '♟',  svg: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPCEtLSBCb2FyZCBiYWNrZ3JvdW5kIC0tPgogIDxyZWN0IHg9IjQiIHk9IjQiIHdpZHRoPSI1NiIgaGVpZ2h0PSI1NiIgcng9IjQiIGZpbGw9IiMzRDMyMjgiLz4KICA8IS0tIDPDlzMgZ3JpZDogMTZweCBjZWxscywgMnB4IGdhcHMsIDJweCBtYXJnaW4g4oCUIHBlcmZlY3RseSBjZW50cmVkIGluIDU2w5c1NiAtLT4KICA8IS0tIFJvdyAxIC0tPgogIDxyZWN0IHg9IjYiICB5PSI2IiAgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iIzJhMjAxYSIvPgogIDxyZWN0IHg9IjI0IiB5PSI2IiAgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iI0M0QTI2NSIgb3BhY2l0eT0iMC45Ii8+CiAgPHJlY3QgeD0iNDIiIHk9IjYiICB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHJ4PSIxIiBmaWxsPSIjMmEyMDFhIi8+CiAgPCEtLSBSb3cgMiAtLT4KICA8cmVjdCB4PSI2IiAgeT0iMjQiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgcng9IjEiIGZpbGw9IiNDNEEyNjUiIG9wYWNpdHk9IjAuOSIvPgogIDxyZWN0IHg9IjI0IiB5PSIyNCIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iIzVDMUExQSIgb3BhY2l0eT0iMC45NSIvPgogIDxyZWN0IHg9IjQyIiB5PSIyNCIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iI0M0QTI2NSIgb3BhY2l0eT0iMC45Ii8+CiAgPCEtLSBSb3cgMyAtLT4KICA8cmVjdCB4PSI2IiAgeT0iNDIiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgcng9IjEiIGZpbGw9IiMyYTIwMWEiLz4KICA8cmVjdCB4PSIyNCIgeT0iNDIiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgcng9IjEiIGZpbGw9IiNDNEEyNjUiIG9wYWNpdHk9IjAuOSIvPgogIDxyZWN0IHg9IjQyIiB5PSI0MiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iIzJhMjAxYSIvPgogIDwhLS0gS2luZyBvbiB0aHJvbmUgKGNlbnRyZSBjZWxsIGNlbnRyZWQgYXQgMzIsMzIpIC0tPgogIDxjaXJjbGUgY3g9IjMyIiBjeT0iMzIiIHI9IjciIGZpbGw9IiNENEEwMTciIHN0cm9rZT0iIzVhMzAxMCIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8bGluZSB4MT0iMzIiIHkxPSIyNyIgeDI9IjMyIiB5Mj0iMzciIHN0cm9rZT0iIzVhMzAxMCIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxsaW5lIHgxPSIyNyIgeTE9IjMyIiB4Mj0iMzciIHkyPSIzMiIgc3Ryb2tlPSIjNWEzMDEwIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPCEtLSBBdHRhY2tlciBwaWVjZSAocmVkKSBpbiBib3R0b20tY2VudHJlIGNlbGwgKGNlbnRyZWQgYXQgMzIsNTApIC0tPgogIDxjaXJjbGUgY3g9IjMyIiBjeT0iNTAiIHI9IjUuNSIgZmlsbD0iIzhCMjAyMCIgc3Ryb2tlPSIjM2EwODA4IiBzdHJva2Utd2lkdGg9IjEuMiIvPgogIDwhLS0gRGVmZW5kZXIgcGllY2UgKGJvbmUpIGluIHJpZ2h0LWNlbnRyZSBjZWxsIChjZW50cmVkIGF0IDUwLDMyKSAtLT4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjMyIiByPSI1LjUiIGZpbGw9IiNGMEU2QzgiIHN0cm9rZT0iIzdhNTAyMCIgc3Ryb2tlLXdpZHRoPSIxLjIiLz4KPC9zdmc+Cg==',    badge: 'Strategy · 2P', maxPlayers: 2, seatRoles: ['attacker', 'defender'] },
-    { key: 'pachisi',    name: 'Pachisi',              icon: '🎯', svg: '../assets/icons/pachisi.svg',    badge: 'Dice · 4P',    maxPlayers: 4 },
+    { key: 'pachisi',    name: 'Pachisi',              icon: '🎯', svg: '../assets/icons/pachisi.svg',    badge: 'Dice · 4P',    maxPlayers: 4,
+      gameModes: [
+        { value: '2player', label: '2 Players', hint: 'You vs AI' },
+        { value: '4player', label: '4 Players', hint: 'Teams · AI fills empty seats' },
+      ]},
   ];
 
   // ── DOM refs ───────────────────────────────────────────────────────────────
@@ -47,10 +51,12 @@
   var elAssignPlayerList= document.getElementById('assign-player-list');
   var elAssignDualOpt   = document.getElementById('assign-dual-option');
   var elAssignDualCb    = document.getElementById('assign-dual-cb');
-  var elAssignCancel    = document.getElementById('assign-cancel-btn');
-  var elAssignConfirm   = document.getElementById('assign-confirm-btn');
+  var elAssignCancel      = document.getElementById('assign-cancel-btn');
+  var elAssignConfirm     = document.getElementById('assign-confirm-btn');
   var elAssignModeSection = document.getElementById('assign-mode-section');
   var elAssignMode1v1     = document.getElementById('assign-mode-1v1');
+  var elAssignGameModes   = document.getElementById('assign-game-modes');
+  var elAssignGameModesBtns = document.getElementById('assign-game-modes-btns');
 
   // Games that support a true 1v1 (2-player) variant
   var SUPPORTS_1V1 = { 'tien-len': true };
@@ -298,9 +304,31 @@
     var players = room.player_ids || [];
     var names   = room.player_names || {};
     var seats   = meta.maxPlayers;
-    var selectedMode = 'normal';
+    var selectedMode     = 'normal';
+    var selectedGameMode = null; // for games with explicit mode choices (e.g. Pachisi)
 
     elAssignDesc.innerHTML = '<strong>' + esc(meta.name) + '</strong> supports up to <strong>' + seats + ' player' + (seats !== 1 ? 's' : '') + '</strong>. Assign roles below.';
+
+    // ── Per-game mode picker (e.g. Pachisi 2P / 4P) ─────────────────────────
+    if (meta.gameModes && meta.gameModes.length) {
+      selectedGameMode = meta.gameModes[0].value;
+      elAssignGameModes.hidden = false;
+      elAssignGameModesBtns.innerHTML = meta.gameModes.map(function (gm) {
+        return '<button class="assign-mode-btn' + (gm.value === selectedGameMode ? ' active' : '') +
+               '" data-gmode="' + esc(gm.value) + '">' + esc(gm.label) +
+               '<span class="assign-mode-hint">' + esc(gm.hint) + '</span></button>';
+      }).join('');
+      elAssignGameModesBtns.querySelectorAll('.assign-mode-btn').forEach(function (btn) {
+        btn.onclick = function () {
+          selectedGameMode = btn.dataset.gmode;
+          elAssignGameModesBtns.querySelectorAll('.assign-mode-btn').forEach(function (b) {
+            b.classList.toggle('active', b.dataset.gmode === selectedGameMode);
+          });
+        };
+      });
+    } else {
+      elAssignGameModes.hidden = true;
+    }
 
     // Build role map. Games with seatRoles get named seats; others get generic 'player'.
     var seatRoles = meta.seatRoles; // e.g. ['attacker','defender'] or undefined
@@ -373,7 +401,8 @@
       Room.setDualInstance(dual).then(function() {
         return Room.setPlayerRoles(roles);
       }).then(function() {
-        return Room.startGame(underPopulated ? selectedMode : 'normal');
+        var modeToStart = selectedGameMode || (underPopulated ? selectedMode : 'normal');
+        return Room.startGame(modeToStart);
       }).then(function() {
         elAssignModal.hidden = true;
         elAssignConfirm.disabled = false;

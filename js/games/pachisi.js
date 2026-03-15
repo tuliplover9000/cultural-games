@@ -405,10 +405,29 @@
 
   // ── AI ────────────────────────────────────────────────────────────────────
 
+  // Seat-index for each player colour (used in room-mode AI lookup)
+  var PLAYER_SEAT = { yellow: 0, red: 1, green: 2, black: 3 };
+
   function isAIPlayer(player) {
-    if (!state.vsAI) return false;
+    // Room mode: AI controls seats listed in state.aiSeats
+    if (state && state.aiSeats && state.aiSeats.length) {
+      return state.aiSeats.indexOf(PLAYER_SEAT[player]) >= 0;
+    }
+    // Local mode
+    if (!state || !state.vsAI) return false;
     if (state.mode === '2player') return player === 'red';
     return player === 'red' || player === 'green';
+  }
+
+  // True when it is the local player's turn to interact (blocks other humans' seats in room mode)
+  function isMyTurn() {
+    if (!state || state.gameOver) return false;
+    if (isAIPlayer(state.currentPlayer)) return false;
+    // Room mode: only interact on your own seat
+    if (state.humanSeat !== undefined && state.humanSeat >= 0) {
+      return PLAYER_SEAT[state.currentPlayer] === state.humanSeat;
+    }
+    return true;
   }
 
   function aiChoosePiece(player, roll) {
@@ -756,7 +775,7 @@
 
   function drawHighlights() {
     if (!state || state.gameOver || state.rollResult === null || state.rollUsed) return;
-    if (isAIPlayer(state.currentPlayer)) return;
+    if (!isMyTurn()) return;
 
     var roll = state.rollResult;
     var valid = validMoves(state.currentPlayer, roll);
@@ -885,7 +904,7 @@
     if (rollBtn) {
       rollBtn.disabled = !!(
         state.gameOver ||
-        isAIPlayer(state.currentPlayer) ||
+        !isMyTurn() ||
         (state.rollResult !== null && !state.rollUsed && validMoves(state.currentPlayer, state.rollResult).length > 0)
       );
     }
@@ -932,7 +951,7 @@
   // Find which valid piece (if any) is under canvas pixel (x, y)
   function pieceAtPx(x, y) {
     if (!state || state.gameOver || state.rollResult === null || state.rollUsed) return null;
-    if (isAIPlayer(state.currentPlayer)) return null;
+    if (!isMyTurn()) return null;
     var roll  = state.rollResult;
     var valid = validMoves(state.currentPlayer, roll);
     if (!valid.length) return null;
@@ -1031,7 +1050,7 @@
 
   function handleCanvasClick(e) {
     if (!state || state.gameOver) return;
-    if (isAIPlayer(state.currentPlayer)) return;
+    if (!isMyTurn()) return;
     if (state.rollResult === null || state.rollUsed) return;
 
     var rect = canvas.getBoundingClientRect();
@@ -1194,7 +1213,7 @@
 
   function doHumanRoll() {
     if (!state || state.gameOver) return;
-    if (isAIPlayer(state.currentPlayer)) return;
+    if (!isMyTurn()) return;
     if (state.rollResult !== null && !state.rollUsed) return;
 
     var rollBtn = document.getElementById('pc-roll-btn');
@@ -1274,9 +1293,37 @@
   // ── Room mode integration ─────────────────────────────────────────────────
 
   function initRoomMode() {
-    // Minimal integration for game-bridge.js
     if (typeof RoomBridge === 'undefined' || !RoomBridge.isActive()) return;
-    // Room mode would sync state here
+
+    var mode        = RoomBridge.getMode();     // '2player' or '4player'
+    var seat        = RoomBridge.getSeat();     // this browser's player seat (0-3)
+    var aiSeatsList = RoomBridge.getAiSeats();  // seats the AI controls
+
+    // Normalise: fall back to 2player if mode wasn't set
+    if (mode !== '2player' && mode !== '4player') mode = '2player';
+
+    // Start game state — vsAI=false, AI controlled via state.aiSeats instead
+    state = freshState(mode, false);
+    state.humanSeat = seat;
+    state.aiSeats   = aiSeatsList;
+
+    // Skip the pre-game lobby
+    var lobbyEl = document.getElementById('pc-lobby');
+    var gameEl  = document.getElementById('pc-game');
+    if (lobbyEl) lobbyEl.hidden = true;
+    if (gameEl)  gameEl.hidden  = false;
+
+    var teamsPanel = document.getElementById('pc-teams-panel');
+    if (teamsPanel) teamsPanel.hidden = (mode !== '4player');
+
+    _hoveredPiece = null;
+    renderCowries(null, false);
+    setStatus("Yellow's turn — roll the shells.");
+    redraw();
+    updateHUD();
+
+    // If the first player is AI, kick off the AI turn immediately
+    if (isAIPlayer(state.currentPlayer)) triggerAITurn();
   }
 
   // ── Bootstrap ─────────────────────────────────────────────────────────────

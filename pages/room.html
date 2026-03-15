@@ -244,6 +244,11 @@
     <div class="rooms-modal rooms-assign-modal">
       <h2 id="assign-modal-title" class="rooms-modal__title">Assign Players</h2>
       <p class="assign-desc" id="assign-desc"></p>
+      <!-- Per-game mode picker (e.g. Pachisi 2P vs 4P) — hidden for most games -->
+      <div id="assign-game-modes" class="assign-game-modes" hidden>
+        <p class="assign-mode-label">Game Mode</p>
+        <div id="assign-game-modes-btns" class="assign-mode-toggle" role="group" aria-label="Choose game mode"></div>
+      </div>
       <ul id="assign-player-list" class="assign-player-list" role="list"></ul>
       <!-- Game mode: shown when room has fewer players than the game's max -->
       <div id="assign-mode-section" class="assign-mode-section" hidden>
