@@ -162,7 +162,7 @@
             communities who may never have had the chance to play with their grandparents.
           </p>
           <div style="text-align:center; margin-top: var(--space-6);">
-            <canvas id="about-globe-canvas" width="260" height="260" style="border-radius:50%; opacity:0.75;" aria-hidden="true"></canvas>
+            <canvas id="about-globe-canvas" width="260" height="260" style="border-radius:50%; opacity:1;" aria-hidden="true"></canvas>
           </div>
         </div>
       </div>
@@ -272,7 +272,7 @@
   /* Wireframe globe */
   var sphereGeo  = new THREE.SphereGeometry(2, 32, 20);
   var wireGeo    = new THREE.WireframeGeometry(sphereGeo);
-  var wireMat    = new THREE.LineBasicMaterial({ color: 0xC89B3C, transparent: true, opacity: 0.35 });
+  var wireMat    = new THREE.LineBasicMaterial({ color: 0xC89B3C, transparent: true, opacity: 0.8 });
   var globe      = new THREE.LineSegments(wireGeo, wireMat);
   scene.add(globe);
   /* Culture dots — 8 cultures */

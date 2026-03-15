@@ -406,8 +406,8 @@
   renderer.setSize(W, H);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(55, W / H, 0.1, 100);
-  camera.position.z = 14;
+  var camera = new THREE.PerspectiveCamera(70, W / H, 0.1, 100);
+  camera.position.z = 6;
   var matGold  = new THREE.MeshBasicMaterial({ color: 0xC89B3C, wireframe: true });
   var matTeal  = new THREE.MeshBasicMaterial({ color: 0x4ecdc4, wireframe: true });
   var matWarm  = new THREE.MeshBasicMaterial({ color: 0xe07040, wireframe: true });
@@ -425,7 +425,7 @@
     var geo = geos[Math.floor(Math.random() * geos.length)];
     var mat = mats[Math.floor(Math.random() * mats.length)];
     var mesh = new THREE.Mesh(geo, mat);
-    mesh.position.set((Math.random() - 0.5) * 28, (Math.random() - 0.5) * 10, (Math.random() - 0.5) * 6);
+    mesh.position.set((Math.random() - 0.5) * 12, (Math.random() - 0.5) * 6, (Math.random() - 0.5) * 4);
     mesh.rotation.set(Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2);
     mesh.userData.rx = (Math.random() - 0.5) * 0.009;
     mesh.userData.ry = (Math.random() - 0.5) * 0.013;
@@ -439,8 +439,8 @@
       m.rotation.x += m.userData.rx;
       m.rotation.y += m.userData.ry;
       m.position.y += m.userData.vy;
-      if (m.position.y >  6) m.userData.vy = -Math.abs(m.userData.vy);
-      if (m.position.y < -6) m.userData.vy =  Math.abs(m.userData.vy);
+      if (m.position.y >  3) m.userData.vy = -Math.abs(m.userData.vy);
+      if (m.position.y < -3) m.userData.vy =  Math.abs(m.userData.vy);
     });
     renderer.render(scene, camera);
   }
