@@ -605,7 +605,6 @@
   background: radial-gradient(ellipse at 68% 50%, #0d1f3c 0%, #111009 45%, #1a0e06 100%);
   position: relative;
   overflow: hidden;
-  min-height: calc(100dvh - var(--nav-height));
   display: flex;
   align-items: center;
 }
@@ -634,7 +633,7 @@
   grid-template-columns: 1fr 1fr;
   gap: var(--space-8);
   align-items: center;
-  padding-block: var(--space-12);
+  padding-block: var(--space-8);
   width: 100%;
 }
 
