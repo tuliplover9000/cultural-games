@@ -67,6 +67,7 @@
   var _filterQ       = '';
   var _filterCulture = '';
   var _filterType    = '';
+  var _filterPlayers = '';
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   function esc(s) {
@@ -94,10 +95,11 @@
   function applyFilter() {
     var q = _filterQ.toLowerCase();
     elGameGrid.querySelectorAll('.lobby-game-card').forEach(function (card) {
-      var nameMatch    = !q || card.dataset.name.toLowerCase().indexOf(q) !== -1;
-      var cultureMatch = !_filterCulture || card.dataset.culture === _filterCulture;
-      var typeMatch    = !_filterType    || card.dataset.type    === _filterType;
-      card.style.display = (nameMatch && cultureMatch && typeMatch) ? '' : 'none';
+      var nameMatch    = !q              || card.dataset.name.toLowerCase().indexOf(q) !== -1;
+      var cultureMatch = !_filterCulture || card.dataset.culture    === _filterCulture;
+      var typeMatch    = !_filterType    || card.dataset.type        === _filterType;
+      var playersMatch = !_filterPlayers || String(card.dataset.maxPlayers) === _filterPlayers;
+      card.style.display = (nameMatch && cultureMatch && typeMatch && playersMatch) ? '' : 'none';
     });
   }
 
@@ -143,7 +145,7 @@
       var iconInner = g.svg
         ? '<img src="' + g.svg + '" class="lobby-game-card__icon-img" alt="" aria-hidden="true" onerror="this.style.display=\'none\';this.parentNode.textContent=\'' + g.icon + '\'">'
         : g.icon;
-      return '<div class="lobby-game-card" role="listitem" data-name="' + esc(g.name) + '" data-culture="' + esc(g.culture || '') + '" data-type="' + esc(g.type || '') + '">' +
+      return '<div class="lobby-game-card" role="listitem" data-name="' + esc(g.name) + '" data-culture="' + esc(g.culture || '') + '" data-type="' + esc(g.type || '') + '" data-max-players="' + (g.maxPlayers || '') + '">' +
         '<span class="lobby-game-card__icon" aria-hidden="true">' + iconInner + '</span>' +
         '<div class="lobby-game-card__info">' +
           '<span class="lobby-game-card__name">' + esc(g.name) + '</span>' +
@@ -552,6 +554,7 @@
   var elGameSearch     = document.getElementById('lobby-game-search');
   var elCultureFilter  = document.getElementById('lobby-culture-filter');
   var elTypeFilter     = document.getElementById('lobby-type-filter');
+  var elPlayersFilter  = document.getElementById('lobby-players-filter');
 
   // Populate culture dropdown from GAMES data
   var cultures = [];
@@ -574,6 +577,10 @@
   });
   elTypeFilter.addEventListener('change', function () {
     _filterType = elTypeFilter.value;
+    applyFilter();
+  });
+  elPlayersFilter.addEventListener('change', function () {
+    _filterPlayers = elPlayersFilter.value;
     applyFilter();
   });
 

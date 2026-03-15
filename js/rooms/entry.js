@@ -22,12 +22,14 @@
   var elNameCancel   = document.getElementById('rooms-name-cancel');
 
   // ── Game Picker ───────────────────────────────────────────────────────────
-  var selectedGame    = null;
-  var elGameSearch    = document.getElementById('rooms-game-search');
-  var elCultureFilter = document.getElementById('rooms-culture-filter');
-  var elGameList      = document.getElementById('rooms-game-list');
-  var elGameHint      = document.getElementById('rooms-game-hint');
-  var games           = window.GAMES_DATA || [];
+  var selectedGame     = null;
+  var elGameSearch     = document.getElementById('rooms-game-search');
+  var elCultureFilter  = document.getElementById('rooms-culture-filter');
+  var elTypeFilter     = document.getElementById('rooms-type-filter');
+  var elPlayersFilter  = document.getElementById('rooms-players-filter');
+  var elGameList       = document.getElementById('rooms-game-list');
+  var elGameHint       = document.getElementById('rooms-game-hint');
+  var games            = window.GAMES_DATA || [];
 
   // Populate culture dropdown
   var cultures = [];
@@ -45,13 +47,16 @@
   games.forEach(function (g) {
     var item = document.createElement('div');
     item.className = 'rooms-game-item';
-    item.dataset.key     = g.key;
-    item.dataset.culture = g.culture;
+    item.dataset.key        = g.key;
+    item.dataset.culture    = g.culture || '';
+    item.dataset.type       = g.type || '';
+    item.dataset.maxPlayers = g.maxPlayers || '';
     item.setAttribute('role', 'option');
     item.setAttribute('aria-selected', 'false');
+    var playerLabel = g.maxPlayers === 8 ? 'Group' : (g.maxPlayers ? g.maxPlayers + 'P' : '');
     item.innerHTML =
       '<span class="rooms-game-item__name">' + g.name + '</span>' +
-      '<span class="rooms-game-item__culture">' + g.culture + '</span>';
+      '<span class="rooms-game-item__culture">' + (g.culture || '') + (g.type ? ' · ' + g.type : '') + (playerLabel ? ' · ' + playerLabel : '') + '</span>';
     item.addEventListener('click', function () {
       if (selectedGame === g.key) {
         selectedGame = null;
@@ -76,14 +81,20 @@
   function filterGames() {
     var q = elGameSearch.value.trim().toLowerCase();
     var c = elCultureFilter.value;
+    var t = elTypeFilter.value;
+    var p = elPlayersFilter.value;
     elGameList.querySelectorAll('.rooms-game-item').forEach(function (item) {
       var nameMatch    = !q || item.querySelector('.rooms-game-item__name').textContent.toLowerCase().indexOf(q) !== -1;
       var cultureMatch = !c || item.dataset.culture === c;
-      item.hidden = !(nameMatch && cultureMatch);
+      var typeMatch    = !t || item.dataset.type === t;
+      var playersMatch = !p || item.dataset.maxPlayers === p;
+      item.hidden = !(nameMatch && cultureMatch && typeMatch && playersMatch);
     });
   }
   elGameSearch.addEventListener('input', filterGames);
   elCultureFilter.addEventListener('change', filterGames);
+  elTypeFilter.addEventListener('change', filterGames);
+  elPlayersFilter.addEventListener('change', filterGames);
 
   // Max-players toggle
   var maxPlayers = 4;
