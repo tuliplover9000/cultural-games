@@ -24,3 +24,6 @@ node_modules/
 # Build output (for future phases)
 dist/
 build/
+
+# Claude Code local config (skills, worktrees — not needed in repo)
+.claude/
