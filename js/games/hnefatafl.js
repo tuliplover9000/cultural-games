@@ -314,7 +314,7 @@
   function handleClick(e) {
     e.preventDefault();
     if (state.gameOver) return;
-    if (vsRoom && state.turn !== (myRoomSeat === 0 ? ATTACKER : DEFENDER)) return;
+    if (vsRoom && (humanSide < 0 || state.turn !== humanSide)) return;
     if (vsAI && state.turn !== humanSide) return;
 
     var pt   = getCanvasPt(e);
@@ -689,7 +689,7 @@
     state.validMoves = [];
     updateHUD();
     render();
-    var myTurn = state.turn === (myRoomSeat === 0 ? ATTACKER : DEFENDER);
+    var myTurn = humanSide >= 0 && state.turn === humanSide;
     if (myTurn && !state.gameOver) {
       elStatus.textContent = 'Your turn to move';
     } else if (!state.gameOver) {
@@ -702,10 +702,23 @@
     vsRoom     = true;
     myRoomSeat = RoomBridge.getSeat();
     vsAI       = false;
+
+    // Determine which side this player controls from the role assigned in the lobby
+    var role = RoomBridge.getRole ? RoomBridge.getRole() : null;
+    if (role === 'defender') {
+      humanSide = DEFENDER;
+    } else if (role === 'spectator') {
+      humanSide = -1; // spectators control neither side
+    } else {
+      humanSide = ATTACKER; // 'attacker' or unset — default
+    }
+
     var modeRow = document.querySelector('.ht-mode-row');
     if (modeRow) modeRow.style.display = 'none';
     RoomBridge.onState(receiveRoomState);
-    if (myRoomSeat === 0) {
+
+    // Attacker (seat 0) moves first — send initial state; defender waits
+    if (humanSide === ATTACKER) {
       syncRoomState();
     } else {
       elStatus.textContent = 'Waiting for Attackers to move\u2026';

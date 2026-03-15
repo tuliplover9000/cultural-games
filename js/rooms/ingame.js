@@ -36,6 +36,11 @@
     'pallanguzhi': 2, 'patolli': 2, 'puluc': 2, 'hnefatafl': 2,
   };
 
+  // Games with named seat roles (role string → seat index by array position)
+  var GAME_SEAT_ROLES = {
+    'hnefatafl': ['attacker', 'defender'],
+  };
+
   // ── Build game URL ─────────────────────────────────────────────────────────
   function buildSrc(room, instanceId) {
     var game    = room.selected_game;
@@ -61,9 +66,17 @@
     // Spectators have seatIdx = -1
     if (myRole === 'spectator') seatIdx = -1;
 
-    // 1v1 mode: second player maps to game seat 2 (tien-len twoPlayer convention: seats 0 & 2)
-    var gameSeat = seatIdx;
-    if (mode === '1v1' && seatIdx === 1) gameSeat = 2;
+    // Games with named roles (e.g. hnefatafl attacker/defender): derive seat from role string
+    var seatRolesList = GAME_SEAT_ROLES[game];
+    var gameSeat;
+    if (seatRolesList) {
+      gameSeat = myRole === 'spectator' ? -1 : seatRolesList.indexOf(myRole);
+      if (gameSeat < 0 && myRole !== 'spectator') gameSeat = seatIdx; // fallback
+    } else {
+      // 1v1 mode: second player maps to game seat 2 (tien-len twoPlayer convention: seats 0 & 2)
+      gameSeat = seatIdx;
+      if (mode === '1v1' && seatIdx === 1) gameSeat = 2;
+    }
 
     // AI seats: fill remaining slots up to game max when mode=normal
     // Group/betting games (like bau-cua) never use AI fill
@@ -148,7 +161,16 @@
       instancePlayers = players;
     }
 
-    var winnerPid = instancePlayers[winnerSeat] || null;
+    // For role-based games (e.g. hnefatafl), resolve winner by role string,
+    // not by join-order index, since the host can assign roles freely.
+    var winnerPid;
+    var seatRolesList = GAME_SEAT_ROLES[room.selected_game];
+    if (seatRolesList) {
+      var winnerRole = seatRolesList[winnerSeat];
+      winnerPid = instancePlayers.find(function(p) { return roles[p] === winnerRole; }) || null;
+    } else {
+      winnerPid = instancePlayers[winnerSeat] || null;
+    }
 
     if (winnerPid) Room.incrementWin(winnerPid);
     Room.endGame(instanceId, winnerPid);

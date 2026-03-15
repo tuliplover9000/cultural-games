@@ -19,7 +19,7 @@
     { key: 'patolli',     name: 'Patolli',             icon: '🟩', svg: '../assets/icons/patolli.svg',    badge: 'Dice · 2P',    maxPlayers: 2 },
     { key: 'puluc',       name: 'Puluc',               icon: '🪵', svg: '../assets/icons/puluc.svg',      badge: 'Dice · 2P',    maxPlayers: 2 },
     { key: 'bau-cua',     name: 'Bầu Cua Tôm Cá',     icon: '🎲', svg: '../assets/icons/bau-cua.svg',      badge: 'Dice · Group', maxPlayers: 8 },
-    { key: 'hnefatafl',  name: 'Hnefatafl',           icon: '♟',  svg: '../assets/icons/hnefatafl.svg',    badge: 'Strategy · 2P', maxPlayers: 2 },
+    { key: 'hnefatafl',  name: 'Hnefatafl',           icon: '♟',  svg: '../assets/icons/hnefatafl.svg',    badge: 'Strategy · 2P', maxPlayers: 2, seatRoles: ['attacker', 'defender'] },
   ];
 
   // ── DOM refs ───────────────────────────────────────────────────────────────
@@ -301,22 +301,30 @@
 
     elAssignDesc.innerHTML = '<strong>' + esc(meta.name) + '</strong> supports up to <strong>' + seats + ' player' + (seats !== 1 ? 's' : '') + '</strong>. Assign roles below.';
 
-    // Build role map starting with all 'player', extra players default to 'spectator'
+    // Build role map. Games with seatRoles get named seats; others get generic 'player'.
+    var seatRoles = meta.seatRoles; // e.g. ['attacker','defender'] or undefined
     var roles = {};
     players.forEach(function(pid, i) {
-      roles[pid] = i < seats ? 'player' : 'spectator';
+      if (seatRoles) {
+        roles[pid] = i < seatRoles.length ? seatRoles[i] : 'spectator';
+      } else {
+        roles[pid] = i < seats ? 'player' : 'spectator';
+      }
     });
 
     elAssignPlayerList.innerHTML = players.map(function(pid) {
-      var name = names[pid] || 'Player';
-      var role = roles[pid];
+      var name     = names[pid] || 'Player';
+      var role     = roles[pid];
+      var btnDefs  = seatRoles ? seatRoles.concat(['spectator']) : ['player', 'spectator'];
+      var btns = btnDefs.map(function(r) {
+        var label = r.charAt(0).toUpperCase() + r.slice(1);
+        return '<button class="assign-role-btn' + (role === r ? ' active' : '') +
+               '" data-pid="' + esc(pid) + '" data-role="' + esc(r) + '">' + label + '</button>';
+      }).join('');
       return '<li class="assign-player-row" data-pid="' + esc(pid) + '">' +
         '<div class="lobby-player__avatar" style="width:30px;height:30px;font-size:var(--text-base)">' + esc(name[0].toUpperCase()) + '</div>' +
         '<span class="assign-player-name">' + esc(name) + (pid === myPid ? ' (you)' : '') + '</span>' +
-        '<div class="assign-role-toggle" role="group" aria-label="Role for ' + esc(name) + '">' +
-          '<button class="assign-role-btn' + (role === 'player' ? ' active' : '') + '" data-pid="' + esc(pid) + '" data-role="player">Player</button>' +
-          '<button class="assign-role-btn' + (role === 'spectator' ? ' active' : '') + '" data-pid="' + esc(pid) + '" data-role="spectator">Spectator</button>' +
-        '</div>' +
+        '<div class="assign-role-toggle" role="group" aria-label="Role for ' + esc(name) + '">' + btns + '</div>' +
       '</li>';
     }).join('');
 
