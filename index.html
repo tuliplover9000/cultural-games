@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
     rel="stylesheet"
   />
 
@@ -31,7 +31,7 @@
 
       <ul class="nav-links" id="nav-links" role="list">
         <li><a href="pages/browse.html" class="nav-link">Browse Games</a></li>
-        <li><a href="pages/rooms.html"  class="nav-link nav-link--rooms">🎮 Rooms</a></li>
+        <li><a href="pages/rooms.html"  class="nav-link nav-link--rooms">Rooms</a></li>
         <li><a href="pages/about.html"  class="nav-link">About</a></li>
       </ul>
 
@@ -52,32 +52,33 @@
          HERO
     ════════════════════════════════════════════════════════ -->
     <section class="hero" aria-label="Hero">
-      <div class="hero__bg" aria-hidden="true">
-        <img src="assets/icons/bau-cua.svg"     class="hero__bg-icon" alt="" />
-        <img src="assets/icons/o-an-quan.svg"   class="hero__bg-icon" alt="" />
-        <img src="assets/icons/tien-len.svg"    class="hero__bg-icon" alt="" />
-        <img src="assets/icons/oware.svg"       class="hero__bg-icon" alt="" />
-        <img src="assets/icons/patolli.svg"     class="hero__bg-icon" alt="" />
-        <img src="assets/icons/puluc.svg"       class="hero__bg-icon" alt="" />
-        <img src="assets/icons/pallanguzhi.svg" class="hero__bg-icon" alt="" />
-      </div>
       <div class="container hero__inner">
-        <span class="hero__eyebrow" id="hero-eyebrow">11 Games &middot; 8 Cultures &middot; Free to Play</span>
 
-        <h1 class="hero__title">
-          Play the games
-          <span class="hero__title-accent">that carry culture.</span>
-        </h1>
+        <!-- Left: text content -->
+        <div class="hero__content">
+          <span class="hero__eyebrow" id="hero-eyebrow">11 Games &middot; 8 Cultures &middot; Free to Play</span>
 
-        <p class="hero__tagline">
-          Discover and play traditional games from Vietnam, West Africa, Mesoamerica,
-          South India, Madagascar, China, and the Norse world — preserved and brought to life in your browser.
-        </p>
+          <h1 class="hero__title">
+            Play the games
+            <span class="hero__title-accent">that carry culture.</span>
+          </h1>
 
-        <div class="hero__actions">
-          <a href="pages/browse.html" class="btn btn-primary btn-lg">Browse All Games</a>
-          <a href="pages/about.html"  class="btn btn-secondary btn-lg">Our Story</a>
+          <p class="hero__tagline">
+            Discover and play traditional games from Vietnam, West Africa, Mesoamerica,
+            South India, Madagascar, China, and the Norse world — preserved and brought to life in your browser.
+          </p>
+
+          <div class="hero__actions">
+            <a href="pages/browse.html" class="btn btn-primary btn-lg">Browse All Games</a>
+            <a href="pages/about.html"  class="btn btn-secondary btn-lg">Our Story</a>
+          </div>
         </div>
+
+        <!-- Right: Three.js floating game pieces -->
+        <div class="hero__visual" aria-hidden="true">
+          <canvas id="hero-canvas"></canvas>
+        </div>
+
       </div>
     </section>
 
@@ -115,8 +116,8 @@
             <div class="stat__label">Cultures</div>
           </div>
           <div class="stat" role="listitem">
-            <div class="stat__number">100%</div>
-            <div class="stat__label">Free to Play</div>
+            <div class="stat__number">Free</div>
+            <div class="stat__label">Always, no account</div>
           </div>
           <div class="stat" role="listitem">
             <div class="stat__number">∞</div>
@@ -140,7 +141,7 @@
 
         <div class="featured__grid">
 
-          <!-- Bầu Cua -->
+          <!-- Bầu Cua — hero card (spans 2 rows) -->
           <article class="game-card">
             <div class="game-card__banner game-card__banner--red" aria-hidden="true">
               <img src="assets/icons/bau-cua.svg" class="game-card__banner-icon" alt="" />
@@ -194,7 +195,7 @@
             </div>
           </article>
 
-          <!-- Pallanguzhi -->
+          <!-- Pallanguzhi — wide bottom card -->
           <article class="game-card">
             <div class="game-card__banner game-card__banner--warm" aria-hidden="true">
               <img src="assets/icons/pallanguzhi.svg" class="game-card__banner-icon" alt="" />
@@ -238,6 +239,9 @@
     </div>
   </footer>
 
+  <!-- Three.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
+
   <script src="js/utils/games-data.js"></script>
   <script>
     (function () {
@@ -255,6 +259,99 @@
       if (featLink) featLink.textContent = 'Browse all ' + gameCount + ' games \u2192';
     }());
   </script>
+
+  <!-- Three.js hero background -->
+  <script>
+    (function () {
+      'use strict';
+      if (!window.THREE) return;
+      var canvas = document.getElementById('hero-canvas');
+      if (!canvas) return;
+
+      var scene    = new THREE.Scene();
+      var camera   = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+      camera.position.z = 9;
+
+      var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+      renderer.setClearColor(0x000000, 0);
+
+      function resize() {
+        var parent = canvas.parentElement;
+        if (!parent) return;
+        var w = parent.offsetWidth;
+        var h = parent.offsetHeight;
+        if (!w || !h) return;
+        renderer.setSize(w, h, false);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      }
+
+      // Game-piece geometries: tile, seed, dice, pawn, coin, cube
+      var geos = [
+        new THREE.BoxGeometry(0.9, 1.2, 0.1),
+        new THREE.SphereGeometry(0.38, 12, 12),
+        new THREE.OctahedronGeometry(0.48),
+        new THREE.CylinderGeometry(0.28, 0.28, 0.2, 12),
+        new THREE.TorusGeometry(0.34, 0.09, 8, 24),
+        new THREE.BoxGeometry(0.52, 0.52, 0.52),
+      ];
+
+      // Gold-heavy palette matching brand
+      var palette = [0xC89B3C, 0xC89B3C, 0xC89B3C, 0xC89B3C, 0xB83232, 0x2C7873];
+
+      var objects = [];
+      var count = 26;
+      for (var i = 0; i < count; i++) {
+        var geo = geos[i % geos.length];
+        var col = palette[Math.floor(Math.random() * palette.length)];
+        var mat = new THREE.MeshBasicMaterial({
+          color: col,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.05 + Math.random() * 0.13,
+        });
+        var mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set(
+          (Math.random() - 0.5) * 12,
+          (Math.random() - 0.5) * 9,
+          (Math.random() - 0.5) * 5 - 1
+        );
+        mesh.rotation.set(
+          Math.random() * Math.PI * 2,
+          Math.random() * Math.PI * 2,
+          Math.random() * Math.PI * 2
+        );
+        scene.add(mesh);
+        objects.push({
+          mesh: mesh,
+          rx: (Math.random() - 0.5) * 0.005,
+          ry: (Math.random() - 0.5) * 0.007,
+          floatAmp:  (0.3 + Math.random() * 0.7) * 0.003,
+          floatFreq: 0.3 + Math.random() * 0.8,
+          floatOff:  Math.random() * Math.PI * 2,
+        });
+      }
+
+      resize();
+      window.addEventListener('resize', resize);
+
+      var t = 0;
+      function animate() {
+        requestAnimationFrame(animate);
+        t += 0.01;
+        for (var i = 0; i < objects.length; i++) {
+          var o = objects[i];
+          o.mesh.rotation.x += o.rx;
+          o.mesh.rotation.y += o.ry;
+          o.mesh.position.y += Math.sin(t * o.floatFreq + o.floatOff) * o.floatAmp;
+        }
+        renderer.render(scene, camera);
+      }
+      animate();
+    }());
+  </script>
+
   <script src="js/utils/navigation.js"></script>
   <script src="js/utils/auth.js"></script>
 </body>
