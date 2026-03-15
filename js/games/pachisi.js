@@ -1367,6 +1367,13 @@
 
       if (state.gameOver) {
         setStatus((state.winner.charAt(0).toUpperCase() + state.winner.slice(1)) + ' wins!');
+      } else {
+        var capName = state.currentPlayer.charAt(0).toUpperCase() + state.currentPlayer.slice(1);
+        if (state.rollResult !== null && !state.rollUsed) {
+          setStatus(capName + ' rolled ' + state.rollResult + ' — pick a piece.');
+        } else {
+          setStatus(capName + "'s turn — roll the shells.");
+        }
       }
     });
   }
