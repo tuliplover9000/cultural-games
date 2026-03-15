@@ -200,13 +200,34 @@
   }
 
   // ── Cowrie dice ───────────────────────────────────────────────────────────
-  // Returns array of 6 booleans (true = face-up / mouth-up)
-  function rollCowries() {
+  // Returns array of 6 booleans (true = face-up / mouth-up).
+  // graceBias 0–1: chance of forcing a 6 or 25 result so pieces can enter board.
+  function rollCowries(graceBias) {
+    graceBias = graceBias || 0;
+    // With graceBias chance, force result to 6 (all up) or 25 (all down)
+    if (graceBias > 0 && Math.random() < graceBias) {
+      var forceGrace = Math.random() < 0.5; // 50/50 between 6 and 25
+      var val = forceGrace ? true : false;  // true=6up, false=0up=25
+      var forced = [];
+      for (var j = 0; j < 6; j++) forced.push(val);
+      return forced;
+    }
     var shells = [];
     for (var i = 0; i < 6; i++) {
       shells.push(Math.random() < 0.5);
     }
     return shells;
+  }
+
+  // Compute grace bias for current player: ramp down from 0.55 → 0 as pieces enter board
+  function graceBiasFor(player) {
+    var onBoard = (state.pieces[player] || []).filter(function (p) {
+      return p.state === 'board';
+    }).length;
+    if (onBoard === 0) return 0.55;   // all in yard: 55% chance of 6 or 25
+    if (onBoard === 1) return 0.30;   // 1 on board: 30%
+    if (onBoard === 2) return 0.10;   // 2 on board: 10%
+    return 0;                         // 3+ on board: natural odds
   }
 
   function shellsToValue(shells) {
@@ -465,73 +486,167 @@
     if (!ctx) return;
     ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
-    // Canvas background (carved wood)
-    ctx.fillStyle = '#3B2507';
+    // ── Outer border (carved wood frame) ─────────────────────────────────────
+    ctx.fillStyle = '#2a1805';
     ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
-    // Draw cells
+    // Warm inner frame
+    var PAD = 4;
+    ctx.fillStyle = '#5a3315';
+    ctx.fillRect(PAD, PAD, CANVAS_SIZE - PAD * 2, CANVAS_SIZE - PAD * 2);
+
+    // ── Yard corners: colored home areas ─────────────────────────────────────
+    var yardDefs = [
+      { player: 'yellow', rows: [6,7,8], cols: [0,1,2], color: '#c8860a', light: '#f5d080' },
+      { player: 'red',    rows: [0,1,2], cols: [0,1,2], color: '#8b1a1a', light: '#e88080' },
+      { player: 'green',  rows: [0,1,2], cols: [6,7,8], color: '#1a5c1a', light: '#80d080' },
+      { player: 'black',  rows: [6,7,8], cols: [6,7,8], color: '#222228', light: '#888898' },
+    ];
+    yardDefs.forEach(function (yd) {
+      // Yard background
+      var x0 = yd.cols[0] * CELL + PAD, y0 = yd.rows[0] * CELL + PAD;
+      var yw = yd.cols.length * CELL - PAD * 2, yh = yd.rows.length * CELL - PAD * 2;
+      var grad = ctx.createLinearGradient(x0, y0, x0 + yw, y0 + yh);
+      grad.addColorStop(0, yd.color);
+      grad.addColorStop(1, yd.light);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.roundRect(x0, y0, yw, yh, 6);
+      ctx.fill();
+      // Decorative inner border
+      ctx.strokeStyle = 'rgba(255,220,100,0.5)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.roundRect(x0 + 4, y0 + 4, yw - 8, yh - 8, 4);
+      ctx.stroke();
+      // Yard label
+      ctx.save();
+      ctx.font = 'bold ' + Math.round(CELL * 0.22) + 'px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillStyle = 'rgba(255,255,255,0.55)';
+      ctx.fillText(yd.player.toUpperCase(), x0 + yw / 2, y0 + 5);
+      ctx.restore();
+    });
+
+    // ── Cross cells ──────────────────────────────────────────────────────────
+    var ARM_BG = {
+      south: { base: '#d4860e', stripe: '#c07a0a' },
+      north: { base: '#a81818', stripe: '#901010' },
+      west:  { base: '#1c6b1c', stripe: '#155815' },
+      east:  { base: '#252525', stripe: '#1a1a1a' },
+    };
+
     for (var r = 0; r < GRID; r++) {
       for (var c = 0; c < GRID; c++) {
+        if (!isCross(r, c)) continue;
+
         var x = c * CELL;
         var y = r * CELL;
+        var isCenter = (r >= 3 && r <= 5 && c >= 3 && c <= 5);
 
-        if (!isCross(r, c)) {
-          // Yard corner — draw arm-colored background
-          var yardColor = '#5a3a10';
-          ctx.fillStyle = yardColor;
+        // Base arm color
+        var armKey = null;
+        if (r >= 6 && c >= 3 && c <= 5) armKey = 'south';
+        else if (r <= 2 && c >= 3 && c <= 5) armKey = 'north';
+        else if (c <= 2 && r >= 3 && r <= 5) armKey = 'west';
+        else if (c >= 6 && r >= 3 && r <= 5) armKey = 'east';
+
+        if (isCenter) {
+          // Charkoni: ivory with gold vein
+          ctx.fillStyle = (r + c) % 2 === 0 ? '#EDE0C4' : '#E0D0A8';
           ctx.fillRect(x, y, CELL, CELL);
-          continue;
+        } else if (armKey) {
+          var arm = ARM_BG[armKey];
+          ctx.fillStyle = arm.base;
+          ctx.fillRect(x, y, CELL, CELL);
+          // Alternating stripe for texture
+          if ((r + c) % 2 === 0) {
+            ctx.fillStyle = arm.stripe;
+            ctx.fillRect(x, y, CELL, CELL);
+          }
         }
 
-        // Determine arm color
-        var cellColor = '#F5EDD6'; // default ivory
-        if (r >= 6 && r <= 8 && c >= 3 && c <= 5) cellColor = ARM_COLORS.south;
-        else if (r >= 0 && r <= 2 && c >= 3 && c <= 5) cellColor = ARM_COLORS.north;
-        else if (r >= 3 && r <= 5 && c >= 0 && c <= 2) cellColor = ARM_COLORS.west;
-        else if (r >= 3 && r <= 5 && c >= 6 && c <= 8) cellColor = ARM_COLORS.east;
-        else if (r >= 3 && r <= 5 && c >= 3 && c <= 5) {
-          // Charkoni center — deep purple
-          cellColor = '#4A148C';
-        }
-
-        ctx.fillStyle = cellColor;
-        ctx.fillRect(x, y, CELL, CELL);
-
-        // Castle squares: chequered gold/ivory
+        // Castle square: gold star marker
         if (isCastle(r, c)) {
-          var hw = CELL / 2;
-          ctx.fillStyle = '#C8960C';
-          ctx.fillRect(x,      y,      hw, hw);
-          ctx.fillRect(x + hw, y + hw, hw, hw);
-          ctx.fillStyle = '#F5EDD6';
-          ctx.fillRect(x + hw, y,      hw, hw);
-          ctx.fillRect(x,      y + hw, hw, hw);
-        }
-
-        // Charkoni center gold border
-        if (r >= 3 && r <= 5 && c >= 3 && c <= 5) {
+          ctx.fillStyle = isCenter ? '#c8960c' : 'rgba(255,220,80,0.18)';
+          ctx.fillRect(x, y, CELL, CELL);
+          // Cross marker
           ctx.strokeStyle = '#C8960C';
           ctx.lineWidth = 2;
-          ctx.strokeRect(x + 1, y + 1, CELL - 2, CELL - 2);
+          ctx.beginPath();
+          ctx.moveTo(x + CELL * 0.5, y + CELL * 0.18);
+          ctx.lineTo(x + CELL * 0.5, y + CELL * 0.82);
+          ctx.moveTo(x + CELL * 0.18, y + CELL * 0.5);
+          ctx.lineTo(x + CELL * 0.82, y + CELL * 0.5);
+          ctx.stroke();
+          // Circle around cross
+          ctx.beginPath();
+          ctx.arc(x + CELL * 0.5, y + CELL * 0.5, CELL * 0.3, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(200,150,12,0.5)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
         }
 
-        // Grid lines
-        ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+        // Cell border
+        ctx.strokeStyle = isCenter ? 'rgba(180,140,20,0.5)' : 'rgba(0,0,0,0.25)';
         ctx.lineWidth = 0.5;
-        ctx.strokeRect(x, y, CELL, CELL);
+        ctx.strokeRect(x + 0.5, y + 0.5, CELL - 1, CELL - 1);
       }
     }
 
-    // Draw home indicator in center
-    var charkCX = cx(4);
-    var charkCY = cy(4);
+    // ── Charkoni center: lotus / star motif ───────────────────────────────────
+    var ccx = cx(4), ccy = cy(4);
+    var cr = CELL * 1.3; // outer radius covering the 3×3 center
+
+    // Deep purple overlay for full center block
+    ctx.fillStyle = 'rgba(60,10,100,0.82)';
+    ctx.fillRect(3 * CELL, 3 * CELL, 3 * CELL, 3 * CELL);
+
+    // Gold border ring around center
+    ctx.strokeStyle = '#C8960C';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(3 * CELL + 3, 3 * CELL + 3, 3 * CELL - 6, 3 * CELL - 6);
+
+    // Inner lotus petals
     ctx.save();
-    ctx.font = 'bold ' + Math.round(CELL * 0.3) + 'px serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
+    ctx.translate(ccx, ccy);
+    for (var petal = 0; petal < 8; petal++) {
+      ctx.save();
+      ctx.rotate(petal * Math.PI / 4);
+      ctx.fillStyle = petal % 2 === 0 ? 'rgba(200,150,12,0.55)' : 'rgba(255,255,255,0.12)';
+      ctx.beginPath();
+      ctx.ellipse(0, -CELL * 0.55, CELL * 0.18, CELL * 0.42, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    // Center circle
+    ctx.beginPath();
+    ctx.arc(0, 0, CELL * 0.28, 0, Math.PI * 2);
     ctx.fillStyle = '#C8960C';
-    ctx.fillText('★', charkCX, charkCY);
+    ctx.fill();
     ctx.restore();
+
+    // HOME label
+    ctx.save();
+    ctx.font = 'bold ' + Math.round(CELL * 0.2) + 'px serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillStyle = 'rgba(255,220,80,0.7)';
+    ctx.fillText('HOME', ccx, ccy + CELL * 1.25);
+    ctx.restore();
+
+    // ── Arm separator lines ───────────────────────────────────────────────────
+    ctx.strokeStyle = 'rgba(0,0,0,0.45)';
+    ctx.lineWidth = 2;
+    // South arm top edge
+    ctx.beginPath(); ctx.moveTo(3*CELL,6*CELL); ctx.lineTo(6*CELL,6*CELL); ctx.stroke();
+    // North arm bottom edge
+    ctx.beginPath(); ctx.moveTo(3*CELL,3*CELL); ctx.lineTo(6*CELL,3*CELL); ctx.stroke();
+    // West arm right edge
+    ctx.beginPath(); ctx.moveTo(3*CELL,3*CELL); ctx.lineTo(3*CELL,6*CELL); ctx.stroke();
+    // East arm left edge
+    ctx.beginPath(); ctx.moveTo(6*CELL,3*CELL); ctx.lineTo(6*CELL,6*CELL); ctx.stroke();
   }
 
   // Collect all board pieces keyed by "row,col" for stacking
@@ -624,11 +739,11 @@
       ctx.strokeStyle = '#FFD700';
       ctx.lineWidth = 3;
 
+      var hx, hy;
       if (piece.state === 'yard') {
-        // Highlight the yard cell
         var yc = YARD_CORNERS[piece.owner];
-        var pieces = playerPieces(piece.owner).filter(function (p) { return p.state === 'yard'; });
-        var idxInYard = pieces.indexOf(piece);
+        var yardPcsH = playerPieces(piece.owner).filter(function (p) { return p.state === 'yard'; });
+        var idxInYard = yardPcsH.indexOf(piece);
         var positions = [
           [yc[0],   yc[1]  ],
           [yc[0],   yc[1]+1],
@@ -636,15 +751,24 @@
           [yc[0]+1, yc[1]+1]
         ];
         if (idxInYard < positions.length) {
-          var pr = positions[idxInYard][0];
-          var pc2 = positions[idxInYard][1];
-          ctx.strokeRect(pc2 * CELL + 3, pr * CELL + 3, CELL - 6, CELL - 6);
+          hx = cx(positions[idxInYard][1]);
+          hy = cy(positions[idxInYard][0]);
         }
       } else if (piece.state === 'board') {
         var pos = piecePos(piece);
-        if (pos) {
-          ctx.strokeRect(pos[1] * CELL + 3, pos[0] * CELL + 3, CELL - 6, CELL - 6);
-        }
+        if (pos) { hx = cx(pos[1]); hy = cy(pos[0]); }
+      }
+      if (hx !== undefined) {
+        // Pulsing gold ring around the piece
+        ctx.beginPath();
+        ctx.arc(hx, hy, CELL * 0.38, 0, Math.PI * 2);
+        ctx.strokeStyle = '#FFD700';
+        ctx.lineWidth = 3;
+        ctx.globalAlpha = 0.85;
+        ctx.stroke();
+        ctx.globalAlpha = 0.2;
+        ctx.fillStyle = '#FFD700';
+        ctx.fill();
       }
       ctx.restore();
     });
@@ -903,7 +1027,7 @@
 
   function doAIRoll() {
     if (!state || !isAIPlayer(state.currentPlayer) || state.gameOver) return;
-    var shells = rollCowries();
+    var shells = rollCowries(graceBiasFor(state.currentPlayer));
     var roll = shellsToValue(shells);
     state.rollResult = roll;
     state.rollUsed = false;
@@ -984,7 +1108,7 @@
     var rollBtn = document.getElementById('pc-roll-btn');
     if (rollBtn) rollBtn.disabled = true;
 
-    var shells = rollCowries();
+    var shells = rollCowries(graceBiasFor(state.currentPlayer));
     var roll = shellsToValue(shells);
     state.rollResult = roll;
     state.rollUsed = false;
