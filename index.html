@@ -260,7 +260,7 @@
     }());
   </script>
 
-  <!-- Three.js hero background -->
+  <!-- Three.js globe -->
   <script>
     (function () {
       'use strict';
@@ -268,9 +268,9 @@
       var canvas = document.getElementById('hero-canvas');
       if (!canvas) return;
 
-      var scene    = new THREE.Scene();
-      var camera   = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
-      camera.position.z = 9;
+      var scene  = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+      camera.position.z = 6.5;
 
       var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
       renderer.setClearColor(0x000000, 0);
@@ -287,35 +287,73 @@
         camera.updateProjectionMatrix();
       }
 
-      // Game-piece geometries: tile, seed, dice, pawn, coin, cube
-      var geos = [
-        new THREE.BoxGeometry(0.9, 1.2, 0.1),
-        new THREE.SphereGeometry(0.38, 12, 12),
-        new THREE.OctahedronGeometry(0.48),
-        new THREE.CylinderGeometry(0.28, 0.28, 0.2, 12),
-        new THREE.TorusGeometry(0.34, 0.09, 8, 24),
-        new THREE.BoxGeometry(0.52, 0.52, 0.52),
+      // ── Wireframe globe ──────────────────────────────────────
+      var globeGroup = new THREE.Group();
+      scene.add(globeGroup);
+
+      var globeMat = new THREE.MeshBasicMaterial({
+        color: 0xC89B3C,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.13,
+      });
+      globeGroup.add(new THREE.Mesh(new THREE.SphereGeometry(2.6, 40, 24), globeMat));
+
+      // ── Culture location dots ────────────────────────────────
+      // Each game culture mapped to approximate lat/lon
+      var cultures = [
+        { lat: 16,  lon: 106, color: 0xB83232 }, // Vietnam
+        { lat: 8,   lon: 0,   color: 0xC89B3C }, // West Africa
+        { lat: 18,  lon: -92, color: 0x2C7873 }, // Mesoamerica
+        { lat: 11,  lon: 80,  color: 0xD4663A }, // South India
+        { lat: -20, lon: 47,  color: 0xC89B3C }, // Madagascar
+        { lat: 35,  lon: 116, color: 0xB83232 }, // China
+        { lat: 60,  lon: 15,  color: 0x2C7873 }, // Norse/Scandinavia
+        { lat: 23,  lon: 78,  color: 0xC89B3C }, // India (Pachisi)
       ];
 
-      // Gold-heavy palette matching brand
-      var palette = [0xC89B3C, 0xC89B3C, 0xC89B3C, 0xC89B3C, 0xB83232, 0x2C7873];
+      var R = 2.65;
+      cultures.forEach(function (c) {
+        var phi   = (90 - c.lat) * Math.PI / 180;
+        var theta = (c.lon + 180) * Math.PI / 180;
+        var dot = new THREE.Mesh(
+          new THREE.SphereGeometry(0.055, 8, 8),
+          new THREE.MeshBasicMaterial({ color: c.color })
+        );
+        dot.position.set(
+          R * Math.sin(phi) * Math.cos(theta),
+          R * Math.cos(phi),
+          R * Math.sin(phi) * Math.sin(theta)
+        );
+        globeGroup.add(dot);
+      });
 
-      var objects = [];
-      var count = 26;
-      for (var i = 0; i < count; i++) {
-        var geo = geos[i % geos.length];
-        var col = palette[Math.floor(Math.random() * palette.length)];
+      // ── Floating game pieces around the globe ────────────────
+      var pieceGeos = [
+        new THREE.BoxGeometry(0.38, 0.52, 0.05),
+        new THREE.SphereGeometry(0.16, 8, 8),
+        new THREE.OctahedronGeometry(0.2),
+        new THREE.TorusGeometry(0.15, 0.04, 6, 16),
+        new THREE.BoxGeometry(0.22, 0.22, 0.22),
+      ];
+      var piecePalette = [0xC89B3C, 0xC89B3C, 0xB83232, 0x2C7873];
+      var pieces = [];
+
+      for (var i = 0; i < 14; i++) {
+        var geo = pieceGeos[i % pieceGeos.length];
         var mat = new THREE.MeshBasicMaterial({
-          color: col,
+          color: piecePalette[Math.floor(Math.random() * piecePalette.length)],
           wireframe: true,
           transparent: true,
-          opacity: 0.05 + Math.random() * 0.13,
+          opacity: 0.08 + Math.random() * 0.14,
         });
         var mesh = new THREE.Mesh(geo, mat);
+        var angle  = (i / 14) * Math.PI * 2;
+        var radius = 3.4 + Math.random() * 1.2;
         mesh.position.set(
-          (Math.random() - 0.5) * 12,
-          (Math.random() - 0.5) * 9,
-          (Math.random() - 0.5) * 5 - 1
+          Math.cos(angle) * radius,
+          (Math.random() - 0.5) * 4.5,
+          Math.sin(angle) * radius - 1.5
         );
         mesh.rotation.set(
           Math.random() * Math.PI * 2,
@@ -323,11 +361,11 @@
           Math.random() * Math.PI * 2
         );
         scene.add(mesh);
-        objects.push({
-          mesh: mesh,
-          rx: (Math.random() - 0.5) * 0.005,
-          ry: (Math.random() - 0.5) * 0.007,
-          floatAmp:  (0.3 + Math.random() * 0.7) * 0.003,
+        pieces.push({
+          mesh:      mesh,
+          rx:        (Math.random() - 0.5) * 0.007,
+          ry:        (Math.random() - 0.5) * 0.009,
+          floatAmp:  (0.3 + Math.random() * 0.7) * 0.002,
           floatFreq: 0.3 + Math.random() * 0.8,
           floatOff:  Math.random() * Math.PI * 2,
         });
@@ -340,11 +378,12 @@
       function animate() {
         requestAnimationFrame(animate);
         t += 0.01;
-        for (var i = 0; i < objects.length; i++) {
-          var o = objects[i];
-          o.mesh.rotation.x += o.rx;
-          o.mesh.rotation.y += o.ry;
-          o.mesh.position.y += Math.sin(t * o.floatFreq + o.floatOff) * o.floatAmp;
+        globeGroup.rotation.y += 0.0018;
+        for (var i = 0; i < pieces.length; i++) {
+          var p = pieces[i];
+          p.mesh.rotation.x += p.rx;
+          p.mesh.rotation.y += p.ry;
+          p.mesh.position.y += Math.sin(t * p.floatFreq + p.floatOff) * p.floatAmp;
         }
         renderer.render(scene, camera);
       }

@@ -602,7 +602,7 @@
    HERO — Homepage hero section
 ============================================================================= */
 .hero {
-  background-color: var(--color-primary);
+  background: radial-gradient(ellipse at 68% 50%, #0d1f3c 0%, #111009 45%, #1a0e06 100%);
   position: relative;
   overflow: hidden;
   min-height: calc(100dvh - var(--nav-height));
