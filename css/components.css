@@ -659,6 +659,12 @@
   height: 100%;
 }
 
+/* ── Entrance animations ── */
+@keyframes heroFadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
 .hero__eyebrow {
   display: inline-block;
   font-size: var(--text-xs);
@@ -670,6 +676,7 @@
   padding: 5px var(--space-2);
   border: 1px solid rgba(200, 155, 60, 0.35);
   border-radius: var(--radius-full);
+  animation: heroFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
 }
 
 .hero__title {
@@ -679,11 +686,13 @@
   line-height: 1.05;
   margin-bottom: var(--space-4);
   letter-spacing: -0.03em;
+  animation: heroFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
 }
 
 .hero__title-accent {
   color: var(--color-accent-gold);
   display: block;
+  transition: opacity 0.35s ease;
 }
 
 .hero__tagline {
@@ -692,6 +701,7 @@
   max-width: 48ch;
   margin: 0 0 var(--space-6);
   line-height: var(--leading-normal);
+  animation: heroFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
 }
 
 .hero__actions {
@@ -699,6 +709,41 @@
   gap: var(--space-2);
   justify-content: flex-start;
   flex-wrap: wrap;
+  animation: heroFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+
+/* ── Game ticker ── */
+.game-ticker {
+  background-color: var(--color-primary);
+  border-top: 1px solid rgba(200, 155, 60, 0.15);
+  border-bottom: 1px solid rgba(200, 155, 60, 0.15);
+  padding-block: 10px;
+  overflow: hidden;
+  white-space: nowrap;
+  user-select: none;
+}
+
+@keyframes tickerScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.game-ticker__track {
+  display: inline-block;
+  animation: tickerScroll 28s linear infinite;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: rgba(200, 155, 60, 0.45);
+  letter-spacing: 0.06em;
+}
+
+.game-ticker__track:hover {
+  animation-play-state: paused;
+}
+
+.game-ticker__sep {
+  margin-inline: var(--space-3);
+  color: rgba(200, 155, 60, 0.2);
 }
 
 /* Mobile: stack, hide canvas */

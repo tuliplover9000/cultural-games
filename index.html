@@ -83,6 +83,36 @@
     </section>
 
     <!-- ════════════════════════════════════════════════════════
+         GAME TICKER
+    ════════════════════════════════════════════════════════ -->
+    <div class="game-ticker" aria-hidden="true">
+      <div class="game-ticker__track">
+        Bầu Cua Tôm Cá <span class="game-ticker__sep">·</span>
+        Oware <span class="game-ticker__sep">·</span>
+        Patolli <span class="game-ticker__sep">·</span>
+        Pallanguzhi <span class="game-ticker__sep">·</span>
+        Fanorona <span class="game-ticker__sep">·</span>
+        Hnefatafl <span class="game-ticker__sep">·</span>
+        Tiến Lên <span class="game-ticker__sep">·</span>
+        Hong Kong Mahjong <span class="game-ticker__sep">·</span>
+        Pachisi <span class="game-ticker__sep">·</span>
+        Puluc <span class="game-ticker__sep">·</span>
+        Ô Ăn Quan <span class="game-ticker__sep">·</span>
+        Bầu Cua Tôm Cá <span class="game-ticker__sep">·</span>
+        Oware <span class="game-ticker__sep">·</span>
+        Patolli <span class="game-ticker__sep">·</span>
+        Pallanguzhi <span class="game-ticker__sep">·</span>
+        Fanorona <span class="game-ticker__sep">·</span>
+        Hnefatafl <span class="game-ticker__sep">·</span>
+        Tiến Lên <span class="game-ticker__sep">·</span>
+        Hong Kong Mahjong <span class="game-ticker__sep">·</span>
+        Pachisi <span class="game-ticker__sep">·</span>
+        Puluc <span class="game-ticker__sep">·</span>
+        Ô Ăn Quan <span class="game-ticker__sep">·</span>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════
          MISSION
     ════════════════════════════════════════════════════════ -->
     <section class="mission" aria-label="Our mission">
@@ -388,6 +418,34 @@
         renderer.render(scene, camera);
       }
       animate();
+    }());
+  </script>
+
+  <!-- Cycling accent text -->
+  <script>
+    (function () {
+      var el = document.querySelector('.hero__title-accent');
+      if (!el) return;
+      var phrases = [
+        'that carry culture.',
+        'from Vietnam.',
+        'from West Africa.',
+        'from ancient Mesoamerica.',
+        'from South India.',
+        'from the Norse world.',
+        'from Madagascar.',
+        'from China.',
+        'played for 7,000 years.',
+      ];
+      var idx = 0;
+      setInterval(function () {
+        el.style.opacity = '0';
+        setTimeout(function () {
+          idx = (idx + 1) % phrases.length;
+          el.textContent = phrases[idx];
+          el.style.opacity = '1';
+        }, 350);
+      }, 2800);
     }());
   </script>
 
