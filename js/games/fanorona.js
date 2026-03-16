@@ -632,6 +632,7 @@
   function scheduleAIMove() {
     var ver = gameVersion;
     setTimeout(function () {
+      if (window.CGTutorial && CGTutorial.isActive) return;
       if (ver !== gameVersion || state.phase !== 'playing') return;
       var move = getBestAIMove(state.board, [], null, null);
       if (!move) { endTurn(); return; }
@@ -803,6 +804,69 @@
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
+  }
+
+  // ── Tutorial steps ──────────────────────────────────────────────────────
+  if (window.CGTutorial) {
+    CGTutorial.register('fanorona', [
+      {
+        target: '#fn-canvas',
+        title: 'The Board',
+        body: 'This is the Fanorona board — 5×9 intersections connected by lines. Pieces move along these lines, one step at a time.',
+        position: 'bottom',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#fn-canvas',
+        title: 'Your Pieces',
+        body: 'You play the lighter pieces. Your goal is to capture all of your opponent\'s darker pieces.',
+        position: 'bottom',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#fn-canvas',
+        title: 'How to Move',
+        body: 'Click a piece, then click a connected intersection to move. Capturing moves are mandatory when available.',
+        position: 'bottom',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#fn-canvas',
+        title: 'Capturing',
+        body: 'Capture by Approach (move toward enemy pieces) or Withdrawal (move away). All enemy pieces in that line are removed.',
+        position: 'top',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#fn-hint-btn',
+        title: 'Need a Hint?',
+        body: 'Press "Show Moves" to highlight all legal moves for the selected piece.',
+        position: 'left',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#fn-ai-toggle',
+        title: 'Play vs AI',
+        body: 'Toggle the AI on or off. With AI on, your opponent plays automatically.',
+        position: 'left',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#fn-new-btn',
+        title: 'New Game',
+        body: 'Click here any time to start a fresh game.',
+        position: 'left',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+    ]);
+    CGTutorial.initTrigger('fanorona');
   }
 
 }());

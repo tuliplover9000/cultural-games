@@ -353,6 +353,7 @@
 
   // ── AI ────────────────────────────────────────────────────────────────────
   function aiTakeTurn() {
+    if (window.CGTutorial && CGTutorial.isActive) return;
     if (state.gameOver) return;
     var side  = state.turn;
     var moves = getAllMoves(side);
@@ -785,6 +786,69 @@
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
+  }
+
+  // ── Tutorial steps ──────────────────────────────────────────────────────
+  if (window.CGTutorial) {
+    CGTutorial.register('hnefatafl', [
+      {
+        target: '#ht-canvas',
+        title: 'The Board',
+        body: 'This is the 11×11 Hnefatafl board. Corner squares are the Attackers\' goal — the King must reach one to escape.',
+        position: 'bottom',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#ht-canvas',
+        title: 'Two Sides',
+        body: 'The King (marked differently) and Defenders start at the center. Attackers surround them and want to capture the King.',
+        position: 'bottom',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#ht-canvas',
+        title: 'Movement',
+        body: 'All pieces move like rooks in chess — any number of squares in a straight line. No jumping over others.',
+        position: 'top',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#ht-canvas',
+        title: 'Capturing',
+        body: 'Capture a piece by sandwiching it between two of yours on a straight line (custodian capture). The King needs to be surrounded on all 4 sides.',
+        position: 'top',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#ht-status',
+        title: 'Whose Turn',
+        body: 'The status bar shows whose turn it is and any important game events.',
+        position: 'bottom',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#ht-ai-toggle',
+        title: 'Play vs AI',
+        body: 'Toggle the AI on or off. Use the side selector below it to choose whether you command Attackers or Defenders.',
+        position: 'left',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#ht-new-btn',
+        title: 'New Game',
+        body: 'Start a new game at any time.',
+        position: 'left',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+    ]);
+    CGTutorial.initTrigger('hnefatafl');
   }
 
 }());

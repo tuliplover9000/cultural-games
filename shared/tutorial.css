@@ -1,0 +1,291 @@
+/* tt- namespace — Cultural Games Tutorial Tooltip System */
+
+/* ── Backdrop ─────────────────────────────────────────────────────────────── */
+.tt-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1040;
+  cursor: pointer;
+}
+
+/* ── Highlight ring ───────────────────────────────────────────────────────── */
+.tt-highlight {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1050;
+  border: 2px solid var(--color-accent-gold);
+  box-shadow: 0 0 0 4px rgba(200, 155, 60, 0.28), 0 0 18px rgba(200, 155, 60, 0.18);
+  border-radius: 8px;
+  transition: top 80ms ease, left 80ms ease, width 80ms ease, height 80ms ease;
+}
+
+/* ── Tooltip shell ────────────────────────────────────────────────────────── */
+.tt-tooltip {
+  position: fixed;
+  z-index: 1100;
+  max-width: 280px;
+  min-width: 200px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.28);
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.tt-tooltip.tt-tooltip--visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── Arrow (double-triangle: border outer + fill inner) ───────────────────── */
+.tt-tooltip__arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/* tooltip ABOVE target → arrow points down */
+.tt-tooltip--top .tt-tooltip__arrow {
+  bottom: -9px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid var(--color-border);
+  transform: translateX(-50%);
+}
+.tt-tooltip--top .tt-tooltip__arrow::after {
+  content: '';
+  position: absolute;
+  top: -9px;
+  left: -7px;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid var(--color-surface);
+}
+
+/* tooltip BELOW target → arrow points up */
+.tt-tooltip--bottom .tt-tooltip__arrow {
+  top: -9px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid var(--color-border);
+  transform: translateX(-50%);
+}
+.tt-tooltip--bottom .tt-tooltip__arrow::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: -7px;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid var(--color-surface);
+}
+
+/* tooltip LEFT of target → arrow points right */
+.tt-tooltip--left .tt-tooltip__arrow {
+  right: -9px;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 8px solid var(--color-border);
+  transform: translateY(-50%);
+}
+.tt-tooltip--left .tt-tooltip__arrow::after {
+  content: '';
+  position: absolute;
+  top: -7px;
+  right: 2px;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 7px solid var(--color-surface);
+}
+
+/* tooltip RIGHT of target → arrow points left */
+.tt-tooltip--right .tt-tooltip__arrow {
+  left: -9px;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 8px solid var(--color-border);
+  transform: translateY(-50%);
+}
+.tt-tooltip--right .tt-tooltip__arrow::after {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: 2px;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-right: 7px solid var(--color-surface);
+}
+
+.tt-tooltip--center .tt-tooltip__arrow { display: none; }
+
+/* ── Tooltip content ──────────────────────────────────────────────────────── */
+.tt-tooltip__inner {
+  padding: 14px 16px 12px;
+}
+
+.tt-tooltip__title {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+  margin-bottom: 5px;
+  line-height: var(--leading-snug);
+}
+
+.tt-tooltip__body {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: var(--leading-normal);
+  margin-bottom: 12px;
+}
+
+.tt-tooltip__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tt-tooltip__progress {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tt-tooltip__actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Skip — text link */
+.tt-tooltip__btn--skip {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  transition: color var(--transition-fast);
+}
+.tt-tooltip__btn--skip:hover { color: var(--color-accent-red); }
+
+/* Prev — ghost */
+.tt-tooltip__btn--prev {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  font-family: var(--font-body);
+  color: var(--color-text-muted);
+  background: none;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+.tt-tooltip__btn--prev:hover { border-color: var(--color-text-muted); color: var(--color-text); }
+
+/* Next / Finish — filled gold */
+.tt-tooltip__btn--next {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  font-family: var(--font-body);
+  color: var(--color-primary);
+  background: var(--color-accent-gold);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+.tt-tooltip__btn--next:hover { background: var(--color-accent-warm); transform: translateY(-1px); }
+
+/* ── "?" trigger button ───────────────────────────────────────────────────── */
+.tt-trigger {
+  position: fixed;
+  top: calc(var(--nav-height) + 10px);
+  right: 14px;
+  z-index: 200;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text);
+  font-size: 1.1rem;
+  font-weight: var(--weight-bold);
+  font-family: var(--font-body);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  transition: background var(--transition-fast), border-color var(--transition-fast),
+              color var(--transition-fast), transform var(--transition-fast);
+}
+
+.tt-trigger:hover {
+  background: var(--color-accent-gold);
+  border-color: var(--color-accent-gold);
+  color: var(--color-primary);
+  transform: scale(1.08);
+}
+
+.tt-trigger:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Badge — pulsing gold dot */
+.tt-trigger__badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--color-accent-gold);
+  border: 1.5px solid var(--color-surface);
+  animation: tt-badge-pulse 2s ease-in-out infinite;
+}
+
+@keyframes tt-badge-pulse {
+  0%, 100% { transform: scale(1);   opacity: 1; }
+  50%       { transform: scale(1.3); opacity: 0.8; }
+}
+
+/* Hide the trigger in room mode (game runs inside an iframe) */
+.room-mode .tt-trigger { display: none !important; }
+
+/* ── Mobile: bottom sheet ─────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .tt-tooltip {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 100%;
+    border-radius: 14px 14px 0 0;
+    transform: translateY(100%);
+    opacity: 1;
+    transition: transform 200ms ease;
+  }
+  .tt-tooltip.tt-tooltip--visible {
+    transform: translateY(0);
+  }
+  .tt-tooltip__arrow { display: none; }
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .tt-tooltip        { transition: none; }
+  .tt-highlight      { transition: none; }
+  .tt-trigger__badge { animation: none; }
+}
