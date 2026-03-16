@@ -1327,15 +1327,7 @@
     var newBtn = document.getElementById('gj-new-game-btn');
     if (newBtn) newBtn.addEventListener('click', function () { resetGame(); });
 
-    var rulesBtn = document.getElementById('gj-rules-btn');
-    var rulesPanel = document.getElementById('gj-rules-panel');
-    if (rulesBtn && rulesPanel) {
-      rulesBtn.addEventListener('click', function () {
-        rulesPanel.hidden = !rulesPanel.hidden;
-      });
-    }
-
-    // Canvas input
+// Canvas input
     canvas.addEventListener('click', function (e) {
       var coords = getScaledCoords(e);
       handleClick(coords.x, coords.y);
