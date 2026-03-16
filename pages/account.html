@@ -66,6 +66,16 @@
         </div>
       </section>
 
+      <!-- Favorites -->
+      <section class="account-body" id="favorites-section" hidden>
+        <div class="container">
+          <div class="account-section">
+            <p class="account-section__heading">Favorites</p>
+            <div class="stats-grid" id="favorites-grid"></div>
+          </div>
+        </div>
+      </section>
+
       <!-- Stats -->
       <section class="account-body">
         <div class="container">
@@ -121,6 +131,7 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../js/utils/games-data.js"></script>
   <script src="../js/utils/navigation.js"></script>
   <script src="../js/utils/auth.js"></script>
   <script>
@@ -129,6 +140,35 @@
       try {
         return new Date(iso).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
       } catch (e) { return ''; }
+    }
+
+    function renderFavorites() {
+      var section = document.getElementById('favorites-section');
+      var grid    = document.getElementById('favorites-grid');
+      if (!section || !grid) return;
+      var favKeys = Auth.getFavorites ? Auth.getFavorites() : [];
+      if (favKeys.length === 0) { section.hidden = true; return; }
+      section.hidden = false;
+
+      // Build a map from all known games for easy lookup
+      var allGames = (window.GAMES_DATA || []).concat(Auth.GAMES || []);
+      var gameMap  = {};
+      allGames.forEach(function (g) { gameMap[g.key || g.id] = g; });
+
+      grid.innerHTML = favKeys.map(function (key) {
+        var game = gameMap[key];
+        var name = game ? (game.name || key) : key;
+        var href = game ? (game.href || ('games/' + key + '.html')) : ('games/' + key + '.html');
+        // href from GAMES_DATA is relative to root, but account.html is in pages/
+        if (href.indexOf('pages/') === 0) href = href.slice(6);
+        return '<div class="stat-card">' +
+          '<div class="stat-card__header">' +
+            '<span style="font-size:1.5rem;" aria-hidden="true">♥</span>' +
+            '<span class="stat-card__name">' + name + '</span>' +
+          '</div>' +
+          '<a href="' + href + '" class="btn btn-sm btn-primary" style="margin-top:auto;align-self:flex-start;">Play →</a>' +
+        '</div>';
+      }).join('');
     }
 
     function renderStats() {
@@ -180,6 +220,7 @@
       document.getElementById('acc-username').textContent = user.username;
       document.getElementById('acc-joined').textContent   = 'Member since ' + fmtDate(user.createdAt);
 
+      renderFavorites();
       renderStats();
 
       // Pre-fill notify email

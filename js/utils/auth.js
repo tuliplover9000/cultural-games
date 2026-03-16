@@ -53,12 +53,14 @@
   var SB_SESSION_KEY = 'cg_session';
 
   /* ── In-memory state ── */
-  var _sb          = null;
-  var _accessToken = null;  // current JWT access token
-  var _user        = null;  // auth user object
-  var _profile     = null;  // { username, created_at }
-  var _stats       = {};    // { gameId: { wins, losses, played } }
-  var _listeners   = [];
+  var _sb           = null;
+  var _accessToken  = null;  // current JWT access token
+  var _user         = null;  // auth user object
+  var _profile      = null;  // { username, created_at }
+  var _stats        = {};    // { gameId: { wins, losses, played } }
+  var _favorites    = new Set(); // Set of favorited game keys
+  var _refreshTimer = null;  // proactive token refresh timer
+  var _listeners    = [];
 
   // DB client for public reads (anon key, no auth needed due to public read policies)
   function getSB() {
@@ -100,10 +102,41 @@
     try {
       var s = JSON.parse(localStorage.getItem(SB_SESSION_KEY));
       if (!s || !s.access_token || !s.user) return null;
-      // Reject if expired
-      if (s.expires_at && s.expires_at * 1000 < Date.now()) { _clearSession(); return null; }
-      return s;
+      return s; // return even if expired — _boot() handles refresh
     } catch (e) { return null; }
+  }
+
+  /* ── Token refresh ── */
+  async function _tryRefresh(refreshToken) {
+    try {
+      var res = await _authFetch('/token?grant_type=refresh_token', { refresh_token: refreshToken });
+      if (!res.ok || !res.data.access_token) return false;
+      _saveSession(res.data);
+      _accessToken = res.data.access_token;
+      if (res.data.user) _user = res.data.user;
+      return true;
+    } catch (e) { return false; }
+  }
+
+  function _scheduleRefresh(session) {
+    if (_refreshTimer) clearTimeout(_refreshTimer);
+    if (!session || !session.refresh_token || !session.expires_at) return;
+    var msUntilExpiry  = session.expires_at * 1000 - Date.now();
+    var msUntilRefresh = Math.max(msUntilExpiry - 5 * 60 * 1000, 10000); // 5 min before expiry, min 10s
+    _refreshTimer = setTimeout(async function () {
+      var s = _readStoredSession();
+      if (!s || !s.refresh_token) return;
+      var ok = await _tryRefresh(s.refresh_token);
+      if (ok) {
+        var fresh = _readStoredSession();
+        if (fresh) _scheduleRefresh(fresh);
+        _emit();
+      } else {
+        _clearSession();
+        _user = null; _profile = null; _stats = {}; _favorites = new Set();
+        _emit();
+      }
+    }, msUntilRefresh);
   }
 
   /* ── Auth REST helper (bypasses Supabase JS auth module) ── */
@@ -144,10 +177,36 @@
     return 'pages/account.html';
   }
 
+  /* ── Favorites ── */
+  async function _loadFavorites(userId) {
+    try {
+      var res = await getSB().from('favorites').select('game_key').eq('user_id', userId);
+      _favorites = new Set((res.data || []).map(function (r) { return r.game_key; }));
+    } catch (e) { _favorites = new Set(); }
+  }
+
+  function isFavorite(gameKey) { return _favorites.has(gameKey); }
+
+  function getFavorites() { return Array.from(_favorites); }
+
+  async function toggleFavorite(gameKey) {
+    if (!_user || !_accessToken) return false;
+    var db = _authedSB();
+    if (_favorites.has(gameKey)) {
+      _favorites.delete(gameKey);
+      db.from('favorites').delete().eq('user_id', _user.id).eq('game_key', gameKey);
+    } else {
+      _favorites.add(gameKey);
+      db.from('favorites').insert({ user_id: _user.id, game_key: gameKey });
+    }
+    _emit();
+    return _favorites.has(gameKey);
+  }
+
   /* ── Load profile + stats from DB after auth ── */
   async function _loadUserData(user) {
     _user = user;
-    if (!user) { _profile = null; _stats = {}; return; }
+    if (!user) { _profile = null; _stats = {}; _favorites = new Set(); return; }
 
     var pRes = await getSB().from('profiles').select('username,created_at').eq('id', user.id).single();
     _profile = pRes.data || { username: user.email.split('@')[0], created_at: user.created_at };
@@ -157,6 +216,8 @@
     (sRes.data || []).forEach(function (row) {
       _stats[row.game_id] = { wins: row.wins, losses: row.losses, played: row.played };
     });
+
+    await _loadFavorites(user.id);
   }
 
   /* ══════════════════════════════════════════
@@ -189,6 +250,7 @@
     });
     if (!res.ok) return { ok: false, error: res.data.error_description || res.data.msg || 'Invalid email or password.' };
     _saveSession(res.data);
+    _scheduleRefresh(_readStoredSession());
     try { await _loadUserData(res.data.user); } catch (e) { _user = res.data.user; }
     _emit();
     return { ok: true };
@@ -220,6 +282,7 @@
     if (!res.data.access_token) return { ok: false, error: 'Please confirm your email, then sign in.' };
 
     _saveSession(res.data);
+    _scheduleRefresh(_readStoredSession());
     var userId = res.data.user.id;
 
     // Create profile + init stats using authed client
@@ -239,11 +302,12 @@
   }
 
   async function signOut() {
+    if (_refreshTimer) { clearTimeout(_refreshTimer); _refreshTimer = null; }
     if (_accessToken) {
       try { await _authFetch('/logout', {}, _accessToken); } catch (e) {}
     }
     _clearSession();
-    _user = null; _profile = null; _stats = {};
+    _user = null; _profile = null; _stats = {}; _favorites = new Set();
     _emit();
   }
 
@@ -576,9 +640,28 @@
 
     var stored = _readStoredSession();
     if (stored) {
+      var isExpired = stored.expires_at && stored.expires_at * 1000 < Date.now();
+      if (isExpired) {
+        if (stored.refresh_token) {
+          var refreshed = await _tryRefresh(stored.refresh_token);
+          if (refreshed) {
+            stored = _readStoredSession();
+          } else {
+            _clearSession();
+            stored = null;
+          }
+        } else {
+          _clearSession();
+          stored = null;
+        }
+      }
+    }
+
+    if (stored) {
       _accessToken = stored.access_token;
       _user        = stored.user;
       _profile     = { username: stored.user.email.split('@')[0], created_at: stored.user.created_at };
+      _scheduleRefresh(stored);
     }
 
     // Defer emit one tick so all DOMContentLoaded handlers (including account page)
@@ -605,17 +688,20 @@
 
   /* ── Public API ── */
   window.Auth = {
-    isLoggedIn:   isLoggedIn,
-    getUser:      getUser,
-    signIn:       signIn,
-    signUp:       signUp,
-    signOut:      signOut,
-    getStats:     getStats,
-    recordResult: recordResult,
-    onAuthChange: onAuthChange,
-    openModal:    openModal,
-    closeModal:   closeModal,
-    GAMES:        GAMES,
+    isLoggedIn:     isLoggedIn,
+    getUser:        getUser,
+    signIn:         signIn,
+    signUp:         signUp,
+    signOut:        signOut,
+    getStats:       getStats,
+    recordResult:   recordResult,
+    onAuthChange:   onAuthChange,
+    openModal:      openModal,
+    closeModal:     closeModal,
+    isFavorite:     isFavorite,
+    getFavorites:   getFavorites,
+    toggleFavorite: toggleFavorite,
+    GAMES:          GAMES,
   };
 
 }());
