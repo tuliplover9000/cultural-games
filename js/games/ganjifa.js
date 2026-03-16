@@ -1303,8 +1303,6 @@
     if (resizeTimer) clearTimeout(resizeTimer);
     resizeTimer = setTimeout(function () {
       if (!canvas) return;
-      canvas.style.width  = Math.min(window.innerWidth - 32, 900) + 'px';
-      canvas.style.height = 'auto';
       buildCache();
       drawFrame();
     }, 60);
@@ -1316,10 +1314,6 @@
     canvas = document.getElementById('gj-canvas');
     if (!canvas) return;
     ctx = canvas.getContext('2d');
-
-    // Initial responsive sizing
-    canvas.style.width  = Math.min(window.innerWidth - 32, 900) + 'px';
-    canvas.style.height = 'auto';
 
     buildCache();
 
