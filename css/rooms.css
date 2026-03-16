@@ -174,7 +174,7 @@
   align-items: flex-start;
   gap: 4px;
 }
-.rooms-game-item__name-wrap { flex: 1; min-width: 0; }
+.rooms-game-item__name-wrap { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .rpicker-star {
   background: none;
   border: none;

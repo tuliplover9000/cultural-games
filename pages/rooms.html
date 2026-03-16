@@ -259,12 +259,17 @@
   var search = document.getElementById('rooms-picker-search');
   var typeEl = document.getElementById('rooms-picker-type');
   var hint   = document.getElementById('rooms-fav-hint');
+  var _selectedKey = null;
+
+  // Expose selected game for entry.js to read when creating a room
+  window.pickerGetSelectedGame = function () { return _selectedKey; };
 
   function renderPicker() {
-    var q    = search.value.toLowerCase().trim();
-    var type = typeEl.value;
-    var favs = new Set((window.Auth && Auth.getFavorites) ? Auth.getFavorites() : []);
-    var user = window.Auth && Auth.isLoggedIn && Auth.isLoggedIn();
+    var q    = (search.value || '').toLowerCase().trim();
+    var type = typeEl.value || 'all';
+    var favArr = (window.Auth && Auth.getFavorites) ? Auth.getFavorites() : [];
+    var favs = new Set(Array.isArray(favArr) ? favArr : []);
+    var loggedIn = !!(window.Auth && Auth.isLoggedIn && Auth.isLoggedIn());
 
     // Sort: favorites first, then alphabetically
     var games = (window.GAMES_DATA || []).slice().sort(function (a, b) {
@@ -274,58 +279,84 @@
       return a.name.localeCompare(b.name);
     });
 
-    // Toggle auth class for star visibility
-    if (user) list.classList.add('auth-ready');
-    else       list.classList.remove('auth-ready');
+    if (loggedIn) list.classList.add('auth-ready');
+    else          list.classList.remove('auth-ready');
 
-    // Hint text
-    if (user && favs.size > 0) {
+    if (loggedIn && favs.size > 0) {
       hint.textContent = '— ' + favs.size + ' favorited';
-    } else if (user) {
+    } else if (loggedIn) {
       hint.textContent = '— star to save favorites';
     } else {
       hint.textContent = '';
     }
 
+    // Keep current selection key valid (may have been filtered out)
+    var prevSelected = _selectedKey;
+
     list.innerHTML = '';
+    var rendered = 0;
     games.forEach(function (g) {
-      // Filter
       if (q && g.name.toLowerCase().indexOf(q) === -1 && g.culture.toLowerCase().indexOf(q) === -1) return;
       if (type !== 'all' && g.type !== type) return;
+      rendered++;
 
       var isFav = favs.has(g.key);
-      var item  = document.createElement('div');
-      item.className = 'rooms-game-item';
+      var isSelected = (g.key === prevSelected);
+
+      // Build item with DOM APIs to avoid any innerHTML parsing issues
+      var item = document.createElement('div');
+      item.className = 'rooms-game-item' + (isSelected ? ' selected' : '');
       item.setAttribute('role', 'listitem');
       item.setAttribute('tabindex', '0');
       item.dataset.key = g.key;
 
-      item.innerHTML =
-        '<div class="rooms-game-item__top">' +
-          '<div class="rooms-game-item__name-wrap">' +
-            '<span class="rooms-game-item__name">' + g.name + '</span>' +
-            '<span class="rooms-game-item__culture">' + g.culture + ' · ' + g.type + '</span>' +
-          '</div>' +
-          '<button class="rpicker-star' + (isFav ? ' rpicker-star--on' : '') + '" ' +
-            'aria-label="' + (isFav ? 'Remove from favorites' : 'Add to favorites') + '" ' +
-            'data-key="' + g.key + '">' +
-            (isFav ? '★' : '☆') +
-          '</button>' +
-        '</div>';
+      var top = document.createElement('div');
+      top.className = 'rooms-game-item__top';
 
-      // Star button — toggle favorite (don't select game)
-      var starBtn = item.querySelector('.rpicker-star');
-      starBtn.addEventListener('click', function (e) {
+      var wrap = document.createElement('div');
+      wrap.className = 'rooms-game-item__name-wrap';
+
+      var nameEl = document.createElement('span');
+      nameEl.className = 'rooms-game-item__name';
+      nameEl.textContent = g.name;
+
+      var cultEl = document.createElement('span');
+      cultEl.className = 'rooms-game-item__culture';
+      cultEl.textContent = g.culture + ' · ' + g.type;
+
+      wrap.appendChild(nameEl);
+      wrap.appendChild(cultEl);
+
+      var star = document.createElement('button');
+      star.className = 'rpicker-star' + (isFav ? ' rpicker-star--on' : '');
+      star.setAttribute('aria-label', isFav ? 'Remove from favorites' : 'Add to favorites');
+      star.setAttribute('type', 'button');
+      star.textContent = isFav ? '★' : '☆';
+      star.addEventListener('click', function (e) {
         e.stopPropagation();
-        if (!window.Auth || !Auth.toggleFavorite) return;
-        Auth.toggleFavorite(g.key);
+        if (window.Auth && Auth.toggleFavorite) Auth.toggleFavorite(g.key);
         renderPicker();
+      });
+
+      top.appendChild(wrap);
+      top.appendChild(star);
+      item.appendChild(top);
+
+      // Click item body → select/deselect game
+      item.addEventListener('click', function () {
+        _selectedKey = (_selectedKey === g.key) ? null : g.key;
+        list.querySelectorAll('.rooms-game-item').forEach(function (el) {
+          el.classList.toggle('selected', el.dataset.key === _selectedKey);
+        });
+      });
+      item.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); item.click(); }
       });
 
       list.appendChild(item);
     });
 
-    if (list.children.length === 0) {
+    if (rendered === 0) {
       var empty = document.createElement('p');
       empty.style.cssText = 'grid-column:1/-1;text-align:center;color:var(--color-text-muted);font-size:var(--text-sm);padding:var(--space-3)';
       empty.textContent = 'No games match your search.';
@@ -336,18 +367,18 @@
   search.addEventListener('input', renderPicker);
   typeEl.addEventListener('change', renderPicker);
 
+  // Register for auth state changes (fires after _boot() on DOMContentLoaded)
   if (window.Auth && Auth.onAuthChange) {
     Auth.onAuthChange(renderPicker);
-  } else {
-    // Auth not loaded yet — wait for it
-    document.addEventListener('DOMContentLoaded', function () {
-      if (window.Auth && Auth.onAuthChange) Auth.onAuthChange(renderPicker);
-      else renderPicker();
-    });
   }
 
-  // Initial render (GAMES_DATA should be loaded already)
+  // Initial render — also re-render after DOMContentLoaded in case
+  // GAMES_DATA or Auth hadn't fully settled when the script first ran
   renderPicker();
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.Auth && Auth.onAuthChange) Auth.onAuthChange(renderPicker);
+    renderPicker();
+  });
 }());
   </script>
 </body>

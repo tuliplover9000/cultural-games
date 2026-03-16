@@ -99,7 +99,8 @@
     clearError(elCreateError);
     requireName(function () {
       showLoading('Creating room…');
-      Room.createRoom({ maxPlayers: maxPlayers }, {
+      var selectedGame = window.pickerGetSelectedGame ? window.pickerGetSelectedGame() : null;
+      Room.createRoom({ maxPlayers: maxPlayers, game: selectedGame }, {
         onError: function (msg) {
           showLanding();
           showError(elCreateError, msg);
