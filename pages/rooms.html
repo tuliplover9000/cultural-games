@@ -180,9 +180,9 @@
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(55, W / H, 0.1, 100);
   camera.position.z = 9;
-  var matGold  = new THREE.MeshBasicMaterial({ color: 0xC89B3C, wireframe: true });
-  var matTeal  = new THREE.MeshBasicMaterial({ color: 0x4ecdc4, wireframe: true });
-  var matFaint = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.25 });
+  var matGold  = new THREE.MeshBasicMaterial({ color: 0xC89B3C, transparent: true, opacity: 0.45 });
+  var matTeal  = new THREE.MeshBasicMaterial({ color: 0x4ecdc4, transparent: true, opacity: 0.45 });
+  var matFaint = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.15 });
   var group = new THREE.Group();
   scene.add(group);
   var defs = [

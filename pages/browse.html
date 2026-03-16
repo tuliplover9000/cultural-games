@@ -408,9 +408,9 @@
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(70, W / H, 0.1, 100);
   camera.position.z = 6;
-  var matGold  = new THREE.MeshBasicMaterial({ color: 0xC89B3C, wireframe: true });
-  var matTeal  = new THREE.MeshBasicMaterial({ color: 0x4ecdc4, wireframe: true });
-  var matWarm  = new THREE.MeshBasicMaterial({ color: 0xe07040, wireframe: true });
+  var matGold  = new THREE.MeshBasicMaterial({ color: 0xC89B3C, transparent: true, opacity: 0.5 });
+  var matTeal  = new THREE.MeshBasicMaterial({ color: 0x4ecdc4, transparent: true, opacity: 0.5 });
+  var matWarm  = new THREE.MeshBasicMaterial({ color: 0xe07040, transparent: true, opacity: 0.5 });
   var mats = [matGold, matTeal, matWarm];
   var geos = [
     new THREE.BoxGeometry(1, 1, 1),
