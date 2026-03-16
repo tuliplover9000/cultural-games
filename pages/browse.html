@@ -412,7 +412,7 @@
 
   var POLYS = []; /* filled after GeoJSON loads */
 
-  var TILT = -40 * Math.PI / 180;
+  var TILT = -22 * Math.PI / 180;
 
   function project(lon, lat, cx, cy, r) {
     var lam = (lon - lon0) * Math.PI / 180;
@@ -497,119 +497,7 @@
   resize();
   window.addEventListener('resize', resize);
 
-  /* ── Floating game pieces (right side) ── */
   var frameTime = 0;
-
-  function shadow(c) { c.shadowColor='rgba(0,0,0,0.45)'; c.shadowBlur=12; c.shadowOffsetX=3; c.shadowOffsetY=5; }
-  function noShadow(c) { c.shadowColor='transparent'; c.shadowBlur=0; c.shadowOffsetX=0; c.shadowOffsetY=0; }
-  function rr(c,x,y,w,h,rd) {
-    c.beginPath(); c.moveTo(x+rd,y);
-    c.arcTo(x+w,y,x+w,y+h,rd); c.arcTo(x+w,y+h,x,y+h,rd);
-    c.arcTo(x,y+h,x,y,rd);     c.arcTo(x,y,x+w,y,rd); c.closePath();
-  }
-
-  function drawMahjongTile(c,x,y,s,a) {
-    var w=s*0.68, h=s; c.save(); c.translate(x,y); c.rotate(a);
-    shadow(c);
-    var g=c.createLinearGradient(-w/2,-h/2,w/2,h/2);
-    g.addColorStop(0,'#f5edd5'); g.addColorStop(1,'#c8b070');
-    c.fillStyle=g; c.strokeStyle='#c89b3c'; c.lineWidth=2;
-    rr(c,-w/2,-h/2,w,h,6); c.fill(); c.stroke(); noShadow(c);
-    c.strokeStyle='rgba(180,130,40,0.5)'; c.lineWidth=1;
-    rr(c,-w/2+4,-h/2+4,w-8,h-8,3); c.stroke();
-    /* 3 bamboo circles */
-    [-h*0.26,0,h*0.26].forEach(function(dy) {
-      var cg=c.createRadialGradient(-s*.04,dy-s*.04,0,0,dy,s*.11);
-      cg.addColorStop(0,'#50c878'); cg.addColorStop(1,'#1a6b35');
-      c.fillStyle=cg; c.strokeStyle='rgba(30,100,50,0.6)'; c.lineWidth=1;
-      c.beginPath(); c.arc(0,dy,s*.11,0,Math.PI*2); c.fill(); c.stroke();
-    });
-    c.restore();
-  }
-
-  function drawChessPawn(c,x,y,s,a) {
-    c.save(); c.translate(x,y); c.rotate(a);
-    shadow(c);
-    function grad(x1,y1,x2,y2) {
-      var g=c.createLinearGradient(x1,y1,x2,y2);
-      g.addColorStop(0,'#e8c96a'); g.addColorStop(0.5,'#c89b3c'); g.addColorStop(1,'#7a5c10'); return g;
-    }
-    c.strokeStyle='rgba(80,50,5,0.6)'; c.lineWidth=1.5;
-    /* base */ c.fillStyle=grad(-s*.3,s*.35,s*.3,s*.35);
-    c.beginPath(); c.ellipse(0,s*.38,s*.28,s*.11,0,0,Math.PI*2); c.fill(); c.stroke();
-    /* shaft */ c.fillStyle=grad(-s*.12,0,s*.12,0);
-    c.beginPath(); c.rect(-s*.1,s*.08,s*.2,s*.28); c.fill(); c.stroke();
-    /* collar */ c.fillStyle=grad(-s*.16,s*.07,s*.16,s*.07);
-    c.beginPath(); c.ellipse(0,s*.08,s*.16,s*.07,0,0,Math.PI*2); c.fill(); c.stroke();
-    /* head */
-    var hg=c.createRadialGradient(-s*.06,-s*.24,0,0,-s*.18,s*.2);
-    hg.addColorStop(0,'#f5d97a'); hg.addColorStop(1,'#8b6010');
-    c.fillStyle=hg;
-    c.beginPath(); c.arc(0,-s*.18,s*.2,0,Math.PI*2); c.fill(); c.stroke();
-    noShadow(c); c.restore();
-  }
-
-  function drawPlayingCard(c,x,y,s,a) {
-    var w=s*.65,h=s; c.save(); c.translate(x,y); c.rotate(a);
-    shadow(c);
-    c.fillStyle='#fff'; c.strokeStyle='rgba(0,0,0,0.15)'; c.lineWidth=1;
-    rr(c,-w/2,-h/2,w,h,7); c.fill(); c.stroke(); noShadow(c);
-    /* red border stripe */ c.strokeStyle='rgba(180,20,20,0.15)'; c.lineWidth=2;
-    rr(c,-w/2+4,-h/2+4,w-8,h-8,4); c.stroke();
-    /* suit */ c.fillStyle='#8b0000'; c.font='bold '+(s*.46)+'px serif';
-    c.textAlign='center'; c.textBaseline='middle'; c.fillText('♥',0,s*.05);
-    c.font='bold '+(s*.19)+'px serif';
-    c.fillText('A',-w/2+s*.14,-h/2+s*.16);
-    c.save(); c.rotate(Math.PI); c.fillText('A',-w/2+s*.14,-h/2+s*.16); c.restore();
-    c.restore();
-  }
-
-  function drawDice(c,x,y,s,a) {
-    c.save(); c.translate(x,y); c.rotate(a);
-    shadow(c);
-    var g=c.createLinearGradient(-s/2,-s/2,s/2,s/2);
-    g.addColorStop(0,'#ffffff'); g.addColorStop(1,'#c8c8c8');
-    c.fillStyle=g; c.strokeStyle='rgba(0,0,0,0.25)'; c.lineWidth=1.5;
-    rr(c,-s/2,-s/2,s,s,s*.13); c.fill(); c.stroke(); noShadow(c);
-    /* dots — face showing 5 */ c.fillStyle='#1a1a2e';
-    var dp=s*.27, dr=s*.088;
-    [[-dp,-dp],[dp,-dp],[0,0],[-dp,dp],[dp,dp]].forEach(function(d) {
-      c.beginPath(); c.arc(d[0],d[1],dr,0,Math.PI*2); c.fill();
-    });
-    c.restore();
-  }
-
-  function drawGoBoard(c,x,y,s,a) {
-    c.save(); c.translate(x,y); c.rotate(a);
-    shadow(c);
-    var g=c.createLinearGradient(-s/2,-s/2,s/2,s/2);
-    g.addColorStop(0,'#d4a535'); g.addColorStop(1,'#8b6010');
-    c.fillStyle=g; c.strokeStyle='rgba(80,50,5,0.7)'; c.lineWidth=1.5;
-    rr(c,-s/2,-s/2,s,s,4); c.fill(); c.stroke(); noShadow(c);
-    /* grid */ c.strokeStyle='rgba(0,0,0,0.55)'; c.lineWidth=0.8;
-    var cells=3, step=s*.72/cells, start=-s*.36;
-    for(var i=0;i<=cells;i++) {
-      c.beginPath(); c.moveTo(start+i*step,start); c.lineTo(start+i*step,-start); c.stroke();
-      c.beginPath(); c.moveTo(start,start+i*step); c.lineTo(-start,start+i*step); c.stroke();
-    }
-    /* stones */
-    [[0,0,0],[-step,step,1],[step,-step,0],[0,-step,1]].forEach(function(st) {
-      var sg=c.createRadialGradient(st[0]-step*.12,st[1]-step*.12,0,st[0],st[1],step*.38);
-      if(!st[2]){sg.addColorStop(0,'#555');sg.addColorStop(1,'#111');}
-      else{sg.addColorStop(0,'#fff');sg.addColorStop(1,'#bbb');}
-      c.fillStyle='rgba(0,0,0,0.3)'; c.beginPath(); c.arc(st[0]+2,st[1]+2,step*.38,0,Math.PI*2); c.fill();
-      c.fillStyle=sg; c.beginPath(); c.arc(st[0],st[1],step*.38,0,Math.PI*2); c.fill();
-    });
-    c.restore();
-  }
-
-  var PIECES = [
-    { fn: drawMahjongTile, rx:.62, ry:.18, phase:0,   baseRot:-.18, rotAmp:.04, floatAmp:9  },
-    { fn: drawDice,        rx:.84, ry:.25, phase:1.1,  baseRot: .12, rotAmp:.06, floatAmp:11 },
-    { fn: drawChessPawn,   rx:.76, ry:.55, phase:2.3,  baseRot:-.08, rotAmp:.04, floatAmp:8  },
-    { fn: drawPlayingCard, rx:.60, ry:.76, phase:.7,   baseRot: .22, rotAmp:.05, floatAmp:10 },
-    { fn: drawGoBoard,     rx:.88, ry:.68, phase:1.9,  baseRot:-.05, rotAmp:.03, floatAmp:7  },
-  ];
 
   function drawPoly(poly, cx, cy, r) {
     var clipped = clipHemisphere(poly);
@@ -677,17 +565,6 @@
       ctx.fillStyle = '#ff4040'; ctx.fill();
       ctx.strokeStyle = 'rgba(255,170,170,0.9)'; ctx.lineWidth = 1; ctx.stroke();
     });
-
-    /* Floating game pieces — right half only on wide screens */
-    if (W > 700) {
-      var ps = Math.min(W, H) * 0.13;
-      PIECES.forEach(function (pc) {
-        var px  = W * pc.rx;
-        var py  = H * pc.ry + Math.sin(frameTime + pc.phase) * pc.floatAmp;
-        var rot = pc.baseRot + Math.sin(frameTime * 0.6 + pc.phase) * pc.rotAmp;
-        pc.fn(ctx, px, py, ps, rot);
-      });
-    }
 
     requestAnimationFrame(frame);
   }
