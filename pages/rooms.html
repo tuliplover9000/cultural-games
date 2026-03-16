@@ -263,8 +263,8 @@
   function renderPicker() {
     var q    = search.value.toLowerCase().trim();
     var type = typeEl.value;
-    var favs = (window.Auth && Auth.getFavorites) ? Auth.getFavorites() : new Set();
-    var user = window._user;
+    var favs = new Set((window.Auth && Auth.getFavorites) ? Auth.getFavorites() : []);
+    var user = window.Auth && Auth.isLoggedIn && Auth.isLoggedIn();
 
     // Sort: favorites first, then alphabetically
     var games = (window.GAMES_DATA || []).slice().sort(function (a, b) {
