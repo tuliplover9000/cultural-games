@@ -55,6 +55,26 @@
           </p>
         </header>
 
+        <!-- ══ GAME PICKER ═══════════════════════════════════════════════════ -->
+        <div class="rooms-game-picker">
+          <p class="rooms-picker-section-label">
+            All Games <span id="rooms-fav-hint"></span>
+          </p>
+          <div class="rooms-picker-controls">
+            <input type="search" class="rooms-picker-search" id="rooms-picker-search"
+              placeholder="Search games…" autocomplete="off" />
+            <select class="rooms-picker-select" id="rooms-picker-type">
+              <option value="all">All types</option>
+              <option value="Dice">Dice</option>
+              <option value="Board">Board</option>
+              <option value="Card">Card</option>
+              <option value="Strategy">Strategy</option>
+              <option value="Tile">Tile</option>
+            </select>
+          </div>
+          <div class="rooms-game-list" id="rooms-game-list" role="list"></div>
+        </div>
+
         <div class="rooms-entry-cards">
 
           <!-- Create card -->
@@ -231,5 +251,104 @@
   <script src="../js/utils/auth.js"></script>
   <script src="../js/utils/room.js"></script>
   <script src="../js/rooms/entry.js"></script>
+
+  <!-- ══ GAME PICKER LOGIC ════════════════════════════════════════════════ -->
+  <script>
+(function () {
+  var list   = document.getElementById('rooms-game-list');
+  var search = document.getElementById('rooms-picker-search');
+  var typeEl = document.getElementById('rooms-picker-type');
+  var hint   = document.getElementById('rooms-fav-hint');
+
+  function renderPicker() {
+    var q    = search.value.toLowerCase().trim();
+    var type = typeEl.value;
+    var favs = (window.Auth && Auth.getFavorites) ? Auth.getFavorites() : new Set();
+    var user = window._user;
+
+    // Sort: favorites first, then alphabetically
+    var games = (window.GAMES_DATA || []).slice().sort(function (a, b) {
+      var af = favs.has(a.key) ? 0 : 1;
+      var bf = favs.has(b.key) ? 0 : 1;
+      if (af !== bf) return af - bf;
+      return a.name.localeCompare(b.name);
+    });
+
+    // Toggle auth class for star visibility
+    if (user) list.classList.add('auth-ready');
+    else       list.classList.remove('auth-ready');
+
+    // Hint text
+    if (user && favs.size > 0) {
+      hint.textContent = '— ' + favs.size + ' favorited';
+    } else if (user) {
+      hint.textContent = '— star to save favorites';
+    } else {
+      hint.textContent = '';
+    }
+
+    list.innerHTML = '';
+    games.forEach(function (g) {
+      // Filter
+      if (q && g.name.toLowerCase().indexOf(q) === -1 && g.culture.toLowerCase().indexOf(q) === -1) return;
+      if (type !== 'all' && g.type !== type) return;
+
+      var isFav = favs.has(g.key);
+      var item  = document.createElement('div');
+      item.className = 'rooms-game-item';
+      item.setAttribute('role', 'listitem');
+      item.setAttribute('tabindex', '0');
+      item.dataset.key = g.key;
+
+      item.innerHTML =
+        '<div class="rooms-game-item__top">' +
+          '<div class="rooms-game-item__name-wrap">' +
+            '<span class="rooms-game-item__name">' + g.name + '</span>' +
+            '<span class="rooms-game-item__culture">' + g.culture + ' · ' + g.type + '</span>' +
+          '</div>' +
+          '<button class="rpicker-star' + (isFav ? ' rpicker-star--on' : '') + '" ' +
+            'aria-label="' + (isFav ? 'Remove from favorites' : 'Add to favorites') + '" ' +
+            'data-key="' + g.key + '">' +
+            (isFav ? '★' : '☆') +
+          '</button>' +
+        '</div>';
+
+      // Star button — toggle favorite (don't select game)
+      var starBtn = item.querySelector('.rpicker-star');
+      starBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (!window.Auth || !Auth.toggleFavorite) return;
+        Auth.toggleFavorite(g.key);
+        renderPicker();
+      });
+
+      list.appendChild(item);
+    });
+
+    if (list.children.length === 0) {
+      var empty = document.createElement('p');
+      empty.style.cssText = 'grid-column:1/-1;text-align:center;color:var(--color-text-muted);font-size:var(--text-sm);padding:var(--space-3)';
+      empty.textContent = 'No games match your search.';
+      list.appendChild(empty);
+    }
+  }
+
+  search.addEventListener('input', renderPicker);
+  typeEl.addEventListener('change', renderPicker);
+
+  if (window.Auth && Auth.onAuthChange) {
+    Auth.onAuthChange(renderPicker);
+  } else {
+    // Auth not loaded yet — wait for it
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.Auth && Auth.onAuthChange) Auth.onAuthChange(renderPicker);
+      else renderPicker();
+    });
+  }
+
+  // Initial render (GAMES_DATA should be loaded already)
+  renderPicker();
+}());
+  </script>
 </body>
 </html>
