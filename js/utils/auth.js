@@ -177,28 +177,43 @@
     return 'pages/account.html';
   }
 
-  /* ── Favorites ── */
+  /* ── Favorites — direct REST calls (bypasses Supabase JS auth override) ── */
   function _favCacheKey(userId) { return 'cg_favs_' + userId; }
 
   function _saveFavCache(userId) {
     try { localStorage.setItem(_favCacheKey(userId), JSON.stringify(Array.from(_favorites))); } catch (e) {}
   }
 
+  // Raw PostgREST fetch — guarantees our JWT reaches RLS, no Supabase client interference
+  function _pgFetch(method, path, body) {
+    var headers = {
+      'apikey':        SB_KEY,
+      'Authorization': 'Bearer ' + _accessToken,
+      'Content-Type':  'application/json',
+      'Accept':        'application/json',
+    };
+    if (method === 'POST') headers['Prefer'] = 'return=minimal';
+    var opts = { method: method, headers: headers };
+    if (body) opts.body = JSON.stringify(body);
+    return fetch(SB_URL + '/rest/v1/' + path, opts);
+  }
+
   async function _loadFavorites(userId) {
-    // Seed from cache first so UI is instant
+    // Seed from cache first so UI is instant on page load
     try {
       var cached = JSON.parse(localStorage.getItem(_favCacheKey(userId)));
       if (Array.isArray(cached)) _favorites = new Set(cached);
     } catch (e) {}
 
-    // Then confirm from server using authed client (RLS policy requires user JWT)
+    // Confirm from server via raw fetch — explicit JWT header, no client override
     try {
-      var res = await _authedSB().from('favorites').select('game_key').eq('user_id', userId);
-      if (!res.error && Array.isArray(res.data)) {
-        _favorites = new Set(res.data.map(function (r) { return r.game_key; }));
+      var resp = await _pgFetch('GET', 'favorites?select=game_key&user_id=eq.' + userId);
+      if (resp.ok) {
+        var data = await resp.json();
+        _favorites = new Set(data.map(function (r) { return r.game_key; }));
         _saveFavCache(userId);
       }
-      // If res.error (table missing, auth issue, etc), keep the localStorage cache
+      // Non-200 (table missing, RLS error, etc) → keep localStorage cache
     } catch (e) { /* keep cache */ }
   }
 
@@ -208,13 +223,12 @@
 
   async function toggleFavorite(gameKey) {
     if (!_user || !_accessToken) return false;
-    var db = _authedSB();
     if (_favorites.has(gameKey)) {
       _favorites.delete(gameKey);
-      db.from('favorites').delete().eq('user_id', _user.id).eq('game_key', gameKey);
+      _pgFetch('DELETE', 'favorites?user_id=eq.' + _user.id + '&game_key=eq.' + gameKey);
     } else {
       _favorites.add(gameKey);
-      db.from('favorites').insert({ user_id: _user.id, game_key: gameKey });
+      _pgFetch('POST', 'favorites', { user_id: _user.id, game_key: gameKey });
     }
     _saveFavCache(_user.id);
     _emit();
