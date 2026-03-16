@@ -978,27 +978,6 @@
   }
 
   var hoveredCard = null;
-
-  canvas.addEventListener('mousemove', function (e) {
-    var coords = getScaledCoords(e);
-    var card = getCardFromClick(coords.x, coords.y);
-    var prev = hoveredCard;
-    hoveredCard = card || null;
-    var changed = (hoveredCard ? hoveredCard.id : null) !== (prev ? prev.id : null);
-    if (changed) {
-      canvas.style.cursor = hoveredCard ? 'pointer' : 'default';
-      drawFrame();
-    }
-  });
-
-  canvas.addEventListener('mouseleave', function () {
-    if (hoveredCard) {
-      hoveredCard = null;
-      canvas.style.cursor = 'default';
-      drawFrame();
-    }
-  });
-
   var selectionAnimating = false;
   function requestSelectionAnimation() {
     if (selectionAnimating) return;
@@ -1267,6 +1246,26 @@
       var coords = getScaledCoords(e);
       handleClick(coords.x, coords.y);
     }, { passive: false });
+
+    canvas.addEventListener('mousemove', function (e) {
+      var coords = getScaledCoords(e);
+      var card = getCardFromClick(coords.x, coords.y);
+      var prev = hoveredCard;
+      hoveredCard = card || null;
+      var changed = (hoveredCard ? hoveredCard.id : null) !== (prev ? prev.id : null);
+      if (changed) {
+        canvas.style.cursor = hoveredCard ? 'pointer' : 'default';
+        drawFrame();
+      }
+    });
+
+    canvas.addEventListener('mouseleave', function () {
+      if (hoveredCard) {
+        hoveredCard = null;
+        canvas.style.cursor = 'default';
+        drawFrame();
+      }
+    });
 
     // Resize
     window.addEventListener('resize', onResize);
