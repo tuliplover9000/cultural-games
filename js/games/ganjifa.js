@@ -145,6 +145,78 @@
     lastRoundResult: null,
   };
 
+  // ── Room mode state ────────────────────────────────────────────────────────
+  var vsRoom      = false;
+  var mySeat      = 'south';  // named seat this client controls
+  var isRoomHost  = false;
+  var aiSeatsRoom = [];       // room-seat indices driven by AI
+
+  var SEAT_IDX = { south: 0, west: 1, north: 2, east: 3 };
+
+  function isAISeat(seatName) {
+    if (vsRoom) return aiSeatsRoom.indexOf(SEAT_IDX[seatName]) >= 0;
+    return seatName !== 'south'; // solo: only south is human
+  }
+
+  function syncRoomState() {
+    if (!vsRoom || !window.RoomBridge) return;
+    RoomBridge.sendState({
+      hands:           state.hands,
+      currentTrick:    state.currentTrick,
+      trickHistory:    state.trickHistory,
+      tricksWon:       state.tricksWon,
+      currentLead:     state.currentLead,
+      currentTurn:     state.currentTurn,
+      ledSuit:         state.ledSuit,
+      trumpSuit:       state.trumpSuit,
+      round:           state.round,
+      scores:          state.scores,
+      gameOver:        state.gameOver,
+      winner:          state.winner,
+      phase:           state.phase,
+      lastRoundResult: state.lastRoundResult,
+      last_actor:      'room:' + mySeat,
+    });
+  }
+
+  function receiveRoomState(blob) {
+    if (!blob || blob.last_actor === 'room:' + mySeat) return;
+    cancelAllTimeouts();
+    state.hands           = blob.hands        || state.hands;
+    state.currentTrick    = blob.currentTrick || state.currentTrick;
+    state.trickHistory    = blob.trickHistory || [];
+    state.tricksWon       = blob.tricksWon    || state.tricksWon;
+    state.currentLead     = blob.currentLead  || state.currentLead;
+    state.currentTurn     = blob.currentTurn  || state.currentTurn;
+    state.ledSuit         = blob.ledSuit !== undefined ? blob.ledSuit : state.ledSuit;
+    state.trumpSuit       = blob.trumpSuit    || state.trumpSuit;
+    state.round           = blob.round        || state.round;
+    state.scores          = blob.scores       || state.scores;
+    state.gameOver        = !!blob.gameOver;
+    state.winner          = blob.winner       || null;
+    state.phase           = blob.phase        || state.phase;
+    state.lastRoundResult = blob.lastRoundResult || null;
+    state.animating       = false;
+    state.selectedCard    = null;
+    drawFrame();
+    updateAriaLive();
+    if (!state.gameOver && state.phase === 'play' &&
+        isAISeat(state.currentTurn) && isRoomHost) {
+      scheduleAI();
+    }
+  }
+
+  function initRoomMode() {
+    if (!window.RoomBridge || !RoomBridge.isActive()) return;
+    vsRoom      = true;
+    var roomSeat = RoomBridge.getSeat();
+    mySeat      = SEATS[roomSeat] || 'south';
+    isRoomHost  = RoomBridge.isRoomHost ? RoomBridge.isRoomHost() : (roomSeat === 0);
+    aiSeatsRoom = RoomBridge.getAiSeats ? RoomBridge.getAiSeats() : [];
+    RoomBridge.onState(receiveRoomState);
+    if (isRoomHost) syncRoomState();
+  }
+
   function cancelAllTimeouts() {
     state.pendingTimeouts.forEach(function (id) { clearTimeout(id); });
     state.pendingTimeouts = [];
@@ -181,7 +253,8 @@
     state.phase        = 'play';
     drawFrame();
     updateAriaLive();
-    if (state.currentTurn !== 'south') scheduleAI();
+    if (isAISeat(state.currentTurn) && (!vsRoom || isRoomHost)) scheduleAI();
+    if (vsRoom && isRoomHost) syncRoomState();
   }
 
   // ── Card Cache (offscreen canvases) ────────────────────────────────────────
@@ -1216,10 +1289,10 @@
 
   function handleClick(x, y) {
     if (state.phase === 'round-end' || state.phase === 'game-over') {
-      nextRoundOrGame();
+      if (!vsRoom || isRoomHost) nextRoundOrGame();
       return;
     }
-    if (state.animating || state.currentTurn !== 'south' || state.phase !== 'play') return;
+    if (state.animating || state.currentTurn !== mySeat || state.phase !== 'play') return;
 
     var card = getCardFromClick(x, y);
     if (!card) {
@@ -1228,19 +1301,19 @@
       return;
     }
 
-    // Verify card is in south's hand
-    var inHand = state.hands.south.some(function (c) { return c.id === card.id; });
+    // Verify card is in my hand
+    var inHand = state.hands[mySeat].some(function (c) { return c.id === card.id; });
     if (!inHand) return;
 
     // Check legality
     var isLeading = !state.ledSuit;
-    var legal = getLegalPlays(state.hands.south, state.ledSuit, isLeading);
+    var legal = getLegalPlays(state.hands[mySeat], state.ledSuit, isLeading);
     var isLegal = legal.some(function (c) { return c.id === card.id; });
     if (!isLegal) return;  // Dimmed card — ignore
 
     if (state.selectedCard && state.selectedCard.id === card.id) {
       // Second click on same card — play it
-      playCard('south', card);
+      playCard(mySeat, card);
     } else {
       // First click — select
       state.selectedCard = card;
@@ -1284,12 +1357,14 @@
     if (allPlayed) {
       state.animating = true;
       drawFrame();
+      if (vsRoom) syncRoomState(); // let others see all 4 cards before resolve
       delay(1200, resolveTrick);
     } else {
       advanceTurn();
       drawFrame();
       updateAriaLive();
-      if (state.currentTurn !== 'south') scheduleAI();
+      if (vsRoom && seat === mySeat) syncRoomState();
+      if (isAISeat(state.currentTurn) && (!vsRoom || isRoomHost)) scheduleAI();
     }
   }
 
@@ -1319,7 +1394,8 @@
     } else {
       drawFrame();
       updateAriaLive();
-      if (state.currentTurn !== 'south') scheduleAI();
+      if (vsRoom) syncRoomState();
+      if (isAISeat(state.currentTurn) && (!vsRoom || isRoomHost)) scheduleAI();
     }
   }
 
@@ -1362,11 +1438,19 @@
       state.gameOver = true;
       state.winner   = winner;
       state.phase    = 'game-over';
+      drawFrame();
+      if (vsRoom) {
+        syncRoomState();
+        RoomBridge.reportWin(SEAT_IDX[winner]);
+      }
+      if (!vsRoom && window.Auth && Auth.recordResult) {
+        Auth.recordResult('ganjifa', winner === 'south' ? 'win' : 'loss');
+      }
     } else {
       state.phase = 'round-end';
+      drawFrame();
+      if (vsRoom && isRoomHost) syncRoomState();
     }
-
-    drawFrame();
   }
 
   function nextRoundOrGame() {
@@ -1385,7 +1469,7 @@
   }
 
   function doAITurn() {
-    if (state.currentTurn === 'south') return;
+    if (!isAISeat(state.currentTurn)) return;
     if (state.phase !== 'play') return;
     var seat = state.currentTurn;
     var card = getAIPlay(seat);
@@ -1537,6 +1621,9 @@
 
     // Resize
     window.addEventListener('resize', onResize);
+
+    // Room mode bridge (sets vsRoom, mySeat etc. before first game starts)
+    initRoomMode();
 
     // Start first game
     resetGame();
