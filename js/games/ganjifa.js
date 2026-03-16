@@ -186,12 +186,14 @@
 
   // ── Card Cache (offscreen canvases) ────────────────────────────────────────
 
+  var DPR = 1;  // device pixel ratio — set in init()
   var cardCache = {};
   var diamondPattern = null;
 
   function buildCache() {
     cardCache = {};
-    var size = CACHE_R * 2 + 4;
+    var cr   = Math.round(CACHE_R * DPR);  // physical cache radius
+    var size = cr * 2 + 4;
 
     // Build all card faces
     SUITS.forEach(function (suit) {
@@ -200,7 +202,7 @@
         var oc  = document.createElement('canvas');
         oc.width = oc.height = size;
         var octx = oc.getContext('2d');
-        drawCardFaceOnCtx(octx, CACHE_R + 2, CACHE_R + 2, CACHE_R, suit, rank);
+        drawCardFaceOnCtx(octx, cr + 2, cr + 2, cr, suit, rank);
         cardCache[id] = oc;
       }
     });
@@ -209,7 +211,7 @@
     var bc = document.createElement('canvas');
     bc.width = bc.height = size;
     var bctx = bc.getContext('2d');
-    drawCardBackOnCtx(bctx, CACHE_R + 2, CACHE_R + 2, CACHE_R);
+    drawCardBackOnCtx(bctx, cr + 2, cr + 2, cr);
     cardCache['back'] = bc;
   }
 
@@ -598,6 +600,9 @@
   function drawFrame() {
     if (!canvas || !ctx) return;
     renderedCards = {};
+
+    // Scale all drawing to logical BASE_W×BASE_H coords regardless of DPR
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
     // ── Dark wood outer rail ──
     ctx.fillStyle = '#1A0D05';
@@ -1467,11 +1472,19 @@
 
   // ── Resize ─────────────────────────────────────────────────────────────────
 
+  function applyDPR() {
+    DPR = Math.min(window.devicePixelRatio || 1, 3);
+    canvas.width  = Math.round(BASE_W * DPR);
+    canvas.height = Math.round(BASE_H * DPR);
+    diamondPattern = null;  // recreate at new scale
+  }
+
   var resizeTimer = null;
   function onResize() {
     if (resizeTimer) clearTimeout(resizeTimer);
     resizeTimer = setTimeout(function () {
       if (!canvas) return;
+      applyDPR();
       buildCache();
       drawFrame();
     }, 60);
@@ -1484,6 +1497,7 @@
     if (!canvas) return;
     ctx = canvas.getContext('2d');
 
+    applyDPR();
     buildCache();
 
     // Button handlers
