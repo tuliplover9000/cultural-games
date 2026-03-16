@@ -51,7 +51,12 @@
       "Bash(wc:*)",
       "Read(//c/Users/zhrui/.claude/**)",
       "Bash(find:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(gh api:*)",
+      "WebFetch(domain:tuliplover9000.github.io)",
+      "Bash(git revert:*)",
+      "Bash(cd:*)",
+      "Bash(curl:*)"
     ]
   }
 }
