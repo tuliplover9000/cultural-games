@@ -1123,8 +1123,7 @@
 /* Card highlight during lottery spin */
 .game-card-wrapper.lottery-highlight .game-card {
   outline: 3px solid var(--color-accent-gold);
-  box-shadow: 0 0 22px rgba(200,155,60,0.55), 0 8px 32px rgba(0,0,0,0.3);
-  transform: perspective(900px) translateZ(6px) scale(1.02);
+  box-shadow: 0 0 28px rgba(200,155,60,0.65), 0 8px 32px rgba(0,0,0,0.35);
 }
 
 .games-grid {

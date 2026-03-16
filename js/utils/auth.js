@@ -370,6 +370,7 @@
     'mahjong':  { win: 500, loss: 150 },
     'tien-len': { win: 500, loss: 150 },
     'pachisi':  { win: 500, loss: 150 },
+    'ganjifa':  { win: 500, loss: 150 },
   };
 
   function recordResult(gameId, outcome) {
