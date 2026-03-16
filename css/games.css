@@ -219,6 +219,38 @@
   line-height: 1;
 }
 
+/* Coin mode toggle */
+.bc-coin-mode-wrap {
+  align-items: center;
+  justify-content: center;
+}
+.bc-mode-btn {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  background: rgba(200,155,60,0.12);
+  border: 1px solid rgba(200,155,60,0.35);
+  color: rgba(255,255,255,0.75);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.bc-mode-btn:hover:not(:disabled) {
+  background: rgba(200,155,60,0.25);
+  border-color: var(--color-accent-gold);
+  color: #fff;
+}
+.bc-mode-btn--active {
+  background: rgba(200,155,60,0.25);
+  border-color: var(--color-accent-gold);
+  color: var(--color-accent-gold);
+}
+.bc-mode-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* Ã¢â€â‚¬Ã¢â€â‚¬ Bet input row Ã¢â€â‚¬Ã¢â€â‚¬ */
 .bc-bet-row {
   display: flex;

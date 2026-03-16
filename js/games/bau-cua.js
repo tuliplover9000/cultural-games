@@ -36,6 +36,13 @@
     },
   };
 
+  // Whether the player is betting with real site coins (opt-in, logged-in only)
+  var useRealCoins = false;
+
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
   // ── Room / group-play mode ──────────────────────────────────────────────────
   var vsRoom   = !!(window.RoomBridge && window.RoomBridge.isActive());
   var roomHost = vsRoom && window.RoomBridge.isRoomHost();
@@ -67,6 +74,24 @@
     bindEvents();
     if (vsRoom) initRoomMode();
     refresh();
+
+    // Show the real-coin toggle once auth settles
+    if (window.Auth && Auth.onAuthChange) {
+      Auth.onAuthChange(function () {
+        if (!els.modeWrap) return;
+        els.modeWrap.style.display = Auth.isLoggedIn() ? 'flex' : 'none';
+        // If user logged out mid-game while using real coins, revert to practice
+        if (!Auth.isLoggedIn() && useRealCoins) {
+          useRealCoins = false;
+          if (state.phase === 'betting') {
+            state.wallet = 100;
+            state.bets   = {};
+            renderChips();
+          }
+          refresh();
+        }
+      });
+    }
   }
 
   // ── Render game HTML ───────────────────────────────────────────────────────
@@ -77,8 +102,11 @@
       // Wallet bar
       '  <div class="bc-wallet-bar">',
       '    <div>',
-      '      <div class="bc-wallet-bar__label">Wallet</div>',
+      '      <div class="bc-wallet-bar__label" id="bc-wallet-label">Wallet</div>',
       '      <div class="bc-wallet-amount" id="bc-wallet">🪙 100</div>',
+      '    </div>',
+      '    <div id="bc-coin-mode-wrap" class="bc-coin-mode-wrap" style="display:none">',
+      '      <button id="bc-mode-btn" class="bc-mode-btn" type="button">💰 Use Real Coins</button>',
       '    </div>',
       '    <div style="text-align:right;">',
       '      <div class="bc-wallet-bar__label">Round</div>',
@@ -161,8 +189,11 @@
 
   function cacheDOMRefs() {
     els = {
-      wallet:    document.getElementById('bc-wallet'),
-      round:     document.getElementById('bc-round'),
+      wallet:      document.getElementById('bc-wallet'),
+      walletLabel: document.getElementById('bc-wallet-label'),
+      modeWrap:    document.getElementById('bc-coin-mode-wrap'),
+      modeBtn:     document.getElementById('bc-mode-btn'),
+      round:       document.getElementById('bc-round'),
       betInput:  document.getElementById('bc-bet-input'),
       zones:     document.querySelectorAll('.bc-symbol-zone'),
       clearBtn:  document.getElementById('bc-clear-btn'),
@@ -218,6 +249,7 @@
     els.rollBtn.addEventListener('click', rollDice);
     els.againBtn.addEventListener('click', newRound);
     els.restartBtn.addEventListener('click', restartGame);
+    if (els.modeBtn) els.modeBtn.addEventListener('click', toggleCoinMode);
   }
 
   // ── Betting phase ──────────────────────────────────────────────────────────
@@ -266,6 +298,34 @@
     state.phase = 'locked';
     refresh();
     setStatus('Bets locked! Click "Roll Dice" to roll.');
+  }
+
+  function toggleCoinMode() {
+    if (state.phase !== 'betting') {
+      setStatus('You can only switch modes between rounds.');
+      return;
+    }
+    if (!useRealCoins) {
+      var balance = window.Auth && Auth.getCoins ? Auth.getCoins() : 0;
+      if (balance <= 0) {
+        setStatus('No coins available — earn some by playing games in rooms!');
+        return;
+      }
+      useRealCoins    = true;
+      state.wallet    = balance;
+      state.betAmount = Math.min(state.betAmount, state.wallet);
+      state.bets      = {};
+      renderChips();
+      setStatus('Now using real coins. Good luck!');
+    } else {
+      useRealCoins    = false;
+      state.wallet    = 100;
+      state.betAmount = 10;
+      state.bets      = {};
+      renderChips();
+      setStatus('Switched to practice mode (100 virtual coins).');
+    }
+    refresh();
   }
 
   function totalBets() {
@@ -405,6 +465,10 @@
 
     // Update wallet
     state.wallet = Math.max(0, state.wallet + net);
+    // Sync real-coin mode: push the delta to the global Auth balance
+    if (useRealCoins && window.Auth && Auth.addCoins) {
+      Auth.addCoins(net);
+    }
     if (vsRoom) syncMyState(); // broadcast updated wallet + empty bets to leaderboard
 
     // Track stats
@@ -493,7 +557,18 @@
   }
 
   function restartGame() {
-    state.wallet     = 100;
+    if (useRealCoins) {
+      var balance = window.Auth && Auth.getCoins ? Auth.getCoins() : 0;
+      if (balance <= 0) {
+        // No real coins left — silently fall back to practice
+        useRealCoins = false;
+        state.wallet = 100;
+      } else {
+        state.wallet = balance;
+      }
+    } else {
+      state.wallet = 100;
+    }
     state.bets       = {};
     state.diceResult = [];
     state.phase      = 'betting';
@@ -526,8 +601,18 @@
     var hasBets   = Object.keys(state.bets).length > 0;
 
     // Wallet + round counter
-    els.wallet.textContent = '🪙 ' + state.wallet;
+    els.wallet.textContent = (useRealCoins ? '💰 ' : '🪙 ') + state.wallet;
     els.round.textContent  = state.stats.rounds + 1;
+
+    // Coin mode label + toggle button
+    if (els.walletLabel) {
+      els.walletLabel.textContent = useRealCoins ? 'Real Coins' : 'Wallet';
+    }
+    if (els.modeBtn) {
+      els.modeBtn.textContent = useRealCoins ? '🎮 Switch to Practice' : '💰 Use Real Coins';
+      els.modeBtn.classList.toggle('bc-mode-btn--active', useRealCoins);
+      els.modeBtn.disabled = (state.phase !== 'betting');
+    }
 
     // Bet input cap
     els.betInput.max = state.wallet;
