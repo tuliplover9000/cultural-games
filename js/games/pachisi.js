@@ -1149,6 +1149,7 @@
   }
 
   function doAIRoll() {
+    if (window.CGTutorial && CGTutorial.isActive) return;
     if (!state || !isAIPlayer(state.currentPlayer) || state.gameOver) return;
     var shells = rollCowries(graceBiasFor(state.currentPlayer));
     var roll = shellsToValue(shells);
@@ -1437,6 +1438,77 @@
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
+  }
+
+  // ── Tutorial steps ──────────────────────────────────────────────────────
+  if (window.CGTutorial) {
+    CGTutorial.register('pachisi', [
+      {
+        target: '#pc-board',
+        title: 'The Board',
+        body: 'This is the Pachisi cross — four arms meeting at a center square. Each player\'s pieces travel around the board and race to reach the center.',
+        position: 'right',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#pc-board',
+        title: 'Your Pieces',
+        body: 'Your pieces start in your home yard (the corner of your arm). Move all of them to the center square to win.',
+        position: 'right',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#pc-cowries',
+        title: 'Cowrie Shells',
+        body: 'Instead of dice, Pachisi uses cowrie shells. The number of shells landing mouth-up determines your move.',
+        position: 'left',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#pc-roll-btn',
+        title: 'Roll the Shells',
+        body: 'Click "Roll Shells" on your turn to cast the cowries and see how many squares you can move.',
+        position: 'left',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#pc-board',
+        title: 'Castle Squares',
+        body: 'Marked squares on the board are Castles — safe zones where your pieces cannot be captured.',
+        position: 'right',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#pc-board',
+        title: 'Capturing',
+        body: 'Land on an opponent\'s piece (outside a Castle) to send it back to their home yard.',
+        position: 'right',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#pc-status',
+        title: 'Turn & Status',
+        body: 'The status bar shows whose turn it is and what just happened.',
+        position: 'left',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#pc-new-btn',
+        title: 'New Game',
+        body: 'Click here to start a fresh game and choose 2-player or 4-player mode.',
+        position: 'left',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+    ]);
+    CGTutorial.initTrigger('pachisi');
   }
 
 }());

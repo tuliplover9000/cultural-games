@@ -1469,6 +1469,7 @@
   }
 
   function doAITurn() {
+    if (window.CGTutorial && CGTutorial.isActive) return;
     if (!isAISeat(state.currentTurn)) return;
     if (state.phase !== 'play') return;
     var seat = state.currentTurn;
@@ -1633,6 +1634,69 @@
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
+  }
+
+  // ── Tutorial steps ──────────────────────────────────────────────────────
+  if (window.CGTutorial) {
+    CGTutorial.register('ganjifa', [
+      {
+        target: '#gj-canvas',
+        title: 'Your Hand',
+        body: 'Your cards are displayed at the bottom. The other players\' card backs are shown around the table.',
+        position: 'top',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#gj-canvas',
+        title: 'The 8 Suits',
+        body: 'Ganjifa has 8 suits. One suit is trump — trump cards outrank all non-trump cards regardless of value.',
+        position: 'top',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#gj-canvas',
+        title: 'Playing a Trick',
+        body: 'The lead player plays any card face-up. The other players must follow suit if they can.',
+        position: 'top',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#gj-canvas',
+        title: 'Following Suit',
+        body: 'You must play a card of the same suit as the lead card. If you have none, you may play any card — including trump.',
+        position: 'top',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#gj-canvas',
+        title: 'Trump Cards',
+        body: 'Playing a trump card beats any non-trump card. If multiple trumps are played, the highest wins the trick.',
+        position: 'top',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#gj-canvas',
+        title: 'Winning & Scoring',
+        body: 'The player who wins the most tricks wins the round. The game is played over several rounds.',
+        position: 'top',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#gj-new-game-btn',
+        title: 'New Game',
+        body: 'Click here to start a new game. Three AI opponents will play against you automatically.',
+        position: 'left',
+        highlight: true,
+        beforeStep: null, afterStep: null,
+      },
+    ]);
+    CGTutorial.initTrigger('ganjifa');
   }
 
 }());
