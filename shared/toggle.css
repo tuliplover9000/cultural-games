@@ -4,6 +4,14 @@
    Button is injected into .nav-inner by theme.js before .nav-hamburger.
 ============================================================================= */
 
+/* ── Keep nav-auth + toggle grouped on the right ─────────────────────────── */
+/* nav-inner uses justify-content:space-between. Without this, a third flex
+   item (the toggle) causes nav-auth to drift to the center. margin-left:auto
+   on nav-auth consumes the free space before it, pinning both elements right. */
+#nav-auth {
+  margin-left: auto;
+}
+
 /* ── Button shell ─────────────────────────────────────────────────────────── */
 .theme-toggle {
   display: flex;
