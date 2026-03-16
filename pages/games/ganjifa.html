@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Play Ganjifa — the ancient Mughal circular card game. 96 hand-painted cards, 8 suits, trick-taking with trump and follow-suit rules." />
+  <title>Ganjifa — Cultural Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cinzel:wght@400;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/components.css" />
+  <link rel="stylesheet" href="../../css/auth.css" />
+  <link rel="stylesheet" href="../../css/games.css" />
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../../index.html" class="nav-logo" aria-label="Cultural Games — Home">
+        <span class="nav-logo-icon" aria-hidden="true">🎲</span>
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="../browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="../rooms.html"  class="nav-link nav-link--rooms">Rooms</a></li>
+        <li><a href="../about.html"  class="nav-link">About</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+
+      <div class="game-nav-bar">
+        <a href="../browse.html" class="back-link">Back to Browse</a>
+      </div>
+
+      <header class="game-header">
+        <div class="game-header__icon" aria-hidden="true"><img src="../../assets/icons/ganjifa.svg" alt="" /></div>
+        <h1 class="game-header__title">Ganjifa</h1>
+        <p class="game-header__origin">
+          Mughal India &nbsp;&middot;&nbsp;
+          <span class="badge badge--card" style="display:inline-flex; vertical-align:middle; margin-left:4px;">Card</span>
+        </p>
+      </header>
+
+      <!-- Game Canvas Area -->
+      <div class="game-container" id="game-container" style="padding:0; background:#1A4A3A; border-radius:12px; overflow:hidden; position:relative;">
+        <canvas id="gj-canvas" width="900" height="660" style="display:block; width:100%; height:auto;" aria-label="Ganjifa card game table"></canvas>
+        <div id="gj-controls" style="position:absolute; top:8px; right:8px; display:flex; gap:8px; z-index:10;">
+          <button id="gj-new-game-btn" class="btn btn-ghost btn-sm" style="background:rgba(0,0,0,0.4); color:#D4A017; border-color:rgba(212,160,23,0.4);">New Game</button>
+          <button id="gj-rules-btn" class="btn btn-ghost btn-sm" style="background:rgba(0,0,0,0.4); color:#D4A017; border-color:rgba(212,160,23,0.4);">Rules</button>
+        </div>
+        <div id="gj-rules-panel" hidden style="position:absolute; top:48px; right:8px; width:280px; background:rgba(13,27,62,0.97); border:1px solid #D4A017; border-radius:8px; padding:16px; color:#F5EDD6; font-size:13px; line-height:1.6; z-index:20; max-height:400px; overflow-y:auto;">
+          <strong style="color:#D4A017; display:block; margin-bottom:8px;">How to Play Ganjifa</strong>
+          <p><strong>Goal:</strong> Win the most tricks over multiple rounds. First player to 50 points wins.</p>
+          <p><strong>Trump:</strong> Determined each round from the human player's hand — first Mir (rank 12), then first Vizier (rank 11), else random.</p>
+          <p><strong>Follow Suit:</strong> You must play a card of the led suit if you have one. If not, play any card.</p>
+          <p><strong>Trick Winner:</strong> Trump beats all. Within a suit, rank 12 &gt; 11 &gt; ... &gt; 1. Only trump or led-suit cards can win.</p>
+          <p><strong>Slam:</strong> Winning all 24 tricks in a round earns +5 bonus points.</p>
+          <p><strong>Cards:</strong> Click once to select (gold ring), click again to play. You can only play legal cards.</p>
+          <button onclick="document.getElementById('gj-rules-panel').hidden=true" style="margin-top:8px; padding:4px 12px; background:#D4A017; color:#0D1B3E; border:none; border-radius:4px; cursor:pointer;">Close</button>
+        </div>
+        <div id="gj-aria-live" aria-live="polite" style="position:absolute; left:-9999px; top:-9999px;"></div>
+      </div>
+
+      <!-- How to Play -->
+      <details class="accordion" open>
+        <summary class="accordion__trigger">
+          <span class="accordion__title">How to Play</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Ganjifa is a 4-player trick-taking card game played with 96 circular cards across 8 suits of 12 ranks each.
+            You play as South against three AI opponents (West, North, East).
+          </p>
+          <ol>
+            <li><strong>Trump suit:</strong> At the start of each round, the trump suit is determined from your hand — the suit of your first Mir (rank 12), or first Vizier (rank 11), or randomly if you have neither.</li>
+            <li><strong>Leading a trick:</strong> The round leader plays any card face-up to start a trick. The led card's suit becomes the "led suit."</li>
+            <li><strong>Following suit:</strong> Each other player must play a card of the led suit if they hold one. If they cannot follow suit, they may play any card (including trump).</li>
+            <li><strong>Winning a trick:</strong> Only trump cards and led-suit cards are eligible to win. The highest trump wins; if no trump was played, the highest led-suit card wins. Other suits cannot win regardless of rank.</li>
+            <li><strong>Scoring:</strong> Each trick won scores 1 point. The winner of each trick leads the next trick.</li>
+            <li><strong>Slam bonus:</strong> If one player wins all 24 tricks in a round, they earn an extra 5 bonus points.</li>
+            <li><strong>Win condition:</strong> First player to reach 50 cumulative points across rounds wins the game.</li>
+            <li><strong>Playing cards:</strong> Click a card in your hand once to select it (gold ring appears). Click it again to play. Legal cards show at full brightness; illegal cards appear dimmed.</li>
+          </ol>
+        </div>
+      </details>
+
+      <!-- Cultural Context -->
+      <details class="accordion">
+        <summary class="accordion__trigger">
+          <span class="accordion__title">Cultural Context</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Ganjifa traces its roots to Persian <em>ganjifeh</em> playing cards, introduced to India by Mughal Emperor Babur in the early 16th century. The name itself derives from the Persian word for "playing cards."
+          </p>
+          <p>
+            Unlike European playing cards made of paper, Ganjifa cards were circular discs hand-crafted from lacquered cotton cloth, ivory, or tortoiseshell — then painted by court artists with extraordinary detail. Their circular shape distinguished them from all other card traditions worldwide.
+          </p>
+          <p>
+            Mughal Ganjifa typically featured 8 suits of 12 cards each (96 cards total), with suits representing imperial themes: gold coins, silver ingots, swords, harps, cloth, crowns, and servants of the court. Regional variants developed over centuries — most notably <strong>Dashavatara Ganjifa</strong> from Odisha, which used 10 suits to depict the ten avatars of Vishnu, fusing Hindu iconography with the Persian card tradition.
+          </p>
+          <p>
+            The craft is now nearly extinct. Fewer than a dozen artisans in Odisha — particularly in the town of Parlakhemundi — still practice the traditional art of painting Ganjifa cards, each card requiring days of meticulous work with natural pigments and lacquer. Efforts are underway by cultural preservation organizations to document and revive this vanishing art form.
+          </p>
+        </div>
+      </details>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <span class="footer-brand">Cultural Games</span>
+      <p class="footer-mission">Preserving cultural heritage through play — one game at a time.</p>
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links" role="list">
+          <li><a href="../browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="../about.html"  class="footer-link">About</a></li>
+        </ul>
+      </nav>
+      <div class="footer-divider"></div>
+      <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
+    </div>
+  </footer>
+
+  <script src="../../js/utils/helpers.js"></script>
+  <script src="../../js/utils/navigation.js"></script>
+  <script src="../../js/utils/auth.js"></script>
+  <script src="../../js/games/ganjifa.js"></script>
+</body>
+</html>
