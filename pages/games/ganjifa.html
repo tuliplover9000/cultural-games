@@ -71,20 +71,47 @@
           <span class="accordion__icon" aria-hidden="true">▼</span>
         </summary>
         <div class="accordion__body">
-          <p>
-            Ganjifa is a 4-player trick-taking card game played with 96 circular cards across 8 suits of 12 ranks each.
-            You play as South against three AI opponents (West, North, East).
-          </p>
+
+          <p>Ganjifa is a 4-player trick-taking card game played with 96 circular cards — 8 suits of 12 ranks each. You play as <strong>South</strong> against three AI opponents: West, North, and East.</p>
+
+          <h4 style="margin:1.2em 0 0.4em; font-family:var(--font-display); color:var(--color-accent-gold);">Reading a Card</h4>
+          <p>Each circular card has three zones:</p>
+          <ul>
+            <li><strong>Outer ring</strong> — colored in the suit's color, with a spoke pattern. Gold outer ring = court card (Mir or Vizier).</li>
+            <li><strong>Middle ring (cream band)</strong> — shows the <strong>rank label</strong> at the top: <strong>M</strong> = Mir (rank 12, the King — highest card in any suit), <strong>V</strong> = Vizier (rank 11, the Minister — second highest), <strong>1–10</strong> = pip cards in descending power (10 beats 9, 9 beats 8, etc., down to 1 which is lowest).</li>
+            <li><strong>Center circle</strong> — the <strong>suit motif</strong>, a small illustration identifying which suit the card belongs to.</li>
+          </ul>
+
+          <h4 style="margin:1.2em 0 0.4em; font-family:var(--font-display); color:var(--color-accent-gold);">The 8 Suits</h4>
+          <p>Each suit represents a theme from the Mughal imperial court:</p>
+          <ul>
+            <li>🔴 <strong>Ghulam</strong> (dark red) — <em>Servant</em>. The motif shows a standing court figure. Mir = enthroned ruler, Vizier = standing minister with staff.</li>
+            <li>🟡 <strong>Taj</strong> (gold) — <em>Crown</em>. The motif shows a jeweled 3-point crown, symbol of imperial authority.</li>
+            <li>🔵 <strong>Shamshir</strong> (blue) — <em>Sword</em>. The motif shows a curved Mughal scimitar blade with a crossguard.</li>
+            <li>🟢 <strong>Qimash</strong> (green) — <em>Cloth</em>. The motif shows draped fabric waves, representing the textile trade central to Mughal commerce.</li>
+            <li>🟣 <strong>Qulaba</strong> (purple) — <em>Harness</em>. The motif shows a circular bridle ring with spokes, representing the imperial stables.</li>
+            <li>🟠 <strong>Chang</strong> (orange) — <em>Harp</em>. The motif shows an arched harp with strings, representing music at the Mughal court.</li>
+            <li>🟥 <strong>Surkh</strong> (deep red) — <em>Gold Coins</em>. The motif shows a stack of coin discs, representing the imperial treasury.</li>
+            <li>⬜ <strong>Safed</strong> (grey-green) — <em>Silver Ingot</em>. The motif shows a trapezoid ingot bar, representing silver wealth.</li>
+          </ul>
+
+          <h4 style="margin:1.2em 0 0.4em; font-family:var(--font-display); color:var(--color-accent-gold);">How a Round Works</h4>
           <ol>
-            <li><strong>Trump suit:</strong> At the start of each round, the trump suit is determined from your hand — the suit of your first Mir (rank 12), or first Vizier (rank 11), or randomly if you have neither.</li>
-            <li><strong>Leading a trick:</strong> The round leader plays any card face-up to start a trick. The led card's suit becomes the "led suit."</li>
-            <li><strong>Following suit:</strong> Each other player must play a card of the led suit if they hold one. If they cannot follow suit, they may play any card (including trump).</li>
-            <li><strong>Winning a trick:</strong> Only trump cards and led-suit cards are eligible to win. The highest trump wins; if no trump was played, the highest led-suit card wins. Other suits cannot win regardless of rank.</li>
-            <li><strong>Scoring:</strong> Each trick won scores 1 point. The winner of each trick leads the next trick.</li>
-            <li><strong>Slam bonus:</strong> If one player wins all 24 tricks in a round, they earn an extra 5 bonus points.</li>
-            <li><strong>Win condition:</strong> First player to reach 50 cumulative points across rounds wins the game.</li>
-            <li><strong>Playing cards:</strong> Click a card in your hand once to select it (gold ring appears). Click it again to play. Legal cards show at full brightness; illegal cards appear dimmed.</li>
+            <li><strong>Trump suit:</strong> Determined automatically from your hand each round — the suit of your highest-ranked card (first Mir, then Vizier, else random). Shown in the Trump panel on the right.</li>
+            <li><strong>Leading:</strong> The leader plays any card to start a trick. That card's suit becomes the "led suit."</li>
+            <li><strong>Following suit:</strong> You <em>must</em> play a card of the led suit if you have one. If not, play anything (including trump).</li>
+            <li><strong>Winning a trick:</strong> Only trump and led-suit cards can win. Highest trump wins; if no trump played, highest led-suit card wins. Cards of other suits can never win, no matter how high their rank.</li>
+            <li><strong>Trick winner leads next.</strong> 24 tricks per round.</li>
+            <li><strong>Scoring:</strong> 1 point per trick won. Win all 24 = +5 slam bonus. First to 50 points across rounds wins.</li>
           </ol>
+
+          <h4 style="margin:1.2em 0 0.4em; font-family:var(--font-display); color:var(--color-accent-gold);">Controls</h4>
+          <ul>
+            <li><strong>Hover</strong> a card to enlarge it and see the suit clearly.</li>
+            <li><strong>Click once</strong> to select (gold ring appears, card lifts). <strong>Click again</strong> to play it.</li>
+            <li>Dimmed cards are illegal to play this turn. Hover them to inspect, but only bright cards can be played.</li>
+          </ul>
+
         </div>
       </details>
 
