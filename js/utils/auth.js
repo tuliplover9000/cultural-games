@@ -191,11 +191,14 @@
       if (Array.isArray(cached)) _favorites = new Set(cached);
     } catch (e) {}
 
-    // Then confirm from server and update cache
+    // Then confirm from server and update cache (only if no DB error)
     try {
       var res = await getSB().from('favorites').select('game_key').eq('user_id', userId);
-      _favorites = new Set((res.data || []).map(function (r) { return r.game_key; }));
-      _saveFavCache(userId);
+      if (!res.error && res.data) {
+        _favorites = new Set(res.data.map(function (r) { return r.game_key; }));
+        _saveFavCache(userId);
+      }
+      // If res.error (e.g. table doesn't exist yet), keep the localStorage cache
     } catch (e) { /* keep cache */ }
   }
 
