@@ -1589,3 +1589,47 @@
   }
 
 }());
+
+/* ── Tutorial ────────────────────────────────────────────────────────────── */
+if (window.CGTutorial) {
+  CGTutorial.register('mahjong', [
+    {
+      target:   '#game-container',
+      title:    'Welcome to Mahjong',
+      body:     'Hong Kong Mahjong is played by four players. Draw and discard tiles each turn to build a winning hand of four melds (sets/runs) plus one pair.',
+      position: 'center',
+      highlight: false,
+    },
+    {
+      target:   '#game-container',
+      title:    'Your Hand',
+      body:     'Your 13 tiles are shown at the bottom. Click a tile to select it, then discard it or wait to claim a discarded tile from another player.',
+      position: 'top',
+    },
+    {
+      target:   '#game-container',
+      title:    'Drawing & Discarding',
+      body:     'On your turn a tile is drawn automatically. Select a tile in your hand to discard — you must always keep exactly 13 tiles (14 when it\'s your turn to discard).',
+      position: 'top',
+    },
+    {
+      target:   '#game-container',
+      title:    'Claiming Discards',
+      body:     'When another player discards, you can Chow (run, left player only), Pong (triplet, any player), or Kong (quad, any player). Winning from a discard is also allowed.',
+      position: 'top',
+    },
+    {
+      target:   '#game-container',
+      title:    'Scoring & Fan',
+      body:     'Winning hands earn Fan (翻) based on the tile combinations. More Fan = higher payout. Aim for special hands like All Pungs, Mixed Suit, or Dragon melds for bonus Fan.',
+      position: 'top',
+    },
+    {
+      target:   '#mj-mp-panel',
+      title:    'Multiplayer',
+      body:     'Create or join a Room to play online with friends. Share the 4-letter room code so others can join your table.',
+      position: 'bottom',
+    },
+  ]);
+  CGTutorial.initTrigger('mahjong');
+}

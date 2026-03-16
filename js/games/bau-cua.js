@@ -792,3 +792,47 @@
   document.addEventListener('DOMContentLoaded', init);
 
 }());
+
+/* ── Tutorial ────────────────────────────────────────────────────────────── */
+if (window.CGTutorial) {
+  CGTutorial.register('bau-cua', [
+    {
+      target:   '#game-container',
+      title:    'Welcome to Bầu Cua',
+      body:     'Bầu Cua Tôm Cá ("Gourd Crab Shrimp Fish") is a classic Vietnamese gambling game played at Tết. Bet on symbols and see if the dice match!',
+      position: 'center',
+      highlight: false,
+    },
+    {
+      target:   '#bc-wallet',
+      title:    'Your Wallet',
+      body:     'This is your coin balance. Place bets wisely — if your wallet hits zero the game is over!',
+      position: 'bottom',
+    },
+    {
+      target:   '#bc-place-btn',
+      title:    'Place Your Bets',
+      body:     'Click the six symbol zones to place chips on any combination of Gourd, Crab, Shrimp, Fish, Deer, or Rooster. Then click Place Bets to lock them in.',
+      position: 'top',
+    },
+    {
+      target:   '#bc-roll-btn',
+      title:    'Roll the Dice',
+      body:     'Once bets are placed, click Roll. Three dice are shaken — each one that matches your bet pays 1:1. Hit all three of a symbol and win triple!',
+      position: 'top',
+    },
+    {
+      target:   '#bc-status',
+      title:    'Round Status',
+      body:     'Follow the game flow here — betting phase, roll results, and winnings are all announced in this bar.',
+      position: 'bottom',
+    },
+    {
+      target:   '#bc-restart-btn',
+      title:    'Restart',
+      body:     'Ran out of coins or want a fresh start? Click Restart to top up your wallet and begin a new session.',
+      position: 'top',
+    },
+  ]);
+  CGTutorial.initTrigger('bau-cua');
+}

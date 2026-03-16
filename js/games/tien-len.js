@@ -337,6 +337,7 @@
 
   /* ── AI ── */
   function scheduleAITurn() {
+    if (window.CGTutorial && CGTutorial.isActive) return;
     state.aiThinking = true;
     render();
     const id = gameVersion;
@@ -923,3 +924,47 @@
   }
 
 }());
+
+/* ── Tutorial ────────────────────────────────────────────────────────────── */
+if (window.CGTutorial) {
+  CGTutorial.register('tien-len', [
+    {
+      target:   '#game-container',
+      title:    'Welcome to Tiến Lên',
+      body:     'Tiến Lên ("Go Forward") is the most popular card game in Vietnam. Be the first to get rid of all your cards. Cards rank 3 (low) → 2 (highest).',
+      position: 'center',
+      highlight: false,
+    },
+    {
+      target:   '.tl-hand',
+      title:    'Your Hand',
+      body:     'Your cards are shown at the bottom. Click a card to select it (it will lift up), then click Play to submit your selection.',
+      position: 'top',
+    },
+    {
+      target:   '#tl-play',
+      title:    'Play Cards',
+      body:     'Click Play to submit your selected cards. You must beat the previous play with a higher combination of the same type.',
+      position: 'top',
+    },
+    {
+      target:   '#tl-pass',
+      title:    'Pass Your Turn',
+      body:     'If you can\'t or don\'t want to beat the current play, click Pass. Once all others pass, the last player to play leads the next trick freely.',
+      position: 'top',
+    },
+    {
+      target:   '.tl-status-bar',
+      title:    'Game Status',
+      body:     'Watch here to see whose turn it is, what combination was last played, and when a new round begins.',
+      position: 'bottom',
+    },
+    {
+      target:   '#tl-new',
+      title:    'New Game',
+      body:     'Start a fresh hand of Tiến Lên at any time.',
+      position: 'bottom',
+    },
+  ]);
+  CGTutorial.initTrigger('tien-len');
+}

@@ -287,6 +287,7 @@
   }
 
   function runAI() {
+    if (window.CGTutorial && CGTutorial.isActive) return;
     if (state.phase !== 'ai-thinking') return;
     const snap  = { pits: [...state.pits], scores: [...state.scores], phase: state.phase };
     const moves = validMoves(snap, AI);
@@ -584,6 +585,43 @@
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
+  }
+
+  // ── Tutorial ────────────────────────────────────────────────────────────
+  if (window.CGTutorial) {
+    CGTutorial.register('oware', [
+      {
+        target: '#game-container',
+        title: 'The Oware Board',
+        body: 'This is Oware — a 2×6 pit mancala from West Africa. Each pit starts with 4 seeds. Your row is the one nearest to you.',
+        position: 'bottom', highlight: true, beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#game-container',
+        title: 'How to Sow',
+        body: 'Click one of your pits to scoop up all its seeds and distribute them one-by-one counter-clockwise around the board.',
+        position: 'bottom', highlight: true, beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#game-container',
+        title: 'Capturing',
+        body: 'If your last seed lands in an opponent\'s pit containing exactly 2 or 3 seeds, you capture them. Captures continue backwards if the preceding pits also have 2 or 3.',
+        position: 'top', highlight: true, beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#game-container',
+        title: 'Grand Slam Rule',
+        body: 'You cannot capture all of your opponent\'s seeds in one move — you must leave them able to play. Such moves are illegal.',
+        position: 'top', highlight: true, beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#ow-new',
+        title: 'New Game',
+        body: 'Click here to reset the board and start over.',
+        position: 'top', highlight: true, beforeStep: null, afterStep: null,
+      },
+    ]);
+    CGTutorial.initTrigger('oware');
   }
 
 }());

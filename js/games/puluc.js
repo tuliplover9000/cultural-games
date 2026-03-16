@@ -261,6 +261,7 @@
 
   // ── AI logic ──────────────────────────────────────────────────────────
   function aiTurn() {
+    if (window.CGTutorial && CGTutorial.isActive) return;
     if (state.phase === 'over') return;
 
     state.phase = 'moving';
@@ -592,3 +593,46 @@
 
   document.addEventListener('DOMContentLoaded', init);
 }());
+
+/* ── Tutorial ────────────────────────────────────────────────────────────── */
+if (window.CGTutorial) {
+  CGTutorial.register('puluc', [
+    {
+      target:   '#pu-track',
+      title:    'The Puluc Track',
+      body:     'This is the race track. Your pieces (dark) and the AI\'s pieces (light) battle up and down it. Capture opponent pieces by landing on them and escort them to your end.',
+      position: 'bottom',
+    },
+    {
+      target:   '#pu-roll-btn',
+      title:    'Roll the Sticks',
+      body:     'Click Roll to throw the corn-kernel dice. The result determines how many spaces your active piece moves this turn.',
+      position: 'top',
+    },
+    {
+      target:   '#pu-status',
+      title:    'Game Status',
+      body:     'Follow the action here — whose turn it is, roll results, captures, and who wins the round are all announced in this bar.',
+      position: 'bottom',
+    },
+    {
+      target:   '#pu-score',
+      title:    'Score Tracker',
+      body:     'Each time you escort captured prisoners off the track you gain a point. The first to the target score wins the match.',
+      position: 'bottom',
+    },
+    {
+      target:   '#pu-mode-ai',
+      title:    'Switch Game Mode',
+      body:     'Toggle between playing against the AI or a local two-player game.',
+      position: 'bottom',
+    },
+    {
+      target:   '#pu-new-game-btn',
+      title:    'New Game',
+      body:     'Reset the board and start a fresh match at any time.',
+      position: 'bottom',
+    },
+  ]);
+  CGTutorial.initTrigger('puluc');
+}

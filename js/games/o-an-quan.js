@@ -686,3 +686,47 @@
   });
 
 }());
+
+/* ── Tutorial ────────────────────────────────────────────────────────────── */
+if (window.CGTutorial) {
+  CGTutorial.register('o-an-quan', [
+    {
+      target:   '#game-container',
+      title:    'Welcome to Ô Ăn Quan',
+      body:     'Ô Ăn Quan ("Mandarin\'s Box") is a Vietnamese mancala-style game for two players. Sow seeds around the board and capture as many as possible.',
+      position: 'center',
+      highlight: false,
+    },
+    {
+      target:   '#game-container',
+      title:    'The Board',
+      body:     'The board has 10 small pits (5 per player) and 2 large Mandarin squares at the ends. Your pits are on the bottom row.',
+      position: 'top',
+    },
+    {
+      target:   '#game-container',
+      title:    'Sowing Seeds',
+      body:     'Click one of your pits to pick up all its seeds and distribute them one-by-one into consecutive pits going clockwise or counter-clockwise.',
+      position: 'top',
+    },
+    {
+      target:   '#game-container',
+      title:    'Capturing Seeds',
+      body:     'If the last seed lands on an empty pit and the pit directly ahead has seeds, you capture those seeds. Chained captures continue while pits alternate occupied → empty.',
+      position: 'top',
+    },
+    {
+      target:   '#game-container',
+      title:    'Mandarin Squares',
+      body:     'The large squares at each end hold many seeds. Capturing a Mandarin square is a huge gain — but landing there ends your turn with no capture.',
+      position: 'top',
+    },
+    {
+      target:   '#oaq-restart',
+      title:    'Restart Game',
+      body:     'Click here to reset the board and begin a new match.',
+      position: 'bottom',
+    },
+  ]);
+  CGTutorial.initTrigger('o-an-quan');
+}

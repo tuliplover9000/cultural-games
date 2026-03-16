@@ -504,6 +504,7 @@
 
   // ── AI ────────────────────────────────────────────────────────────────
   async function runAI() {
+    if (window.CGTutorial && CGTutorial.isActive) return;
     if (state.phase !== 'ai-thinking') return;
     var cup = aiChooseMove();
     if (cup === -1) { await endTurn(); return; }
@@ -574,4 +575,47 @@
 
   // ── Init ──────────────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', function () { newGame(); initRoomMode(); });
+
+  // ── Tutorial ────────────────────────────────────────────────────────────
+  if (window.CGTutorial) {
+    CGTutorial.register('pallanguzhi', [
+      {
+        target: '#game-container',
+        title: 'The Board',
+        body: 'Pallanguzhi is a South Indian mancala played on 2 rows of 7 cups. Each cup starts with 6 shells.',
+        position: 'bottom', highlight: true, beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#game-container',
+        title: 'Sowing Shells',
+        body: 'Click one of your cups to pick up all its shells and distribute them one-by-one clockwise. Your side is the row closest to you.',
+        position: 'bottom', highlight: true, beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#game-container',
+        title: 'Capturing',
+        body: 'When your last shell lands in a cup, skip over the next cup. If the cup after that has shells, capture them — then keep going.',
+        position: 'top', highlight: true, beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#game-container',
+        title: 'Your Store',
+        body: 'Captured shells go into your store on the right. The player with the most shells in their store at the end wins.',
+        position: 'top', highlight: true, beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#pg-mode-ai',
+        title: 'Play vs AI',
+        body: 'Switch to AI mode to play against the computer.',
+        position: 'bottom', highlight: true, beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#pg-new',
+        title: 'New Game',
+        body: 'Reset the board and start a fresh game.',
+        position: 'top', highlight: true, beforeStep: null, afterStep: null,
+      },
+    ]);
+    CGTutorial.initTrigger('pallanguzhi');
+  }
 }());

@@ -457,6 +457,7 @@
   }
 
   function aiTurn() {
+    if (window.CGTutorial && CGTutorial.isActive) return;
     state.phase = 'ai-thinking';
     setStatus('AI is thinking… <span class="pt-thinking"><span></span><span></span><span></span></span>');
     render();
@@ -659,3 +660,46 @@
   }
 
 }());
+
+/* ── Tutorial ────────────────────────────────────────────────────────────── */
+if (window.CGTutorial) {
+  CGTutorial.register('patolli', [
+    {
+      target:   '#pt-board',
+      title:    'The Patolli Board',
+      body:     'This X-shaped cross track is the Patolli board. Your pieces travel around its path — the goal is to move all your pieces off the board before your opponent.',
+      position: 'bottom',
+    },
+    {
+      target:   '#pt-roll-btn',
+      title:    'Roll the Beans',
+      body:     'Click Roll to cast the patolli beans. Each marked side that lands face-up advances your piece by one space; rolling all blanks moves you five spaces.',
+      position: 'top',
+    },
+    {
+      target:   '#pt-status',
+      title:    'Game Status',
+      body:     'This bar shows whose turn it is and what action is needed. Watch here for capture alerts and win announcements.',
+      position: 'bottom',
+    },
+    {
+      target:   '#pt-score',
+      title:    'Score Tracker',
+      body:     'Scores accumulate each round. Patolli was historically a wagering game — track who holds the lead here.',
+      position: 'bottom',
+    },
+    {
+      target:   '#pt-mode-ai',
+      title:    'Switch Game Mode',
+      body:     'Toggle between playing against the AI or a second player on the same device.',
+      position: 'bottom',
+    },
+    {
+      target:   '#pt-new-game-btn',
+      title:    'New Game',
+      body:     'Reset the board and start a fresh match at any time.',
+      position: 'bottom',
+    },
+  ]);
+  CGTutorial.initTrigger('patolli');
+}
