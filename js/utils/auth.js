@@ -178,11 +178,25 @@
   }
 
   /* ── Favorites ── */
+  function _favCacheKey(userId) { return 'cg_favs_' + userId; }
+
+  function _saveFavCache(userId) {
+    try { localStorage.setItem(_favCacheKey(userId), JSON.stringify(Array.from(_favorites))); } catch (e) {}
+  }
+
   async function _loadFavorites(userId) {
+    // Seed from cache first so UI is instant
+    try {
+      var cached = JSON.parse(localStorage.getItem(_favCacheKey(userId)));
+      if (Array.isArray(cached)) _favorites = new Set(cached);
+    } catch (e) {}
+
+    // Then confirm from server and update cache
     try {
       var res = await getSB().from('favorites').select('game_key').eq('user_id', userId);
       _favorites = new Set((res.data || []).map(function (r) { return r.game_key; }));
-    } catch (e) { _favorites = new Set(); }
+      _saveFavCache(userId);
+    } catch (e) { /* keep cache */ }
   }
 
   function isFavorite(gameKey) { return _favorites.has(gameKey); }
@@ -199,6 +213,7 @@
       _favorites.add(gameKey);
       db.from('favorites').insert({ user_id: _user.id, game_key: gameKey });
     }
+    _saveFavCache(_user.id);
     _emit();
     return _favorites.has(gameKey);
   }
@@ -306,6 +321,7 @@
     if (_accessToken) {
       try { await _authFetch('/logout', {}, _accessToken); } catch (e) {}
     }
+    if (_user) { try { localStorage.removeItem(_favCacheKey(_user.id)); } catch (e) {} }
     _clearSession();
     _user = null; _profile = null; _stats = {}; _favorites = new Set();
     _emit();
@@ -662,6 +678,11 @@
       _user        = stored.user;
       _profile     = { username: stored.user.email.split('@')[0], created_at: stored.user.created_at };
       _scheduleRefresh(stored);
+      // Pre-load favorites from cache so UI is instant before server responds
+      try {
+        var cachedFavs = JSON.parse(localStorage.getItem(_favCacheKey(stored.user.id)));
+        if (Array.isArray(cachedFavs)) _favorites = new Set(cachedFavs);
+      } catch (e) {}
     }
 
     // Defer emit one tick so all DOMContentLoaded handlers (including account page)

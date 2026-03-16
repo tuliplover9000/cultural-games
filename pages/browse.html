@@ -628,13 +628,13 @@
   <script src="../js/utils/auth.js"></script>
   <style>
     .fav-btn {
-      background: none; border: none; cursor: pointer; padding: 0 2px;
-      font-size: 1.25rem; line-height: 1; opacity: 0.35;
-      transition: opacity 0.2s, transform 0.15s;
+      background: none; border: none; cursor: pointer; padding: 0 4px;
+      font-size: 1.2rem; line-height: 1; color: #bbb;
+      transition: color 0.18s, transform 0.15s;
       display: none; /* hidden until logged in */
     }
-    .fav-btn:hover { opacity: 0.75; transform: scale(1.15); }
-    .fav-btn.fav-active { opacity: 1; }
+    .fav-btn:hover { color: #f5c518; transform: scale(1.2); }
+    .fav-btn.fav-active { color: #f5c518; }
     .auth-ready .fav-btn { display: inline-block; }
   </style>
   <script>
@@ -643,7 +643,7 @@
     var grid = document.getElementById('games-grid');
     if (!grid) return;
 
-    /* Inject a heart button into every game card footer */
+    /* Inject a star button into every game card footer */
     grid.querySelectorAll('.game-card').forEach(function (card) {
       var footer   = card.querySelector('.game-card__footer');
       var playLink = card.querySelector('.game-card__footer a');
@@ -653,36 +653,47 @@
 
       var btn = document.createElement('button');
       btn.className = 'fav-btn';
-      btn.setAttribute('aria-label', 'Favorite');
+      btn.setAttribute('aria-label', 'Add to favorites');
       btn.setAttribute('data-game-key', gameKey);
-      btn.textContent = '♡';
+      btn.textContent = '☆';
       btn.addEventListener('click', async function (e) {
         e.preventDefault();
         if (!window.Auth || !Auth.isLoggedIn()) { Auth.openModal('signin'); return; }
         await Auth.toggleFavorite(gameKey);
-        syncHearts();
+        syncStars();
       });
       footer.insertBefore(btn, playLink);
     });
 
-    function syncHearts() {
+    function syncStars() {
       var loggedIn = window.Auth && Auth.isLoggedIn();
       grid.classList.toggle('auth-ready', loggedIn);
+
       grid.querySelectorAll('.fav-btn').forEach(function (btn) {
         var key = btn.getAttribute('data-game-key');
         var fav = loggedIn && Auth.isFavorite(key);
-        btn.textContent = fav ? '♥' : '♡';
+        btn.textContent = fav ? '★' : '☆';
         btn.classList.toggle('fav-active', fav);
-        btn.setAttribute('aria-label', fav ? 'Unfavorite' : 'Favorite');
+        btn.setAttribute('aria-label', fav ? 'Remove from favorites' : 'Add to favorites');
       });
+
+      // Sort favorited cards to top
+      if (loggedIn) {
+        var wrappers = Array.from(grid.querySelectorAll('.game-card-wrapper'));
+        var favs     = wrappers.filter(function (w) {
+          var btn = w.querySelector('.fav-btn');
+          return btn && Auth.isFavorite(btn.getAttribute('data-game-key'));
+        });
+        favs.forEach(function (w) { grid.insertBefore(w, grid.firstChild); });
+      }
     }
 
     if (window.Auth) {
-      Auth.onAuthChange(syncHearts);
-      syncHearts();
+      Auth.onAuthChange(syncStars);
+      syncStars();
     } else {
       document.addEventListener('DOMContentLoaded', function () {
-        if (window.Auth) { Auth.onAuthChange(syncHearts); syncHearts(); }
+        if (window.Auth) { Auth.onAuthChange(syncStars); syncStars(); }
       });
     }
   }());
