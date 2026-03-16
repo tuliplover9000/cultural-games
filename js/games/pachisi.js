@@ -167,6 +167,14 @@
   // ── State ─────────────────────────────────────────────────────────────────
   var state = null;
 
+  function recordSoloResult(win) {
+    if (!win || !window.Auth || !Auth.recordResult) return;
+    if (state && state.humanSeat !== undefined && state.humanSeat !== null) return; // room mode
+    var humanWon = (state.mode === '2player') ? win === 'yellow'
+                 : /* 4-player */               win === 'Team A';
+    Auth.recordResult('pachisi', humanWon ? 'win' : 'loss');
+  }
+
   function makePieces(owner) {
     var arr = [];
     for (var i = 0; i < 4; i++) {
@@ -1079,6 +1087,7 @@
       setStatus((win.charAt(0).toUpperCase() + win.slice(1)) + ' wins!');
       redraw();
       updateHUD();
+      recordSoloResult(win);
       return;
     }
 
@@ -1190,6 +1199,7 @@
           setStatus((win.charAt(0).toUpperCase() + win.slice(1)) + ' wins!');
           redraw();
           updateHUD();
+          recordSoloResult(win);
           return;
         }
 

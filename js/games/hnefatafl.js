@@ -262,6 +262,11 @@
     state.winner   = winner;
     updateHUD();
     render();
+    if (!vsRoom && window.Auth && Auth.recordResult) {
+      var outcome = winner === 'draw' ? 'draw'
+                  : winner === humanSide ? 'win' : 'loss';
+      Auth.recordResult('hnefatafl', outcome);
+    }
   }
 
   // ── Execute move ──────────────────────────────────────────────────────────

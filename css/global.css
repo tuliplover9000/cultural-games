@@ -261,12 +261,18 @@ main {
 .room-mode #mp-panel,
 .room-mode .mp-panel,
 .room-mode .pt-mode-row,
-.room-mode #pt-new-game-btn {
+.room-mode #pt-new-game-btn,
+.room-mode .game-header,
+.room-mode .game-disclaimer,
+.room-mode .accordion {
   display: none !important;
 }
 .room-mode body {
   background: var(--color-bg);
 }
 .room-mode .game-page {
-  padding-top: var(--space-4);
+  padding: var(--space-3) 0 0;
+}
+.room-mode .game-page .container {
+  padding-inline: var(--space-3);
 }
