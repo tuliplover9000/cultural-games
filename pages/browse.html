@@ -16,7 +16,6 @@
   <link rel="stylesheet" href="../css/global.css" />
   <link rel="stylesheet" href="../css/components.css" />
   <link rel="stylesheet" href="../css/auth.css" />
-  <script src="../js/three.min.js"></script>
 </head>
 <body>
 
@@ -396,103 +395,196 @@
   </script>
 
   <script>
-/* ── Browse hero — filled globe + orbiting game pieces ── */
+/* ── Browse hero — 2D world map globe + orbiting game pieces ── */
 (function () {
   var canvas = document.getElementById('browse-bg-canvas');
-  if (!canvas || !window.THREE) return;
-  var W = canvas.offsetWidth || canvas.parentElement.offsetWidth;
-  var H = canvas.offsetHeight || canvas.parentElement.offsetHeight || 260;
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-  renderer.setSize(W, H);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(55, W / H, 0.1, 100);
-  camera.position.z = 9;
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
 
-  var group = new THREE.Group();
-  scene.add(group);
-
-  /* ── Solid filled globe ── */
-  var globeR = 2;
-  var solidGeo = new THREE.SphereGeometry(globeR, 48, 32);
-  var solidMat = new THREE.MeshBasicMaterial({ color: 0x0e2a42, transparent: true, opacity: 0.85 });
-  var solidSphere = new THREE.Mesh(solidGeo, solidMat);
-  group.add(solidSphere);
-
-  /* Grid lines over the surface */
-  var wireGeo = new THREE.WireframeGeometry(new THREE.SphereGeometry(globeR + 0.01, 18, 12));
-  var wireMat = new THREE.LineBasicMaterial({ color: 0xC89B3C, transparent: true, opacity: 0.18 });
-  group.add(new THREE.LineSegments(wireGeo, wireMat));
-
-  /* Culture dots */
-  var cultures = [
-    { lat:  16, lon: 106 }, { lat:   8, lon:  -2 },
-    { lat:  19, lon: -99 }, { lat:  11, lon:  77 },
-    { lat: -19, lon:  47 }, { lat:  35, lon: 105 },
-    { lat:  62, lon:  15 }, { lat:  23, lon:  80 },
-  ];
-  var dotMat = new THREE.MeshBasicMaterial({ color: 0xff6b6b });
-  cultures.forEach(function (c) {
-    var phi   = (90 - c.lat) * Math.PI / 180;
-    var theta = (c.lon + 180) * Math.PI / 180;
-    var dot   = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 8), dotMat);
-    dot.position.set(
-      -globeR * Math.sin(phi) * Math.cos(theta),
-       globeR * Math.cos(phi),
-       globeR * Math.sin(phi) * Math.sin(theta)
-    );
-    solidSphere.add(dot);
-  });
-
-  /* ── Orbiting game pieces ── */
-  var gold  = new THREE.MeshBasicMaterial({ color: 0xC89B3C, transparent: true, opacity: 0.85 });
-  var teal  = new THREE.MeshBasicMaterial({ color: 0x4ecdc4, transparent: true, opacity: 0.85 });
-  var warm  = new THREE.MeshBasicMaterial({ color: 0xe07040, transparent: true, opacity: 0.85 });
-
-  var pieceDefs = [
-    /* dice */       { geo: new THREE.BoxGeometry(0.32, 0.32, 0.32),       mat: gold, r: 3.1, spd: 0.009,  ang: 0,              tilt: 0.4  },
-    /* coin */       { geo: new THREE.CylinderGeometry(0.22, 0.22, 0.08, 14), mat: teal, r: 3.5, spd: -0.007, ang: Math.PI*0.6,    tilt: 0.7  },
-    /* d4 */         { geo: new THREE.TetrahedronGeometry(0.30),             mat: warm, r: 3.0, spd: 0.012,  ang: Math.PI*1.1,    tilt: -0.5 },
-    /* d8 */         { geo: new THREE.OctahedronGeometry(0.26),              mat: gold, r: 3.4, spd: -0.010, ang: Math.PI*1.7,    tilt: 0.3  },
-    /* tile/card */  { geo: new THREE.BoxGeometry(0.28, 0.38, 0.09),        mat: teal, r: 3.7, spd: 0.007,  ang: Math.PI*0.3,    tilt: -0.6 },
-    /* pawn base */  { geo: new THREE.CylinderGeometry(0.12, 0.18, 0.38, 10), mat: gold, r: 3.2, spd: -0.013, ang: Math.PI*2.1,    tilt: 0.55 },
+  /* ── Simplified continent outlines [lon, lat] ── */
+  var CONTINENTS = [
+    /* Africa */
+    [[-18,37],[37,37],[51,12],[44,11],[43,-12],[36,-28],[19,-35],[17,-29],[-1,5],[-5,5],[-18,15],[-18,37]],
+    /* Europe */
+    [[-10,36],[28,36],[36,46],[28,60],[24,70],[15,70],[5,62],[-10,56],[-10,36]],
+    /* Asia */
+    [[26,70],[60,70],[75,75],[110,75],[142,70],[170,65],[145,45],[135,35],[125,20],[120,5],[100,0],[95,10],[90,23],[70,8],[55,12],[44,11],[43,20],[37,20],[30,37],[36,46],[26,70]],
+    /* North America */
+    [[-168,72],[-130,72],[-120,60],[-90,50],[-80,48],[-70,45],[-75,35],[-80,25],[-90,20],[-83,10],[-77,8],[-60,10],[-55,65],[-65,75],[-100,75],[-168,72]],
+    /* South America */
+    [[-78,12],[-62,12],[-50,5],[-35,-5],[-40,-20],[-60,-40],[-75,-50],[-70,-55],[-67,-55],[-55,-35],[-40,-23],[-35,-10],[-50,2],[-78,12]],
+    /* Australia */
+    [[114,-22],[130,-15],[140,-15],[150,-25],[155,-30],[150,-38],[140,-38],[130,-33],[115,-35],[114,-22]],
+    /* Greenland */
+    [[-50,80],[-20,80],[-20,75],[-30,70],[-45,65],[-55,65],[-55,75],[-50,80]],
   ];
 
-  var pieceAngles = pieceDefs.map(function (d) { return d.ang; });
-  var pieceMeshes = pieceDefs.map(function (d) {
-    var m = new THREE.Mesh(d.geo, d.mat);
-    group.add(m);
-    return m;
-  });
+  /* ── Culture dots [lon, lat, label] ── */
+  var CULTURES = [
+    { lat: 16,  lon: 106 }, /* Vietnam */
+    { lat: 8,   lon: -2  }, /* West Africa */
+    { lat: 19,  lon: -99 }, /* Mesoamerica */
+    { lat: 11,  lon: 77  }, /* South India */
+    { lat: -19, lon: 47  }, /* Madagascar */
+    { lat: 35,  lon: 105 }, /* China */
+    { lat: 62,  lon: 15  }, /* Norse */
+    { lat: 23,  lon: 80  }, /* Indian Subcontinent */
+  ];
 
-  function animate() {
-    requestAnimationFrame(animate);
-    group.rotation.y += 0.003;
-    solidSphere.rotation.y += 0.004;
+  /* ── Orthographic projection ── */
+  function project(lon, lat, lon0, cx, cy, r) {
+    var lam = (lon - lon0) * Math.PI / 180;
+    var phi = lat * Math.PI / 180;
+    var visible = Math.cos(phi) * Math.cos(lam) >= 0;
+    return {
+      x: cx + r * Math.cos(phi) * Math.sin(lam),
+      y: cy - r * Math.sin(phi),
+      v: visible,
+    };
+  }
 
-    pieceDefs.forEach(function (d, i) {
-      pieceAngles[i] += d.spd;
-      var a = pieceAngles[i];
-      pieceMeshes[i].position.set(
-        d.r * Math.cos(a),
-        d.r * Math.sin(a) * Math.sin(d.tilt),
-        d.r * Math.sin(a) * Math.cos(d.tilt)
-      );
-      pieceMeshes[i].rotation.x += 0.012;
-      pieceMeshes[i].rotation.y += 0.009;
+  /* ── Game piece drawing ── */
+  function drawDice(c, x, y, s, a) {
+    c.save(); c.translate(x, y); c.rotate(a);
+    c.fillStyle = 'rgba(200,155,60,0.9)'; c.strokeStyle = 'rgba(255,220,130,0.95)'; c.lineWidth = 1.5;
+    c.beginPath(); c.rect(-s/2, -s/2, s, s); c.fill(); c.stroke();
+    c.fillStyle = '#fff';
+    [[-.28,-.28],[.28,.28],[0,0]].forEach(function(d) {
+      c.beginPath(); c.arc(d[0]*s, d[1]*s, s*.12, 0, Math.PI*2); c.fill();
+    });
+    c.restore();
+  }
+  function drawCard(c, x, y, s, a) {
+    c.save(); c.translate(x, y); c.rotate(a);
+    c.fillStyle = 'rgba(78,205,196,0.85)'; c.strokeStyle = 'rgba(140,240,230,0.95)'; c.lineWidth = 1.5;
+    var w = s*.65, h = s;
+    c.beginPath(); c.rect(-w/2, -h/2, w, h); c.fill(); c.stroke();
+    c.fillStyle = 'rgba(255,255,255,0.6)'; c.font = (s*.45)+'px serif';
+    c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillText('♠', 0, 0);
+    c.restore();
+  }
+  function drawCoin(c, x, y, s, a) {
+    c.save(); c.translate(x, y); c.rotate(a);
+    c.fillStyle = 'rgba(200,155,60,0.85)'; c.strokeStyle = 'rgba(255,220,100,0.95)'; c.lineWidth = 2;
+    c.beginPath(); c.arc(0, 0, s/2, 0, Math.PI*2); c.fill(); c.stroke();
+    c.strokeStyle = 'rgba(255,240,160,0.7)'; c.lineWidth = 1;
+    c.beginPath(); c.arc(0, 0, s*.3, 0, Math.PI*2); c.stroke();
+    c.restore();
+  }
+  function drawPawn(c, x, y, s, a) {
+    c.save(); c.translate(x, y); c.rotate(a);
+    c.fillStyle = 'rgba(224,112,64,0.9)'; c.strokeStyle = 'rgba(255,160,100,0.95)'; c.lineWidth = 1;
+    c.beginPath(); c.arc(0, -s*.25, s*.28, 0, Math.PI*2); c.fill(); c.stroke();
+    c.beginPath(); c.moveTo(-s*.25, s*.4); c.lineTo(s*.25, s*.4);
+    c.lineTo(s*.18, s*.05); c.lineTo(-s*.18, s*.05); c.closePath(); c.fill(); c.stroke();
+    c.restore();
+  }
+  function drawTile(c, x, y, s, a) {
+    c.save(); c.translate(x, y); c.rotate(a);
+    c.fillStyle = 'rgba(78,205,196,0.85)'; c.strokeStyle = 'rgba(140,240,230,0.95)'; c.lineWidth = 1.5;
+    c.beginPath(); c.rect(-s*.5, -s*.35, s, s*.7); c.fill(); c.stroke();
+    c.strokeStyle = 'rgba(255,255,255,0.35)'; c.lineWidth = 0.8;
+    c.beginPath(); c.rect(-s*.35, -s*.22, s*.7, s*.44); c.stroke();
+    c.restore();
+  }
+
+  var PIECES = [
+    { draw: drawDice,  orbitR: 1.55, angle: 0,              speed:  0.009, rot: 0, rotSpd: 0.025 },
+    { draw: drawCard,  orbitR: 1.65, angle: Math.PI * 0.45, speed: -0.007, rot: 0, rotSpd: 0.020 },
+    { draw: drawCoin,  orbitR: 1.50, angle: Math.PI * 0.9,  speed:  0.011, rot: 0, rotSpd: 0.015 },
+    { draw: drawPawn,  orbitR: 1.70, angle: Math.PI * 1.4,  speed: -0.009, rot: 0, rotSpd: 0.022 },
+    { draw: drawTile,  orbitR: 1.58, angle: Math.PI * 1.85, speed:  0.008, rot: 0, rotSpd: 0.018 },
+  ];
+
+  var lon0 = 20; /* starting central longitude */
+
+  function resize() {
+    canvas.width  = canvas.parentElement.offsetWidth;
+    canvas.height = canvas.parentElement.offsetHeight || 280;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function frame() {
+    var W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    var r  = Math.min(H * 0.42, W * 0.21);
+    var cx = W > 700 ? W * 0.72 : W * 0.5;
+    var cy = H * 0.5;
+
+    /* Ocean */
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(10,30,54,0.88)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(200,155,60,0.45)'; ctx.lineWidth = 2; ctx.stroke();
+
+    /* Clip to globe */
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx, cy, r - 1, 0, Math.PI * 2); ctx.clip();
+
+    /* Latitude / longitude grid */
+    ctx.strokeStyle = 'rgba(200,155,60,0.13)'; ctx.lineWidth = 0.6;
+    [-60,-30,0,30,60].forEach(function(lat) {
+      ctx.beginPath(); var go = false;
+      for (var ln = -180; ln <= 180; ln += 4) {
+        var p = project(ln, lat, lon0, cx, cy, r);
+        if (p.v) { go ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); go = true; } else { go = false; }
+      }
+      ctx.stroke();
+    });
+    [-150,-120,-90,-60,-30,0,30,60,90,120,150,180].forEach(function(lon) {
+      ctx.beginPath(); var go = false;
+      for (var lt = -85; lt <= 85; lt += 4) {
+        var p = project(lon, lt, lon0, cx, cy, r);
+        if (p.v) { go ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); go = true; } else { go = false; }
+      }
+      ctx.stroke();
     });
 
-    renderer.render(scene, camera);
-  }
-  animate();
+    /* Continents */
+    ctx.fillStyle = 'rgba(40,140,90,0.72)';
+    ctx.strokeStyle = 'rgba(70,180,115,0.5)'; ctx.lineWidth = 0.7;
+    CONTINENTS.forEach(function(poly) {
+      ctx.beginPath(); var go = false;
+      poly.forEach(function(pt) {
+        var p = project(pt[0], pt[1], lon0, cx, cy, r);
+        if (p.v) { go ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); go = true; } else { go = false; }
+      });
+      ctx.fill(); ctx.stroke();
+    });
 
-  window.addEventListener('resize', function () {
-    W = canvas.parentElement.offsetWidth;
-    H = canvas.parentElement.offsetHeight || 260;
-    camera.aspect = W / H;
-    camera.updateProjectionMatrix();
-    renderer.setSize(W, H);
-  });
+    ctx.restore(); /* end clip */
+
+    /* Culture dots */
+    CULTURES.forEach(function(c) {
+      var p = project(c.lon, c.lat, lon0, cx, cy, r);
+      if (!p.v) return;
+      /* glow */
+      var g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 0.07);
+      g.addColorStop(0, 'rgba(255,90,90,1)'); g.addColorStop(1, 'rgba(255,90,90,0)');
+      ctx.beginPath(); ctx.arc(p.x, p.y, r * 0.07, 0, Math.PI * 2);
+      ctx.fillStyle = g; ctx.fill();
+      /* dot */
+      ctx.beginPath(); ctx.arc(p.x, p.y, r * 0.028, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,70,70,1)'; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,180,180,0.9)'; ctx.lineWidth = 1; ctx.stroke();
+    });
+
+    /* Orbiting game pieces */
+    var sz = r * 0.28;
+    PIECES.forEach(function(pc) {
+      var px = cx + r * pc.orbitR * Math.cos(pc.angle);
+      var py = cy + r * pc.orbitR * Math.sin(pc.angle);
+      pc.draw(ctx, px, py, sz, pc.rot);
+      pc.angle += pc.speed;
+      pc.rot   += pc.rotSpd;
+    });
+
+    lon0 -= 0.12; /* slow globe rotation */
+    requestAnimationFrame(frame);
+  }
+  frame();
 }());
 
 /* ── Game card 3D tilt ── */
