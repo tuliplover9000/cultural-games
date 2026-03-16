@@ -87,40 +87,38 @@
     btn.innerHTML = isDark ? SVG_SUN : SVG_MOON;
   }
 
-  function _placeBtn(btn) {
-    // Prefer: right after #nav-auth (sign-in button / account widget).
-    // Fall back: right before .nav-hamburger.
-    var navAuth   = document.getElementById('nav-auth');
-    var hamburger = document.querySelector('.nav-hamburger');
-    if (navAuth) {
-      navAuth.parentNode.insertBefore(btn, navAuth.nextSibling);
-    } else if (hamburger) {
-      hamburger.parentNode.insertBefore(btn, hamburger);
-    }
-  }
-
   function _injectToggle() {
     if (document.getElementById('theme-toggle')) return;
     var hamburger = document.querySelector('.nav-hamburger');
     if (!hamburger) return;
-    var btn = document.createElement('button');
-    btn.id        = 'theme-toggle';
-    btn.className = 'theme-toggle';
-    btn.type      = 'button';
-    btn.addEventListener('click', _toggle);
-    _placeBtn(btn);
-    _updateBtn();
 
-    // auth.js injects #nav-auth asynchronously (after Supabase resolves).
-    // Once it appears, reposition the toggle to sit after it.
-    if (!document.getElementById('nav-auth')) {
-      var observer = new MutationObserver(function (mutations, obs) {
+    function _doInsert() {
+      if (document.getElementById('theme-toggle')) return;
+      var btn = document.createElement('button');
+      btn.id        = 'theme-toggle';
+      btn.className = 'theme-toggle';
+      btn.type      = 'button';
+      btn.addEventListener('click', _toggle);
+      // Always place immediately after #nav-auth so toggle sits
+      // right beside the sign-in / account widget with no jumping.
+      var navAuth = document.getElementById('nav-auth');
+      navAuth.parentNode.insertBefore(btn, navAuth.nextSibling);
+      _updateBtn();
+    }
+
+    var navAuth = document.getElementById('nav-auth');
+    if (navAuth) {
+      _doInsert();
+    } else {
+      // auth.js injects #nav-auth after Supabase resolves — wait for it
+      // before inserting so the toggle never appears in the wrong place.
+      var obs = new MutationObserver(function (mutations, o) {
         if (document.getElementById('nav-auth')) {
-          obs.disconnect();
-          _placeBtn(btn);
+          o.disconnect();
+          _doInsert();
         }
       });
-      observer.observe(hamburger.parentNode, { childList: true });
+      obs.observe(hamburger.parentNode, { childList: true });
     }
   }
 
