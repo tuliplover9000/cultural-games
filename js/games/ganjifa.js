@@ -677,20 +677,23 @@
       var cardX = startX + i * spacing;
       var cardY = y;
       var isSelected = state.selectedCard && state.selectedCard.id === card.id;
+      var isHovered  = !isSelected && hoveredCard && hoveredCard.id === card.id;
       var isLegal    = legalSet[card.id];
       var isTurn     = state.currentTurn === 'south' && state.phase === 'play';
 
-      if (isSelected) cardY -= 12;
+      var displayR = isHovered ? Math.round(FULL_R * 1.65) : FULL_R;
+      if (isSelected) cardY -= 14;
+      if (isHovered)  cardY -= 22;
 
       ctx.save();
       if (!isTurn || !isLegal) {
-        ctx.globalAlpha = 0.45;
+        ctx.globalAlpha = isHovered ? 0.65 : 0.45;
       }
-      blitCard(cardX, cardY, FULL_R, card, true, isSelected, true /* store in renderedCards */);
+      blitCard(cardX, cardY, displayR, card, true, isSelected, true /* store in renderedCards */);
       ctx.restore();
 
-      // Store position for hit testing
-      renderedCards[card.id] = { cx: cardX, cy: cardY, r: FULL_R };
+      // Store position for hit testing (use actual rendered radius)
+      renderedCards[card.id] = { cx: cardX, cy: cardY, r: displayR };
     }
   }
 
@@ -973,6 +976,28 @@
       requestSelectionAnimation();
     }
   }
+
+  var hoveredCard = null;
+
+  canvas.addEventListener('mousemove', function (e) {
+    var coords = getScaledCoords(e);
+    var card = getCardFromClick(coords.x, coords.y);
+    var prev = hoveredCard;
+    hoveredCard = card || null;
+    var changed = (hoveredCard ? hoveredCard.id : null) !== (prev ? prev.id : null);
+    if (changed) {
+      canvas.style.cursor = hoveredCard ? 'pointer' : 'default';
+      drawFrame();
+    }
+  });
+
+  canvas.addEventListener('mouseleave', function () {
+    if (hoveredCard) {
+      hoveredCard = null;
+      canvas.style.cursor = 'default';
+      drawFrame();
+    }
+  });
 
   var selectionAnimating = false;
   function requestSelectionAnimation() {
