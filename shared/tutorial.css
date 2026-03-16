@@ -208,10 +208,10 @@
 
 /* ── "?" trigger button ───────────────────────────────────────────────────── */
 .tt-trigger {
-  position: fixed;
-  top: calc(var(--nav-height) + 10px);
-  right: 14px;
-  z-index: 200;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
   width: 36px;
   height: 36px;
   border-radius: var(--radius-full);

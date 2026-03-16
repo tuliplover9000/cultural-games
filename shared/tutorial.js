@@ -63,6 +63,13 @@
     _el.badge   = document.getElementById('tt-badge');
     if (!_el.trigger) return;
 
+    // Move the button inside the game container so it sits within
+    // the gold-bordered game area rather than floating over the page.
+    var gc = document.querySelector('.game-container');
+    if (gc) {
+      gc.appendChild(_el.trigger);
+    }
+
     var seen = false;
     try { seen = !!localStorage.getItem(STORAGE_PREFIX + gameId); } catch (e) {}
     if (!seen && _el.badge) _el.badge.removeAttribute('hidden');

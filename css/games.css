@@ -161,6 +161,7 @@
   overflow: hidden;
   min-height: 400px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  position: relative;
 }
 
 .game-container__inner {
