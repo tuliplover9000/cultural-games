@@ -364,16 +364,26 @@
     return _stats[gameId] || { wins: 0, losses: 0, played: 0 };
   }
 
+  // Coin reward table — long-form games pay more for both outcomes.
+  // Short-form games: win = 100, loss = 0.
+  var COIN_REWARDS = {
+    'mahjong':  { win: 500, loss: 150 },
+    'tien-len': { win: 500, loss: 150 },
+    'pachisi':  { win: 500, loss: 150 },
+  };
+
   function recordResult(gameId, outcome) {
     if (!_user || !_accessToken) return;
     if (!_stats[gameId]) _stats[gameId] = { wins: 0, losses: 0, played: 0 };
     _stats[gameId].played++;
     if (outcome === 'win')  _stats[gameId].wins++;
     if (outcome === 'loss') _stats[gameId].losses++;
-    // Award coins: +10 for playing, +50 bonus for winning
-    var coinDelta = 10;
-    if (outcome === 'win') coinDelta += 50;
-    addCoins(coinDelta);
+    // Award coins based on game type
+    var rewards   = COIN_REWARDS[gameId] || { win: 100, loss: 0 };
+    var coinDelta = outcome === 'win'  ? rewards.win
+                  : outcome === 'loss' ? rewards.loss
+                  : 0;
+    if (coinDelta > 0) addCoins(coinDelta);
     // Fire-and-forget upsert using authed client (RLS requires JWT)
     _authedSB().from('stats').upsert({
       user_id: _user.id,
