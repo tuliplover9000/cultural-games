@@ -191,14 +191,14 @@
       if (Array.isArray(cached)) _favorites = new Set(cached);
     } catch (e) {}
 
-    // Then confirm from server and update cache (only if no DB error)
+    // Then confirm from server using authed client (RLS policy requires user JWT)
     try {
-      var res = await getSB().from('favorites').select('game_key').eq('user_id', userId);
-      if (!res.error && res.data) {
+      var res = await _authedSB().from('favorites').select('game_key').eq('user_id', userId);
+      if (!res.error && Array.isArray(res.data)) {
         _favorites = new Set(res.data.map(function (r) { return r.game_key; }));
         _saveFavCache(userId);
       }
-      // If res.error (e.g. table doesn't exist yet), keep the localStorage cache
+      // If res.error (table missing, auth issue, etc), keep the localStorage cache
     } catch (e) { /* keep cache */ }
   }
 
