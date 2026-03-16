@@ -110,8 +110,8 @@
   var BASE_W  = 900;
   var BASE_H  = 660;
   var HAND_H  = 80;
-  var SOUTH_H = 122;  // two rows of cards
-  var FULL_R  = 23;
+  var SOUTH_H = 134;  // two rows of cards
+  var FULL_R  = 26;
   var AI_R    = 22;
   var TRICK_R = 44;
   var CACHE_R = 50;
