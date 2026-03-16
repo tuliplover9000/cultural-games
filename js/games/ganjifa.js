@@ -110,7 +110,7 @@
   var BASE_W  = 900;
   var BASE_H  = 660;
   var HAND_H  = 80;
-  var SOUTH_H = 95;
+  var SOUTH_H = 168;  // two rows of cards
   var FULL_R  = 36;
   var AI_R    = 22;
   var TRICK_R = 44;
@@ -658,43 +658,62 @@
     var n = hand.length;
     if (n === 0) return;
 
-    var legal = getLegalPlays(
-      hand,
-      state.ledSuit,
-      state.currentTurn === 'south' && !state.ledSuit
-    );
+    var isTurn = state.currentTurn === 'south' && state.phase === 'play';
+    var legal  = getLegalPlays(hand, state.ledSuit, isTurn && !state.ledSuit);
     var legalSet = {};
     legal.forEach(function (c) { legalSet[c.id] = true; });
 
-    var maxWidth = TABLE_W - 20;
-    var spacing  = Math.min(FULL_R * 2.2, maxWidth / Math.max(n - 1, 1));
-    var totalW   = (n - 1) * spacing + FULL_R * 2;
-    var startX   = CX - totalW / 2 + FULL_R;
-    var y = BASE_H - SOUTH_H / 2;
+    // Split into two rows of up to 12
+    var row1 = hand.slice(0, Math.ceil(n / 2));
+    var row2 = hand.slice(Math.ceil(n / 2));
 
-    for (var i = 0; i < n; i++) {
-      var card = hand[i];
-      var cardX = startX + i * spacing;
-      var cardY = y;
-      var isSelected = state.selectedCard && state.selectedCard.id === card.id;
-      var isHovered  = !isSelected && hoveredCard && hoveredCard.id === card.id;
-      var isLegal    = legalSet[card.id];
-      var isTurn     = state.currentTurn === 'south' && state.phase === 'play';
+    // Which card pops out: selected takes priority, then hovered (only if nothing selected)
+    var popCard = state.selectedCard || (!state.selectedCard ? hoveredCard : null);
 
-      var displayR = isHovered ? Math.round(FULL_R * 1.65) : FULL_R;
-      if (isSelected) cardY -= 14;
-      if (isHovered)  cardY -= 22;
+    var pad = 12;
+    var rowSpacing = FULL_R * 2 + 8;
+    var row1Y = BASE_H - SOUTH_H + FULL_R + pad;
+    var row2Y = row1Y + rowSpacing;
 
-      ctx.save();
-      if (!isTurn || !isLegal) {
-        ctx.globalAlpha = isHovered ? 0.65 : 0.45;
-      }
-      blitCard(cardX, cardY, displayR, card, true, isSelected, true /* store in renderedCards */);
-      ctx.restore();
-
-      // Store position for hit testing (use actual rendered radius)
-      renderedCards[card.id] = { cx: cardX, cy: cardY, r: displayR };
+    function rowStartX(row) {
+      var perRow  = row.length;
+      var spacing = Math.min(FULL_R * 2.05, (BASE_W - FULL_R * 2 - 16) / Math.max(perRow - 1, 1));
+      var totalW  = (perRow - 1) * spacing + FULL_R * 2;
+      return { startX: CX - totalW / 2 + FULL_R, spacing: spacing };
     }
+
+    function drawRow(row, baseY, renderFirst) {
+      var rx = rowStartX(row);
+      // Render non-popped cards first so popped card always draws on top
+      var order = renderFirst ? [] : [];
+      for (var i = 0; i < row.length; i++) {
+        var card    = row[i];
+        var isPopped   = popCard && popCard.id === card.id;
+        var isSelected = state.selectedCard && state.selectedCard.id === card.id;
+        var isLegal    = legalSet[card.id];
+        var cx = rx.startX + i * rx.spacing;
+        var cy = baseY;
+
+        if (isPopped) cy -= 20;
+
+        var displayR = isPopped ? Math.round(FULL_R * 1.6) : FULL_R;
+
+        ctx.save();
+        if (isTurn && !isPopped && !isLegal) {
+          ctx.globalAlpha = 0.4;
+        } else if (!isTurn) {
+          ctx.globalAlpha = isPopped ? 0.85 : 0.6;
+        }
+        blitCard(cx, cy, displayR, card, true, isSelected);
+        ctx.restore();
+
+        renderedCards[card.id] = { cx: cx, cy: cy, r: displayR };
+      }
+    }
+
+    // Render back row first, then front row (front row appears on top)
+    drawRow(row1, row1Y);
+    drawRow(row2, row2Y);
   }
 
   function blitCard(cx, cy, r, card, faceUp, selected, storeHit) {
@@ -927,9 +946,13 @@
 
   function getCardFromClick(x, y) {
     var hand = state.hands.south;
-    // Iterate in reverse order so topmost card gets hit first
-    for (var i = hand.length - 1; i >= 0; i--) {
-      var card = hand[i];
+    var n    = hand.length;
+    // Check front row (row2) first, then back row (row1), each in reverse render order
+    var row2 = hand.slice(Math.ceil(n / 2));
+    var row1 = hand.slice(0, Math.ceil(n / 2));
+    var checkOrder = row2.concat(row1).reverse();
+    for (var i = 0; i < checkOrder.length; i++) {
+      var card = checkOrder[i];
       var pos  = renderedCards[card.id];
       if (!pos) continue;
       var dx = x - pos.cx;
