@@ -87,7 +87,7 @@
   /* Summary stats bar */
   .acc-summary {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     border-top: 1px solid rgba(255,255,255,0.08);
   }
   .acc-stat {
@@ -116,11 +116,18 @@
     text-transform: uppercase;
     color: rgba(255,255,255,0.38);
   }
-  @media (max-width: 520px) {
+  @media (max-width: 640px) {
+    .acc-summary { grid-template-columns: repeat(3, 1fr); }
+    .acc-stat:nth-child(3n) { border-right: none; }
+    .acc-stat:nth-child(4),
+    .acc-stat:nth-child(5) { border-top: 1px solid rgba(255,255,255,0.08); }
+  }
+  @media (max-width: 400px) {
     .acc-summary { grid-template-columns: repeat(2, 1fr); }
     .acc-stat:nth-child(2n) { border-right: none; }
     .acc-stat:nth-child(3),
-    .acc-stat:nth-child(4) { border-top: 1px solid rgba(255,255,255,0.08); }
+    .acc-stat:nth-child(4),
+    .acc-stat:nth-child(5) { border-top: 1px solid rgba(255,255,255,0.08); }
   }
 
   /* ── Body sections ── */
@@ -400,6 +407,11 @@
               <span class="acc-stat__num" id="stat-favs">—</span>
               <span class="acc-stat__label">Favorites</span>
             </div>
+            <div class="acc-stat">
+              <span class="acc-stat__icon" aria-hidden="true">💰</span>
+              <span class="acc-stat__num" id="stat-coins">—</span>
+              <span class="acc-stat__label">Coins</span>
+            </div>
           </div>
         </div>
       </section>
@@ -504,11 +516,13 @@
 
       var winRate  = totalPlayed > 0 ? Math.round(totalWins / totalPlayed * 100) : 0;
       var favCount = Auth.getFavorites ? Auth.getFavorites().length : 0;
+      var coins    = Auth.getCoins    ? Auth.getCoins()             : 0;
 
       countUp(document.getElementById('stat-played'),   totalPlayed,          '',  120);
       countUp(document.getElementById('stat-winrate'),  winRate,              '%', 220);
       countUp(document.getElementById('stat-cultures'), culturesPlayed.size,  '',  320);
       countUp(document.getElementById('stat-favs'),     favCount,             '',  420);
+      countUp(document.getElementById('stat-coins'),    coins,                '',  520);
     }
 
     /* ── favorites ── */

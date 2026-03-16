@@ -7,6 +7,15 @@
 (function () {
   'use strict';
 
+  // Track awarded game instance to prevent double-awarding on re-renders
+  var _lastAwardedHash = null;
+
+  function _instanceHash(instances) {
+    return (instances || []).map(function(i) {
+      return (i.instance_id || '') + ':' + (i.winner_pid || '');
+    }).join('|');
+  }
+
   var elEndscreen    = document.getElementById('room-endscreen');
   var elSingle       = document.getElementById('endscreen-single');
   var elDual         = document.getElementById('endscreen-dual');
@@ -92,6 +101,29 @@
 
     renderLeaderboard(room);
 
+    // ── Coin rewards + bet resolution (once per unique game result) ──────────
+    var hash = _instanceHash(room.game_instances);
+    if (hash && hash !== _lastAwardedHash && window.Auth && Auth.isLoggedIn()) {
+      _lastAwardedHash = hash;
+      var myPid     = Room.getPlayerId();
+      var gameId    = room.selected_game || 'unknown';
+      var bets      = room.bets || {};
+      var myBet     = bets[myPid] || 0;
+
+      if (!dual) {
+        var winnerPid = (instances[0] || {}).winner_pid;
+        var isWinner  = myPid === winnerPid;
+        Auth.recordResult(gameId, isWinner ? 'win' : 'loss');
+        if (myBet > 0) {
+          Auth.addCoins(isWinner ? myBet * 2 : -myBet); // win: return stake + profit; lose: deduct stake
+        }
+      } else {
+        // Dual instance: check if current player won either of the two sub-games
+        var dualWon = (instances[0] || {}).winner_pid === myPid || (instances[1] || {}).winner_pid === myPid;
+        Auth.recordResult(gameId, dualWon ? 'win' : 'loss');
+      }
+    }
+
     // Only host buttons are functional
     var isHost = Room.amHost();
     elRematchBtn.disabled = !isHost;
@@ -118,6 +150,9 @@
     });
   }
 
-  window.Endscreen = { show: show };
+  window.Endscreen = {
+    show: show,
+    reset: function() { _lastAwardedHash = null; },
+  };
 
 }());

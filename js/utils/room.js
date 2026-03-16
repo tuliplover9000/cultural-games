@@ -337,11 +337,19 @@
       await db().from('rooms').update({ player_wins: wins }).eq('id', _room.id);
     },
 
+    placeBet: async function (amount) {
+      if (!_room) return;
+      var bets = Object.assign({}, _room.bets || {});
+      bets[getPlayerId()] = Math.max(0, amount || 0);
+      await db().from('rooms').update({ bets: bets }).eq('id', _room.id);
+    },
+
     rematch: async function () {
       if (!_room) return;
       await db().from('rooms').update({
         status:         'playing',
         game_instances: [],
+        bets:           {},
       }).eq('id', _room.id);
     },
 
@@ -355,6 +363,7 @@
         player_roles:   {},
         player_ready:   {},
         dual_instance:  false,
+        bets:           {},
       }).eq('id', _room.id);
     },
 

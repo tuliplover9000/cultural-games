@@ -79,6 +79,28 @@
           <ul id="lobby-player-list" class="lobby-player-list" role="list">
             <!-- Populated by lobby.js -->
           </ul>
+
+          <!-- Coin balance + bet panel (logged-in users only) -->
+          <div id="lobby-bet-panel" class="lobby-bet-panel" hidden>
+            <div class="lobby-bet__header">
+              <span class="lobby-bet__title">💰 Coins</span>
+              <span id="lobby-bet-balance" class="lobby-bet__balance">0</span>
+            </div>
+            <p class="lobby-bet__hint">Bet on yourself to win!</p>
+            <div class="lobby-bet__row">
+              <input
+                id="lobby-bet-input"
+                class="lobby-bet-input"
+                type="number"
+                min="0"
+                step="10"
+                placeholder="Amount"
+                aria-label="Bet amount"
+              />
+              <button id="lobby-bet-btn" class="btn btn-primary btn-sm">Bet</button>
+            </div>
+            <p id="lobby-bet-status" class="lobby-bet-status" hidden></p>
+          </div>
         </aside>
 
         <!-- CENTER: Game browser + suggestions / active game -->

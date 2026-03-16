@@ -209,6 +209,7 @@
   position: relative;
   display: flex;
   align-items: center;
+  gap: 8px;
 }
 
 /* Logged-out Sign In button */
@@ -270,6 +271,22 @@
   color: rgba(255, 255, 255, 0.85);
 }
 .nav-auth__caret { font-size: 10px; color: rgba(255, 255, 255, 0.5); }
+
+/* Coin balance badge in nav */
+.nav-coins {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-accent-gold);
+  background: rgba(200, 155, 60, 0.12);
+  border: 1px solid rgba(200, 155, 60, 0.3);
+  border-radius: var(--radius-full);
+  padding: 3px 10px;
+  white-space: nowrap;
+  pointer-events: none;
+}
 
 /* Dropdown */
 .nav-auth__dropdown {

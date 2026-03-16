@@ -27,6 +27,10 @@
  *   create policy "own insert"    on stats for insert with check (auth.uid() = user_id);
  *   create policy "own update"    on stats for update using (auth.uid() = user_id);
  *
+ * Coins + betting (run once):
+ *   alter table profiles add column if not exists coins integer not null default 0;
+ *   alter table rooms    add column if not exists bets  jsonb   not null default '{}';
+ *
  * Also go to Supabase → Authentication → Settings and DISABLE "Enable email confirmations"
  * so users can sign in immediately after registering.
  */
@@ -59,6 +63,7 @@
   var _profile      = null;  // { username, created_at }
   var _stats        = {};    // { gameId: { wins, losses, played } }
   var _favorites    = new Set(); // Set of favorited game keys
+  var _coins        = 0;         // coin balance
   var _refreshTimer = null;  // proactive token refresh timer
   var _listeners    = [];
 
@@ -133,7 +138,7 @@
         _emit();
       } else {
         _clearSession();
-        _user = null; _profile = null; _stats = {}; _favorites = new Set();
+        _user = null; _profile = null; _stats = {}; _favorites = new Set(); _coins = 0;
         _emit();
       }
     }, msUntilRefresh);
@@ -221,6 +226,16 @@
 
   function getFavorites() { return Array.from(_favorites); }
 
+  /* ── Coins ── */
+  function getCoins() { return _coins; }
+
+  async function addCoins(delta) {
+    if (!_user || !_accessToken) return;
+    _coins = Math.max(0, _coins + delta);
+    _authedSB().from('profiles').update({ coins: _coins }).eq('id', _user.id);
+    _emit();
+  }
+
   async function toggleFavorite(gameKey) {
     if (!_user || !_accessToken) return false;
     if (_favorites.has(gameKey)) {
@@ -238,10 +253,11 @@
   /* ── Load profile + stats from DB after auth ── */
   async function _loadUserData(user) {
     _user = user;
-    if (!user) { _profile = null; _stats = {}; _favorites = new Set(); return; }
+    if (!user) { _profile = null; _stats = {}; _favorites = new Set(); _coins = 0; return; }
 
-    var pRes = await getSB().from('profiles').select('username,created_at').eq('id', user.id).single();
+    var pRes = await getSB().from('profiles').select('username,created_at,coins').eq('id', user.id).single();
     _profile = pRes.data || { username: user.email.split('@')[0], created_at: user.created_at };
+    _coins   = (pRes.data && pRes.data.coins) || 0;
 
     var sRes = await getSB().from('stats').select('game_id,wins,losses,played').eq('user_id', user.id);
     _stats = {};
@@ -340,7 +356,7 @@
     }
     if (_user) { try { localStorage.removeItem(_favCacheKey(_user.id)); } catch (e) {} }
     _clearSession();
-    _user = null; _profile = null; _stats = {}; _favorites = new Set();
+    _user = null; _profile = null; _stats = {}; _favorites = new Set(); _coins = 0;
     _emit();
   }
 
@@ -354,6 +370,10 @@
     _stats[gameId].played++;
     if (outcome === 'win')  _stats[gameId].wins++;
     if (outcome === 'loss') _stats[gameId].losses++;
+    // Award coins: +10 for playing, +50 bonus for winning
+    var coinDelta = 10;
+    if (outcome === 'win') coinDelta += 50;
+    addCoins(coinDelta);
     // Fire-and-forget upsert using authed client (RLS requires JWT)
     _authedSB().from('stats').upsert({
       user_id: _user.id,
@@ -572,6 +592,7 @@
 
       container.innerHTML =
         '<div class="nav-auth">' +
+          '<span class="nav-coins" aria-label="Coin balance" title="Your coins">💰 ' + _coins.toLocaleString() + '</span>' +
           '<button class="nav-auth__trigger" id="nav-auth-trigger" aria-haspopup="true" aria-expanded="false">' +
             '<span class="nav-auth__avatar" aria-hidden="true">' + init + '</span>' +
             '<span class="nav-auth__name">' + uname + '</span>' +
@@ -739,6 +760,8 @@
     isFavorite:     isFavorite,
     getFavorites:   getFavorites,
     toggleFavorite: toggleFavorite,
+    getCoins:       getCoins,
+    addCoins:       addCoins,
     GAMES:          GAMES,
   };
 

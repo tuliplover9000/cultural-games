@@ -46,6 +46,12 @@
   var elChatForm        = document.getElementById('lobby-chat-form');
   var elChatInput       = document.getElementById('lobby-chat-input');
 
+  var elBetPanel   = document.getElementById('lobby-bet-panel');
+  var elBetBalance = document.getElementById('lobby-bet-balance');
+  var elBetInput   = document.getElementById('lobby-bet-input');
+  var elBetBtn     = document.getElementById('lobby-bet-btn');
+  var elBetStatus  = document.getElementById('lobby-bet-status');
+
   var elAssignModal     = document.getElementById('room-assign-modal');
   var elAssignDesc      = document.getElementById('assign-desc');
   var elAssignPlayerList= document.getElementById('assign-player-list');
@@ -464,12 +470,31 @@
     };
   }
 
+  // ── Bet panel ──────────────────────────────────────────────────────────────
+  function updateBetPanel(room) {
+    if (!elBetPanel) return;
+    if (!window.Auth || !Auth.isLoggedIn()) { elBetPanel.hidden = true; return; }
+    elBetPanel.hidden = false;
+    var coins = Auth.getCoins ? Auth.getCoins() : 0;
+    elBetBalance.textContent = coins.toLocaleString();
+    var r    = room || (window.Room && Room.currentRoom()) || {};
+    var bets = r.bets || {};
+    var myBet = bets[Room.getPlayerId()] || 0;
+    if (myBet > 0) {
+      elBetStatus.textContent = 'Your bet: ' + myBet.toLocaleString() + ' coins';
+      elBetStatus.hidden = false;
+    } else {
+      elBetStatus.hidden = true;
+    }
+  }
+
   // ── Main render ────────────────────────────────────────────────────────────
   function renderLobby(room) {
     elCodeDisplay.textContent = room.code;
     renderPlayerList(room);
     renderGameGrid();       // re-render so host/guest button state is always current
     renderSuggestions(room);
+    updateBetPanel(room);
   }
 
   // ── Transitions ────────────────────────────────────────────────────────────
@@ -480,6 +505,8 @@
     document.getElementById('room-endscreen').hidden = true;
     // Restore center panel to game-selector view
     if (window.Ingame && window.Ingame.hideBoardFrame) window.Ingame.hideBoardFrame();
+    // Allow coins to be re-awarded for next game
+    if (window.Endscreen && Endscreen.reset) Endscreen.reset();
   }
 
   // ── Initialise ─────────────────────────────────────────────────────────────
@@ -604,8 +631,31 @@
     applyFilter();
   });
 
+  // Bet button
+  if (elBetBtn) {
+    elBetBtn.addEventListener('click', function() {
+      var amount = parseInt(elBetInput.value, 10) || 0;
+      if (amount < 0) return;
+      var coins = window.Auth && Auth.getCoins ? Auth.getCoins() : 0;
+      if (amount > coins) {
+        elBetStatus.textContent = 'Not enough coins! (Balance: ' + coins.toLocaleString() + ')';
+        elBetStatus.hidden = false;
+        return;
+      }
+      elBetBtn.disabled = true;
+      Room.placeBet(amount).then(function() {
+        elBetInput.value = '';
+        elBetBtn.disabled = false;
+        updateBetPanel();
+      });
+    });
+  }
+
   // Re-render game grid when auth state / favorites change
-  if (window.Auth && Auth.onAuthChange) Auth.onAuthChange(renderGameGrid);
+  if (window.Auth && Auth.onAuthChange) Auth.onAuthChange(function() {
+    renderGameGrid();
+    updateBetPanel();
+  });
 
   // Boot
   init();
