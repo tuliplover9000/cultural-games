@@ -401,19 +401,7 @@
   var canvas = document.getElementById('browse-bg-canvas');
   if (!canvas) return;
   var ctx = canvas.getContext('2d');
-
-  /* Enable pointer events so the globe is draggable */
   canvas.style.pointerEvents = 'auto';
-
-  var CONTINENTS = [
-    [[-18,37],[37,37],[51,12],[44,11],[43,-12],[36,-28],[19,-35],[17,-29],[-1,5],[-5,5],[-18,15],[-18,37]],
-    [[-10,36],[28,36],[36,46],[28,60],[24,70],[15,70],[5,62],[-10,56],[-10,36]],
-    [[26,70],[60,70],[75,75],[110,75],[142,70],[170,65],[145,45],[135,35],[125,20],[120,5],[100,0],[95,10],[90,23],[70,8],[55,12],[44,11],[43,20],[37,20],[30,37],[36,46],[26,70]],
-    [[-168,72],[-130,72],[-120,60],[-90,50],[-80,48],[-70,45],[-75,35],[-80,25],[-90,20],[-83,10],[-77,8],[-60,10],[-55,65],[-65,75],[-100,75],[-168,72]],
-    [[-78,12],[-62,12],[-50,5],[-35,-5],[-40,-20],[-60,-40],[-75,-50],[-70,-55],[-67,-55],[-55,-35],[-40,-23],[-35,-10],[-50,2],[-78,12]],
-    [[114,-22],[130,-15],[140,-15],[150,-25],[155,-30],[150,-38],[140,-38],[130,-33],[115,-35],[114,-22]],
-    [[-50,80],[-20,80],[-20,75],[-30,70],[-45,65],[-55,65],[-55,75],[-50,80]],
-  ];
 
   var CULTURES = [
     { lat: 16,  lon: 106 }, { lat: 8,   lon: -2  },
@@ -421,6 +409,8 @@
     { lat: -19, lon: 47  }, { lat: 35,  lon: 105 },
     { lat: 62,  lon: 15  }, { lat: 23,  lon: 80  },
   ];
+
+  var POLYS = []; /* filled after GeoJSON loads */
 
   function project(lon, lat, lon0, cx, cy, r) {
     var lam = (lon - lon0) * Math.PI / 180;
@@ -434,27 +424,22 @@
 
   function globeBounds() {
     var W = canvas.width, H = canvas.height;
-    var r  = Math.min(H * 0.42, W * 0.21);
-    var cx = W > 700 ? W * 0.72 : W * 0.5;
-    var cy = H * 0.5;
-    return { r: r, cx: cx, cy: cy };
+    return {
+      r:  Math.min(H * 0.42, W * 0.21),
+      cx: W > 700 ? W * 0.72 : W * 0.5,
+      cy: H * 0.5,
+    };
   }
 
   function inGlobe(ex, ey) {
     var rect = canvas.getBoundingClientRect();
-    var scaleX = canvas.width  / rect.width;
-    var scaleY = canvas.height / rect.height;
     var b = globeBounds();
-    var dx = (ex - rect.left) * scaleX - b.cx;
-    var dy = (ey - rect.top)  * scaleY - b.cy;
+    var dx = (ex - rect.left) * (canvas.width  / rect.width)  - b.cx;
+    var dy = (ey - rect.top)  * (canvas.height / rect.height) - b.cy;
     return dx * dx + dy * dy <= b.r * b.r;
   }
 
-  /* ── Drag state ── */
-  var lon0      = 20;
-  var isDragging = false;
-  var lastX      = 0;
-  var spinVel    = -0.12; /* auto-spin speed (deg/frame) */
+  var lon0 = 20, isDragging = false, lastX = 0, spinVel = -0.12;
 
   canvas.addEventListener('mousedown', function (e) {
     if (!inGlobe(e.clientX, e.clientY)) return;
@@ -462,32 +447,19 @@
     canvas.style.cursor = 'grabbing';
   });
   window.addEventListener('mousemove', function (e) {
-    if (!isDragging) {
-      canvas.style.cursor = inGlobe(e.clientX, e.clientY) ? 'grab' : '';
-      return;
-    }
-    spinVel = -(e.clientX - lastX) * 0.35;
-    lon0 += spinVel;
-    lastX = e.clientX;
+    if (!isDragging) { canvas.style.cursor = inGlobe(e.clientX, e.clientY) ? 'grab' : ''; return; }
+    spinVel = -(e.clientX - lastX) * 0.35; lon0 += spinVel; lastX = e.clientX;
   });
-  window.addEventListener('mouseup', function () {
-    if (!isDragging) return;
-    isDragging = false;
-    canvas.style.cursor = '';
-  });
+  window.addEventListener('mouseup', function () { isDragging = false; canvas.style.cursor = ''; });
 
   canvas.addEventListener('touchstart', function (e) {
     var t = e.touches[0];
     if (!inGlobe(t.clientX, t.clientY)) return;
-    isDragging = true; lastX = t.clientX; spinVel = 0;
-    e.preventDefault();
+    isDragging = true; lastX = t.clientX; spinVel = 0; e.preventDefault();
   }, { passive: false });
   window.addEventListener('touchmove', function (e) {
     if (!isDragging) return;
-    var t = e.touches[0];
-    spinVel = -(t.clientX - lastX) * 0.35;
-    lon0 += spinVel; lastX = t.clientX;
-    e.preventDefault();
+    var t = e.touches[0]; spinVel = -(t.clientX - lastX) * 0.35; lon0 += spinVel; lastX = t.clientX; e.preventDefault();
   }, { passive: false });
   window.addEventListener('touchend', function () { isDragging = false; });
 
@@ -498,15 +470,19 @@
   resize();
   window.addEventListener('resize', resize);
 
-  function frame() {
-    if (!isDragging) {
-      spinVel = spinVel * 0.92 + (-0.12) * 0.08; /* decay toward auto-spin */
-      lon0 += spinVel;
+  function drawPoly(poly, cx, cy, r) {
+    ctx.beginPath(); var go = false;
+    for (var i = 0; i < poly.length; i++) {
+      var p = project(poly[i][0], poly[i][1], lon0, cx, cy, r);
+      if (p.v) { go ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); go = true; } else { go = false; }
     }
+    ctx.fill(); ctx.stroke();
+  }
 
+  function frame() {
+    if (!isDragging) { spinVel = spinVel * 0.92 + (-0.12) * 0.08; lon0 += spinVel; }
     var W = canvas.width, H = canvas.height;
     ctx.clearRect(0, 0, W, H);
-
     var b = globeBounds(), r = b.r, cx = b.cx, cy = b.cy;
 
     /* Ocean */
@@ -518,10 +494,10 @@
     ctx.beginPath(); ctx.arc(cx, cy, r - 1, 0, Math.PI * 2); ctx.clip();
 
     /* Grid */
-    ctx.strokeStyle = 'rgba(200,155,60,0.13)'; ctx.lineWidth = 0.6;
+    ctx.strokeStyle = 'rgba(200,155,60,0.12)'; ctx.lineWidth = 0.5;
     [-60,-30,0,30,60].forEach(function (lat) {
       ctx.beginPath(); var go = false;
-      for (var ln = -180; ln <= 180; ln += 4) {
+      for (var ln = -180; ln <= 180; ln += 3) {
         var p = project(ln, lat, lon0, cx, cy, r);
         if (p.v) { go ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); go = true; } else { go = false; }
       }
@@ -529,24 +505,17 @@
     });
     [-150,-120,-90,-60,-30,0,30,60,90,120,150,180].forEach(function (lon) {
       ctx.beginPath(); var go = false;
-      for (var lt = -85; lt <= 85; lt += 4) {
+      for (var lt = -85; lt <= 85; lt += 3) {
         var p = project(lon, lt, lon0, cx, cy, r);
         if (p.v) { go ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); go = true; } else { go = false; }
       }
       ctx.stroke();
     });
 
-    /* Continents */
-    ctx.fillStyle = 'rgba(40,140,90,0.75)';
-    ctx.strokeStyle = 'rgba(70,180,115,0.5)'; ctx.lineWidth = 0.7;
-    CONTINENTS.forEach(function (poly) {
-      ctx.beginPath(); var go = false;
-      poly.forEach(function (pt) {
-        var p = project(pt[0], pt[1], lon0, cx, cy, r);
-        if (p.v) { go ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); go = true; } else { go = false; }
-      });
-      ctx.fill(); ctx.stroke();
-    });
+    /* Land */
+    ctx.fillStyle = 'rgba(40,140,90,0.78)';
+    ctx.strokeStyle = 'rgba(65,170,110,0.45)'; ctx.lineWidth = 0.5;
+    POLYS.forEach(function (poly) { drawPoly(poly, cx, cy, r); });
 
     ctx.restore();
 
@@ -554,18 +523,32 @@
     CULTURES.forEach(function (c) {
       var p = project(c.lon, c.lat, lon0, cx, cy, r);
       if (!p.v) return;
-      var g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 0.07);
-      g.addColorStop(0, 'rgba(255,90,90,0.9)'); g.addColorStop(1, 'rgba(255,90,90,0)');
-      ctx.beginPath(); ctx.arc(p.x, p.y, r * 0.07, 0, Math.PI * 2);
+      var g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 0.065);
+      g.addColorStop(0, 'rgba(255,80,80,0.85)'); g.addColorStop(1, 'rgba(255,80,80,0)');
+      ctx.beginPath(); ctx.arc(p.x, p.y, r * 0.065, 0, Math.PI * 2);
       ctx.fillStyle = g; ctx.fill();
-      ctx.beginPath(); ctx.arc(p.x, p.y, r * 0.028, 0, Math.PI * 2);
-      ctx.fillStyle = '#ff4646'; ctx.fill();
-      ctx.strokeStyle = 'rgba(255,180,180,0.9)'; ctx.lineWidth = 1; ctx.stroke();
+      ctx.beginPath(); ctx.arc(p.x, p.y, r * 0.026, 0, Math.PI * 2);
+      ctx.fillStyle = '#ff4040'; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,170,170,0.9)'; ctx.lineWidth = 1; ctx.stroke();
     });
 
     requestAnimationFrame(frame);
   }
-  frame();
+
+  /* Load real GeoJSON land polygons, then start */
+  fetch('../js/utils/world-land.geojson')
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      data.features.forEach(function (f) {
+        var g = f.geometry;
+        if (g.type === 'Polygon') {
+          POLYS.push(g.coordinates[0]);
+        } else if (g.type === 'MultiPolygon') {
+          g.coordinates.forEach(function (p) { POLYS.push(p[0]); });
+        }
+      });
+      frame();
+    });
 }());
 
 /* ── Game card 3D tilt ── */
