@@ -17,7 +17,7 @@
   color: var(--color-accent-gold);
   cursor: pointer;
   flex-shrink: 0;
-  margin-right: var(--space-1);
+  margin-left: 6px;
   line-height: 1;
   transition: background var(--transition-fast),
               border-color var(--transition-fast),

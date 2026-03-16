@@ -87,6 +87,18 @@
     btn.innerHTML = isDark ? SVG_SUN : SVG_MOON;
   }
 
+  function _placeBtn(btn) {
+    // Prefer: right after #nav-auth (sign-in button / account widget).
+    // Fall back: right before .nav-hamburger.
+    var navAuth   = document.getElementById('nav-auth');
+    var hamburger = document.querySelector('.nav-hamburger');
+    if (navAuth) {
+      navAuth.parentNode.insertBefore(btn, navAuth.nextSibling);
+    } else if (hamburger) {
+      hamburger.parentNode.insertBefore(btn, hamburger);
+    }
+  }
+
   function _injectToggle() {
     if (document.getElementById('theme-toggle')) return;
     var hamburger = document.querySelector('.nav-hamburger');
@@ -96,8 +108,20 @@
     btn.className = 'theme-toggle';
     btn.type      = 'button';
     btn.addEventListener('click', _toggle);
-    hamburger.parentNode.insertBefore(btn, hamburger);
+    _placeBtn(btn);
     _updateBtn();
+
+    // auth.js injects #nav-auth asynchronously (after Supabase resolves).
+    // Once it appears, reposition the toggle to sit after it.
+    if (!document.getElementById('nav-auth')) {
+      var observer = new MutationObserver(function (mutations, obs) {
+        if (document.getElementById('nav-auth')) {
+          obs.disconnect();
+          _placeBtn(btn);
+        }
+      });
+      observer.observe(hamburger.parentNode, { childList: true });
+    }
   }
 
   /* ── 6. Expose global ─────────────────────────────────────────────────── */
