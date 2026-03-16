@@ -141,11 +141,20 @@
   // Re-rendered on each lobby update so host Play buttons reflect current state.
   function renderGameGrid() {
     var isHost = Room.amHost();
-    elGameGrid.innerHTML = GAMES.map(function(g) {
+    var favs   = new Set((window.Auth && Auth.getFavorites) ? Auth.getFavorites() : []);
+
+    // Favorites float to the top, otherwise keep original catalogue order
+    var sorted = GAMES.slice().sort(function(a, b) {
+      return (favs.has(a.key) ? 0 : 1) - (favs.has(b.key) ? 0 : 1);
+    });
+
+    elGameGrid.innerHTML = sorted.map(function(g) {
+      var isFav     = favs.has(g.key);
       var iconInner = g.svg
         ? '<img src="' + g.svg + '" class="lobby-game-card__icon-img" alt="" aria-hidden="true" onerror="this.style.display=\'none\';this.parentNode.textContent=\'' + g.icon + '\'">'
         : g.icon;
       return '<div class="lobby-game-card" role="listitem" data-name="' + esc(g.name) + '" data-culture="' + esc(g.culture || '') + '" data-type="' + esc(g.type || '') + '" data-max-players="' + (g.maxPlayers || '') + '">' +
+        '<button class="lobby-star-btn' + (isFav ? ' lobby-star-btn--on' : '') + '" data-game="' + g.key + '" type="button" aria-label="' + (isFav ? 'Remove from favorites' : 'Add to favorites') + '">' + (isFav ? '★' : '☆') + '</button>' +
         '<span class="lobby-game-card__icon" aria-hidden="true">' + iconInner + '</span>' +
         '<div class="lobby-game-card__info">' +
           '<span class="lobby-game-card__name">' + esc(g.name) + '</span>' +
@@ -157,6 +166,17 @@
         ) +
       '</div>';
     }).join('');
+
+    // Star buttons — toggle favorite
+    elGameGrid.querySelectorAll('.lobby-star-btn').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (window.Auth && Auth.toggleFavorite) {
+          Auth.toggleFavorite(btn.dataset.game);
+          renderGameGrid();
+        }
+      });
+    });
 
     // Host: clicking Play directly selects that game
     elGameGrid.querySelectorAll('.lobby-play-direct-btn').forEach(function(btn) {
@@ -583,6 +603,9 @@
     _filterPlayers = elPlayersFilter.value;
     applyFilter();
   });
+
+  // Re-render game grid when auth state / favorites change
+  if (window.Auth && Auth.onAuthChange) Auth.onAuthChange(renderGameGrid);
 
   // Boot
   init();
