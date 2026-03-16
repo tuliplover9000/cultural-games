@@ -482,7 +482,7 @@
 
 .badge--card {
   background-color: rgba(200, 155, 60, 0.12);
-  color: #9a7520;
+  color: var(--color-accent-gold);
   border-color: rgba(200, 155, 60, 0.3);
 }
 
@@ -509,7 +509,7 @@
 }
 
 .page-placeholder h1 {
-  color: var(--color-primary);
+  color: var(--color-text);
   font-size: clamp(var(--text-3xl), 5vw, var(--text-5xl));
 }
 
@@ -1338,7 +1338,7 @@
   font-family: var(--font-body);
   font-weight: var(--weight-semibold);
   letter-spacing: 0.04em;
-  color: #b8860b;
+  color: #c9a12a;
   background: rgba(201, 161, 42, 0.12);
   border: 1px solid rgba(201, 161, 42, 0.35);
   border-radius: 99px;

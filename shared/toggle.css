@@ -1,0 +1,53 @@
+/* =============================================================================
+   CULTURAL GAMES — shared/toggle.css
+   Theme toggle button widget.
+   Button is injected into .nav-inner by theme.js before .nav-hamburger.
+============================================================================= */
+
+/* ── Button shell ─────────────────────────────────────────────────────────── */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.10);
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  color: var(--color-accent-gold);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-right: var(--space-1);
+  line-height: 1;
+  transition: background var(--transition-fast),
+              border-color var(--transition-fast),
+              transform var(--transition-fast);
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.38);
+  transform: scale(1.08);
+}
+
+.theme-toggle:active {
+  transform: scale(0.93);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--color-accent-gold);
+  outline-offset: 3px;
+}
+
+.theme-toggle svg {
+  pointer-events: none;
+  display: block;
+}
+
+/* ── Mobile nav — hide toggle on very small screens (hamburger takes over) ── */
+@media (max-width: 479px) {
+  .theme-toggle {
+    width: 32px;
+    height: 32px;
+  }
+}

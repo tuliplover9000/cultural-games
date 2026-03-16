@@ -155,7 +155,7 @@
    GAME CONTAINER Ã¢â‚¬â€ where the game canvas renders
 ============================================================================= */
 .game-container {
-  background-color: #f5efe0;
+  background-color: var(--color-surface-alt);
   border: 2px solid var(--color-accent-gold);
   border-radius: var(--radius-xl);
   overflow: hidden;

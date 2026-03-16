@@ -1,0 +1,65 @@
+/* =============================================================================
+   CULTURAL GAMES — shared/theme.css
+   Dark-mode CSS variable overrides.
+   Loaded AFTER global.css so these values take precedence.
+============================================================================= */
+
+/* ── Dark theme overrides ─────────────────────────────────────────────────── */
+[data-theme="dark"] {
+  /* Backgrounds */
+  --color-bg:          #120C05;   /* very dark walnut page bg */
+  --color-surface:     #1E1309;   /* dark warm card/panel surface */
+  --color-surface-alt: #2A1A0E;   /* slightly lifted dark surface */
+
+  /* NOTE: --color-primary is intentionally NOT overridden here.
+     It stays #1A0E06 so the nav and footer remain dark in both themes. */
+
+  /* Text */
+  --color-text:         #F0E6D0;  /* warm parchment — body text on dark bg */
+  --color-text-muted:   #B09070;  /* warm medium — secondary / caption text */
+  --color-text-inverse: #1A0E06;  /* dark text used on gold / accent backgrounds */
+
+  /* Borders & Shadows */
+  --color-border: #3D2A18;
+  --color-shadow: rgba(0, 0, 0, 0.50);
+
+  /* Accents — slightly brightened for readability on dark backgrounds */
+  --color-accent-red:  #C94040;
+  --color-accent-gold: #D4A84B;
+  --color-accent-teal: #3A9990;
+  --color-accent-warm: #E07848;
+}
+
+/* ── Light-mode overrides for components that assume a dark host ─────────── */
+/* Lottery button has a dark wood gradient that blends in dark mode.
+   In light mode we keep it slightly warmer to contrast against parchment. */
+[data-theme="light"] .browse-lottery-btn {
+  background: linear-gradient(135deg, #3d2e10 0%, #5a4318 100%);
+}
+[data-theme="light"] .browse-lottery-btn:hover {
+  background: linear-gradient(135deg, #5a4318 0%, #7a5c20 100%);
+}
+
+/* ── Smooth color transitions on theme switch ─────────────────────────────── */
+body,
+.site-nav,
+.site-footer,
+.game-ticker,
+.browse-hero,
+.card,
+.game-card,
+.game-container,
+.accordion,
+.stat,
+.auth-card,
+.browse-search__input,
+.browse-select,
+.form-input {
+  transition: background-color 250ms ease, color 250ms ease,
+              border-color 250ms ease;
+}
+
+/* ── Flash prevention — no transitions on first load ─────────────────────── */
+html.cg-no-transition * {
+  transition: none !important;
+}
