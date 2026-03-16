@@ -799,6 +799,9 @@
       ctx.fillText(SEAT_LABELS[seat] + ': ' + state.tricksWon[seat], tpX + 10, tpY + 26 + i * 18);
     });
 
+    // Trick log (right column, between round indicator and trump panel)
+    drawTrickLog(panelX, panelY + 145, panelW, TABLE_H - 260);
+
     // Trump indicator (bottom-right of table)
     if (state.trumpSuit) {
       var suit = SUIT_MAP[state.trumpSuit];
@@ -841,6 +844,79 @@
       ctx.fillStyle = 'rgba(245,237,214,0.85)';
       ctx.fillText(turnText, CX, CY + TRICK_R * 2.2 + FULL_R + 18);
     }
+  }
+
+  function drawTrickLog(x, y, w, h) {
+    // Panel background
+    ctx.fillStyle = 'rgba(13,27,62,0.82)';
+    roundRect(ctx, x, y, w, h, 6);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(212,160,23,0.3)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Header
+    ctx.font = 'bold 10px Cinzel, serif';
+    ctx.fillStyle = '#D4A017';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText('TRICK LOG', x + 10, y + 8);
+
+    var history = state.trickHistory;
+    var rowH = 30;
+    var maxRows = Math.floor((h - 24) / rowH);
+
+    if (history.length === 0) {
+      ctx.font = '10px Outfit, sans-serif';
+      ctx.fillStyle = 'rgba(245,237,214,0.3)';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('No tricks played yet', x + w / 2, y + h / 2);
+      return;
+    }
+
+    // Show most-recent tricks first
+    var recent = history.slice(-maxRows).reverse();
+
+    recent.forEach(function (entry, i) {
+      var ry   = y + 24 + i * rowH;
+      var suit = SUIT_MAP[entry.ledSuit];
+      var trickNum = history.length - i;
+
+      // Divider between rows
+      if (i > 0) {
+        ctx.beginPath();
+        ctx.moveTo(x + 8, ry - 1);
+        ctx.lineTo(x + w - 8, ry - 1);
+        ctx.strokeStyle = 'rgba(212,160,23,0.12)';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+
+      // Suit colour dot
+      ctx.beginPath();
+      ctx.arc(x + 16, ry + 10, 7, 0, Math.PI * 2);
+      ctx.fillStyle = suit ? suit.color : '#888';
+      ctx.fill();
+
+      // Trick # and suit name
+      ctx.font = 'bold 9px Cinzel, serif';
+      ctx.fillStyle = '#D4A017';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillText('#' + trickNum, x + 28, ry + 2);
+
+      ctx.font = '9px Outfit, sans-serif';
+      ctx.fillStyle = suit ? suit.color : '#aaa';
+      ctx.fillText(suit ? suit.name : '?', x + 28, ry + 13);
+
+      // Winner
+      ctx.font = '10px Outfit, sans-serif';
+      ctx.fillStyle = entry.winner === 'south' ? '#D4A017' : 'rgba(245,237,214,0.75)';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(SEAT_LABELS[entry.winner] + ' won', x + w - 8, ry + 10);
+    });
   }
 
   function drawOverlay() {
