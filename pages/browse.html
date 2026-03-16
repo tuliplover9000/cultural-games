@@ -412,21 +412,24 @@
 
   var POLYS = []; /* filled after GeoJSON loads */
 
+  var TILT = 28 * Math.PI / 180; /* axial tilt */
+
   function project(lon, lat, lon0, cx, cy, r) {
     var lam = (lon - lon0) * Math.PI / 180;
     var phi = lat * Math.PI / 180;
+    var cosc = Math.sin(TILT) * Math.sin(phi) + Math.cos(TILT) * Math.cos(phi) * Math.cos(lam);
     return {
       x: cx + r * Math.cos(phi) * Math.sin(lam),
-      y: cy - r * Math.sin(phi),
-      v: Math.cos(phi) * Math.cos(lam) >= 0,
+      y: cy - r * (Math.cos(TILT) * Math.sin(phi) - Math.sin(TILT) * Math.cos(phi) * Math.cos(lam)),
+      v: cosc >= 0,
     };
   }
 
   function globeBounds() {
     var W = canvas.width, H = canvas.height;
     return {
-      r:  Math.min(H * 0.42, W * 0.21),
-      cx: W > 700 ? W * 0.72 : W * 0.5,
+      r:  Math.min(H * 0.52, W * 0.24),
+      cx: W > 700 ? W * 0.28 : W * 0.5,
       cy: H * 0.5,
     };
   }
@@ -474,8 +477,15 @@
     ctx.beginPath(); var go = false;
     for (var i = 0; i < poly.length; i++) {
       var p = project(poly[i][0], poly[i][1], lon0, cx, cy, r);
-      if (p.v) { go ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); go = true; } else { go = false; }
+      if (p.v) {
+        go ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
+        go = true;
+      } else {
+        if (go) ctx.closePath(); /* seal visible segment before going behind globe */
+        go = false;
+      }
     }
+    if (go) ctx.closePath();
     ctx.fill(); ctx.stroke();
   }
 
