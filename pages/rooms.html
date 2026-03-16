@@ -178,37 +178,39 @@
   renderer.setSize(W, H);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 100);
-  camera.position.set(W > 600 ? 3.5 : 0, 0, 7);
-  /* Wireframe globe */
-  var sphereGeo = new THREE.SphereGeometry(2.2, 32, 20);
-  var wireGeo   = new THREE.WireframeGeometry(sphereGeo);
-  var wireMat   = new THREE.LineBasicMaterial({ color: 0xC89B3C, transparent: true, opacity: 0.55 });
-  var globe     = new THREE.LineSegments(wireGeo, wireMat);
-  scene.add(globe);
-  /* Culture dots */
-  var cultures = [
-    { lat:  16, lon: 106 }, { lat:   8, lon:  -2 },
-    { lat:  19, lon: -99 }, { lat:  11, lon:  77 },
-    { lat: -19, lon:  47 }, { lat:  35, lon: 105 },
-    { lat:  62, lon:  15 }, { lat:  23, lon:  80 },
+  var camera = new THREE.PerspectiveCamera(55, W / H, 0.1, 100);
+  camera.position.z = 9;
+  var matGold  = new THREE.MeshBasicMaterial({ color: 0xC89B3C, transparent: true, opacity: 0.5 });
+  var matTeal  = new THREE.MeshBasicMaterial({ color: 0x4ecdc4, transparent: true, opacity: 0.5 });
+  var matFaint = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.18 });
+  var group = new THREE.Group();
+  scene.add(group);
+  var defs = [
+    { geo: new THREE.IcosahedronGeometry(1.1),         mat: matGold,  orbit: 0,   speed: 0,      angle: 0             },
+    { geo: new THREE.TorusGeometry(0.55, 0.18, 8, 16), mat: matTeal,  orbit: 2.6, speed: 0.011,  angle: 0             },
+    { geo: new THREE.OctahedronGeometry(0.75),          mat: matFaint, orbit: 1.9, speed: -0.009, angle: Math.PI / 2   },
+    { geo: new THREE.TetrahedronGeometry(0.65),         mat: matTeal,  orbit: 3.1, speed: 0.008,  angle: Math.PI       },
+    { geo: new THREE.BoxGeometry(0.65, 0.65, 0.65),    mat: matGold,  orbit: 2.2, speed: -0.013, angle: Math.PI * 1.5 },
+    { geo: new THREE.IcosahedronGeometry(0.45),         mat: matFaint, orbit: 3.6, speed: 0.015,  angle: Math.PI * 0.75},
   ];
-  var dotMat = new THREE.MeshBasicMaterial({ color: 0xff6b6b });
-  cultures.forEach(function (c) {
-    var phi   = (90 - c.lat) * Math.PI / 180;
-    var theta = (c.lon + 180) * Math.PI / 180;
-    var dot   = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 8), dotMat);
-    dot.position.set(
-      -2.2 * Math.sin(phi) * Math.cos(theta),
-       2.2 * Math.cos(phi),
-       2.2 * Math.sin(phi) * Math.sin(theta)
-    );
-    globe.add(dot);
-  });
+  var angles  = defs.map(function (d) { return d.angle; });
+  var meshes  = defs.map(function (d) { var m = new THREE.Mesh(d.geo, d.mat); group.add(m); return m; });
   function animate() {
     requestAnimationFrame(animate);
-    globe.rotation.y += 0.004;
-    globe.rotation.x = 0.2;
+    group.rotation.y += 0.004;
+    defs.forEach(function (d, i) {
+      if (d.orbit === 0) {
+        meshes[i].rotation.x += 0.006;
+        meshes[i].rotation.y += 0.009;
+      } else {
+        angles[i] += d.speed;
+        meshes[i].position.x = Math.cos(angles[i]) * d.orbit;
+        meshes[i].position.y = Math.sin(angles[i] * 0.6) * d.orbit * 0.35;
+        meshes[i].position.z = Math.sin(angles[i]) * d.orbit * 0.5;
+        meshes[i].rotation.x += 0.01;
+        meshes[i].rotation.y += 0.008;
+      }
+    });
     renderer.render(scene, camera);
   }
   animate();
@@ -216,7 +218,6 @@
     W = canvas.parentElement.offsetWidth;
     H = canvas.parentElement.offsetHeight || 280;
     camera.aspect = W / H;
-    camera.position.x = W > 600 ? 3.5 : 0;
     camera.updateProjectionMatrix();
     renderer.setSize(W, H);
   });

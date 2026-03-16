@@ -396,7 +396,7 @@
   </script>
 
   <script>
-/* ── Browse hero globe ── */
+/* ── Browse hero — filled globe + orbiting game pieces ── */
 (function () {
   var canvas = document.getElementById('browse-bg-canvas');
   if (!canvas || !window.THREE) return;
@@ -406,14 +406,24 @@
   renderer.setSize(W, H);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 100);
-  camera.position.set(W > 600 ? 3.5 : 0, 0, 7);
-  /* Wireframe globe */
-  var sphereGeo = new THREE.SphereGeometry(2.2, 32, 20);
-  var wireGeo   = new THREE.WireframeGeometry(sphereGeo);
-  var wireMat   = new THREE.LineBasicMaterial({ color: 0xC89B3C, transparent: true, opacity: 0.55 });
-  var globe     = new THREE.LineSegments(wireGeo, wireMat);
-  scene.add(globe);
+  var camera = new THREE.PerspectiveCamera(55, W / H, 0.1, 100);
+  camera.position.z = 9;
+
+  var group = new THREE.Group();
+  scene.add(group);
+
+  /* ── Solid filled globe ── */
+  var globeR = 2;
+  var solidGeo = new THREE.SphereGeometry(globeR, 48, 32);
+  var solidMat = new THREE.MeshBasicMaterial({ color: 0x0e2a42, transparent: true, opacity: 0.85 });
+  var solidSphere = new THREE.Mesh(solidGeo, solidMat);
+  group.add(solidSphere);
+
+  /* Grid lines over the surface */
+  var wireGeo = new THREE.WireframeGeometry(new THREE.SphereGeometry(globeR + 0.01, 18, 12));
+  var wireMat = new THREE.LineBasicMaterial({ color: 0xC89B3C, transparent: true, opacity: 0.18 });
+  group.add(new THREE.LineSegments(wireGeo, wireMat));
+
   /* Culture dots */
   var cultures = [
     { lat:  16, lon: 106 }, { lat:   8, lon:  -2 },
@@ -427,24 +437,59 @@
     var theta = (c.lon + 180) * Math.PI / 180;
     var dot   = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 8), dotMat);
     dot.position.set(
-      -2.2 * Math.sin(phi) * Math.cos(theta),
-       2.2 * Math.cos(phi),
-       2.2 * Math.sin(phi) * Math.sin(theta)
+      -globeR * Math.sin(phi) * Math.cos(theta),
+       globeR * Math.cos(phi),
+       globeR * Math.sin(phi) * Math.sin(theta)
     );
-    globe.add(dot);
+    solidSphere.add(dot);
   });
+
+  /* ── Orbiting game pieces ── */
+  var gold  = new THREE.MeshBasicMaterial({ color: 0xC89B3C, transparent: true, opacity: 0.85 });
+  var teal  = new THREE.MeshBasicMaterial({ color: 0x4ecdc4, transparent: true, opacity: 0.85 });
+  var warm  = new THREE.MeshBasicMaterial({ color: 0xe07040, transparent: true, opacity: 0.85 });
+
+  var pieceDefs = [
+    /* dice */       { geo: new THREE.BoxGeometry(0.32, 0.32, 0.32),       mat: gold, r: 3.1, spd: 0.009,  ang: 0,              tilt: 0.4  },
+    /* coin */       { geo: new THREE.CylinderGeometry(0.22, 0.22, 0.08, 14), mat: teal, r: 3.5, spd: -0.007, ang: Math.PI*0.6,    tilt: 0.7  },
+    /* d4 */         { geo: new THREE.TetrahedronGeometry(0.30),             mat: warm, r: 3.0, spd: 0.012,  ang: Math.PI*1.1,    tilt: -0.5 },
+    /* d8 */         { geo: new THREE.OctahedronGeometry(0.26),              mat: gold, r: 3.4, spd: -0.010, ang: Math.PI*1.7,    tilt: 0.3  },
+    /* tile/card */  { geo: new THREE.BoxGeometry(0.28, 0.38, 0.09),        mat: teal, r: 3.7, spd: 0.007,  ang: Math.PI*0.3,    tilt: -0.6 },
+    /* pawn base */  { geo: new THREE.CylinderGeometry(0.12, 0.18, 0.38, 10), mat: gold, r: 3.2, spd: -0.013, ang: Math.PI*2.1,    tilt: 0.55 },
+  ];
+
+  var pieceAngles = pieceDefs.map(function (d) { return d.ang; });
+  var pieceMeshes = pieceDefs.map(function (d) {
+    var m = new THREE.Mesh(d.geo, d.mat);
+    group.add(m);
+    return m;
+  });
+
   function animate() {
     requestAnimationFrame(animate);
-    globe.rotation.y += 0.004;
-    globe.rotation.x = 0.2;
+    group.rotation.y += 0.003;
+    solidSphere.rotation.y += 0.004;
+
+    pieceDefs.forEach(function (d, i) {
+      pieceAngles[i] += d.spd;
+      var a = pieceAngles[i];
+      pieceMeshes[i].position.set(
+        d.r * Math.cos(a),
+        d.r * Math.sin(a) * Math.sin(d.tilt),
+        d.r * Math.sin(a) * Math.cos(d.tilt)
+      );
+      pieceMeshes[i].rotation.x += 0.012;
+      pieceMeshes[i].rotation.y += 0.009;
+    });
+
     renderer.render(scene, camera);
   }
   animate();
+
   window.addEventListener('resize', function () {
     W = canvas.parentElement.offsetWidth;
     H = canvas.parentElement.offsetHeight || 260;
     camera.aspect = W / H;
-    camera.position.x = W > 600 ? 3.5 : 0;
     camera.updateProjectionMatrix();
     renderer.setSize(W, H);
   });

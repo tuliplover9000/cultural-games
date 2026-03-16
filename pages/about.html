@@ -161,9 +161,6 @@
             survive — and reach the next generation, including children of diaspora
             communities who may never have had the chance to play with their grandparents.
           </p>
-          <div style="text-align:center; margin-top: var(--space-6);">
-            <canvas id="about-globe-canvas" width="260" height="260" style="border-radius:50%; opacity:1;" aria-hidden="true"></canvas>
-          </div>
         </div>
       </div>
     </section>
@@ -258,55 +255,6 @@
     </div>
   </footer>
 
-  <script>
-(function () {
-  var canvas = document.getElementById('about-globe-canvas');
-  if (!canvas || !window.THREE) return;
-  var size = 260;
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-  renderer.setSize(size, size);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-  camera.position.z = 5;
-  /* Wireframe globe */
-  var sphereGeo  = new THREE.SphereGeometry(2, 32, 20);
-  var wireGeo    = new THREE.WireframeGeometry(sphereGeo);
-  var wireMat    = new THREE.LineBasicMaterial({ color: 0xC89B3C, transparent: true, opacity: 0.8 });
-  var globe      = new THREE.LineSegments(wireGeo, wireMat);
-  scene.add(globe);
-  /* Culture dots — 8 cultures */
-  var cultures = [
-    { lat:  16, lon: 106 }, /* Vietnam */
-    { lat:   8, lon:  -2 }, /* West Africa */
-    { lat:  19, lon: -99 }, /* Mesoamerica */
-    { lat:  11, lon:  77 }, /* South India */
-    { lat: -19, lon:  47 }, /* Madagascar */
-    { lat:  35, lon: 105 }, /* China */
-    { lat:  62, lon:  15 }, /* Norse */
-    { lat:  23, lon:  80 }, /* Indian Subcontinent */
-  ];
-  var dotMat = new THREE.MeshBasicMaterial({ color: 0xff6b6b });
-  cultures.forEach(function (c) {
-    var phi   = (90 - c.lat) * Math.PI / 180;
-    var theta = (c.lon + 180) * Math.PI / 180;
-    var dot   = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 8), dotMat);
-    dot.position.set(
-      -2 * Math.sin(phi) * Math.cos(theta),
-       2 * Math.cos(phi),
-       2 * Math.sin(phi) * Math.sin(theta)
-    );
-    globe.add(dot);
-  });
-  function animate() {
-    requestAnimationFrame(animate);
-    globe.rotation.y += 0.004;
-    globe.rotation.x  = 0.2;
-    renderer.render(scene, camera);
-  }
-  animate();
-}());
-  </script>
 
   <script>
     (function () {
