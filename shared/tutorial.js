@@ -65,9 +65,14 @@
 
     // Move the button inside the game container so it sits within
     // the gold-bordered game area rather than floating over the page.
+    // A MutationObserver re-appends it if a game re-renders via innerHTML.
     var gc = document.querySelector('.game-container');
     if (gc) {
       gc.appendChild(_el.trigger);
+      var _obs = new MutationObserver(function () {
+        if (!gc.contains(_el.trigger)) gc.appendChild(_el.trigger);
+      });
+      _obs.observe(gc, { childList: true });
     }
 
     var seen = false;
