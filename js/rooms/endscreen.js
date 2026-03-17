@@ -141,17 +141,15 @@
     }
   }
 
-  // Buttons — optimistic UI: hide endscreen immediately then fire DB update
+  // Buttons — hide endscreen immediately for instant feedback, then fire DB update.
+  // Do NOT call Ingame.launch() here — the subscription fires with the freshly
+  // updated room (game_instances: []) and launches the game with clean state.
   if (elRematchBtn) {
     elRematchBtn.addEventListener('click', function() {
       elRematchBtn.disabled = true;
       elLobbyBtn.disabled   = true;
       elEndscreen.hidden = true;
-      Room.rematch().then(function() {
-        // Subscription should trigger Ingame.launch(); directly launch if lobby is ready
-        var room = Room.currentRoom();
-        if (room && window.Ingame) Ingame.launch(room);
-      });
+      Room.rematch();
     });
   }
   if (elLobbyBtn) {
@@ -159,10 +157,8 @@
       elLobbyBtn.disabled   = true;
       elRematchBtn.disabled = true;
       elEndscreen.hidden = true;
-      Room.backToLobby().then(function() {
-        // Subscription should trigger showLobby(); directly invoke if needed
-        if (window.Ingame && Ingame.hideBoardFrame) Ingame.hideBoardFrame();
-      });
+      if (window.Ingame && Ingame.hideBoardFrame) Ingame.hideBoardFrame();
+      Room.backToLobby();
     });
   }
 
