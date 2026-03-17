@@ -195,6 +195,7 @@
         elQuitBtn.hidden = false;
         elQuitBtn.onclick = function () {
           if (!confirm('End the game and return everyone to the lobby?')) return;
+          hideBoardFrame();
           Room.backToLobby();
         };
       } else {
