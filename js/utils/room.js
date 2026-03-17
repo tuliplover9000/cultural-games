@@ -322,9 +322,12 @@
           status:     'finished',
           winner_pid: winnerPid,
         });
+      } else {
+        // Instance not yet in array (game ended before first state sync) — add it directly
+        instances.push({ instance_id: instanceId, status: 'finished', winner_pid: winnerPid });
       }
       // Check if all instances are done
-      var allDone = instances.every(function(i){ return i.status === 'finished'; });
+      var allDone = instances.length > 0 && instances.every(function(i){ return i.status === 'finished'; });
       var update = { game_instances: instances };
       if (allDone) update.status = 'endscreen';
       await db().from('rooms').update(update).eq('id', _room.id);

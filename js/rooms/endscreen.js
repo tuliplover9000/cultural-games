@@ -128,25 +128,41 @@
     var isHost = Room.amHost();
     elRematchBtn.disabled = !isHost;
     elLobbyBtn.disabled   = !isHost;
+
+    // Clear any previous "waiting" note before potentially adding a new one
+    var prevNote = elEndscreen.querySelector('.endscreen-guest-note');
+    if (prevNote) prevNote.remove();
     if (!isHost) {
       var note = document.createElement('p');
-      note.style.cssText = 'font-size:var(--text-xs);color:var(--color-text-muted);text-align:center';
+      note.className = 'endscreen-guest-note';
+      note.style.cssText = 'font-size:var(--text-xs);color:var(--color-text-muted);text-align:center;width:100%';
       note.textContent = 'Waiting for host to continue…';
       elEndscreen.querySelector('.endscreen-actions').appendChild(note);
     }
   }
 
-  // Buttons
+  // Buttons — optimistic UI: hide endscreen immediately then fire DB update
   if (elRematchBtn) {
     elRematchBtn.addEventListener('click', function() {
       elRematchBtn.disabled = true;
-      Room.rematch();
+      elLobbyBtn.disabled   = true;
+      elEndscreen.hidden = true;
+      Room.rematch().then(function() {
+        // Subscription should trigger Ingame.launch(); directly launch if lobby is ready
+        var room = Room.currentRoom();
+        if (room && window.Ingame) Ingame.launch(room);
+      });
     });
   }
   if (elLobbyBtn) {
     elLobbyBtn.addEventListener('click', function() {
-      elLobbyBtn.disabled = true;
-      Room.backToLobby();
+      elLobbyBtn.disabled   = true;
+      elRematchBtn.disabled = true;
+      elEndscreen.hidden = true;
+      Room.backToLobby().then(function() {
+        // Subscription should trigger showLobby(); directly invoke if needed
+        if (window.Ingame && Ingame.hideBoardFrame) Ingame.hideBoardFrame();
+      });
     });
   }
 
