@@ -142,14 +142,14 @@
   }
 
   // Buttons — hide endscreen immediately for instant feedback, then fire DB update.
-  // Do NOT call Ingame.launch() here — the subscription fires with the freshly
-  // updated room (game_instances: []) and launches the game with clean state.
   if (elRematchBtn) {
-    elRematchBtn.addEventListener('click', function() {
+    elRematchBtn.addEventListener('click', async function() {
       elRematchBtn.disabled = true;
       elLobbyBtn.disabled   = true;
       elEndscreen.hidden = true;
-      Room.rematch();
+      await Room.rematch();
+      // Launch immediately with locally-updated room (no subscription wait needed)
+      if (window.Ingame) Ingame.launch(Room.currentRoom());
     });
   }
   if (elLobbyBtn) {

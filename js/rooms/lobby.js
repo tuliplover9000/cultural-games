@@ -506,6 +506,9 @@
     document.getElementById('room-endscreen').hidden = true;
     // Restore center panel to game-selector view
     if (window.Ingame && window.Ingame.hideBoardFrame) window.Ingame.hideBoardFrame();
+    // Failsafe: always hide the mid-game quit button in lobby state
+    var quitBtn = document.getElementById('ingame-quit-btn');
+    if (quitBtn) quitBtn.hidden = true;
     // Allow coins to be re-awarded for next game
     if (window.Endscreen && Endscreen.reset) Endscreen.reset();
   }

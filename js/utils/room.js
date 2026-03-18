@@ -351,6 +351,8 @@
 
     rematch: async function () {
       if (!_room) return;
+      // Update local cache immediately so callers can launch the game optimistically
+      _room = Object.assign({}, _room, { status: 'playing', game_instances: [], bets: {} });
       await db().from('rooms').update({
         status:         'playing',
         game_instances: [],
