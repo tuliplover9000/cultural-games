@@ -177,9 +177,9 @@
   }
   function _accountHref() {
     var d = _depth();
-    if (d === 'games') return '../account.html';
-    if (d === 'pages') return 'account.html';
-    return 'pages/account.html';
+    if (d === 'games') return '../../profile/';
+    if (d === 'pages') return '../profile/';
+    return 'profile/';
   }
 
   /* ── Favorites — direct REST calls (bypasses Supabase JS auth override) ── */
@@ -245,6 +245,8 @@
     } else {
       _favorites.add(gameKey);
       _pgFetch('POST', 'favorites', { user_id: _user.id, game_key: gameKey });
+      // Award favourite achievement
+      if (window.Achievements) Achievements.checkAction('set_favorite');
     }
     _saveFavCache(_user.id);
     _emit();
@@ -394,6 +396,25 @@
       losses:  _stats[gameId].losses,
       played:  _stats[gameId].played,
     }, { onConflict: 'user_id,game_id' });
+
+    // Track win streak in localStorage
+    var streakKey = 'cg-streak';
+    var streak = 0;
+    try { streak = parseInt(localStorage.getItem(streakKey) || '0', 10); } catch (e) {}
+    if (outcome === 'win')  { streak++; } else { streak = 0; }
+    try { localStorage.setItem(streakKey, streak); } catch (e) {}
+
+    // Fire achievement evaluation
+    if (window.Achievements) {
+      Achievements.evaluate({
+        gameId:   gameId,
+        result:   outcome,
+        isOnline: !!(window.Room && Room.currentRoom()),
+        isHost:   !!(window.Room && Room.amHost()),
+        stats:    _stats,
+        streak:   streak,
+      });
+    }
   }
 
   function onAuthChange(fn) { _listeners.push(fn); }

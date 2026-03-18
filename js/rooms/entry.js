@@ -144,6 +144,7 @@
         },
       }).then(function (result) {
         if (!result) return;
+        if (window.Achievements) Achievements.checkAction('join_room');
         window.location.href = 'room.html?id=' + encodeURIComponent(result.roomId);
       });
     });

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Your Cultural Games profile — track wins, achievements, and game stats." />
+  <title>My Profile — Cultural Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="../shared/theme.js"></script>
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../shared/theme.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../shared/toggle.css" />
+  <link rel="stylesheet" href="../css/auth.css" />
+  <link rel="stylesheet" href="../shared/achievements.css" />
+  <link rel="stylesheet" href="profile.css" />
+</head>
+<body class="profile-page">
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../index.html" class="nav-logo" aria-label="Cultural Games — Home">
+        <span class="nav-logo-icon" aria-hidden="true">🎲</span>
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="../pages/browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="../pages/rooms.html"  class="nav-link nav-link--rooms">Rooms</a></li>
+        <li><a href="../pages/about.html"  class="nav-link">About</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- Sign-out state -->
+    <div id="prof-locked" class="prof-locked">
+      <div class="prof-locked__icon" aria-hidden="true">&#128274;</div>
+      <h2>Sign in to view your profile</h2>
+      <p>Track your wins, unlock achievements, and see your game history.</p>
+      <button class="btn btn-primary btn-lg" id="prof-signin-btn">Sign In</button>
+      <p style="font-size:var(--text-sm);color:var(--color-text-muted);">
+        No account? <button class="auth-switch-btn" id="prof-signup-btn">Create one — it's free</button>
+      </p>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="prof-dashboard" hidden>
+
+      <!-- Hero -->
+      <section class="prof-hero" aria-label="Profile">
+        <div class="container">
+          <div class="prof-hero__top">
+            <div class="prof-avatar" id="prof-initial" aria-hidden="true"></div>
+            <div class="prof-info">
+              <h1 class="prof-username" id="prof-username"></h1>
+              <p class="prof-meta" id="prof-joined"></p>
+            </div>
+          </div>
+
+          <div class="prof-summary" aria-label="Profile summary">
+            <div class="prof-stat">
+              <span class="prof-stat__icon" aria-hidden="true">&#127918;</span>
+              <span class="prof-stat__num" id="prof-stat-played">—</span>
+              <span class="prof-stat__label">Games Played</span>
+            </div>
+            <div class="prof-stat">
+              <span class="prof-stat__icon" aria-hidden="true">&#127942;</span>
+              <span class="prof-stat__num" id="prof-stat-winrate">—</span>
+              <span class="prof-stat__label">Win Rate</span>
+            </div>
+            <div class="prof-stat">
+              <span class="prof-stat__icon" aria-hidden="true">&#127758;</span>
+              <span class="prof-stat__num" id="prof-stat-cultures">—</span>
+              <span class="prof-stat__label">Cultures</span>
+            </div>
+            <div class="prof-stat">
+              <span class="prof-stat__icon" aria-hidden="true">&#128176;</span>
+              <span class="prof-stat__num" id="prof-stat-coins">—</span>
+              <span class="prof-stat__label">Coins</span>
+            </div>
+            <div class="prof-stat">
+              <span class="prof-stat__icon" aria-hidden="true">&#11088;</span>
+              <span class="prof-stat__num" id="prof-stat-achievements">—</span>
+              <span class="prof-stat__label">Achievements</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="prof-body">
+
+        <!-- Achievements -->
+        <section>
+          <div class="container prof-section">
+            <p class="prof-section__label">&#11088; Achievements</p>
+
+            <!-- Progress -->
+            <div class="ach-progress-row">
+              <span class="ach-progress-count" id="ach-count">0 / 0 unlocked</span>
+              <div class="ach-progress-bar-wrap" role="progressbar" aria-label="Achievement progress">
+                <div class="ach-progress-bar" id="ach-progress-bar" style="width:0%"></div>
+              </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="ach-filters" role="group" aria-label="Filter achievements">
+              <select class="ach-filter-select" id="ach-filter-category" aria-label="Filter by category">
+                <option value="">All Categories</option>
+                <option value="combat">Combat</option>
+                <option value="explorer">Explorer</option>
+                <option value="social">Social</option>
+                <option value="milestone">Milestone</option>
+              </select>
+              <select class="ach-filter-select" id="ach-filter-tier" aria-label="Filter by tier">
+                <option value="">All Tiers</option>
+                <option value="bronze">Bronze</option>
+                <option value="silver">Silver</option>
+                <option value="gold">Gold</option>
+              </select>
+              <select class="ach-filter-select" id="ach-filter-status" aria-label="Filter by status">
+                <option value="">All Status</option>
+                <option value="unlocked">Unlocked</option>
+                <option value="locked">Locked</option>
+              </select>
+            </div>
+
+            <!-- Grid -->
+            <div class="ach-grid" id="ach-grid" role="list" aria-label="Achievements"></div>
+          </div>
+        </section>
+
+        <!-- Game Stats -->
+        <section>
+          <div class="container prof-section">
+            <p class="prof-section__label">&#127918; Game Stats</p>
+            <div class="prof-gsc-grid" id="prof-stats-grid"></div>
+          </div>
+        </section>
+
+      </div><!-- /.prof-body -->
+
+    </div><!-- /#prof-dashboard -->
+
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <span class="footer-brand">Cultural Games</span>
+      <p class="footer-mission">Preserving cultural heritage through play — one game at a time.</p>
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links" role="list">
+          <li><a href="../pages/browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="../pages/about.html"  class="footer-link">About</a></li>
+        </ul>
+      </nav>
+      <div class="footer-divider"></div>
+      <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../js/utils/games-data.js"></script>
+  <script src="../js/utils/navigation.js"></script>
+  <script src="../js/utils/auth.js"></script>
+  <script src="../shared/achievement-queue.js"></script>
+  <script src="../shared/achievements.js"></script>
+  <script src="profile.js"></script>
+
+</body>
+</html>

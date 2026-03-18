@@ -1,0 +1,162 @@
+/* =============================================================================
+   achievements.css — Achievement toast & UI component styles
+   All classes prefixed with "ach-"
+============================================================================= */
+
+/* ── Toast Container ── */
+.ach-toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 9900;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  pointer-events: none;
+  max-width: 360px;
+  width: calc(100vw - 3rem);
+}
+
+/* ── Toast card ── */
+.ach-toast {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.875rem 2.25rem 0.875rem 0.875rem;
+  background: var(--color-primary, #1A0E06);
+  color: var(--color-text-inverse, #fff);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.3);
+  border-left: 4px solid #CD7F32;
+  overflow: hidden;
+  pointer-events: auto;
+
+  /* Start off-screen to the right */
+  opacity: 0;
+  transform: translateX(calc(100% + 2rem));
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ach-toast--bronze { border-left-color: #CD7F32; }
+.ach-toast--silver { border-left-color: #A8A9AD; }
+.ach-toast--gold   { border-left-color: #D4A017; }
+
+.ach-toast--visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.ach-toast--hiding {
+  opacity: 0;
+  transform: translateX(calc(100% + 2rem));
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* ── Toast icon ── */
+.ach-toast__icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+/* ── Toast body ── */
+.ach-toast__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.ach-toast__eyebrow {
+  margin: 0 0 3px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  line-height: 1;
+}
+
+.ach-toast__tier {
+  font-weight: 700;
+}
+
+.ach-toast__title {
+  margin: 0 0 2px;
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ach-toast__desc {
+  margin: 0;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Close button ── */
+.ach-toast__close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.45);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, background 0.15s;
+}
+.ach-toast__close:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.1);
+}
+
+/* ── Progress bar ── */
+.ach-toast__progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255,255,255,0.1);
+}
+
+.ach-toast__progress-bar {
+  height: 100%;
+  width: 100%;
+  border-radius: 0 0 0 0;
+  animation: ach-progress 5s linear forwards;
+  transform-origin: left;
+}
+
+@keyframes ach-progress {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+
+/* ── Mobile adjustments ── */
+@media (max-width: 480px) {
+  .ach-toast-container {
+    bottom: 1rem;
+    right: 0.75rem;
+    left: 0.75rem;
+    width: auto;
+  }
+}
