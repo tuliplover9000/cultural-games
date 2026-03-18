@@ -161,6 +161,8 @@
           chat_messages:  [],
           max_players:    max,
           expires_at:     new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
+          is_public:    (opts && opts.is_public !== undefined) ? !!opts.is_public : true,
+          game_name:    (opts && opts.gameName) || null,
         }).select().single();
         if (!res.error) room = res.data;
       }
@@ -408,6 +410,54 @@
     // ── Re-export callbacks setter ────────────────────────────────────────────
     setCallbacks: function (cbs) {
       _cbs = Object.assign(_cbs, cbs);
+    },
+
+    // ── Public Room Browser ───────────────────────────────────────────────────
+
+    // Max players map (used for hasSlots filter)
+    fetchPublicRooms: async function(filters) {
+      filters = filters || {};
+      var twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+      var query = db().from('rooms')
+        .select('id, code, game_name, host_id, player_ids, player_names, status, is_public, created_at')
+        .eq('is_public', true)
+        .in('status', ['lobby', 'playing'])
+        .gte('created_at', twoHoursAgo)
+        .order('created_at', { ascending: false })
+        .limit(50);
+      if (filters.gameName) query = query.eq('game_name', filters.gameName);
+      var res = await query;
+      if (res.error) throw res.error;
+      var data = res.data || [];
+      var _MAX_PLAYERS = {
+        'fanorona': 2, 'hnefatafl': 2, 'o-an-quan': 2, 'oware': 2,
+        'pallanguzhi': 2, 'patolli': 2, 'puluc': 2,
+        'tien-len': 4, 'mahjong': 4, 'ganjifa': 4, 'pachisi': 4, 'bau-cua': 8,
+      };
+      if (filters.hasSlots) {
+        data = data.filter(function(r) {
+          return (r.player_ids || []).length < (_MAX_PLAYERS[r.game_name] || 2);
+        });
+      }
+      return data;
+    },
+
+    getAvailableGames: async function() {
+      var twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+      var res = await db().from('rooms')
+        .select('game_name')
+        .eq('is_public', true)
+        .in('status', ['lobby', 'playing'])
+        .gte('created_at', twoHoursAgo);
+      if (res.error) throw res.error;
+      var seen = {};
+      return (res.data || []).map(function(r) { return r.game_name; })
+        .filter(function(n) { return n && !seen[n] && (seen[n] = true); });
+    },
+
+    setPublic: async function(roomId, isPublic) {
+      var res = await db().from('rooms').update({ is_public: !!isPublic }).eq('id', roomId);
+      if (res.error) throw res.error;
     },
   };
 
