@@ -232,8 +232,9 @@
   async function addCoins(delta) {
     if (!_user || !_accessToken) return;
     _coins = Math.max(0, _coins + delta);
-    _authedSB().from('profiles').update({ coins: _coins }).eq('id', _user.id);
     _emit();
+    // Use raw PostgREST fetch with explicit JWT (same pattern as favorites — reliable across all pages)
+    _pgFetch('PATCH', 'profiles?id=eq.' + _user.id, { coins: _coins });
   }
 
   async function toggleFavorite(gameKey) {
