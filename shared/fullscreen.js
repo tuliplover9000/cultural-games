@@ -125,19 +125,49 @@
   document.addEventListener('fullscreenchange',       _onNativeChange);
   document.addEventListener('webkitfullscreenchange', _onNativeChange);
 
+  // ── Canvas scale-to-fill (transform-based, works on all canvas games) ──────
+  // Reads the canvas's own pixel dimensions (canvas.width / canvas.height),
+  // computes a scale factor that fills the wrapper while keeping aspect ratio,
+  // then applies it as CSS transform: scale(). No game JS changes needed.
+  function _scaleCanvas(active) {
+    var w = wrap();
+    if (!w) return;
+    var canvas = w.querySelector('canvas');
+    if (!canvas) return;
+
+    if (!active) {
+      canvas.style.transform = '';
+      return;
+    }
+
+    var cw = canvas.width;
+    var ch = canvas.height;
+    if (!cw || !ch) return;
+
+    var availW = w.clientWidth;
+    var availH = w.clientHeight;
+    if (!availW || !availH) return;
+
+    var scale = Math.min(availW / cw, availH / ch);
+    canvas.style.transform       = 'scale(' + scale + ')';
+    canvas.style.transformOrigin = 'center center';
+  }
+
   // ── State change dispatcher ────────────────────────────────────────────────
   function _onStateChange(isActive) {
     if (isActive) {
-      // Wait two frames for the browser to apply fullscreen dimensions,
-      // then fire onEnter so game canvas resizes to the correct size.
+      // Wait two frames for the browser to commit fullscreen dimensions,
+      // then scale the canvas and fire the game's onEnter hook.
       requestAnimationFrame(function () {
         requestAnimationFrame(function () {
+          _scaleCanvas(true);
           FSMode.onEnter();
           _startHideTimer();
           _moveFocusIn();
         });
       });
     } else {
+      _scaleCanvas(false);
       FSMode.onExit();
       _clearHideTimer();
       _restoreFocus();
