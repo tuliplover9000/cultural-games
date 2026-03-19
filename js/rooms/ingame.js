@@ -220,12 +220,14 @@
       fr0.title     = room.selected_game + ' — Match 1';
       fr0.src       = buildSrc(room, '0');
       fr0.setAttribute('allow', 'autoplay');
+      fr0.setAttribute('allowfullscreen', '');
 
       var fr1 = document.createElement('iframe');
       fr1.className = 'ingame-frame ingame-frame--half';
       fr1.title     = room.selected_game + ' — Match 2';
       fr1.src       = buildSrc(room, '1');
       fr1.setAttribute('allow', 'autoplay');
+      fr1.setAttribute('allowfullscreen', '');
 
       elBoards.appendChild(fr0);
       elBoards.appendChild(fr1);
@@ -235,6 +237,7 @@
       fr.title     = room.selected_game;
       fr.src       = buildSrc(room, '0');
       fr.setAttribute('allow', 'autoplay');
+      fr.setAttribute('allowfullscreen', '');
       elBoards.appendChild(fr);
     }
   }

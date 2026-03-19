@@ -1,0 +1,133 @@
+/*
+  Cultural Games — fullscreen.css
+  Fullscreen mode: native API + CSS fallback (iOS Safari)
+
+  Z-INDEX STACK:
+  Game UI base:           1–99
+  Game overlays:          100–499
+  Tutorial tooltips:      1100
+  Achievement toasts:     1200
+  Fullscreen layer:       1250
+  Game-over overlay:      1280
+  Fullscreen button:      1300
+*/
+
+/* ── Feature detection class on <html> ── */
+html.fs-supported .fs-toggle { display: flex; }
+html.fs-css-only  .fs-toggle { display: flex; }
+
+/* ── Toggle button ── */
+.fs-toggle {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 36px;
+  height: 36px;
+  background: rgba(0,0,0,0.45);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 1300;
+  transition: background 150ms ease, opacity 150ms ease;
+  display: none; /* shown only when fs-supported or fs-css-only class present */
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+}
+.fs-toggle:hover { background: rgba(0,0,0,0.65); }
+.fs-toggle:focus-visible {
+  outline: 3px solid var(--color-accent-gold, #C89B3C);
+  outline-offset: 2px;
+}
+.fs-toggle__icon { width: 18px; height: 18px; display: block; }
+.fs-toggle__icon--exit { display: none; }
+
+/* active state — swap icons */
+.fs-game-wrap.fs-active .fs-toggle__icon--enter,
+.fs-game-wrap:fullscreen .fs-toggle__icon--enter,
+.fs-game-wrap:-webkit-full-screen .fs-toggle__icon--enter { display: none; }
+
+.fs-game-wrap.fs-active .fs-toggle__icon--exit,
+.fs-game-wrap:fullscreen .fs-toggle__icon--exit,
+.fs-game-wrap:-webkit-full-screen .fs-toggle__icon--exit { display: block; }
+
+/* ── Wrapper ── */
+.fs-game-wrap {
+  position: relative;
+}
+
+/* ── CSS fullscreen fallback (iOS Safari, etc.) ── */
+.fs-game-wrap.fs-active {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1250 !important;
+  width: 100vw !important;
+  height: 100vh; /* fallback */
+  height: 100dvh !important;
+  overflow: hidden;
+  background: #111;
+  display: flex !important;
+  flex-direction: row;
+  align-items: stretch;
+  animation: fs-expand 200ms cubic-bezier(0.4,0,0.2,1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fs-game-wrap.fs-active { animation: none; }
+}
+
+@keyframes fs-expand {
+  from { opacity: 0.8; transform: scale(0.98); }
+  to   { opacity: 1;   transform: scale(1); }
+}
+
+/* body lock */
+.fs-body-lock {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
+/* ── Native fullscreen ── */
+.fs-game-wrap:fullscreen {
+  background: #111;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  width: 100vw;
+  height: 100vh;
+}
+.fs-game-wrap:-webkit-full-screen {
+  background: #111;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  width: 100vw;
+  height: 100vh;
+}
+.fs-game-wrap::backdrop { background: #111; }
+
+/* button fixed inside native fullscreen */
+.fs-game-wrap:fullscreen .fs-toggle { position: fixed; }
+.fs-game-wrap:-webkit-full-screen .fs-toggle { position: fixed; }
+
+/* ── Screen reader only ── */
+.fs-sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Mobile: stack vertically in fullscreen ── */
+@media (max-width: 600px) {
+  .fs-game-wrap.fs-active,
+  .fs-game-wrap:fullscreen,
+  .fs-game-wrap:-webkit-full-screen {
+    flex-direction: column;
+  }
+}

@@ -1699,4 +1699,16 @@
     CGTutorial.initTrigger('ganjifa');
   }
 
+  // ── Fullscreen resize hooks ────────────────────────────────────────────────
+  if (window.FSMode) {
+    FSMode.onEnter = function () { _fsResize(); };
+    FSMode.onExit  = function () { _fsResize(); };
+  }
+
+  function _fsResize() {
+    setTimeout(function () {
+      if (typeof drawFrame === 'function') drawFrame();
+    }, 50);
+  }
+
 }());

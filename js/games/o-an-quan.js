@@ -730,3 +730,15 @@ if (window.CGTutorial) {
   ]);
   CGTutorial.initTrigger('o-an-quan');
 }
+
+// ── Fullscreen resize hooks ────────────────────────────────────────────────
+if (window.FSMode) {
+  FSMode.onEnter = function () { _fsResize(); };
+  FSMode.onExit  = function () { _fsResize(); };
+}
+
+function _fsResize() {
+  setTimeout(function () {
+    if (typeof renderBoard === 'function') renderBoard();
+  }, 50);
+}

@@ -636,3 +636,15 @@ if (window.CGTutorial) {
   ]);
   CGTutorial.initTrigger('puluc');
 }
+
+// ── Fullscreen resize hooks ────────────────────────────────────────────────
+if (window.FSMode) {
+  FSMode.onEnter = function () { _fsResize(); };
+  FSMode.onExit  = function () { _fsResize(); };
+}
+
+function _fsResize() {
+  setTimeout(function () {
+    if (typeof render === 'function') render();
+  }, 50);
+}

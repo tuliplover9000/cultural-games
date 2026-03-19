@@ -24,6 +24,7 @@
   <link rel="stylesheet" href="../../css/auth.css" />
   <link rel="stylesheet" href="../../css/games.css" />
   <link rel="stylesheet" href="../../shared/achievements.css" />
+  <link rel="stylesheet" href="../../shared/fullscreen.css" />
 </head>
 <body>
   <button id="tt-trigger" class="tt-trigger" type="button" aria-label="How to play">
@@ -68,8 +69,19 @@
       </header>
 
       <!-- Game Container -->
+      <div id="fs-game-wrap" class="fs-game-wrap">
+      <button id="fs-toggle" class="fs-toggle" aria-label="Enter fullscreen" title="Enter fullscreen">
+        <svg class="fs-toggle__icon fs-toggle__icon--enter" viewBox="0 0 18 18" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round">
+          <path d="M1 6V1h5M12 1h5v5M17 12v5h-5M6 17H1v-5"/>
+        </svg>
+        <svg class="fs-toggle__icon fs-toggle__icon--exit" viewBox="0 0 18 18" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" style="display:none">
+          <path d="M6 1v5H1M17 6h-5V1M12 17v-5h5M1 12h5v5"/>
+        </svg>
+      </button>
+      <div class="fs-sr-only" id="fs-announce" aria-live="polite"></div>
       <div class="game-container" id="game-container" aria-label="Game area">
       </div>
+      </div><!-- /#fs-game-wrap -->
 
       <!-- Disclaimer -->
       <div class="game-disclaimer" role="note">
@@ -154,6 +166,7 @@
   <script src="../../shared/achievements.js"></script>
   <script src="../../js/rooms/game-bridge.js"></script>
   <script src="../../shared/tutorial.js"></script>
+  <script src="../../shared/fullscreen.js"></script>
   <script src="../../js/games/bau-cua.js"></script>
 </body>
 </html>
