@@ -288,11 +288,62 @@
   outline-offset: 2px;
 }
 
-/* Grid */
+/* Outer wrapper — stacks groups vertically */
 .ach-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Collapsible group */
+.ach-group {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.ach-group[open] .ach-group__chevron { transform: rotate(180deg); }
+
+.ach-group__summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.ach-group__summary::-webkit-details-marker { display: none; }
+.ach-group__summary:hover { background: var(--color-surface-alt); }
+
+.ach-group__label {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-text);
+  flex: 1;
+}
+.ach-group__count {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  background: var(--color-surface-alt);
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.ach-group__chevron {
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  transition: transform 0.2s ease;
+  line-height: 1;
+}
+
+/* Inner card grid */
+.ach-group__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: var(--space-3);
+  padding: 0 var(--space-4) var(--space-4);
 }
 
 /* Achievement card */
@@ -399,29 +450,14 @@
   user-select: none;
 }
 
-/* Unlocked badge */
-.ach-card__badge {
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--color-accent-teal);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-/* Category label */
-.ach-card__category {
-  position: absolute;
-  top: var(--space-2);
-  right: var(--space-2);
-  font-size: 0.58rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-  opacity: 0.6;
+/* Unlocked check mark in card header */
+.ach-card__check {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #4caf8a;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding-left: var(--space-2);
 }
 
 /* Empty state */

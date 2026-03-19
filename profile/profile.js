@@ -128,19 +128,41 @@
   }
 
   /* ── render achievements ── */
+  var CATEGORY_LABELS = { combat: '⚔️ Combat', explorer: '🧭 Explorer', social: '🤝 Social', milestone: '🏆 Milestone' };
+  var CATEGORY_ORDER  = ['combat', 'explorer', 'social', 'milestone'];
+  var TIER_COLORS     = { bronze: '#CD7F32', silver: '#A8A9AD', gold: '#D4A017' };
+  var TIER_ICONS      = { bronze: '🥉', silver: '🥈', gold: '🥇' };
+
+  function achCard(a, isUnlocked) {
+    var tierColor  = TIER_COLORS[a.tier] || '#CD7F32';
+    var stateClass = isUnlocked ? 'ach-card--unlocked' : 'ach-card--locked';
+    return '<div class="ach-card ach-card--' + esc(a.tier) + ' ' + stateClass + ' prof-reveal" role="listitem">' +
+      '<div class="ach-card__header">' +
+        '<div class="ach-card__icon" aria-hidden="true" style="color:' + tierColor + '">' + (TIER_ICONS[a.tier] || '🏅') + '</div>' +
+        '<div class="ach-card__meta">' +
+          '<p class="ach-card__title">' + esc(a.title) + '</p>' +
+          '<p class="ach-card__tier">' + esc(a.tier) + '</p>' +
+        '</div>' +
+        (isUnlocked ? '<span class="ach-card__check" aria-label="Unlocked">&#10003;</span>' : '') +
+      '</div>' +
+      '<p class="ach-card__desc' + (isUnlocked ? '' : ' ach-card__desc--locked') + '">' + esc(a.description) + '</p>' +
+    '</div>';
+  }
+
   function renderAchievements() {
     if (!window.Achievements) return;
 
-    var all          = Achievements.ACHIEVEMENTS;
-    var unlockedSet  = {};
+    var all         = Achievements.ACHIEVEMENTS;
+    var unlockedSet = {};
     Achievements.getUnlocked().forEach(function (id) { unlockedSet[id] = true; });
 
     var total    = all.length;
     var unlocked = Achievements.getUnlocked().length;
 
-    // Progress
+    // Progress bar
     var pct = total > 0 ? Math.round(unlocked / total * 100) : 0;
-    document.getElementById('ach-count').textContent = unlocked + ' / ' + total + ' unlocked';
+    var countEl = document.getElementById('ach-count');
+    if (countEl) countEl.textContent = unlocked + ' / ' + total + ' unlocked';
     var bar = document.getElementById('ach-progress-bar');
     if (bar) setTimeout(function () { bar.style.width = pct + '%'; }, 100);
 
@@ -161,28 +183,31 @@
       return;
     }
 
-    var TIER_ICONS = { bronze: '&#127942;', silver: '&#127942;', gold: '&#127942;' };
-    var TIER_COLORS = { bronze: '#CD7F32', silver: '#A8A9AD', gold: '#D4A017' };
+    // Group by category
+    var groups = {};
+    filtered.forEach(function (a) {
+      if (!groups[a.category]) groups[a.category] = [];
+      groups[a.category].push(a);
+    });
 
-    grid.innerHTML = filtered.map(function (a) {
-      var isUnlocked = !!unlockedSet[a.id];
-      var stateClass = isUnlocked ? 'ach-card--unlocked' : 'ach-card--locked';
-      var tierColor  = TIER_COLORS[a.tier] || '#CD7F32';
+    // Render each category as a collapsible <details> section
+    var html = CATEGORY_ORDER.filter(function (cat) { return groups[cat] && groups[cat].length; }).map(function (cat) {
+      var items       = groups[cat];
+      var catUnlocked = items.filter(function (a) { return unlockedSet[a.id]; }).length;
+      var label       = CATEGORY_LABELS[cat] || cat;
+      var cards       = items.map(function (a) { return achCard(a, !!unlockedSet[a.id]); }).join('');
 
-      return '<div class="ach-card ach-card--' + esc(a.tier) + ' ' + stateClass + ' prof-reveal" role="listitem">' +
-        '<span class="ach-card__category">' + esc(a.category) + '</span>' +
-        '<div class="ach-card__header">' +
-          '<div class="ach-card__icon" aria-hidden="true" style="color:' + tierColor + '">' + (TIER_ICONS[a.tier] || '&#127942;') + '</div>' +
-          '<div class="ach-card__meta">' +
-            '<p class="ach-card__title">' + esc(a.title) + '</p>' +
-            '<p class="ach-card__tier">' + esc(a.tier) + '</p>' +
-          '</div>' +
-        '</div>' +
-        '<p class="ach-card__desc">' + esc(a.description) + '</p>' +
-        (isUnlocked ? '<p class="ach-card__badge">&#10003; Unlocked</p>' : '') +
-      '</div>';
+      return '<details class="ach-group" open>' +
+        '<summary class="ach-group__summary">' +
+          '<span class="ach-group__label">' + label + '</span>' +
+          '<span class="ach-group__count">' + catUnlocked + ' / ' + items.length + '</span>' +
+          '<span class="ach-group__chevron" aria-hidden="true">&#8964;</span>' +
+        '</summary>' +
+        '<div class="ach-group__grid">' + cards + '</div>' +
+      '</details>';
     }).join('');
 
+    grid.innerHTML = html;
     initReveal();
   }
 
