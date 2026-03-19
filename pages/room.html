@@ -177,8 +177,11 @@
         </main>
 
         <!-- RIGHT: Chat -->
-        <aside class="room-panel room-panel--chat" aria-label="Room chat">
-          <h2 class="room-panel__title">Chat</h2>
+        <aside class="room-panel room-panel--chat" id="lobby-chat-panel" aria-label="Room chat">
+          <div class="room-panel--chat__header">
+            <h2 class="room-panel__title">Chat</h2>
+            <button class="room-chat-close-btn" id="lobby-chat-close" aria-label="Close chat" hidden>✕</button>
+          </div>
           <ul
             id="lobby-chat-list"
             class="lobby-chat-list"
@@ -204,6 +207,12 @@
 
       </div><!-- /.room-lobby__body -->
     </div><!-- /#room-lobby -->
+
+    <!-- Mobile chat FAB (hidden on desktop via CSS) -->
+    <button class="room-chat-fab" id="room-chat-fab" aria-label="Open chat" aria-expanded="false">
+      💬
+      <span class="room-chat-fab__badge" id="room-chat-fab-badge" hidden>!</span>
+    </button>
 
     <!-- ══ IN-GAME VIEW ══════════════════════════════════════════════════════ -->
     <div id="room-ingame" class="room-ingame" hidden>
@@ -343,5 +352,41 @@
   <script src="../js/rooms/lobby.js"></script>
   <script src="../js/rooms/ingame.js"></script>
   <script src="../js/rooms/endscreen.js"></script>
+  <script>
+    // Mobile chat FAB toggle
+    (function () {
+      var fab   = document.getElementById('room-chat-fab');
+      var panel = document.getElementById('lobby-chat-panel');
+      var close = document.getElementById('lobby-chat-close');
+      var badge = document.getElementById('room-chat-fab-badge');
+      if (!fab || !panel) return;
+
+      function openChat() {
+        panel.classList.add('chat-open');
+        fab.classList.add('chat-open');
+        fab.setAttribute('aria-expanded', 'true');
+        badge.hidden = true;
+        setTimeout(function () { document.getElementById('lobby-chat-input') && document.getElementById('lobby-chat-input').focus(); }, 80);
+      }
+      function closeChat() {
+        panel.classList.remove('chat-open');
+        fab.classList.remove('chat-open');
+        fab.setAttribute('aria-expanded', 'false');
+      }
+
+      fab.addEventListener('click', openChat);
+      if (close) close.addEventListener('click', closeChat);
+
+      // Show unread badge when a new message arrives and chat is closed
+      var chatList = document.getElementById('lobby-chat-list');
+      if (chatList && window.MutationObserver) {
+        new MutationObserver(function () {
+          if (!panel.classList.contains('chat-open') && window.innerWidth <= 700) {
+            badge.hidden = false;
+          }
+        }).observe(chatList, { childList: true });
+      }
+    }());
+  </script>
 </body>
 </html>

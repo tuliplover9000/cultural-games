@@ -843,6 +843,71 @@
 
 /* ── Chat panel ── */
 .room-panel--chat { display: flex; flex-direction: column; }
+.room-panel--chat__header { display: flex; align-items: center; justify-content: space-between; }
+.room-chat-close-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--color-text-muted); font-size: 1rem; padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+.room-chat-close-btn:hover { color: var(--color-text); background: var(--color-surface-alt); }
+
+/* Mobile: hidden by default, becomes a bottom drawer */
+.room-chat-fab { display: none; }
+
+@media (max-width: 700px) {
+  /* Hide chat panel from the normal flow */
+  .room-panel--chat {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 60vh;
+    z-index: 200;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-top: 2px solid var(--color-accent-gold);
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.4);
+    padding: var(--space-3);
+    transform: translateY(100%);
+    transition: transform 0.25s ease;
+  }
+  .room-panel--chat.chat-open {
+    display: flex;
+    transform: translateY(0);
+  }
+  .room-chat-close-btn { display: block !important; }
+
+  /* Floating chat button */
+  .room-chat-fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: var(--space-4);
+    right: var(--space-4);
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: var(--color-accent-gold);
+    color: #000;
+    font-size: 1.4rem;
+    border: none;
+    cursor: pointer;
+    z-index: 199;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  .room-chat-fab:active { transform: scale(0.93); }
+  .room-chat-fab.chat-open { opacity: 0; pointer-events: none; }
+
+  /* Unread badge */
+  .room-chat-fab__badge {
+    position: absolute;
+    top: 4px; right: 4px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: #e74c3c;
+    font-size: 0;
+    border: 2px solid var(--color-bg);
+  }
+}
 .lobby-chat-list {
   flex: 1;
   overflow-y: auto;
