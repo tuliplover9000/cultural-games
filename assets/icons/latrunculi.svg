@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Board background -->
+  <rect x="4" y="4" width="56" height="56" rx="4" fill="#2C1E10"/>
+
+  <!-- Grid lines (4x4 inner grid, 5 lines each way) -->
+  <!-- Vertical lines -->
+  <line x1="16" y1="8"  x2="16" y2="56" stroke="#6b4e2a" stroke-width="0.75" opacity="0.7"/>
+  <line x1="26" y1="8"  x2="26" y2="56" stroke="#6b4e2a" stroke-width="0.75" opacity="0.7"/>
+  <line x1="36" y1="8"  x2="36" y2="56" stroke="#6b4e2a" stroke-width="0.75" opacity="0.7"/>
+  <line x1="46" y1="8"  x2="46" y2="56" stroke="#6b4e2a" stroke-width="0.75" opacity="0.7"/>
+  <!-- Horizontal lines -->
+  <line x1="8"  y1="16" x2="56" y2="16" stroke="#6b4e2a" stroke-width="0.75" opacity="0.7"/>
+  <line x1="8"  y1="26" x2="56" y2="26" stroke="#6b4e2a" stroke-width="0.75" opacity="0.7"/>
+  <line x1="8"  y1="36" x2="56" y2="36" stroke="#6b4e2a" stroke-width="0.75" opacity="0.7"/>
+  <line x1="8"  y1="46" x2="56" y2="46" stroke="#6b4e2a" stroke-width="0.75" opacity="0.7"/>
+
+  <!-- White piece (left flanker) -->
+  <circle cx="21" cy="36" r="7" fill="#F0E8D0" stroke="#C89B3C" stroke-width="1.5"/>
+  <circle cx="21" cy="36" r="3.5" fill="none" stroke="#C89B3C" stroke-width="1"/>
+
+  <!-- Black piece (center — being captured) -->
+  <circle cx="32" cy="36" r="7" fill="#3a2810" stroke="#6b4e2a" stroke-width="1.5"/>
+  <circle cx="32" cy="36" r="3.5" fill="none" stroke="#6b4e2a" stroke-width="1"/>
+
+  <!-- White Dux piece (right flanker — crowned, completing the sandwich) -->
+  <circle cx="43" cy="36" r="7" fill="#F0E8D0" stroke="#C89B3C" stroke-width="1.5"/>
+  <!-- Crown marks on Dux -->
+  <line x1="40" y1="34" x2="40" y2="31" stroke="#C89B3C" stroke-width="1.4" stroke-linecap="round"/>
+  <line x1="43" y1="34" x2="43" y2="30" stroke="#C89B3C" stroke-width="1.4" stroke-linecap="round"/>
+  <line x1="46" y1="34" x2="46" y2="31" stroke="#C89B3C" stroke-width="1.4" stroke-linecap="round"/>
+  <line x1="39.5" y1="34" x2="46.5" y2="34" stroke="#C89B3C" stroke-width="1.4" stroke-linecap="round"/>
+
+  <!-- Capture arrows — subtle gold dots above the captured piece -->
+  <circle cx="32" cy="22" r="2" fill="#C89B3C" opacity="0.6"/>
+  <circle cx="32" cy="17" r="1.2" fill="#C89B3C" opacity="0.35"/>
+
+  <!-- Lone white piece (top row — showing board activity) -->
+  <circle cx="21" cy="21" r="5.5" fill="#F0E8D0" stroke="#C89B3C" stroke-width="1.2" opacity="0.6"/>
+
+  <!-- Lone black piece (top-right) -->
+  <circle cx="43" cy="21" r="5.5" fill="#3a2810" stroke="#6b4e2a" stroke-width="1.2" opacity="0.6"/>
+</svg>
