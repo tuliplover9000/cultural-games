@@ -986,12 +986,11 @@
     if (!state || !state.boardConfig) return;
     if (!canvas) return;
     var cfg = state.boardConfig;
-    var pad = 20;
-    var cs  = Math.floor(Math.min((availW - pad) / cfg.cols, (availH - pad) / cfg.rows));
+    var cs = Math.floor(Math.min(availW / cfg.cols, availH / cfg.rows) * 0.92);
     cs = Math.max(cs, 24);
-    cfg.cellSize  = cs;
-    canvas.width  = cfg.cols * cs + BORDER_W * 2;
-    canvas.height = cfg.rows * cs + BORDER_W * 2;
+    cfg.cellSize = cs;
+    canvas.width  = availW;
+    canvas.height = availH;
     render();
   };
 

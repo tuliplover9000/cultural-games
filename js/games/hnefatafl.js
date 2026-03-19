@@ -865,9 +865,10 @@
 
   window.GameResize = function (availW, availH) {
     if (!canvas) return;
-    var avail = Math.min(availW, availH);
-    CELL = Math.floor((avail - PAD * 2) / SIZE);
+    CELL = Math.floor(Math.min(availW / SIZE, availH / SIZE) * 0.92);
     if (CELL < 20) CELL = 20;
+    canvas.width  = availW;
+    canvas.height = availH;
     render();
   };
 

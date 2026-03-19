@@ -1525,12 +1525,11 @@
 
   window.GameResize = function (availW, availH) {
     if (!canvas) return;
-    var avail = Math.min(availW, availH);
-    CELL = Math.floor(avail / GRID);
+    CELL = Math.floor(Math.min(availW / GRID, availH / GRID) * 0.92);
     if (CELL < 40) CELL = 40;
     CANVAS_SIZE = CELL * GRID;
-    canvas.width  = CANVAS_SIZE;
-    canvas.height = CANVAS_SIZE;
+    canvas.width  = availW;
+    canvas.height = availH;
     redraw();
   };
 
