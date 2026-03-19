@@ -51,6 +51,7 @@
     { id: 'pallanguzhi', name: 'Pallanguzhi',      iconPath: 'assets/icons/pallanguzhi.svg', href: 'games/pallanguzhi.html' },
     { id: 'fanorona',    name: 'Fanorona',          iconPath: 'assets/icons/fanorona.svg',    href: 'games/fanorona.html' },
     { id: 'mahjong',     name: 'Hong Kong Mahjong', iconPath: '',                              href: 'games/mahjong.html' },
+    { id: 'latrunculi',  name: 'Ludus Latrunculorum', iconPath: '',                            href: 'games/latrunculi.html' },
   ];
 
   /* ── Session storage key (custom — NOT the Supabase internal key) ── */

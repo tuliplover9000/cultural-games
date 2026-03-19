@@ -61,6 +61,9 @@
     { id: 'pg_wins_10',    gameId: 'pallanguzhi', title: 'Pit Master',        description: 'Win 10 games of Pallanguzhi',              tier: 'silver', category: 'combat', condition: { type: 'stat', game: 'pallanguzhi', stat: 'wins', threshold: 10 } },
     { id: 'bc_first_win',  gameId: 'bau-cua',     title: 'Lucky Roll',        description: 'Win your first game of B\u1ea7u Cua T\u00f4m C\u00e1', tier: 'bronze', category: 'combat', condition: { type: 'stat', game: 'bau-cua',     stat: 'wins', threshold: 1  } },
     { id: 'bc_wins_10',    gameId: 'bau-cua',     title: 'Sea Gambler',       description: 'Win 10 games of B\u1ea7u Cua T\u00f4m C\u00e1',        tier: 'silver', category: 'combat', condition: { type: 'stat', game: 'bau-cua',     stat: 'wins', threshold: 10 } },
+    { id: 'lt_first_win',  gameId: 'latrunculi',  title: 'Victor of Rome',    description: 'Win your first game of Ludus Latrunculorum',             tier: 'bronze', category: 'combat', condition: { type: 'stat', game: 'latrunculi',  stat: 'wins', threshold: 1  } },
+    { id: 'lt_wins_10',    gameId: 'latrunculi',  title: 'Praetorian Guard',  description: 'Win 10 games of Ludus Latrunculorum',                    tier: 'silver', category: 'combat', condition: { type: 'stat', game: 'latrunculi',  stat: 'wins', threshold: 10 } },
+    { id: 'lt_wins_50',    gameId: 'latrunculi',  title: 'Consul of the Board','description': 'Win 50 games of Ludus Latrunculorum',                  tier: 'gold',   category: 'combat', condition: { type: 'stat', game: 'latrunculi',  stat: 'wins', threshold: 50 } },
 
     /* ── Explorer (cross-game) ── */
     { id: 'exp_play_3',   gameId: null, title: 'Curious Traveller', description: 'Play 3 different games',               tier: 'bronze', category: 'explorer', condition: { type: 'games_played', threshold: 3  } },

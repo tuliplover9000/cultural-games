@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Play Ludus Latrunculorum — the ancient Roman strategy game of capture and command, free in your browser." />
+  <title>Ludus Latrunculorum — Cultural Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cinzel:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="../../shared/theme.js"></script>
+  <script src="../../js/rooms/room-mode.js"></script>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../shared/theme.css" />
+  <link rel="stylesheet" href="../../css/components.css" />
+  <link rel="stylesheet" href="../../shared/toggle.css" />
+  <link rel="stylesheet" href="../../shared/tutorial.css" />
+  <link rel="stylesheet" href="../../css/auth.css" />
+  <link rel="stylesheet" href="../../css/games.css" />
+  <link rel="stylesheet" href="../../shared/achievements.css" />
+
+  <style>
+    /* ── Latrunculi — Roman Aesthetic ── */
+    .ll-lobby {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem 4rem;
+      text-align: center;
+      min-height: 60vh;
+      background: radial-gradient(ellipse at center, #2a1505 0%, #1A1008 70%);
+    }
+
+    .ll-lobby__title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      font-weight: 700;
+      color: #D4A017;
+      margin: 0 0 0.4rem;
+      letter-spacing: 0.04em;
+      text-shadow: 0 2px 12px rgba(212,160,23,0.4);
+    }
+
+    .ll-lobby__subtitle {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      color: #b89060;
+      margin: 0 0 1.2rem;
+      letter-spacing: 0.06em;
+    }
+
+    .ll-lobby__teaser {
+      color: #c8b090;
+      max-width: 480px;
+      margin: 0 0 2.5rem;
+      line-height: 1.7;
+      font-size: 1.05rem;
+    }
+
+    .ll-lobby__modes {
+      display: flex;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .ll-mode-btn {
+      background: linear-gradient(135deg, #2C1E10 0%, #3a2810 100%);
+      border: 2px solid #6b4e2a;
+      border-radius: 12px;
+      color: #e8d5b0;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      padding: 1.4rem 2rem;
+      text-align: center;
+      transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+      min-width: 180px;
+    }
+
+    .ll-mode-btn:hover {
+      border-color: #D4A017;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(212,160,23,0.25);
+    }
+
+    .ll-mode-btn strong {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem;
+      color: #D4A017;
+      letter-spacing: 0.03em;
+    }
+
+    .ll-mode-btn span {
+      font-size: 0.85rem;
+      color: #b89060;
+    }
+
+    /* ── Game container layout ── */
+    .ll-game-container {
+      display: flex;
+      flex-direction: row;
+      gap: 1.2rem;
+      align-items: flex-start;
+      background: #1A1008;
+      border-radius: 12px;
+      padding: 1rem;
+    }
+
+    .ll-canvas-wrap {
+      flex: 1 1 auto;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+
+    #ll-board {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    /* ── Sidebar ── */
+    .ll-sidebar {
+      flex: 0 0 180px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      background: #2C1E10;
+      border: 1px solid #6b4e2a;
+      border-radius: 10px;
+      padding: 1rem 0.9rem;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .ll-sidebar__title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      color: #D4A017;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .ll-turn-indicator {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #e8d5b0;
+      padding: 0.5rem 0.6rem;
+      border-radius: 6px;
+      background: rgba(212,160,23,0.08);
+      border-left: 3px solid #D4A017;
+      text-align: center;
+    }
+
+    .ll-turn-indicator.white-turn {
+      border-color: #F0EAD6;
+      background: rgba(240,234,214,0.08);
+    }
+
+    .ll-turn-indicator.black-turn {
+      border-color: #6b4e2a;
+      background: rgba(42,32,24,0.5);
+    }
+
+    .ll-stat {
+      font-size: 0.85rem;
+      color: #c8b090;
+    }
+
+    .ll-stat span {
+      color: #D4A017;
+      font-weight: 600;
+    }
+
+    .ll-ai-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: #c8b090;
+      cursor: pointer;
+    }
+
+    .ll-ai-label input[type="checkbox"] {
+      accent-color: #D4A017;
+    }
+
+    .ll-divider {
+      height: 1px;
+      background: rgba(107,78,42,0.4);
+      margin: 0.2rem 0;
+    }
+
+    .ll-btn {
+      background: linear-gradient(135deg, #3a2810 0%, #2C1E10 100%);
+      border: 1px solid #6b4e2a;
+      border-radius: 6px;
+      color: #D4A017;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.05em;
+      padding: 0.5rem 0.8rem;
+      transition: border-color 0.15s, background 0.15s;
+      width: 100%;
+      text-align: center;
+    }
+
+    .ll-btn:hover {
+      border-color: #D4A017;
+      background: rgba(212,160,23,0.12);
+    }
+
+    .ll-btn--forfeit {
+      color: #b86060;
+      border-color: #6b3a2a;
+    }
+
+    .ll-btn--forfeit:hover {
+      border-color: #b86060;
+      background: rgba(184,96,96,0.1);
+    }
+
+    .ll-landscape-hint {
+      display: none;
+      font-size: 0.8rem;
+      color: #b89060;
+      text-align: center;
+      margin-top: 0.4rem;
+    }
+
+    /* ── Cultural details ── */
+    .ll-culture-details {
+      margin-top: 1.5rem;
+    }
+
+    .ll-culture-details summary {
+      font-family: 'Cinzel', serif;
+      color: #D4A017;
+      cursor: pointer;
+      padding: 0.6rem 0;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      list-style: none;
+    }
+
+    .ll-culture-details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .ll-culture-details summary::before {
+      content: '+ ';
+    }
+
+    .ll-culture-details[open] summary::before {
+      content: '- ';
+    }
+
+    .ll-culture-details p {
+      color: #c8b090;
+      line-height: 1.7;
+      margin: 0.6rem 0;
+      font-size: 0.9rem;
+    }
+
+    /* ── Game over overlay ── */
+    .ll-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(26,16,8,0.82);
+      border-radius: 4px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.35s;
+    }
+
+    .ll-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .ll-overlay__title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.8rem;
+      color: #D4A017;
+      margin: 0 0 0.4rem;
+      text-shadow: 0 2px 12px rgba(212,160,23,0.5);
+    }
+
+    .ll-overlay__sub {
+      font-size: 1rem;
+      color: #e8d5b0;
+      margin: 0 0 1.2rem;
+    }
+
+    /* ── Mobile responsive ── */
+    @media (max-width: 680px) {
+      .ll-game-container {
+        flex-direction: column;
+      }
+
+      .ll-sidebar {
+        flex: none;
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+      }
+
+      .ll-sidebar__title {
+        width: 100%;
+      }
+
+      .ll-turn-indicator {
+        flex: 1 1 auto;
+      }
+
+      .ll-stat {
+        flex: 1 1 auto;
+      }
+
+      .ll-landscape-hint {
+        display: block;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .ll-lobby__modes {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button id="tt-trigger" class="tt-trigger" type="button" aria-label="How to play">
+    <span class="tt-trigger__icon" aria-hidden="true">?</span>
+    <span class="tt-trigger__badge" id="tt-badge" hidden>New</span>
+  </button>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../../index.html" class="nav-logo" aria-label="Cultural Games — Home">
+        <span class="nav-logo-icon" aria-hidden="true">🎲</span>
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="../browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="../rooms.html"  class="nav-link nav-link--rooms">Rooms</a></li>
+        <li><a href="../about.html"  class="nav-link">About</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+
+      <div class="game-nav-bar">
+        <a href="../browse.html" class="back-link">Back to Browse</a>
+      </div>
+
+      <header class="game-header">
+        <div class="game-header__icon" aria-hidden="true">
+          <img src="../../assets/icons/latrunculi.svg" alt="" onerror="this.style.display='none'" />
+        </div>
+        <h1 class="game-header__title">Ludus Latrunculorum</h1>
+        <p class="game-header__origin">
+          Roman Empire &nbsp;&middot;&nbsp;
+          <span class="badge badge--board" style="display:inline-flex; vertical-align:middle; margin-left:4px;">Strategy</span>
+        </p>
+      </header>
+
+      <!-- Lobby / Mode Select -->
+      <div id="ll-lobby">
+        <div class="ll-lobby">
+          <h1 class="ll-lobby__title">Ludus Latrunculorum</h1>
+          <p class="ll-lobby__subtitle">Roman Strategy Game &middot; ~1st century BC</p>
+          <p class="ll-lobby__teaser">Command your legions. Capture the enemy commander. Master the game of Rome.</p>
+          <div class="ll-lobby__modes">
+            <button class="ll-mode-btn" data-mode="8x8">
+              <strong>Standard Board</strong>
+              <span>8&times;8 &middot; 17 pieces per side</span>
+            </button>
+            <button class="ll-mode-btn" data-mode="12x8">
+              <strong>Grand Board</strong>
+              <span>12&times;8 &middot; 25 pieces per side</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game Container (hidden until mode chosen) -->
+      <div class="game-container ll-game-container" id="game-container" aria-label="Game area" style="display:none; position:relative;">
+
+        <div class="ll-canvas-wrap" id="ll-canvas-wrap">
+          <canvas id="ll-board" aria-label="Ludus Latrunculorum game board" role="img"></canvas>
+          <div class="ll-overlay" id="ll-overlay" aria-live="polite">
+            <p class="ll-overlay__title" id="ll-overlay-title"></p>
+            <p class="ll-overlay__sub" id="ll-overlay-sub"></p>
+          </div>
+        </div>
+
+        <aside class="ll-sidebar" aria-label="Game info">
+          <p class="ll-sidebar__title">Legions</p>
+
+          <div class="ll-turn-indicator" id="ll-turn">White's turn</div>
+
+          <div class="ll-stat">Captured: W <span id="ll-cap-w">0</span> &nbsp; B <span id="ll-cap-b">0</span></div>
+          <div class="ll-stat">Move: <span id="ll-moves">0</span></div>
+
+          <div class="ll-divider"></div>
+
+          <label class="ll-ai-label">
+            <input type="checkbox" id="ll-ai-toggle" checked />
+            <span>vs AI</span>
+          </label>
+
+          <div class="ll-divider"></div>
+
+          <button class="ll-btn" id="ll-new-btn">New Game</button>
+          <button class="ll-btn ll-btn--forfeit" id="ll-forfeit-btn">Forfeit</button>
+
+          <p class="ll-landscape-hint" id="ll-landscape-hint">&#8635; Rotate for best experience</p>
+        </aside>
+
+      </div>
+
+      <!-- Cultural Context -->
+      <details class="ll-culture-details accordion">
+        <summary class="accordion__trigger">
+          <span class="accordion__title">About Ludus Latrunculorum</span>
+          <span class="accordion__icon" aria-hidden="true">&#9660;</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Ludus Latrunculorum ("Game of Brigands" or "Game of Mercenary Soldiers") was one of the most popular strategy
+            games of the Roman Empire, played from at least the 1st century BC through the 5th century AD. Roman legionaries
+            carved boards into stone steps at forts and forums across the empire — from Hadrian's Wall to the deserts of
+            North Africa.
+          </p>
+          <p>
+            The game was referenced by Ovid, Martial, and Varro, who praised it as a game of intellect and military virtue.
+            Boards carved into stone steps at Roman forum sites have been found across Europe, the Middle East, and North Africa,
+            testament to how widely the game was played.
+          </p>
+          <p>
+            The <em>Dux</em> ("commander") piece is explicitly mentioned in ancient sources as a special piece distinct from
+            regular <em>latrones</em> (soldiers). The commander moved differently from ordinary pieces, though the exact rules
+            for the Dux have been reconstructed from fragmentary sources. The custodian capture rule — surrounding a piece on
+            two sides to remove it — is the game's defining mechanic, mirroring the Roman military practice of encirclement.
+          </p>
+        </div>
+      </details>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <span class="footer-brand">Cultural Games</span>
+      <p class="footer-mission">Preserving cultural heritage through play — one game at a time.</p>
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links" role="list">
+          <li><a href="../browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="../about.html"  class="footer-link">About</a></li>
+        </ul>
+      </nav>
+      <div class="footer-divider"></div>
+      <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
+    </div>
+  </footer>
+
+  <script src="../../js/utils/helpers.js"></script>
+  <script src="../../js/utils/navigation.js"></script>
+  <script src="../../js/utils/auth.js"></script>
+  <script src="../../shared/achievement-queue.js"></script>
+  <script src="../../shared/achievements.js"></script>
+  <script src="../../js/rooms/game-bridge.js"></script>
+  <script src="../../shared/tutorial.js"></script>
+  <script src="../../js/games/latrunculi.js"></script>
+</body>
+</html>

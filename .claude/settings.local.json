@@ -56,7 +56,10 @@
       "WebFetch(domain:tuliplover9000.github.io)",
       "Bash(git revert:*)",
       "Bash(cd:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(sed:*)"
     ]
   }
 }
