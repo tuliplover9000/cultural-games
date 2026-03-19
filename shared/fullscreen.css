@@ -71,11 +71,7 @@ html.fs-css-only  .fs-toggle { display: flex; }
   height: 100dvh !important;
   overflow: hidden;
   background: #111;
-  /* Column layout: game-container fills remaining height */
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
+  display: block !important;
   animation: fs-expand 180ms ease forwards;
 }
 
@@ -98,40 +94,40 @@ html.fs-css-only  .fs-toggle { display: flex; }
 /* ── Native fullscreen ── */
 .fs-game-wrap:fullscreen {
   background: #111;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
+  display: block !important;
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
 }
 .fs-game-wrap:-webkit-full-screen {
   background: #111;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
+  display: block !important;
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
 }
 .fs-game-wrap::backdrop { background: #111; }
 
-/* ── Canvas: JS scales it via transform, CSS just removes constraints ── */
-.fs-game-wrap.fs-active canvas,
-.fs-game-wrap:fullscreen canvas,
-.fs-game-wrap:-webkit-full-screen canvas {
-  transform-origin: center center;
-  /* Let JS set transform: scale(X) */
-}
-
-/* ── Inner game-container: hide borders/radius in fullscreen ── */
+/* ── In fullscreen, game-container fills wrapper ── */
 .fs-game-wrap.fs-active .game-container,
 .fs-game-wrap:fullscreen .game-container,
 .fs-game-wrap:-webkit-full-screen .game-container {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
   border-radius: 0 !important;
   border: none !important;
   background: transparent !important;
   box-shadow: none !important;
+  position: absolute !important;
+  inset: 0 !important;
+}
+
+/* ── Canvas fills game-container ── */
+.fs-game-wrap.fs-active canvas,
+.fs-game-wrap:fullscreen canvas,
+.fs-game-wrap:-webkit-full-screen canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 /* ── Screen reader only ── */

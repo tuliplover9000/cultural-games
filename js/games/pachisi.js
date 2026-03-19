@@ -1523,4 +1523,15 @@
     }, 50);
   }
 
+  window.GameResize = function (availW, availH) {
+    if (!canvas) return;
+    var avail = Math.min(availW, availH);
+    CELL = Math.floor(avail / GRID);
+    if (CELL < 40) CELL = 40;
+    CANVAS_SIZE = CELL * GRID;
+    canvas.width  = CANVAS_SIZE;
+    canvas.height = CANVAS_SIZE;
+    redraw();
+  };
+
 }());

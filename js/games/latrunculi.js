@@ -982,4 +982,17 @@
     }, 50);
   }
 
+  window.GameResize = function (availW, availH) {
+    if (!state || !state.boardConfig) return;
+    if (!canvas) return;
+    var cfg = state.boardConfig;
+    var pad = 20;
+    var cs  = Math.floor(Math.min((availW - pad) / cfg.cols, (availH - pad) / cfg.rows));
+    cs = Math.max(cs, 24);
+    cfg.cellSize  = cs;
+    canvas.width  = cfg.cols * cs + BORDER_W * 2;
+    canvas.height = cfg.rows * cs + BORDER_W * 2;
+    render();
+  };
+
 }());

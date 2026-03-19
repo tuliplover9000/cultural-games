@@ -849,3 +849,8 @@ function _fsResize() {
     if (container && typeof renderGame === 'function') renderGame(container);
   }, 50);
 }
+
+// DOM-based game — re-render to let CSS fill the new available space
+window.GameResize = function (availW, availH) {
+  if (typeof refresh === 'function') refresh();
+};

@@ -881,4 +881,22 @@
     }, 50);
   }
 
+  window.GameResize = function (availW, availH) {
+    if (!cnv) return;
+    // Keep aspect ratio: board is (COLS-1)/(ROWS-1) wide-to-tall plus PAD*2
+    var maxW = availW;
+    var maxH = availH;
+    var aspectW = COLS - 1;
+    var aspectH = ROWS - 1;
+    var w = maxW;
+    var h = Math.round(w * aspectH / aspectW) + PAD * 2;
+    if (h > maxH) {
+      h = maxH;
+      w = Math.round((h - PAD * 2) * aspectW / aspectH);
+    }
+    cnv.width  = Math.max(w, 100);
+    cnv.height = Math.max(h, 100);
+    render();
+  };
+
 }());

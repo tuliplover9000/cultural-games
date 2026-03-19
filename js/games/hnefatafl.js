@@ -863,4 +863,12 @@
     }, 50);
   }
 
+  window.GameResize = function (availW, availH) {
+    if (!canvas) return;
+    var avail = Math.min(availW, availH);
+    CELL = Math.floor((avail - PAD * 2) / SIZE);
+    if (CELL < 20) CELL = 20;
+    render();
+  };
+
 }());

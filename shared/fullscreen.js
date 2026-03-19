@@ -125,11 +125,8 @@
   document.addEventListener('fullscreenchange',       _onNativeChange);
   document.addEventListener('webkitfullscreenchange', _onNativeChange);
 
-  // ── Canvas scale-to-fill (transform-based, works on all canvas games) ──────
-  // Reads the canvas's own pixel dimensions (canvas.width / canvas.height),
-  // computes a scale factor that fills the wrapper while keeping aspect ratio,
-  // then applies it as CSS transform: scale(). No game JS changes needed.
-  function _scaleCanvas(active) {
+  // ── Resize dispatcher — calls window.GameResize if available, else CSS scale ──
+  function _triggerResize(active) {
     var w = wrap();
     if (!w) return;
     var canvas = w.querySelector('canvas');
@@ -137,20 +134,30 @@
 
     if (!active) {
       canvas.style.transform = '';
+      // Restore original canvas size if saved
+      if (canvas._fs_origW) { canvas.width = canvas._fs_origW; canvas.height = canvas._fs_origH; }
+      if (window.GameResize && canvas._fs_origW) window.GameResize(canvas._fs_origW, canvas._fs_origH);
       return;
     }
 
-    var cw = canvas.width;
-    var ch = canvas.height;
-    if (!cw || !ch) return;
+    // Save original size
+    if (!canvas._fs_origW) { canvas._fs_origW = canvas.width; canvas._fs_origH = canvas.height; }
 
-    var availW = w.clientWidth;
-    var availH = w.clientHeight;
-    if (!availW || !availH) return;
+    var availW = w.clientWidth  || window.innerWidth;
+    var availH = w.clientHeight || window.innerHeight;
 
-    var scale = Math.min(availW / cw, availH / ch);
-    canvas.style.transform       = 'scale(' + scale + ')';
-    canvas.style.transformOrigin = 'center center';
+    if (window.GameResize) {
+      // Game provides proper resize — use it
+      window.GameResize(availW, availH);
+    } else {
+      // Fallback: CSS transform scale-to-contain
+      var cw = canvas.width;
+      var ch = canvas.height;
+      if (!cw || !ch) return;
+      var scale = Math.min(availW / cw, availH / ch);
+      canvas.style.transform = 'scale(' + scale + ')';
+      canvas.style.transformOrigin = 'center center';
+    }
   }
 
   // ── State change dispatcher ────────────────────────────────────────────────
@@ -160,14 +167,14 @@
       // then scale the canvas and fire the game's onEnter hook.
       requestAnimationFrame(function () {
         requestAnimationFrame(function () {
-          _scaleCanvas(true);
+          _triggerResize(true);
           FSMode.onEnter();
           _startHideTimer();
           _moveFocusIn();
         });
       });
     } else {
-      _scaleCanvas(false);
+      _triggerResize(false);
       FSMode.onExit();
       _clearHideTimer();
       _restoreFocus();

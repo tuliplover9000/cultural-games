@@ -1711,4 +1711,30 @@
     }, 50);
   }
 
+  window.GameResize = function (availW, availH) {
+    if (!canvas) return;
+    // Scale logical dimensions to fill available space, preserving aspect ratio
+    var origRatio = 900 / 660; // BASE_W / BASE_H original aspect
+    var w = availW;
+    var h = Math.round(w / origRatio);
+    if (h > availH) {
+      h = availH;
+      w = Math.round(h * origRatio);
+    }
+    BASE_W = w;
+    BASE_H = h;
+    TABLE_X = HAND_H;
+    TABLE_Y = HAND_H;
+    TABLE_W = BASE_W - 2 * HAND_H;
+    TABLE_H = BASE_H - HAND_H - SOUTH_H;
+    CX = Math.round(BASE_W / 2);
+    CY = TABLE_Y + Math.round(TABLE_H / 2);
+    // Invalidate offscreen caches
+    cardCache = {};
+    diamondPattern = null;
+    applyDPR();
+    buildCache();
+    drawFrame();
+  };
+
 }());
