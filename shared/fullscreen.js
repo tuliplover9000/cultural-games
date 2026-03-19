@@ -128,9 +128,15 @@
   // ── State change dispatcher ────────────────────────────────────────────────
   function _onStateChange(isActive) {
     if (isActive) {
-      FSMode.onEnter();
-      _startHideTimer();
-      _moveFocusIn();
+      // Wait two frames for the browser to apply fullscreen dimensions,
+      // then fire onEnter so game canvas resizes to the correct size.
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          FSMode.onEnter();
+          _startHideTimer();
+          _moveFocusIn();
+        });
+      });
     } else {
       FSMode.onExit();
       _clearHideTimer();
