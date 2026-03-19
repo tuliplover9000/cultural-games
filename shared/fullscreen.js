@@ -143,8 +143,11 @@
     // Save original size
     if (!canvas._fs_origW) { canvas._fs_origW = canvas.width; canvas._fs_origH = canvas.height; }
 
-    var availW = w.clientWidth  || window.innerWidth;
-    var availH = w.clientHeight || window.innerHeight;
+    // Always use window.innerWidth/Height — most reliable during fullscreen
+    // transitions. w.clientHeight can return the pre-fullscreen value if
+    // layout hasn't fully committed yet, even after two rAF frames.
+    var availW = window.innerWidth;
+    var availH = window.innerHeight;
 
     if (window.GameResize) {
       // Game provides proper resize — use it

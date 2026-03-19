@@ -110,24 +110,22 @@ html.fs-css-only  .fs-toggle { display: flex; }
 .fs-game-wrap.fs-active .game-container,
 .fs-game-wrap:fullscreen .game-container,
 .fs-game-wrap:-webkit-full-screen .game-container {
-  width: 100% !important;
-  height: 100% !important;
-  min-height: 0 !important;
   border-radius: 0 !important;
   border: none !important;
-  background: transparent !important;
   box-shadow: none !important;
   position: absolute !important;
   inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  /* background intentionally NOT overridden — games like Bau Cua rely on it */
 }
 
-/* ── Canvas fills game-container ── */
+/* ── Canvas: display block, let GameResize control pixel dimensions ── */
 .fs-game-wrap.fs-active canvas,
 .fs-game-wrap:fullscreen canvas,
 .fs-game-wrap:-webkit-full-screen canvas {
   display: block;
-  width: 100% !important;
-  height: 100% !important;
 }
 
 /* ── Screen reader only ── */
