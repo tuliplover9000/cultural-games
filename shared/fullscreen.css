@@ -91,38 +91,46 @@ html.fs-css-only  .fs-toggle { display: flex; }
   width: 100%;
 }
 
-/* ── Native fullscreen ── */
+/* ── Native fullscreen — position: relative makes #fs-game-wrap the
+   containing block for the absolutely-positioned canvas ── */
 .fs-game-wrap:fullscreen {
   background: #111;
   display: block !important;
   width: 100vw;
   height: 100dvh;
+  position: relative !important;
 }
 .fs-game-wrap:-webkit-full-screen {
   background: #111;
   display: block !important;
   width: 100vw;
   height: 100dvh;
+  position: relative !important;
 }
 .fs-game-wrap::backdrop { background: #111; }
 
-/* ── In fullscreen, game-container fills wrapper ── */
+/* ── In fullscreen, game-container fills wrapper.
+   position: static ensures canvas (position:absolute) bypasses it and
+   anchors directly to #fs-game-wrap — which is always the true full-
+   screen sized element in both CSS-fallback (fixed) and native modes. ── */
 .fs-game-wrap.fs-active .game-container,
 .fs-game-wrap:fullscreen .game-container,
 .fs-game-wrap:-webkit-full-screen .game-container {
   border-radius: 0 !important;
   border: none !important;
   box-shadow: none !important;
-  position: absolute !important;
-  inset: 0 !important;
+  position: static !important;
   width: 100% !important;
   height: 100% !important;
   min-height: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
   /* background intentionally NOT overridden — games like Bau Cua rely on it */
 }
 
-/* ── Canvas fills the game-container absolutely — bypasses any intermediate
-   flex/grid containers that would otherwise constrain its height ── */
+/* ── Canvas anchors to #fs-game-wrap (the guaranteed full-screen element).
+   Works for any DOM nesting depth — no intermediate container can
+   intercept the absolute positioning since they're all static. ── */
 .fs-game-wrap.fs-active canvas,
 .fs-game-wrap:fullscreen canvas,
 .fs-game-wrap:-webkit-full-screen canvas {
