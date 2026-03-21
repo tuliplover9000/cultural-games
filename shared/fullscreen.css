@@ -133,6 +133,41 @@ html.fs-css-only  .fs-toggle { display: flex; }
   display: block;
 }
 
+/* ── DOM games: root element must fill the fullscreen game-container ──
+   Canvas games are handled by JS (canvas moved + transform:scale).
+   DOM games have no canvas; their root div must fill height:100% so the
+   game background covers the whole container (no brown gap at bottom). ── */
+.fs-game-wrap.fs-active .tl-game,
+.fs-game-wrap.fs-active .oaq-game,
+.fs-game-wrap.fs-active .ow-game,
+.fs-game-wrap.fs-active .pg-game,
+.fs-game-wrap.fs-active .pt-game-wrap,
+.fs-game-wrap.fs-active .pu-game-wrap,
+.fs-game-wrap.fs-active .mj-wrap,
+.fs-game-wrap.fs-active .bc-game,
+.fs-game-wrap:fullscreen .tl-game,
+.fs-game-wrap:fullscreen .oaq-game,
+.fs-game-wrap:fullscreen .ow-game,
+.fs-game-wrap:fullscreen .pg-game,
+.fs-game-wrap:fullscreen .pt-game-wrap,
+.fs-game-wrap:fullscreen .pu-game-wrap,
+.fs-game-wrap:fullscreen .mj-wrap,
+.fs-game-wrap:fullscreen .bc-game,
+.fs-game-wrap:-webkit-full-screen .tl-game,
+.fs-game-wrap:-webkit-full-screen .oaq-game,
+.fs-game-wrap:-webkit-full-screen .ow-game,
+.fs-game-wrap:-webkit-full-screen .pg-game,
+.fs-game-wrap:-webkit-full-screen .pt-game-wrap,
+.fs-game-wrap:-webkit-full-screen .pu-game-wrap,
+.fs-game-wrap:-webkit-full-screen .mj-wrap,
+.fs-game-wrap:-webkit-full-screen .bc-game {
+  height: 100% !important;
+  min-height: 0 !important;
+  border-radius: 0 !important;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
 /* ── Screen reader only ── */
 .fs-sr-only {
   position: absolute;
