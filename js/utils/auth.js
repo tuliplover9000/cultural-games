@@ -204,6 +204,22 @@
     return fetch(SB_URL + '/rest/v1/' + path, opts);
   }
 
+  // RPC call helper — used for SECURITY DEFINER server-side functions.
+  // Does NOT set Prefer:return=minimal so the response JSON is returned.
+  function _rpcFetch(fnName, params) {
+    return fetch(SB_URL + '/rest/v1/rpc/' + fnName, {
+      method:    'POST',
+      keepalive: true,
+      headers: {
+        'apikey':        SB_KEY,
+        'Authorization': 'Bearer ' + _accessToken,
+        'Content-Type':  'application/json',
+        'Accept':        'application/json',
+      },
+      body: JSON.stringify(params),
+    });
+  }
+
   async function _loadFavorites(userId) {
     // Seed from cache first so UI is instant on page load
     try {
@@ -230,12 +246,13 @@
   /* ── Coins ── */
   function getCoins() { return _coins; }
 
-  async function addCoins(delta) {
-    if (!_user || !_accessToken) return;
+  function addCoins(delta) {
+    // Local-only update — the server balance is the authority, confirmed via
+    // the record_game_result RPC. This keeps the UI responsive while the
+    // server write is in flight.
+    if (typeof delta !== 'number') return;
     _coins = Math.max(0, _coins + delta);
     _emit();
-    // keepalive:true lets the request survive page navigation / room leave
-    _pgFetch('PATCH', 'profiles?id=eq.' + _user.id, { coins: _coins }, { keepalive: true });
   }
 
   async function toggleFavorite(gameKey) {
@@ -377,35 +394,26 @@
     'ganjifa':  { win: 500, loss: 150 },
   };
 
-  function recordResult(gameId, outcome) {
-    if (!_user || !_accessToken) return;
+  function recordResult(gameId, outcome, roomId) {
+    // ── Optimistic local update (immediate UI feedback) ────────────────────
     if (!_stats[gameId]) _stats[gameId] = { wins: 0, losses: 0, played: 0 };
     _stats[gameId].played++;
     if (outcome === 'win')  _stats[gameId].wins++;
     if (outcome === 'loss') _stats[gameId].losses++;
-    // Award coins based on game type
+
     var rewards   = COIN_REWARDS[gameId] || { win: 100, loss: 0 };
     var coinDelta = outcome === 'win'  ? rewards.win
-                  : outcome === 'loss' ? rewards.loss
-                  : 0;
-    if (coinDelta > 0) addCoins(coinDelta);
-    // Fire-and-forget upsert using authed client (RLS requires JWT)
-    _authedSB().from('stats').upsert({
-      user_id: _user.id,
-      game_id: gameId,
-      wins:    _stats[gameId].wins,
-      losses:  _stats[gameId].losses,
-      played:  _stats[gameId].played,
-    }, { onConflict: 'user_id,game_id' });
+                  : outcome === 'loss' ? rewards.loss : 0;
+    if (coinDelta > 0) { _coins = Math.max(0, _coins + coinDelta); _emit(); }
 
-    // Track win streak in localStorage
+    // Win streak (localStorage)
     var streakKey = 'cg-streak';
     var streak = 0;
     try { streak = parseInt(localStorage.getItem(streakKey) || '0', 10); } catch (e) {}
-    if (outcome === 'win')  { streak++; } else { streak = 0; }
+    if (outcome === 'win') { streak++; } else { streak = 0; }
     try { localStorage.setItem(streakKey, streak); } catch (e) {}
 
-    // Fire achievement evaluation
+    // Achievement evaluation
     if (window.Achievements) {
       Achievements.evaluate({
         gameId:   gameId,
@@ -416,6 +424,28 @@
         streak:   streak,
       });
     }
+
+    // ── Server-side authoritative write ───────────────────────────────────
+    // Validates the result, upserts stats, resolves any room bet, and updates
+    // profiles.coins — all in one atomic DB function. Coins from the server
+    // response overwrite the optimistic local value once confirmed.
+    if (!_user || !_accessToken) return;
+    var sessionKey = _user.id + '_' + gameId + '_' +
+                     Date.now().toString(36) + '_' +
+                     Math.random().toString(36).slice(2, 7);
+    _rpcFetch('record_game_result', {
+      p_game_id:     gameId,
+      p_result:      outcome,
+      p_session_key: sessionKey,
+      p_room_id:     roomId || null,
+    }).then(function(resp) {
+      return resp.ok ? resp.json() : null;
+    }).then(function(data) {
+      if (data && data.success && typeof data.new_balance === 'number') {
+        _coins = data.new_balance;
+        _emit();
+      }
+    }).catch(function() { /* non-fatal — optimistic state already shown */ });
   }
 
   function onAuthChange(fn) { _listeners.push(fn); }

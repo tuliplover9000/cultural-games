@@ -105,22 +105,20 @@
     var hash = _instanceHash(room.game_instances);
     if (hash && hash !== _lastAwardedHash && window.Auth && Auth.isLoggedIn()) {
       _lastAwardedHash = hash;
-      var myPid     = Room.getPlayerId();
-      var gameId    = room.selected_game || 'unknown';
-      var bets      = room.bets || {};
-      var myBet     = bets[myPid] || 0;
+      var myPid  = Room.getPlayerId();
+      var gameId = room.selected_game || 'unknown';
+      var roomId = room.id || null;
+      // Bet resolution is now handled server-side inside record_game_result
+      // when roomId is provided — no separate addCoins call needed.
 
       if (!dual) {
         var winnerPid = (instances[0] || {}).winner_pid;
         var isWinner  = myPid === winnerPid;
-        Auth.recordResult(gameId, isWinner ? 'win' : 'loss');
-        if (myBet > 0) {
-          Auth.addCoins(isWinner ? myBet * 2 : -myBet); // win: return stake + profit; lose: deduct stake
-        }
+        Auth.recordResult(gameId, isWinner ? 'win' : 'loss', roomId);
       } else {
         // Dual instance: check if current player won either of the two sub-games
         var dualWon = (instances[0] || {}).winner_pid === myPid || (instances[1] || {}).winner_pid === myPid;
-        Auth.recordResult(gameId, dualWon ? 'win' : 'loss');
+        Auth.recordResult(gameId, dualWon ? 'win' : 'loss', roomId);
       }
     }
 
