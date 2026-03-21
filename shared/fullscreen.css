@@ -109,37 +109,28 @@ html.fs-css-only  .fs-toggle { display: flex; }
 }
 .fs-game-wrap::backdrop { background: #111; }
 
-/* ── In fullscreen, game-container fills wrapper.
-   position: static ensures canvas (position:absolute) bypasses it and
-   anchors directly to #fs-game-wrap — which is always the true full-
-   screen sized element in both CSS-fallback (fixed) and native modes. ── */
+/* ── In fullscreen, game-container fills wrapper ── */
 .fs-game-wrap.fs-active .game-container,
 .fs-game-wrap:fullscreen .game-container,
 .fs-game-wrap:-webkit-full-screen .game-container {
   border-radius: 0 !important;
   border: none !important;
   box-shadow: none !important;
-  position: static !important;
+  position: absolute !important;
+  inset: 0 !important;
   width: 100% !important;
   height: 100% !important;
   min-height: 0 !important;
   padding: 0 !important;
-  overflow: visible !important;
   /* background intentionally NOT overridden — games like Bau Cua rely on it */
 }
 
-/* ── Canvas anchors to #fs-game-wrap (the guaranteed full-screen element).
-   Works for any DOM nesting depth — no intermediate container can
-   intercept the absolute positioning since they're all static. ── */
+/* ── Canvas: JS moves it to be a direct child of #fs-game-wrap and
+   applies inline styles. This rule is a safety fallback only. ── */
 .fs-game-wrap.fs-active canvas,
 .fs-game-wrap:fullscreen canvas,
 .fs-game-wrap:-webkit-full-screen canvas {
   display: block;
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
 }
 
 /* ── Screen reader only ── */

@@ -127,12 +127,15 @@
 
   // ── Resize dispatcher ──────────────────────────────────────────────────────
   //
-  // Strategy: call GameResize(availW, availH) so the game can update its
-  // cell/layout variables and call render(). Some render() functions
-  // reset canvas.width/height to content-size (e.g. a square board).
-  // After that we read the actual canvas pixel dimensions and apply a
-  // CSS transform:scale() to fill the viewport, preserving aspect ratio.
-  // Inline styles with !important beat any stylesheet rule.
+  // Approach: physically move the canvas to be a DIRECT child of
+  // #fs-game-wrap. This removes all containing-block ambiguity — no CSS
+  // specificity battle, no intermediate-wrapper interference.
+  //
+  // After moving, call GameResize so the game re-renders at the new size.
+  // Some render() functions reset canvas.width/height to a content-sized
+  // value (e.g. a square board). We read those actual pixel dimensions
+  // AFTER render() runs, then apply transform:scale() to fill the viewport
+  // while preserving aspect ratio (letterboxed centering).
   //
   function _triggerResize(active) {
     var w = wrap();
@@ -140,8 +143,18 @@
     var canvas = w.querySelector('canvas');
 
     if (!active) {
-      // Clear all fullscreen inline overrides
       if (canvas) {
+        // Restore canvas to its original DOM position
+        if (canvas._fs_origParent) {
+          try {
+            canvas._fs_origParent.insertBefore(canvas, canvas._fs_origNextSibling || null);
+          } catch (e) {
+            canvas._fs_origParent.appendChild(canvas);
+          }
+          canvas._fs_origParent      = null;
+          canvas._fs_origNextSibling = null;
+        }
+        // Clear all fullscreen inline overrides
         canvas.style.removeProperty('transform');
         canvas.style.removeProperty('transform-origin');
         canvas.style.removeProperty('width');
@@ -149,6 +162,7 @@
         canvas.style.removeProperty('top');
         canvas.style.removeProperty('left');
         canvas.style.removeProperty('position');
+        canvas.style.removeProperty('z-index');
         // Restore original canvas buffer size and re-render at normal size
         if (canvas._fs_origW) {
           canvas.width  = canvas._fs_origW;
@@ -165,17 +179,26 @@
 
     // Save original canvas buffer size before any fullscreen resize
     if (!canvas._fs_origW) {
-      canvas._fs_origW = canvas.width;
-      canvas._fs_origH = canvas.height;
+      canvas._fs_origW = canvas.width  || 1;
+      canvas._fs_origH = canvas.height || 1;
+    }
+
+    // ── Move canvas to be a direct child of #fs-game-wrap ──────────────────
+    // This guarantees position:absolute anchors to the fullscreen wrapper,
+    // bypassing ALL intermediate containers regardless of their CSS.
+    if (!canvas._fs_origParent) {
+      canvas._fs_origParent      = canvas.parentNode;
+      canvas._fs_origNextSibling = canvas.nextSibling;
+      w.appendChild(canvas);
     }
 
     // Use window.innerWidth/Height — most reliable during fullscreen transitions.
     var availW = window.innerWidth;
     var availH = window.innerHeight;
 
-    // Let the game update cell sizes and re-render.
-    // After this, canvas.width/height hold the content-sized canvas
-    // (may be viewport-sized, or a constrained square/rectangle).
+    // Let the game update cell sizes and re-render at new dimensions.
+    // After this, canvas.width/height reflect the actual content-sized buffer
+    // (some games set it to availW×availH; others to a constrained square).
     if (window.GameResize) {
       window.GameResize(availW, availH);
     }
@@ -189,15 +212,15 @@
     var offsetX = Math.round((availW - cw * scale) / 2);
     var offsetY = Math.round((availH - ch * scale) / 2);
 
-    // Pin canvas to #fs-game-wrap (position:fixed/relative) and scale it up.
-    // setProperty priority:'important' beats CSS !important in stylesheets.
-    canvas.style.setProperty('position',         'absolute',              'important');
-    canvas.style.setProperty('width',            cw + 'px',               'important');
-    canvas.style.setProperty('height',           ch + 'px',               'important');
-    canvas.style.setProperty('top',              offsetY + 'px',          'important');
-    canvas.style.setProperty('left',             offsetX + 'px',          'important');
-    canvas.style.setProperty('transform',        'scale(' + scale + ')',  'important');
-    canvas.style.setProperty('transform-origin', 'top left',              'important');
+    // Apply as inline styles on the directly-parented canvas element.
+    canvas.style.setProperty('position',         'absolute',             'important');
+    canvas.style.setProperty('z-index',          '0',                    'important');
+    canvas.style.setProperty('width',            cw + 'px',              'important');
+    canvas.style.setProperty('height',           ch + 'px',              'important');
+    canvas.style.setProperty('top',              offsetY + 'px',         'important');
+    canvas.style.setProperty('left',             offsetX + 'px',         'important');
+    canvas.style.setProperty('transform',        'scale(' + scale + ')', 'important');
+    canvas.style.setProperty('transform-origin', 'top left',             'important');
   }
 
   // ── State change dispatcher ────────────────────────────────────────────────
