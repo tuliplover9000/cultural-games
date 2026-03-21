@@ -191,7 +191,7 @@
   }
 
   // Raw PostgREST fetch — guarantees our JWT reaches RLS, no Supabase client interference
-  function _pgFetch(method, path, body) {
+  function _pgFetch(method, path, body, extra) {
     var headers = {
       'apikey':        SB_KEY,
       'Authorization': 'Bearer ' + _accessToken,
@@ -199,7 +199,7 @@
       'Accept':        'application/json',
     };
     if (method === 'POST') headers['Prefer'] = 'return=minimal';
-    var opts = { method: method, headers: headers };
+    var opts = Object.assign({ method: method, headers: headers }, extra || {});
     if (body) opts.body = JSON.stringify(body);
     return fetch(SB_URL + '/rest/v1/' + path, opts);
   }
@@ -234,8 +234,8 @@
     if (!_user || !_accessToken) return;
     _coins = Math.max(0, _coins + delta);
     _emit();
-    // Use raw PostgREST fetch with explicit JWT (same pattern as favorites — reliable across all pages)
-    _pgFetch('PATCH', 'profiles?id=eq.' + _user.id, { coins: _coins });
+    // keepalive:true lets the request survive page navigation / room leave
+    _pgFetch('PATCH', 'profiles?id=eq.' + _user.id, { coins: _coins }, { keepalive: true });
   }
 
   async function toggleFavorite(gameKey) {

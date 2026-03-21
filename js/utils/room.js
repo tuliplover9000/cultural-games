@@ -316,8 +316,16 @@
       await db().from('rooms').update({ game_instances: instances }).eq('id', _room.id);
     },
 
-    endGame: async function (instanceId, winnerPid) {
+    // endGameWithWin — single atomic update that increments player_wins AND marks
+    // the instance finished. One DB write → one subscription event → no race condition
+    // where endscreen shows before wins are updated, or a stale subscription overwrites
+    // game_instances after a rematch.
+    endGameWithWin: async function (instanceId, winnerPid) {
       if (!_room) return;
+      // Increment win
+      var wins = Object.assign({}, _room.player_wins || {});
+      if (winnerPid) wins[winnerPid] = (wins[winnerPid] || 0) + 1;
+      // Mark instance finished
       var instances = (_room.game_instances || []).slice();
       var idx = instances.findIndex(function(i){ return i.instance_id === instanceId; });
       if (idx !== -1) {
@@ -326,21 +334,12 @@
           winner_pid: winnerPid,
         });
       } else {
-        // Instance not yet in array (game ended before first state sync) — add it directly
         instances.push({ instance_id: instanceId, status: 'finished', winner_pid: winnerPid });
       }
-      // Check if all instances are done
       var allDone = instances.length > 0 && instances.every(function(i){ return i.status === 'finished'; });
-      var update = { game_instances: instances };
+      var update = { game_instances: instances, player_wins: wins };
       if (allDone) update.status = 'endscreen';
       await db().from('rooms').update(update).eq('id', _room.id);
-    },
-
-    incrementWin: async function (playerId) {
-      if (!_room) return;
-      var wins = Object.assign({}, _room.player_wins || {});
-      wins[playerId] = (wins[playerId] || 0) + 1;
-      await db().from('rooms').update({ player_wins: wins }).eq('id', _room.id);
     },
 
     placeBet: async function (amount) {

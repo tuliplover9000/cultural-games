@@ -140,7 +140,7 @@
       if (readyRoom) {
         var insts = readyRoom.game_instances || [];
         var inst  = insts[readyIdx];
-        if (inst && inst.board_state && e.source) {
+        if (inst && inst.board_state && inst.status !== 'finished' && e.source) {
           e.source.postMessage({ type: 'room-state', data: inst.board_state }, '*');
         }
       }
@@ -175,8 +175,7 @@
       winnerPid = instancePlayers[winnerSeat] || null;
     }
 
-    if (winnerPid) Room.incrementWin(winnerPid);
-    Room.endGame(instanceId, winnerPid);
+    Room.endGameWithWin(instanceId, winnerPid);
   }
 
   // ── Launch — shows game inline in the lobby center panel ──────────────────
@@ -206,8 +205,9 @@
     // Hide endscreen if it was showing
     document.getElementById('room-endscreen').hidden = true;
 
-    // Reset per-game win tracking
+    // Reset per-game win tracking and coin-award dedup
     _winHandled = {};
+    if (window.Endscreen && Endscreen.reset) Endscreen.reset();
 
     // Clear old frames
     elBoards.innerHTML = '';
@@ -258,7 +258,7 @@
     var instances = room.game_instances || [];
     var frames    = elBoards ? elBoards.querySelectorAll('iframe') : [];
     instances.forEach(function(inst, idx) {
-      if (frames[idx] && inst && inst.board_state) {
+      if (frames[idx] && inst && inst.board_state && inst.status !== 'finished') {
         frames[idx].contentWindow.postMessage({ type: 'room-state', data: inst.board_state }, '*');
       }
     });
