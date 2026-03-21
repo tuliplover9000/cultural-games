@@ -137,11 +137,16 @@
   // AFTER render() runs, then apply transform:scale() to fill the viewport
   // while preserving aspect ratio (letterboxed centering).
   //
+  var _DOM_GAME_SELECTOR =
+    '.tl-game, .oaq-game, .ow-game, .pg-game, ' +
+    '.pt-game-wrap, .pu-game-wrap, .mj-wrap, .bc-game';
+
   function _triggerResize(active) {
     var w = wrap();
     if (!w) return;
     var canvas = w.querySelector('canvas');
 
+    // ── Exit fullscreen ────────────────────────────────────────────────────────
     if (!active) {
       if (canvas) {
         // Restore canvas to its original DOM position
@@ -171,11 +176,54 @@
           canvas._fs_origW = null;
           canvas._fs_origH = null;
         }
+      } else {
+        // DOM game restore
+        var domRoot = w.querySelector(_DOM_GAME_SELECTOR);
+        if (domRoot) {
+          domRoot.style.removeProperty('transform');
+          domRoot.style.removeProperty('transform-origin');
+          domRoot.style.removeProperty('width');
+          domRoot.style.removeProperty('height');
+          domRoot.style.removeProperty('min-height');
+          domRoot.style.removeProperty('overflow');
+        }
       }
       return;
     }
 
-    if (!canvas) return;
+    // ── Enter fullscreen ───────────────────────────────────────────────────────
+    var availW = window.innerWidth;
+    var availH = window.innerHeight;
+
+    if (!canvas) {
+      // ── DOM game: scale root element to fill viewport ──────────────────────
+      // Canvas games resize via GameResize + transform on the canvas element.
+      // DOM games have no canvas; instead we scale the game's root div so
+      // everything (cards, pits, pieces) fills the fullscreen viewport.
+      var gameRoot = w.querySelector(_DOM_GAME_SELECTOR);
+      if (!gameRoot) return;
+      // Measure natural content height with height:auto (ignores our CSS override).
+      gameRoot.style.setProperty('height',     'auto', 'important');
+      gameRoot.style.setProperty('min-height', '0',    'important');
+      var naturalH = gameRoot.scrollHeight;
+      var naturalW = gameRoot.offsetWidth;  // equals availW (game fills container width)
+      if (!naturalH || !naturalW) return;
+      var scale = Math.min(availW / naturalW, availH / naturalH);
+      if (scale <= 1.01) {
+        // Content already fills or overflows — restore height and allow scroll.
+        gameRoot.style.setProperty('height',     '100%', 'important');
+        gameRoot.style.setProperty('min-height', '0',    'important');
+        return;
+      }
+      // Shrink layout box by 1/scale so that after transform:scale it fills exactly.
+      gameRoot.style.setProperty('width',            Math.round(availW / scale) + 'px', 'important');
+      gameRoot.style.setProperty('height',           Math.round(availH / scale) + 'px', 'important');
+      gameRoot.style.setProperty('min-height',       '0',                    'important');
+      gameRoot.style.setProperty('transform',        'scale(' + scale + ')', 'important');
+      gameRoot.style.setProperty('transform-origin', 'top left',             'important');
+      gameRoot.style.setProperty('overflow',         'hidden',               'important');
+      return;
+    }
 
     // Save original canvas buffer size before any fullscreen resize
     if (!canvas._fs_origW) {
@@ -191,10 +239,6 @@
       canvas._fs_origNextSibling = canvas.nextSibling;
       w.appendChild(canvas);
     }
-
-    // Use window.innerWidth/Height — most reliable during fullscreen transitions.
-    var availW = window.innerWidth;
-    var availH = window.innerHeight;
 
     // Let the game update cell sizes and re-render at new dimensions.
     // After this, canvas.width/height reflect the actual content-sized buffer
