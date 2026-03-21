@@ -163,6 +163,7 @@
           expires_at:     new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
           is_public:    (opts && opts.is_public !== undefined) ? !!opts.is_public : true,
           game_name:    (opts && opts.gameName) || null,
+          room_name:    (opts && opts.roomName) || null,
         }).select().single();
         if (!res.error) room = res.data;
       }
@@ -421,7 +422,7 @@
       filters = filters || {};
       var twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
       var query = db().from('rooms')
-        .select('id, code, game_name, host_id, player_ids, player_names, status, is_public, created_at')
+        .select('id, code, game_name, room_name, host_id, player_ids, player_names, status, is_public, created_at')
         .eq('is_public', true)
         .in('status', ['lobby', 'playing'])
         .gte('created_at', twoHoursAgo)

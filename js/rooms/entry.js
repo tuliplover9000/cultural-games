@@ -115,7 +115,9 @@
       showLoading('Creating room…');
       var isPrivateCb = document.getElementById('rb-is-private');
       var isPrivate   = isPrivateCb ? isPrivateCb.checked : false;
-      Room.createRoom({ maxPlayers: maxPlayers, is_public: !isPrivate, gameName: null }, {
+      var roomNameEl = document.getElementById('rb-room-name');
+      var roomName   = roomNameEl ? roomNameEl.value.trim() : '';
+      Room.createRoom({ maxPlayers: maxPlayers, is_public: !isPrivate, gameName: null, roomName: roomName || null }, {
         onError: function (msg) {
           showLanding();
           showError(elCreateError, msg);
@@ -204,8 +206,13 @@
     var badgeClass = isPlaying ? 'rb-badge--playing' : 'rb-badge--waiting';
     var badgeText  = isPlaying ? 'In Progress'       : 'Waiting';
 
+    var roomNameHtml = (room.room_name && room.room_name.trim())
+      ? '<span class="rb-card__name">' + escHtml(room.room_name.trim()) + '</span>'
+      : '';
+
     li.innerHTML =
       '<div class="rb-card__main">' +
+        roomNameHtml +
         '<span class="rb-card__game">' + escHtml(gameName) + '</span>' +
         '<span class="rb-card__code">' + escHtml(room.code) + '</span>' +
         '<span class="rb-badge ' + badgeClass + '">' + badgeText + '</span>' +

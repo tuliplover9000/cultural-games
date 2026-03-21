@@ -35,6 +35,7 @@
   var elErrorMsg        = document.getElementById('room-error-msg');
   var elLobby           = document.getElementById('room-lobby');
   var elCodeDisplay     = document.getElementById('lobby-code-display');
+  var elNameDisplay     = document.getElementById('lobby-name-display');
   var elStatusText      = document.getElementById('lobby-status-text');
   var elLeaveBtn        = document.getElementById('lobby-leave-btn');
   var elPlayerList      = document.getElementById('lobby-player-list');
@@ -493,6 +494,11 @@
   // ── Main render ────────────────────────────────────────────────────────────
   function renderLobby(room) {
     elCodeDisplay.textContent = room.code;
+    if (elNameDisplay) {
+      var rn = room.room_name && room.room_name.trim();
+      elNameDisplay.textContent = rn || '';
+      elNameDisplay.hidden = !rn;
+    }
     renderPlayerList(room);
     renderGameGrid();       // re-render so host/guest button state is always current
     renderSuggestions(room);
@@ -561,7 +567,8 @@
     }).then(function(room) {
       if (!room) return; // error already shown
       // Set page title to include room code
-      document.title = 'Room ' + room.code + ' — Cultural Games';
+      var titleName = (room.room_name && room.room_name.trim()) || ('Room ' + room.code);
+      document.title = titleName + ' — Cultural Games';
       showLobby();
       renderLobby(room); // renderGameGrid is called inside renderLobby now
 
