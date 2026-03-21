@@ -197,7 +197,7 @@
     var gameName   = GAME_DISPLAY_NAMES[room.game_name] || (room.game_name || 'Unknown game');
     var hostName   = (room.player_names || {})[room.host_id] || 'Unknown host';
     var playerIds  = room.player_ids || [];
-    var maxP       = MAX_PLAYERS[room.game_name] || 2;
+    var maxP       = room.max_players || MAX_PLAYERS[room.game_name] || 4;
     var playerCount = playerIds.length + ' / ' + maxP;
     var isFull     = playerIds.length >= maxP;
     var isPlaying  = room.status === 'playing';

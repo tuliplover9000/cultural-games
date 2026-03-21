@@ -421,7 +421,7 @@
       filters = filters || {};
       var twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
       var query = db().from('rooms')
-        .select('id, code, game_name, room_name, host_id, player_ids, player_names, status, is_public, created_at')
+        .select('id, code, game_name, room_name, host_id, player_ids, player_names, status, is_public, created_at, max_players')
         .eq('is_public', true)
         .in('status', ['lobby', 'playing'])
         .gte('created_at', twoHoursAgo)
@@ -438,7 +438,7 @@
       };
       if (filters.hasSlots) {
         data = data.filter(function(r) {
-          return (r.player_ids || []).length < (_MAX_PLAYERS[r.game_name] || 2);
+          return (r.player_ids || []).length < (r.max_players || _MAX_PLAYERS[r.game_name] || 4);
         });
       }
       return data;
