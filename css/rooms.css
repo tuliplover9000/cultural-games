@@ -392,6 +392,46 @@
 }
 
 
+/* ── Share modal ── */
+.share-modal {
+  text-align: center;
+  max-width: 360px;
+}
+.share-modal__code-label {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-1);
+}
+.share-modal__code {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.22em;
+  color: var(--color-accent-gold);
+  margin-bottom: var(--space-4);
+}
+.share-modal__qr {
+  display: block;
+  margin: 0 auto var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--color-border);
+}
+.share-modal__link-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  width: 100%;
+}
+.share-modal__link-input {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
 /* =============================================================================
    ROOM SHELL (room.html) — shared top-bar
 ============================================================================= */

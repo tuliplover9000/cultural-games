@@ -55,6 +55,14 @@
   var elBetBtn     = document.getElementById('lobby-bet-btn');
   var elBetStatus  = document.getElementById('lobby-bet-status');
 
+  var elShareBtn        = document.getElementById('lobby-share-btn');
+  var elShareModal      = document.getElementById('share-modal');
+  var elShareCode       = document.getElementById('share-modal-code');
+  var elShareQr         = document.getElementById('share-modal-qr');
+  var elShareLink       = document.getElementById('share-modal-link');
+  var elShareCopy       = document.getElementById('share-modal-copy');
+  var elShareClose      = document.getElementById('share-modal-close');
+
   var elAssignModal     = document.getElementById('room-assign-modal');
   var elAssignDesc      = document.getElementById('assign-desc');
   var elAssignPlayerList= document.getElementById('assign-player-list');
@@ -588,6 +596,41 @@
       window.location.href = 'rooms.html';
     });
   });
+
+  // Share
+  if (elShareBtn) {
+    elShareBtn.addEventListener('click', function() {
+      var room = Room.currentRoom() || {};
+      var code = room.code || '';
+      var url = 'https://playculturalgames.com/pages/rooms.html?join=' + encodeURIComponent(code);
+      if (elShareCode) elShareCode.textContent = code;
+      if (elShareQr)   elShareQr.src = 'https://api.qrserver.com/v1/create-qr-code/?data=' + encodeURIComponent(url) + '&size=160x160&margin=8';
+      if (elShareLink) elShareLink.value = url;
+      if (elShareModal) elShareModal.hidden = false;
+    });
+  }
+  if (elShareCopy) {
+    elShareCopy.addEventListener('click', function() {
+      var val = elShareLink ? elShareLink.value : '';
+      if (!val) return;
+      navigator.clipboard.writeText(val).then(function() {
+        elShareCopy.textContent = 'Copied!';
+        setTimeout(function() { elShareCopy.textContent = 'Copy'; }, 2000);
+      }).catch(function() {
+        if (elShareLink) { elShareLink.select(); document.execCommand('copy'); }
+        elShareCopy.textContent = 'Copied!';
+        setTimeout(function() { elShareCopy.textContent = 'Copy'; }, 2000);
+      });
+    });
+  }
+  if (elShareClose) {
+    elShareClose.addEventListener('click', function() { elShareModal.hidden = true; });
+  }
+  if (elShareModal) {
+    elShareModal.addEventListener('click', function(e) {
+      if (e.target === elShareModal) elShareModal.hidden = true;
+    });
+  }
 
 
   // Mode toggle (host only)

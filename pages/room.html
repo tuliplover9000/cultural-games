@@ -71,6 +71,7 @@
           Room <strong id="lobby-code-display"></strong>
         </span>
         <span class="room-topbar__status" id="lobby-status-text" aria-live="polite"></span>
+        <button id="lobby-share-btn" class="btn btn-ghost btn-sm" title="Invite friends">🔗 Share</button>
         <button id="ingame-quit-btn" class="btn btn-ghost btn-sm" hidden>← Game Selection</button>
         <button id="lobby-leave-btn" class="btn btn-ghost btn-sm">Leave</button>
       </div>
@@ -298,6 +299,30 @@
     </div><!-- /#room-endscreen -->
 
   </main>
+
+  <!-- ══ SHARE MODAL ══════════════════════════════════════════════════════════ -->
+  <div
+    id="share-modal"
+    class="rooms-modal-backdrop"
+    hidden
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="share-modal-title"
+  >
+    <div class="rooms-modal share-modal">
+      <h2 id="share-modal-title" class="rooms-modal__title">Invite Friends</h2>
+      <p class="share-modal__code-label">Room Code</p>
+      <p class="share-modal__code" id="share-modal-code"></p>
+      <img id="share-modal-qr" class="share-modal__qr" src="" alt="QR code for room invite link" width="160" height="160" />
+      <div class="share-modal__link-row">
+        <input id="share-modal-link" class="rooms-text-input share-modal__link-input" type="text" readonly aria-label="Share link" />
+        <button id="share-modal-copy" class="btn btn-primary btn-sm">Copy</button>
+      </div>
+      <div class="rooms-modal__actions">
+        <button id="share-modal-close" class="btn btn-ghost">Close</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ══ PLAYER ASSIGNMENT MODAL ══════════════════════════════════════════════ -->
   <div

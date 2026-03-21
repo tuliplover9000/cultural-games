@@ -310,4 +310,15 @@
     initBrowser();
   }
 
+  // Auto-join from share link: rooms.html?join=CODE
+  (function() {
+    var params  = new URLSearchParams(location.search);
+    var joinCode = params.get('join');
+    if (!joinCode || !elJoinCode || !elJoinBtn) return;
+    elJoinCode.value = joinCode.trim().toUpperCase().slice(0, 6);
+    // Scroll to the join card so the user sees it, then trigger the join flow
+    elJoinCode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    elJoinBtn.click();
+  }());
+
 }());
