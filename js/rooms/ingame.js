@@ -16,6 +16,7 @@
   var elCenterPanel  = document.querySelector('.room-panel--games');
 
   var _winHandled  = {};   // instanceId → true, prevents double-processing
+  var _launchGen   = 0;   // incremented on each launch(); rejects stale iframe messages
 
   // ── Game name lookup ───────────────────────────────────────────────────────
   var GAME_NAMES = {
@@ -97,6 +98,7 @@
       seat:     gameSeat,
       role:     myRole,
       instance: instanceId,
+      gen:      _launchGen,
       mode:     mode,
       aiSeats:  aiSeats.join(','),
       isHost:   (myPid === room.host_id) ? '1' : '0',
@@ -111,7 +113,10 @@
 
     // Game iframe reports a move — forward to the other iframe and persist
     if (e.data.type === 'game-sync') {
+      if (String(e.data.gen) !== String(_launchGen)) return;
       var instanceId = e.data.instance || '0';
+      // Don't overwrite finished status with a state-sync that raced endGameWithWin
+      if (_winHandled[instanceId]) return;
       // Forward to all iframes except sender
       var frames = elBoards ? elBoards.querySelectorAll('iframe') : [];
       frames.forEach(function(fr) {
@@ -125,6 +130,7 @@
 
     // Game reports a win (guard against duplicate messages from multiple iframes)
     if (e.data.type === 'game-win') {
+      if (String(e.data.gen) !== String(_launchGen)) return;
       var winInst = e.data.instance || '0';
       if (!_winHandled[winInst]) {
         _winHandled[winInst] = true;
@@ -134,6 +140,7 @@
 
     // Game iframe is ready — push latest board_state so reconnecting players sync up
     if (e.data.type === 'game-ready') {
+      if (String(e.data.gen) !== String(_launchGen)) return;
       var readyInst = e.data.instance || '0';
       var readyIdx  = parseInt(readyInst, 10);
       var readyRoom = Room.currentRoom();
@@ -205,6 +212,8 @@
     // Hide endscreen if it was showing
     document.getElementById('room-endscreen').hidden = true;
 
+    // Bump generation so stale postMessages from destroyed iframes are ignored
+    _launchGen++;
     // Reset per-game win tracking and coin-award dedup
     _winHandled = {};
     if (window.Endscreen && Endscreen.reset) Endscreen.reset();

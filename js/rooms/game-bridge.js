@@ -28,6 +28,7 @@
   var seat       = parseInt(params.get('seat') || '-1', 10);
   var role       = params.get('role')     || 'player';
   var instance   = params.get('instance') || '0';
+  var gen        = params.get('gen')      || '0';
   var mode       = params.get('mode')     || 'normal';
   var isRoomHost = params.get('isHost')   === '1';
   var aiSeatsStr = params.get('aiSeats')  || '';
@@ -63,7 +64,7 @@
      */
     sendState: function (blob) {
       try {
-        parent.postMessage({ type: 'game-sync', instance: instance, data: blob }, '*');
+        parent.postMessage({ type: 'game-sync', instance: instance, gen: gen, data: blob }, '*');
       } catch (err) { /* cross-origin safety, should never fire */ }
     },
 
@@ -80,6 +81,7 @@
         parent.postMessage({
           type: 'game-win',
           instance: instance,
+          gen: gen,
           winnerSeat: winnerSeat,
           score: score || null,
         }, '*');
@@ -96,7 +98,7 @@
       _onStateFn = fn;
       // Tell the parent we're ready; it will push current board_state if any.
       try {
-        parent.postMessage({ type: 'game-ready', instance: instance }, '*');
+        parent.postMessage({ type: 'game-ready', instance: instance, gen: gen }, '*');
       } catch (err) { /* cross-origin safety */ }
     },
 
