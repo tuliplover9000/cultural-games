@@ -24,7 +24,7 @@
     'oware': 'Oware', 'o-an-quan': 'Ô Ăn Quan', 'fanorona': 'Fanorona',
     'pallanguzhi': 'Pallanguzhi', 'patolli': 'Patolli', 'puluc': 'Puluc',
     'bau-cua': 'Bầu Cua Tôm Cá', 'hnefatafl': 'Hnefatafl', 'pachisi': 'Pachisi',
-    'ganjifa': 'Ganjifa',
+    'ganjifa': 'Ganjifa', 'latrunculi': 'Ludus Latrunculorum', 'cachos': 'Cachos',
   };
 
   // Games where AI fill doesn't apply (group/betting games)
@@ -36,6 +36,12 @@
     'tien-len': 4, 'mahjong': 4, 'ganjifa': 4,
     'oware': 2, 'o-an-quan': 2, 'fanorona': 2,
     'pallanguzhi': 2, 'patolli': 2, 'puluc': 2, 'hnefatafl': 2, 'pachisi': 4,
+    'latrunculi': 2, 'cachos': 6,
+  };
+
+  // Games whose HTML files live outside pages/games/ (paths relative to pages/room.html)
+  var GAME_PATHS = {
+    'cachos': '../cachos/index.html',
   };
 
   // Games with named seat roles (role string → seat index by array position)
@@ -104,7 +110,8 @@
       isHost:   (myPid === room.host_id) ? '1' : '0',
     });
 
-    return 'games/' + game + '.html?' + params.toString();
+    var gamePath = GAME_PATHS[game] || ('games/' + game + '.html');
+    return gamePath + '?' + params.toString();
   }
 
   // ── postMessage bridge ─────────────────────────────────────────────────────
