@@ -476,16 +476,16 @@
 
 /* ── Game over overlay ────────────────────────────────────────────── */
 .ca-gameover {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  background: rgba(10,5,2,0.88);
+  background: rgba(10,5,2,0.92);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-xl);
   opacity: 0;
   transition: opacity 0.4s;
-  z-index: 50;
+  z-index: 1300;
+  backdrop-filter: blur(4px);
 }
 .ca-gameover--show { opacity: 1; }
 .ca-gameover__inner {

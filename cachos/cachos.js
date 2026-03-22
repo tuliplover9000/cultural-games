@@ -679,24 +679,22 @@
   }
 
   function showGameOver() {
-    var container = document.getElementById('game-container');
-    if (!container) return;
     var existing = document.getElementById('ca-gameover');
     if (existing) existing.remove();
-    var isHumanWin  = state.winner === 0;
-    var winnerName  = state.players[state.winner].name;
+    var isHumanWin = state.winner === 0;
+    var winnerName = state.players[state.winner].name;
     var overlay = document.createElement('div');
     overlay.className = 'ca-gameover';
     overlay.id = 'ca-gameover';
     overlay.innerHTML =
       '<div class="ca-gameover__inner">' +
-        '<div class="ca-gameover__emoji">' + (isHumanWin ? '\u{1F3C6}' : '\u{1F480}') + '</div>' +
+        '<div class="ca-gameover__emoji">' + (isHumanWin ? '\uD83C\uDFC6' : '\uD83D\uDC80') + '</div>' +
         '<h2 class="ca-gameover__title">' + (isHumanWin ? '\u00a1Ganaste!' : '\u00a1Perdiste!') + '</h2>' +
         '<p class="ca-gameover__winner">' + (isHumanWin ? 'You win!' : winnerName + ' wins!') + '</p>' +
         '<p class="ca-gameover__rounds">Lasted ' + state.round + ' round' + (state.round !== 1 ? 's' : '') + '</p>' +
         '<button class="ca-gameover__btn" id="ca-play-again-btn">Play Again</button>' +
       '</div>';
-    container.appendChild(overlay);
+    document.body.appendChild(overlay);
     setTimeout(function () { overlay.classList.add('ca-gameover--show'); }, 30);
     document.getElementById('ca-play-again-btn').addEventListener('click', function () {
       overlay.remove();
@@ -859,7 +857,57 @@
      INIT
   ════════════════════════════════════════════════════ */
 
-  var caSteps = [];
+  var caSteps = [
+    {
+      target:    null,
+      title:     'Welcome to Cachos',
+      body:      'A bluffing dice game from Latin America. You can only see your own dice \u2014 but you bet on what all players have combined.',
+      position:  'center',
+      highlight: false
+    },
+    {
+      target:    null,
+      title:     'Everyone Rolls Secretly',
+      body:      'Each player shakes 5 dice under a cup. Only you see your own dice. The goal: be the last player with dice remaining.',
+      position:  'center',
+      highlight: false
+    },
+    {
+      target:    null,
+      title:     'Make a Bid',
+      body:      'On your turn, state a face and quantity \u2014 e.g. "3 fours." You\u2019re claiming there are at least that many of that face across ALL cups combined.',
+      position:  'center',
+      highlight: false
+    },
+    {
+      target:    null,
+      title:     'Raise or Challenge',
+      body:      'Each bid must go higher: more of the same face, OR the same amount of a higher face. If you think the bid is wrong, hit \u00a1Dudo! to challenge.',
+      position:  'center',
+      highlight: false
+    },
+    {
+      target:    null,
+      title:     'Aces Are Wild',
+      body:      'Ones (aces) count as ANY face when others bid non-aces. Bidding aces directly is a special high-risk move \u2014 bid at least half the previous quantity.',
+      position:  'center',
+      highlight: false
+    },
+    {
+      target:    null,
+      title:     'After a Challenge',
+      body:      'All cups lift. Count the matching dice. If enough exist \u2014 the challenger loses a life. If not enough \u2014 the bidder loses a life. Losing a life = losing a die.',
+      position:  'center',
+      highlight: false
+    },
+    {
+      target:    null,
+      title:     'Last Cup Standing',
+      body:      'Lose all your dice and you\u2019re eliminated. The last player still rolling wins. Good luck \u2014 and don\u2019t trust anyone!',
+      position:  'center',
+      highlight: false
+    }
+  ];
 
   document.addEventListener('DOMContentLoaded', function () {
     if (window.Achievements) Achievements.init();

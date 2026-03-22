@@ -100,18 +100,31 @@
           <span class="accordion__icon" aria-hidden="true">▼</span>
         </summary>
         <div class="accordion__body">
-          <p>
-            Cachos is a bluffing dice game for 2–6 players. Each player shakes
-            <strong>5 dice</strong> under a leather cup — only you can see your own dice.
-          </p>
-          <ol>
-            <li><strong>Bid:</strong> the first player declares a bid — "There are at least <em>X</em> fours under all the cups." Each bid must claim a higher quantity or higher face than the previous one.</li>
-            <li><strong>Raise or challenge:</strong> the next player must either raise the bid or call <em>"¡Dudo!"</em> (I doubt it!) to challenge.</li>
-            <li><strong>Reveal:</strong> when challenged, all cups are lifted. Count the matching dice — aces (1s) are wild and count as any face.</li>
-            <li><strong>Lose a life:</strong> if the bid was too high, the bidder loses a life. If the bid was accurate, the challenger loses a life. Losing a life removes one die from your cup.</li>
-            <li><strong>Last cup standing:</strong> the last player with dice remaining wins.</li>
-          </ol>
-          <p><em>Note: Calza (calling the exact bid) is not included in this version.</em></p>
+          <p><strong>Goal:</strong> be the last player with dice.</p>
+
+          <p>Everyone secretly rolls <strong>5 dice</strong> under a cup — you can only see your own. Players take turns bidding on how many of a certain face exist across <em>all</em> cups combined.</p>
+
+          <h4 style="margin:12px 0 6px; color:var(--color-text);">Bidding</h4>
+          <ul>
+            <li>Say a face and quantity — e.g. <strong>"3 fours"</strong> means you claim at least 3 fours exist in total.</li>
+            <li>Each new bid must be <strong>higher</strong>: more of the same face, or the same amount of a higher face (e.g. 3 fours → 3 fives, or → 4 fours).</li>
+            <li><strong>Aces (1s) are wild</strong> — they count as any face for non-ace bids.</li>
+          </ul>
+
+          <h4 style="margin:12px 0 6px; color:var(--color-text);">¡Dudo! — Challenge</h4>
+          <ul>
+            <li>If you think the bid is wrong, press <strong>¡Dudo!</strong> to challenge.</li>
+            <li>All cups lift. Count the matching dice (aces count too).</li>
+            <li>If the bid was <strong>true</strong> → the challenger loses a life.</li>
+            <li>If the bid was <strong>false</strong> → the bidder loses a life.</li>
+          </ul>
+
+          <h4 style="margin:12px 0 6px; color:var(--color-text);">Lives &amp; Elimination</h4>
+          <ul>
+            <li>Each life lost = <strong>one fewer die</strong> next round.</li>
+            <li>Lose all dice = eliminated.</li>
+            <li>The last player rolling wins!</li>
+          </ul>
         </div>
       </details>
 
