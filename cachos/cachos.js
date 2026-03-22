@@ -920,7 +920,15 @@
       CGTutorial.register('cachos', caSteps);
     }
     var inRoom = window.parent !== window;
-    if (!inRoom) showModal();
+    if (!inRoom) {
+      showModal();
+    } else {
+      // Room mode: read player count from the ?mode= param (e.g. '3p' → 3)
+      var urlParams = new URLSearchParams(location.search);
+      var modeStr   = urlParams.get('mode') || '2p';
+      var roomCount = Math.max(2, Math.min(6, parseInt(modeStr, 10) || 2));
+      startGame(roomCount);
+    }
   });
 
 }());
