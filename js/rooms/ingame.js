@@ -11,6 +11,7 @@
   // #ingame-boards now lives inside the lobby center panel
   var elBoards       = document.getElementById('ingame-boards');
   var elQuitBtn      = document.getElementById('ingame-quit-btn');
+  var elRulesBtn     = document.getElementById('ingame-rules-btn');
   var elGamesSection = document.getElementById('lobby-games-section');
   var elCenterTitle  = document.getElementById('center-panel-title');
   var elCenterPanel  = document.querySelector('.room-panel--games');
@@ -216,6 +217,23 @@
       }
     }
 
+    // Show "? Rules" button — opens the game's built-in tutorial inside the iframe
+    if (elRulesBtn) {
+      elRulesBtn.hidden = false;
+      elRulesBtn.onclick = function () {
+        var frames = elBoards ? elBoards.querySelectorAll('iframe') : [];
+        var fr = frames[0];
+        if (!fr) return;
+        try {
+          var cgt = fr.contentWindow && fr.contentWindow.CGTutorial;
+          if (cgt && cgt.startTutorial) {
+            var game = room.selected_game;
+            cgt.startTutorial(game);
+          }
+        } catch(e) {}
+      };
+    }
+
     // Hide endscreen if it was showing
     document.getElementById('room-endscreen').hidden = true;
 
@@ -263,7 +281,8 @@
     if (!elBoards) return;
     elBoards.hidden = true;
     elBoards.innerHTML = '';
-    if (elQuitBtn) elQuitBtn.hidden = true;
+    if (elQuitBtn)   elQuitBtn.hidden   = true;
+    if (elRulesBtn)  elRulesBtn.hidden  = true;
     if (elGamesSection) elGamesSection.hidden = false;
     if (elCenterTitle)  elCenterTitle.textContent = 'Pick a Game';
     if (elCenterPanel)  elCenterPanel.classList.remove('is-playing');
