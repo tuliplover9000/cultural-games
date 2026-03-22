@@ -301,6 +301,18 @@
 
   </main>
 
+  <!-- ══ RULES PANEL (slides in from right during gameplay) ══════════════════ -->
+  <div id="ingame-rules-panel" class="ingame-rules-panel" aria-label="Game rules" hidden>
+    <div class="ingame-rules-panel__header">
+      <h3 class="ingame-rules-panel__title" id="ingame-rules-panel-title">How to Play</h3>
+      <button id="ingame-rules-close" class="btn btn-ghost btn-sm">✕</button>
+    </div>
+    <div class="ingame-rules-panel__body" id="ingame-rules-panel-body">
+      <p class="ingame-rules-panel__loading">Loading…</p>
+    </div>
+  </div>
+  <div id="ingame-rules-backdrop" class="ingame-rules-backdrop" hidden></div>
+
   <!-- ══ SHARE MODAL ══════════════════════════════════════════════════════════ -->
   <div
     id="share-modal"

@@ -9,12 +9,46 @@
   'use strict';
 
   // #ingame-boards now lives inside the lobby center panel
-  var elBoards       = document.getElementById('ingame-boards');
-  var elQuitBtn      = document.getElementById('ingame-quit-btn');
-  var elRulesBtn     = document.getElementById('ingame-rules-btn');
-  var elGamesSection = document.getElementById('lobby-games-section');
-  var elCenterTitle  = document.getElementById('center-panel-title');
-  var elCenterPanel  = document.querySelector('.room-panel--games');
+  var elBoards        = document.getElementById('ingame-boards');
+  var elQuitBtn       = document.getElementById('ingame-quit-btn');
+  var elRulesBtn      = document.getElementById('ingame-rules-btn');
+  var elRulesPanel    = document.getElementById('ingame-rules-panel');
+  var elRulesPanelBody= document.getElementById('ingame-rules-panel-body');
+  var elRulesPanelTitle = document.getElementById('ingame-rules-panel-title');
+  var elRulesClose    = document.getElementById('ingame-rules-close');
+  var elRulesBackdrop = document.getElementById('ingame-rules-backdrop');
+  var elGamesSection  = document.getElementById('lobby-games-section');
+  var elCenterTitle   = document.getElementById('center-panel-title');
+  var elCenterPanel   = document.querySelector('.room-panel--games');
+
+  // Rules panel paths — same convention as GAME_PATHS in buildSrc
+  var RULES_PAGE_PATHS = {
+    'cachos': '../cachos/index.html',
+  };
+
+  function openRulesPanel(gameName) {
+    if (!elRulesPanel) return;
+    elRulesPanel.hidden = false;
+    elRulesBackdrop.hidden = false;
+    if (elRulesPanelTitle) elRulesPanelTitle.textContent = gameName;
+    setTimeout(function () {
+      elRulesPanel.classList.add('ingame-rules-panel--open');
+      elRulesBackdrop.classList.add('ingame-rules-panel--open');
+    }, 10);
+  }
+
+  function closeRulesPanel() {
+    if (!elRulesPanel) return;
+    elRulesPanel.classList.remove('ingame-rules-panel--open');
+    elRulesBackdrop.classList.remove('ingame-rules-panel--open');
+    setTimeout(function () {
+      elRulesPanel.hidden = true;
+      elRulesBackdrop.hidden = true;
+    }, 300);
+  }
+
+  if (elRulesClose)    elRulesClose.addEventListener('click', closeRulesPanel);
+  if (elRulesBackdrop) elRulesBackdrop.addEventListener('click', closeRulesPanel);
 
   var _winHandled  = {};   // instanceId → true, prevents double-processing
   var _launchGen   = 0;   // incremented on each launch(); rejects stale iframe messages
@@ -217,20 +251,38 @@
       }
     }
 
-    // Show "? Rules" button — opens the game's built-in tutorial inside the iframe
+    // Show "? Rules" button — fetches the game's standalone page and extracts accordion sections
     if (elRulesBtn) {
       elRulesBtn.hidden = false;
       elRulesBtn.onclick = function () {
-        var frames = elBoards ? elBoards.querySelectorAll('iframe') : [];
-        var fr = frames[0];
-        if (!fr) return;
-        try {
-          var cgt = fr.contentWindow && fr.contentWindow.CGTutorial;
-          if (cgt && cgt.startTutorial) {
-            var game = room.selected_game;
-            cgt.startTutorial(game);
-          }
-        } catch(e) {}
+        var game     = room.selected_game;
+        var pagePath = RULES_PAGE_PATHS[game] || ('games/' + game + '.html');
+        openRulesPanel(gameLabel(game));
+        if (elRulesPanelBody) elRulesPanelBody.innerHTML = '<p class="ingame-rules-panel__loading">Loading\u2026</p>';
+        fetch(pagePath)
+          .then(function (r) { return r.text(); })
+          .then(function (html) {
+            var doc        = new DOMParser().parseFromString(html, 'text/html');
+            var accordions = doc.querySelectorAll('details.accordion');
+            if (!accordions.length) {
+              elRulesPanelBody.innerHTML = '<p class="ingame-rules-panel__loading">No rules found.</p>';
+              return;
+            }
+            var out = '';
+            accordions.forEach(function (det) {
+              var titleEl = det.querySelector('.accordion__title');
+              var bodyEl  = det.querySelector('.accordion__body');
+              if (!titleEl || !bodyEl) return;
+              out += '<div class="rp-section">' +
+                '<h4 class="rp-section__title">' + titleEl.textContent + '</h4>' +
+                '<div class="rp-section__body">' + bodyEl.innerHTML + '</div>' +
+              '</div>';
+            });
+            elRulesPanelBody.innerHTML = out || '<p class="ingame-rules-panel__loading">No rules found.</p>';
+          })
+          .catch(function () {
+            if (elRulesPanelBody) elRulesPanelBody.innerHTML = '<p class="ingame-rules-panel__loading">Could not load rules.</p>';
+          });
       };
     }
 
