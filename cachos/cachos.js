@@ -193,20 +193,16 @@
     zone.id = 'ca-zone-' + player.id;
     zone.setAttribute('data-player-id', player.id);
 
-    var cupWrap = document.createElement('div');
-    cupWrap.className = 'ca-cup-wrap';
-
+    // dice-wrap is position:relative; cup-cover sits inside as absolute overlay
     var diceWrap = document.createElement('div');
     diceWrap.className = 'ca-dice-wrap';
     diceWrap.id = 'ca-dice-' + player.id;
 
     var cupDiv = document.createElement('div');
-    cupDiv.className = 'ca-cup';
+    cupDiv.className = 'ca-cup-cover';
     cupDiv.id = 'ca-cup-' + player.id;
     cupDiv.innerHTML = getCupSVG();
-
-    cupWrap.appendChild(diceWrap);
-    cupWrap.appendChild(cupDiv);
+    diceWrap.appendChild(cupDiv);   // cup lives inside diceWrap
 
     var info = document.createElement('div');
     info.className = 'ca-player-info';
@@ -219,7 +215,7 @@
     info.appendChild(nameEl);
     info.appendChild(livesEl);
 
-    zone.appendChild(cupWrap);
+    zone.appendChild(diceWrap);
     zone.appendChild(info);
     return zone;
   }
@@ -231,7 +227,8 @@
   function renderDiceForPlayer(player) {
     var wrap = document.getElementById('ca-dice-' + player.id);
     if (!wrap) return;
-    wrap.innerHTML = '';
+    // Remove only die elements — preserve the cup-cover overlay
+    wrap.querySelectorAll('.ca-die-wrap').forEach(function (el) { el.remove(); });
     player.dice.forEach(function (val) {
       wrap.appendChild(createDieEl(val));
     });
@@ -257,6 +254,34 @@
     state.players.forEach(function (p) {
       if (!p.isEliminated) renderDiceForPlayer(p);
     });
+  }
+
+  /* ── Cup helpers ──────────────────────────────────────────────────── */
+
+  function liftCup(pid) {
+    var cup = document.getElementById('ca-cup-' + pid);
+    if (!cup) return;
+    cup.classList.remove('ca-cup-cover--shaking');
+    cup.classList.add('ca-cup-cover--lifted');
+  }
+
+  function lowerCup(pid) {
+    var cup = document.getElementById('ca-cup-' + pid);
+    if (!cup) return;
+    cup.classList.remove('ca-cup-cover--lifted');
+    cup.classList.remove('ca-cup-cover--shaking');
+  }
+
+  function shakeCup(pid, cb) {
+    var cup = document.getElementById('ca-cup-' + pid);
+    if (!cup) { setTimeout(cb || function(){}, 650); return; }
+    cup.classList.remove('ca-cup-cover--shaking');
+    void cup.offsetWidth;                          // force reflow so animation restarts
+    cup.classList.add('ca-cup-cover--shaking');
+    setTimeout(function () {
+      cup.classList.remove('ca-cup-cover--shaking');
+      if (cb) cb();
+    }, 650);
   }
 
   function updateBidDisplay() {
@@ -342,12 +367,7 @@
     wireControls();
     renderAllLives();
     renderAllDice();
-
-    // Human cup lifted (can see own dice), AI cups down
-    state.players.forEach(function (p) {
-      var cup = document.getElementById('ca-cup-' + p.id);
-      if (cup && p.isHuman) cup.classList.add('ca-cup--lifted');
-    });
+    // Cups all start down; startGame() will shake then lift the human cup
   }
 
   function buildBidControls() {
@@ -525,11 +545,10 @@
     state.players.forEach(function (p) {
       if (p.isEliminated) return;
       p.isRevealed = true;
-      var cup = document.getElementById('ca-cup-' + p.id);
-      if (cup) cup.classList.add('ca-cup--lifted');
+      liftCup(p.id);
       renderDiceForPlayer(p);
     });
-    setTimeout(cb, 450);
+    setTimeout(cb, 500);
   }
 
   function showChallengeResult(ch, cb) {
@@ -625,36 +644,38 @@
   }
 
   function startNextRound(firstPlayerId) {
+    // Lower all cups, clear highlights
     state.players.forEach(function (p) {
-      if (p.isEliminated) return;
-      var cup = document.getElementById('ca-cup-' + p.id);
-      if (cup) cup.classList.remove('ca-cup--lifted');
+      if (!p.isEliminated) lowerCup(p.id);
     });
     document.querySelectorAll('.ca-die-wrap--match').forEach(function (el) {
       el.classList.remove('ca-die-wrap--match');
     });
+    // Re-roll dice after a short pause (cups are closed)
     setTimeout(function () {
       resetRound(firstPlayerId);
       renderAllDice();
       renderAllLives();
       updateBidDisplay();
       updateRoundCounter();
-      var hCup = document.getElementById('ca-cup-0');
-      if (hCup) hCup.classList.add('ca-cup--lifted');
       state.activePlayers.forEach(function (pid) {
         var z = document.getElementById('ca-zone-' + pid);
         if (z) z.classList.remove('ca-zone--active');
       });
-      highlightActiveTurn();
-      var curPid    = state.activePlayers[state.currentTurn];
-      var curPlayer = state.players[curPid];
-      if (curPlayer.isHuman) {
-        setControlsEnabled(true);
-      } else {
-        setControlsEnabled(false);
-        aiTimeout = setTimeout(function () { aiTakeTurn(curPlayer); }, 1000 + Math.random() * 600);
-      }
-    }, 650);
+      // Shake human cup then lift to reveal new dice
+      shakeCup(0, function () {
+        liftCup(0);
+        highlightActiveTurn();
+        var curPid    = state.activePlayers[state.currentTurn];
+        var curPlayer = state.players[curPid];
+        if (curPlayer.isHuman) {
+          setControlsEnabled(true);
+        } else {
+          setControlsEnabled(false);
+          aiTimeout = setTimeout(function () { aiTakeTurn(curPlayer); }, 900 + Math.random() * 500);
+        }
+      });
+    }, 600);
   }
 
   function showGameOver() {
@@ -820,14 +841,18 @@
     buildTable();
     updateRoundCounter();
     highlightActiveTurn();
-    var pid    = state.activePlayers[state.currentTurn];
-    var player = state.players[pid];
-    if (player.isHuman) {
-      setControlsEnabled(true);
-    } else {
-      setControlsEnabled(false);
-      aiTimeout = setTimeout(function () { aiTakeTurn(player); }, 1200);
-    }
+    // Shake human cup then lift to reveal starting dice
+    shakeCup(0, function () {
+      liftCup(0);
+      var pid    = state.activePlayers[state.currentTurn];
+      var player = state.players[pid];
+      if (player.isHuman) {
+        setControlsEnabled(true);
+      } else {
+        setControlsEnabled(false);
+        aiTimeout = setTimeout(function () { aiTakeTurn(player); }, 1200);
+      }
+    });
   }
 
   /* ════════════════════════════════════════════════════

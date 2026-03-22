@@ -171,38 +171,9 @@
   pointer-events: none;
 }
 
-/* ── Cup ──────────────────────────────────────────────────────────── */
-.ca-cup-wrap {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.ca-cup {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-  transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.3s;
-  cursor: default;
-  pointer-events: none;
-}
-.ca-cup-svg {
-  width: 56px;
-  height: 72px;
-  display: block;
-}
-.ca-cup--lifted {
-  transform: translateX(-50%) translateY(-68px) rotate(-12deg);
-}
-.ca-player-zone--human .ca-cup {
-  width: 52px;
-  height: 68px;
-}
-
 /* ── Dice wrap ────────────────────────────────────────────────────── */
 .ca-dice-wrap {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -210,6 +181,61 @@
   padding: 8px 4px;
   min-height: 70px;
   align-items: center;
+}
+
+/* ── Cup cover (overlays entire dice-wrap) ────────────────────────── */
+.ca-cup-cover {
+  position: absolute;
+  inset: -3px;
+  z-index: 10;
+  border-radius: 10px;
+  background: linear-gradient(160deg, #7A3B10 0%, #4A2000 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  box-shadow: inset 0 2px 8px rgba(255,255,255,0.12), 0 3px 10px rgba(0,0,0,0.5);
+  transition: transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.35s;
+  overflow: hidden;
+}
+.ca-cup-cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    88deg,
+    transparent,
+    transparent 9px,
+    rgba(0,0,0,0.07) 9px,
+    rgba(0,0,0,0.07) 10px
+  );
+}
+.ca-cup-svg {
+  position: relative;
+  z-index: 1;
+  width: 52px;
+  height: 66px;
+  display: block;
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.45));
+}
+
+@keyframes ca-shake {
+  0%   { transform: translateX(0)    rotate(0deg); }
+  12%  { transform: translateX(-8px) rotate(-5deg); }
+  25%  { transform: translateX(8px)  rotate(5deg); }
+  37%  { transform: translateX(-7px) rotate(-4deg); }
+  50%  { transform: translateX(7px)  rotate(4deg); }
+  62%  { transform: translateX(-5px) rotate(-2deg); }
+  75%  { transform: translateX(5px)  rotate(2deg); }
+  87%  { transform: translateX(-2px) rotate(-1deg); }
+  100% { transform: translateX(0)    rotate(0deg); }
+}
+.ca-cup-cover--shaking {
+  animation: ca-shake 0.65s ease-in-out;
+}
+.ca-cup-cover--lifted {
+  transform: translateY(-130%) rotate(-14deg);
+  opacity: 0;
 }
 
 /* ── 3D Dice ──────────────────────────────────────────────────────── */
@@ -584,5 +610,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ca-die { transition: none; }
-  .ca-cup { transition: none; }
+  .ca-cup-cover { transition: none; animation: none; }
 }
