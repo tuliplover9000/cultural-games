@@ -43,12 +43,19 @@
   var _selQty    = 1;
 
   // Room-mode vars
-  var _inRoom           = false;
-  var _roomGen          = '0';
-  var _roomInstance     = '0';
-  var _stateSeq         = 0;
-  var _lastAppliedSeq   = -1;
-  var _pendingRoomState = null;
+  var _inRoom                = false;
+  var _roomGen               = '0';
+  var _roomInstance          = '0';
+  var _lastAppliedVersion    = -1;
+  var _pendingRoomState      = null;
+
+  // Version = monotonically increasing game position; same value on all iframes.
+  // Supabase bounces own state back, so we need a version that both sides agree on.
+  function stateVersion(s) {
+    if (!s) return -1;
+    var base = (s.round || 1) * 200 + (s.currentTurn || 0);
+    return s.phase === 'reveal' ? base + 100 : base;
+  }
 
   /* ════════════════════════════════════════════════════
      DATA MODEL
@@ -531,7 +538,7 @@
   function broadcastState() {
     if (!_inRoom || !state) return;
     var data = {
-      seq:            _stateSeq++,
+      version:        stateVersion(state),
       phase:          state.phase,
       round:          state.round,
       currentTurn:    state.currentTurn,
@@ -563,10 +570,11 @@
 
   function applyRoomState(data) {
     if (!data || !state) return;
-    if (typeof data.seq === 'number' && data.seq <= _lastAppliedSeq) return;
+    var ver = stateVersion(data);
+    if (ver <= _lastAppliedVersion) return;   // stale or duplicate (incl. Supabase own-bounce)
     // Buffer incoming state during reveal animations
     if (state.animating) { _pendingRoomState = data; return; }
-    _lastAppliedSeq = typeof data.seq === 'number' ? data.seq : _lastAppliedSeq + 1;
+    _lastAppliedVersion = ver;
 
     var prevPhase = state.phase;
     var prevRound = state.round;
@@ -601,7 +609,8 @@
         showChallengeResult(data.lastChallenge, function () {
           state.animating = false;
           if (_pendingRoomState) {
-            var pending = _pendingRoomState; _pendingRoomState = null; applyRoomState(pending);
+            var pending = _pendingRoomState; _pendingRoomState = null;
+          applyRoomState(pending);
           }
         });
       });
