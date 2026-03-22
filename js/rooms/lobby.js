@@ -167,6 +167,9 @@
   function renderGameGrid() {
     var isHost = Room.amHost();
     var favs   = new Set((window.Auth && Auth.getFavorites) ? Auth.getFavorites() : []);
+    var curRoom    = (Room.currentRoom && Room.currentRoom()) || {};
+    var roomSize   = (curRoom.player_ids || []).length;
+    var tooFew     = isHost && roomSize < 2;
 
     // Favorites float to the top, otherwise keep original catalogue order
     var sorted = GAMES.slice().sort(function(a, b) {
@@ -186,7 +189,7 @@
           '<span class="badge badge--board" style="font-size:0.65rem;padding:2px 7px">' + esc(g.badge) + '</span>' +
         '</div>' +
         (isHost
-          ? '<button class="btn btn-primary btn-sm lobby-play-direct-btn" data-game="' + g.key + '" aria-label="Play ' + esc(g.name) + '">▶ Play</button>'
+          ? '<button class="btn btn-primary btn-sm lobby-play-direct-btn" data-game="' + g.key + '" aria-label="Play ' + esc(g.name) + '"' + (tooFew ? ' disabled title="Need at least 2 players to start"' : '') + '>▶ Play</button>'
           : '<button class="btn btn-teal btn-sm lobby-suggest-btn" data-game="' + g.key + '" aria-label="Suggest ' + esc(g.name) + '">Suggest</button>'
         ) +
       '</div>';
@@ -375,8 +378,15 @@
 
     // ── Per-game mode picker (e.g. Pachisi 2P / 4P) ─────────────────────────
     if (meta.gameModes && meta.gameModes.length) {
-      // Auto-select based on player count: 3+ players → 4player, otherwise 2player
-      selectedGameMode = players.length >= 3 ? '4player' : '2player';
+      // Auto-select: match mode to player count.
+      // For numeric modes like '2p','3p' → match parseInt(value) to players.length.
+      // For legacy text modes like '2player','4player' → fall back to threshold logic.
+      selectedGameMode = meta.gameModes[0].value;
+      meta.gameModes.forEach(function(gm) {
+        var n = parseInt(gm.value, 10);
+        if (!isNaN(n) && n <= players.length) selectedGameMode = gm.value;
+        else if (isNaN(n) && gm.value === (players.length >= 3 ? '4player' : '2player')) selectedGameMode = gm.value;
+      });
       elAssignGameModes.hidden = false;
       elAssignGameModesBtns.innerHTML = meta.gameModes.map(function (gm) {
         return '<button class="assign-mode-btn' + (gm.value === selectedGameMode ? ' active' : '') +
