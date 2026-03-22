@@ -42,6 +42,14 @@
   var _selFace   = 2;
   var _selQty    = 1;
 
+  // Room-mode vars
+  var _inRoom           = false;
+  var _roomGen          = '0';
+  var _roomInstance     = '0';
+  var _stateSeq         = 0;
+  var _lastAppliedSeq   = -1;
+  var _pendingRoomState = null;
+
   /* ════════════════════════════════════════════════════
      DATA MODEL
   ════════════════════════════════════════════════════ */
@@ -107,28 +115,38 @@
     state.currentTurn = idx !== -1 ? idx : 0;
   }
 
-  function initGame(playerCount) {
+  function initGame(playerCount, humanSeat, aiSeatsArr) {
     clearTimeout(aiTimeout);
     playerCount = parseInt(playerCount, 10);
+    humanSeat = (humanSeat !== undefined && humanSeat >= 0 && humanSeat < playerCount) ? humanSeat : 0;
+    var aiSet = {};
+    (aiSeatsArr || []).forEach(function(s) { aiSet[s] = true; });
     var names = AI_NAMES.slice().sort(function () { return Math.random() - 0.5; });
     var personalities = ['cautious', 'aggressive', 'balanced'];
     var players = [];
+    var nameIdx = 0;
     for (var i = 0; i < playerCount; i++) {
+      var isHuman  = (i === humanSeat);
+      var isAI     = !isHuman && !!aiSet[i];
+      var isRemote = !isHuman && !isAI;
       players.push({
         id:           i,
-        name:         i === 0 ? 'You' : names[i - 1],
-        isHuman:      i === 0,
+        name:         isHuman ? 'You' : names[nameIdx++],
+        isHuman:      isHuman,
+        isAI:         isAI,
+        isRemote:     isRemote,
         lives:        STARTING_LIVES,
         dice:         rollDice(DICE_PER_PLAYER),
         isRevealed:   false,
         isEliminated: false,
-        personality:  i === 0 ? null : personalities[Math.floor(Math.random() * personalities.length)]
+        personality:  (isHuman || isRemote) ? null : personalities[Math.floor(Math.random() * personalities.length)]
       });
     }
     var active = [];
     for (var j = 0; j < playerCount; j++) active.push(j);
     state = {
       playerCount:     playerCount,
+      humanId:         humanSeat,
       players:         players,
       activePlayers:   active,
       currentBid:      null,
@@ -334,11 +352,11 @@
     table.className = 'ca-table ca-players-' + state.playerCount;
     table.id = 'ca-table';
 
-    // AI zones
+    // AI zones (all players except the human)
     var aiZones = document.createElement('div');
     aiZones.className = 'ca-ai-zones';
-    for (var i = 1; i < state.playerCount; i++) {
-      aiZones.appendChild(createPlayerZone(state.players[i]));
+    for (var i = 0; i < state.playerCount; i++) {
+      if (i !== state.humanId) aiZones.appendChild(createPlayerZone(state.players[i]));
     }
 
     // Center
@@ -358,7 +376,7 @@
       '<div class="ca-result-msg" id="ca-result-msg" hidden></div>';
 
     // Human zone + controls
-    var humanZone = createPlayerZone(state.players[0]);
+    var humanZone = createPlayerZone(state.players[state.humanId]);
     var bidControls = buildBidControls();
     humanZone.appendChild(bidControls);
 
@@ -435,14 +453,14 @@
     });
     if (bidBtn) bidBtn.addEventListener('click', function () {
       if (state.animating || !isHumanTurn()) return;
-      var bid = { quantity: _selQty, face: _selFace, playerId: 0 };
+      var bid = { quantity: _selQty, face: _selFace, playerId: state.humanId };
       if (!isValidBid(bid, state.currentBid)) return;
       placeBid(bid);
     });
     if (chalBtn) chalBtn.addEventListener('click', function () {
       if (state.animating || !isHumanTurn() || !state.currentBid) return;
       setControlsEnabled(false);
-      callChallenge(0);
+      callChallenge(state.humanId);
     });
   }
 
@@ -465,7 +483,7 @@
 
   function isHumanTurn() {
     if (!state || state.gameOver || state.phase !== 'bidding') return false;
-    return state.activePlayers[state.currentTurn] === 0;
+    return state.activePlayers[state.currentTurn] === state.humanId;
   }
 
   function setControlsEnabled(on) {
@@ -497,10 +515,128 @@
     highlightActiveTurn();
     if (player.isHuman) {
       setControlsEnabled(true);
+    } else if (player.isRemote) {
+      setControlsEnabled(false);
+      // Wait — their iframe will broadcast next state
     } else {
       setControlsEnabled(false);
       aiTimeout = setTimeout(function () { aiTakeTurn(player); }, 800 + Math.random() * 700);
     }
+  }
+
+  /* ════════════════════════════════════════════════════
+     ROOM MULTIPLAYER SYNC
+  ════════════════════════════════════════════════════ */
+
+  function broadcastState() {
+    if (!_inRoom || !state) return;
+    var data = {
+      seq:            _stateSeq++,
+      phase:          state.phase,
+      round:          state.round,
+      currentTurn:    state.currentTurn,
+      activePlayers:  state.activePlayers.slice(),
+      currentBid:     state.currentBid,
+      lastChallenge:  state.lastChallenge,
+      winner:         state.winner,
+      totalDiceInPlay: state.totalDiceInPlay,
+      players: state.players.map(function (p) {
+        return { id: p.id, lives: p.lives, dice: p.dice.slice(), isEliminated: p.isEliminated };
+      })
+    };
+    window.parent.postMessage({ type: 'game-sync', instance: _roomInstance, gen: _roomGen, data: data }, '*');
+  }
+
+  function continueTurnFromState() {
+    var pid    = state.activePlayers[state.currentTurn];
+    var player = state.players[pid];
+    if (!player) return;
+    if (player.isHuman) {
+      setControlsEnabled(true);
+    } else if (player.isRemote) {
+      setControlsEnabled(false);
+    } else {
+      setControlsEnabled(false);
+      aiTimeout = setTimeout(function () { aiTakeTurn(player); }, 800 + Math.random() * 700);
+    }
+  }
+
+  function applyRoomState(data) {
+    if (!data || !state) return;
+    if (typeof data.seq === 'number' && data.seq <= _lastAppliedSeq) return;
+    // Buffer incoming state during reveal animations
+    if (state.animating) { _pendingRoomState = data; return; }
+    _lastAppliedSeq = typeof data.seq === 'number' ? data.seq : _lastAppliedSeq + 1;
+
+    var prevPhase = state.phase;
+    var prevRound = state.round;
+
+    // Apply incoming state
+    state.phase          = data.phase;
+    state.round          = data.round;
+    state.currentTurn    = data.currentTurn;
+    state.activePlayers  = data.activePlayers;
+    state.currentBid     = data.currentBid;
+    state.lastChallenge  = data.lastChallenge;
+    state.winner         = data.winner;
+    state.totalDiceInPlay = data.totalDiceInPlay;
+    state.gameOver       = (data.phase === 'gameover');
+    if (data.players) {
+      data.players.forEach(function (pd) {
+        var p = state.players[pd.id];
+        if (!p) return;
+        p.lives        = pd.lives;
+        p.dice         = pd.dice;
+        p.isEliminated = pd.isEliminated;
+      });
+    }
+
+    if (state.gameOver) { showGameOver(); return; }
+
+    // Remote player challenged — run reveal animation locally
+    if (data.phase === 'reveal' && prevPhase === 'bidding') {
+      state.animating = true;
+      setControlsEnabled(false);
+      revealAllCups(function () {
+        showChallengeResult(data.lastChallenge, function () {
+          state.animating = false;
+          if (_pendingRoomState) {
+            var pending = _pendingRoomState; _pendingRoomState = null; applyRoomState(pending);
+          }
+        });
+      });
+      return;
+    }
+
+    // New round started — transition with animation
+    if (data.round !== prevRound) {
+      clearTimeout(aiTimeout);
+      state.players.forEach(function (p) { if (!p.isEliminated) lowerCup(p.id); });
+      document.querySelectorAll('.ca-die-wrap--match').forEach(function (el) { el.classList.remove('ca-die-wrap--match'); });
+      setTimeout(function () {
+        renderAllDice();
+        renderAllLives();
+        updateBidDisplay();
+        updateRoundCounter();
+        state.players.forEach(function (p) {
+          var z = document.getElementById('ca-zone-' + p.id);
+          if (z) z.classList.remove('ca-zone--active');
+        });
+        shakeCup(state.humanId, function () {
+          liftCup(state.humanId);
+          highlightActiveTurn();
+          continueTurnFromState();
+        });
+      }, 600);
+      return;
+    }
+
+    // Normal bid update
+    renderAllDice();
+    updateBidDisplay();
+    updateRoundCounter();
+    highlightActiveTurn();
+    continueTurnFromState();
   }
 
   /* ════════════════════════════════════════════════════
@@ -518,6 +654,7 @@
       setTimeout(function () { zone.classList.remove('ca-zone--just-bid'); }, 600);
     }
     advanceTurn();
+    if (_inRoom) broadcastState();
   }
 
   function callChallenge(challengerId) {
@@ -534,8 +671,11 @@
     state.lastChallenge = {
       challenger: challengerId, target: bid.playerId,
       actual: actual, bidQuantity: bid.quantity, bidFace: bid.face,
-      challengerWon: !bidGood, loserId: loserId
+      challengerWon: !bidGood, loserId: loserId,
+      loserName: state.players[loserId].name
     };
+
+    if (_inRoom) broadcastState();  // broadcast reveal state so others can animate
 
     revealAllCups(function () {
       showChallengeResult(state.lastChallenge, function () {
@@ -559,7 +699,7 @@
     var msgEl = document.getElementById('ca-result-msg');
     if (!msgEl) { setTimeout(cb, 2500); return; }
     var faceName  = ch.bidFace === 1 ? 'aces' : ch.bidFace + 's';
-    var loserName = state.players[ch.loserId].name;
+    var loserName = ch.loserName || state.players[ch.loserId].name;
     msgEl.innerHTML =
       '<strong>' + ch.bidQuantity + ' ' + faceName + '</strong> bid \u2014 ' +
       '<strong>' + ch.actual + ' found</strong><br>' +
@@ -632,7 +772,7 @@
     if (state.activePlayers.length > 1) return false;
     state.gameOver = true;
     state.winner   = state.activePlayers[0];
-    var isHumanWin = state.winner === 0;
+    var isHumanWin = state.winner === state.humanId;
     if (window.Auth && Auth.recordResult) {
       Auth.recordResult('cachos', isHumanWin ? 'win' : 'loss', null);
     }
@@ -642,6 +782,10 @@
         Achievements.checkAction('ca_first_win');
         if (state.playerCount === 6) Achievements.checkAction('ca_win_6player');
       }
+    }
+    if (_inRoom) {
+      window.parent.postMessage({ type: 'game-win', instance: _roomInstance, gen: _roomGen, winnerSeat: state.winner, score: null }, '*');
+      return true;
     }
     setTimeout(showGameOver, 700);
     return true;
@@ -658,6 +802,7 @@
     // Re-roll dice after a short pause (cups are closed)
     setTimeout(function () {
       resetRound(firstPlayerId);
+      if (_inRoom) broadcastState();  // broadcast new round dice to all players
       renderAllDice();
       renderAllLives();
       updateBidDisplay();
@@ -667,17 +812,10 @@
         if (z) z.classList.remove('ca-zone--active');
       });
       // Shake human cup then lift to reveal new dice
-      shakeCup(0, function () {
-        liftCup(0);
+      shakeCup(state.humanId, function () {
+        liftCup(state.humanId);
         highlightActiveTurn();
-        var curPid    = state.activePlayers[state.currentTurn];
-        var curPlayer = state.players[curPid];
-        if (curPlayer.isHuman) {
-          setControlsEnabled(true);
-        } else {
-          setControlsEnabled(false);
-          aiTimeout = setTimeout(function () { aiTakeTurn(curPlayer); }, 900 + Math.random() * 500);
-        }
+        continueTurnFromState();
       });
     }, 600);
   }
@@ -685,7 +823,7 @@
   function showGameOver() {
     var existing = document.getElementById('ca-gameover');
     if (existing) existing.remove();
-    var isHumanWin = state.winner === 0;
+    var isHumanWin = state.winner === state.humanId;
     var winnerName = state.players[state.winner].name;
     var overlay = document.createElement('div');
     overlay.className = 'ca-gameover';
@@ -838,22 +976,17 @@
     });
   }
 
-  function startGame(playerCount) {
-    initGame(playerCount);
+  function startGame(playerCount, humanSeat, aiSeatsArr) {
+    initGame(playerCount, humanSeat, aiSeatsArr);
     buildTable();
     updateRoundCounter();
     highlightActiveTurn();
+    // Round leader (lowest active seat) broadcasts initial state so all iframes share same dice
+    if (_inRoom && state.activePlayers[0] === state.humanId) broadcastState();
     // Shake human cup then lift to reveal starting dice
-    shakeCup(0, function () {
-      liftCup(0);
-      var pid    = state.activePlayers[state.currentTurn];
-      var player = state.players[pid];
-      if (player.isHuman) {
-        setControlsEnabled(true);
-      } else {
-        setControlsEnabled(false);
-        aiTimeout = setTimeout(function () { aiTakeTurn(player); }, 1200);
-      }
+    shakeCup(state.humanId, function () {
+      liftCup(state.humanId);
+      continueTurnFromState();
     });
   }
 
@@ -923,11 +1056,26 @@
     if (!inRoom) {
       showModal();
     } else {
-      // Room mode: read player count from the ?mode= param (e.g. '3p' → 3)
-      var urlParams = new URLSearchParams(location.search);
-      var modeStr   = urlParams.get('mode') || '2p';
-      var roomCount = Math.max(2, Math.min(6, parseInt(modeStr, 10) || 2));
-      startGame(roomCount);
+      // Room mode: wire room-state listener first
+      window.addEventListener('message', function (e) {
+        if (e.data && e.data.type === 'room-state') applyRoomState(e.data.data);
+      });
+
+      var urlParams   = new URLSearchParams(location.search);
+      var modeStr     = urlParams.get('mode') || '2p';
+      var roomCount   = Math.max(2, Math.min(6, parseInt(modeStr, 10) || 2));
+      var seatParam   = parseInt(urlParams.get('seat') || '0', 10);
+      var humanSeat   = isNaN(seatParam) ? 0 : Math.max(0, Math.min(roomCount - 1, seatParam));
+      var aiSeatsStr  = urlParams.get('aiSeats') || '';
+      var aiSeatsArr  = aiSeatsStr ? aiSeatsStr.split(',').map(Number).filter(function (n) { return !isNaN(n); }) : [];
+      _inRoom         = true;
+      _roomGen        = urlParams.get('gen') || '0';
+      _roomInstance   = urlParams.get('instance') || '0';
+
+      startGame(roomCount, humanSeat, aiSeatsArr);
+
+      // Signal ready so reconnecting players receive the saved board state
+      window.parent.postMessage({ type: 'game-ready', instance: _roomInstance, gen: _roomGen }, '*');
     }
   });
 

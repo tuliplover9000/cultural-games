@@ -391,7 +391,7 @@
       elAssignGameModesBtns.innerHTML = meta.gameModes.map(function (gm) {
         return '<button class="assign-mode-btn' + (gm.value === selectedGameMode ? ' active' : '') +
                '" data-gmode="' + esc(gm.value) + '">' + esc(gm.label) +
-               '<span class="assign-mode-hint">' + esc(gm.hint) + '</span></button>';
+               (gm.hint ? '<span class="assign-mode-hint">' + esc(gm.hint) + '</span>' : '') + '</button>';
       }).join('');
       elAssignGameModesBtns.querySelectorAll('.assign-mode-btn').forEach(function (btn) {
         btn.onclick = function () {
