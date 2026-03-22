@@ -744,6 +744,48 @@
   text-overflow: ellipsis;
 }
 
+/* ── Rules toggle button ── */
+.lobby-game-card { flex-wrap: wrap; }
+.lobby-rules-btn {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  margin-left: auto;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.lobby-rules-btn:hover,
+.lobby-rules-btn--open {
+  background: var(--color-accent-gold);
+  border-color: var(--color-accent-gold);
+  color: #1a1209;
+}
+
+/* ── Rules dropdown panel ── */
+.lobby-game-rules {
+  width: 100%;
+  flex-basis: 100%;
+  padding: 8px 10px 4px;
+  border-top: 1px solid var(--color-border);
+  margin-top: 4px;
+}
+.lobby-game-rules__list {
+  margin: 0;
+  padding-left: 16px;
+  list-style: disc;
+}
+.lobby-game-rules__list li {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+  margin-bottom: 3px;
+}
+.lobby-game-rules__list li:last-child { margin-bottom: 0; }
+
 /* ── Lobby star (favorite) button ── */
 .lobby-star-btn {
   background: none;

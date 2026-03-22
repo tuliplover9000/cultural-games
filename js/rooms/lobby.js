@@ -10,24 +10,38 @@
 
   // ── Game catalogue ─────────────────────────────────────────────────────────
   var GAMES = [
-    { key: 'tien-len',    name: 'Tiến Lên',          culture: 'Vietnam',              type: 'Card',     icon: '🃏', svg: '../assets/icons/tien-len.svg',    badge: 'Card · 4P',    maxPlayers: 4 },
-    { key: 'mahjong',     name: 'Hong Kong Mahjong',  culture: 'China',                type: 'Tile',     icon: '🀄', svg: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPGcgdHJhbnNmb3JtPSJyb3RhdGUoLTE0IDIwIDI5KSI+CiAgICA8cmVjdCB4PSI4IiB5PSIxNCIgd2lkdGg9IjIyIiBoZWlnaHQ9IjMwIiByeD0iMyIgZmlsbD0iI2M4YTQ2ZSIgc3Ryb2tlPSIjN2E1MDIwIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogICAgPHJlY3QgeD0iMTEiIHk9IjE3IiB3aWR0aD0iMTYiIGhlaWdodD0iMjQiIHJ4PSIxLjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2IwODA0MCIgc3Ryb2tlLXdpZHRoPSIwLjgiLz4KICAgIDxjaXJjbGUgY3g9IjE5IiBjeT0iMjkiIHI9IjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2IwODA0MCIgc3Ryb2tlLXdpZHRoPSIwLjgiLz4KICAgIDxjaXJjbGUgY3g9IjE5IiBjeT0iMjkiIHI9IjEuNSIgZmlsbD0iI2IwODA0MCIvPgogIDwvZz4KICAKICA8cmVjdCB4PSIyNCIgeT0iMjIiIHdpZHRoPSIyMiIgaGVpZ2h0PSIzMCIgcng9IjMiIGZpbGw9IiMxYTA4MDAiIG9wYWNpdHk9IjAuMTgiLz4KICAKICA8cmVjdCB4PSIyMiIgeT0iMTkiIHdpZHRoPSIyMiIgaGVpZ2h0PSIzMCIgcng9IjMiIGZpbGw9IiNGQkY1RTYiIHN0cm9rZT0iIzVhMzAxMCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHJlY3QgeD0iMjUiIHk9IjIyIiB3aWR0aD0iMTYiIGhlaWdodD0iMjQiIHJ4PSIxLjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0M4OUIzQyIgc3Ryb2tlLXdpZHRoPSIxLjIiLz4KCiAgPGxpbmUgeDE9IjMzIiB5MT0iMjUiIHgyPSIzMyIgeTI9IjQzIiBzdHJva2U9IiNjYzIyMDAiIHN0cm9rZS13aWR0aD0iMi4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cmVjdCB4PSIyNy41IiB5PSIyOC41IiB3aWR0aD0iMTEiIGhlaWdodD0iMTAiIHJ4PSIwLjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2NjMjIwMCIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPg==', badge: 'Tile · 4P',    maxPlayers: 4 },
-    { key: 'oware',       name: 'Oware',              culture: 'West Africa',          type: 'Board',    icon: '🟤', svg: '../assets/icons/oware.svg',       badge: 'Board · 2P',   maxPlayers: 2 },
-    { key: 'o-an-quan',   name: 'Ô Ăn Quan',          culture: 'Vietnam',              type: 'Board',    icon: '⚫', svg: '../assets/icons/o-an-quan.svg',  badge: 'Board · 2P',   maxPlayers: 2 },
-    { key: 'fanorona',    name: 'Fanorona',            culture: 'Madagascar',           type: 'Board',    icon: '⬡',  svg: '../assets/icons/fanorona.svg',   badge: 'Board · 2P',   maxPlayers: 2 },
-    { key: 'pallanguzhi', name: 'Pallanguzhi',         culture: 'South India',          type: 'Board',    icon: '🐚', svg: '../assets/icons/pallanguzhi.svg',badge: 'Board · 2P',   maxPlayers: 2 },
-    { key: 'patolli',     name: 'Patolli',             culture: 'Mesoamerica',          type: 'Dice',     icon: '🟩', svg: '../assets/icons/patolli.svg',    badge: 'Dice · 2P',    maxPlayers: 2 },
-    { key: 'puluc',       name: 'Puluc',               culture: 'Mesoamerica',          type: 'Dice',     icon: '🪵', svg: '../assets/icons/puluc.svg',      badge: 'Dice · 2P',    maxPlayers: 2 },
-    { key: 'bau-cua',     name: 'Bầu Cua Tôm Cá',     culture: 'Vietnam',              type: 'Dice',     icon: '🎲', svg: '../assets/icons/bau-cua.svg',    badge: 'Dice · Group', maxPlayers: 8 },
-    { key: 'hnefatafl',   name: 'Hnefatafl',           culture: 'Norse',                type: 'Strategy', icon: '♟',  svg: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPCEtLSBCb2FyZCBiYWNrZ3JvdW5kIC0tPgogIDxyZWN0IHg9IjQiIHk9IjQiIHdpZHRoPSI1NiIgaGVpZ2h0PSI1NiIgcng9IjQiIGZpbGw9IiMzRDMyMjgiLz4KICA8IS0tIDPDlzMgZ3JpZDogMTZweCBjZWxscywgMnB4IGdhcHMsIDJweCBtYXJnaW4g4oCUIHBlcmZlY3RseSBjZW50cmVkIGluIDU2w5c1NiAtLT4KICA8IS0tIFJvdyAxIC0tPgogIDxyZWN0IHg9IjYiICB5PSI2IiAgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iIzJhMjAxYSIvPgogIDxyZWN0IHg9IjI0IiB5PSI2IiAgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iI0M0QTI2NSIgb3BhY2l0eT0iMC45Ii8+CiAgPHJlY3QgeD0iNDIiIHk9IjYiICB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHJ4PSIxIiBmaWxsPSIjMmEyMDFhIi8+CiAgPCEtLSBSb3cgMiAtLT4KICA8cmVjdCB4PSI2IiAgeT0iMjQiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgcng9IjEiIGZpbGw9IiNDNEEyNjUiIG9wYWNpdHk9IjAuOSIvPgogIDxyZWN0IHg9IjI0IiB5PSIyNCIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iIzVDMUExQSIgb3BhY2l0eT0iMC45NSIvPgogIDxyZWN0IHg9IjQyIiB5PSIyNCIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iI0M0QTI2NSIgb3BhY2l0eT0iMC45Ii8+CiAgPCEtLSBSb3cgMyAtLT4KICA8cmVjdCB4PSI2IiAgeT0iNDIiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgcng9IjEiIGZpbGw9IiMyYTIwMWEiLz4KICA8cmVjdCB4PSIyNCIgeT0iNDIiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgcng9IjEiIGZpbGw9IiNDNEEyNjUiIG9wYWNpdHk9IjAuOSIvPgogIDxyZWN0IHg9IjQyIiB5PSI0MiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iIzJhMjAxYSIvPgogIDwhLS0gS2luZyBvbiB0aHJvbmUgKGNlbnRyZSBjZWxsIGNlbnRyZWQgYXQgMzIsMzIpIC0tPgogIDxjaXJjbGUgY3g9IjMyIiBjeT0iMzIiIHI9IjciIGZpbGw9IiNENEEwMTciIHN0cm9rZT0iIzVhMzAxMCIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8bGluZSB4MT0iMzIiIHkxPSIyNyIgeDI9IjMyIiB5Mj0iMzciIHN0cm9rZT0iIzVhMzAxMCIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxsaW5lIHgxPSIyNyIgeTE9IjMyIiB4Mj0iMzciIHkyPSIzMiIgc3Ryb2tlPSIjNWEzMDEwIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPCEtLSBBdHRhY2tlciBwaWVjZSAocmVkKSBpbiBib3R0b20tY2VudHJlIGNlbGwgKGNlbnRyZWQgYXQgMzIsNTApIC0tPgogIDxjaXJjbGUgY3g9IjMyIiBjeT0iNTAiIHI9IjUuNSIgZmlsbD0iIzhCMjAyMCIgc3Ryb2tlPSIjM2EwODA4IiBzdHJva2Utd2lkdGg9IjEuMiIvPgogIDwhLS0gRGVmZW5kZXIgcGllY2UgKGJvbmUpIGluIHJpZ2h0LWNlbnRyZSBjZWxsIChjZW50cmVkIGF0IDUwLDMyKSAtLT4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjMyIiByPSI1LjUiIGZpbGw9IiNGMEU2QzgiIHN0cm9rZT0iIzdhNTAyMCIgc3Ryb2tlLXdpZHRoPSIxLjIiLz4KPC9zdmc+Cg==', badge: 'Strategy · 2P', maxPlayers: 2, seatRoles: ['attacker', 'defender'] },
-    { key: 'ganjifa',     name: 'Ganjifa',             culture: 'Mughal India',         type: 'Card',     icon: '🃏', svg: '../assets/icons/ganjifa.svg',    badge: 'Card · 4P',    maxPlayers: 4 },
-    { key: 'latrunculi',  name: 'Ludus Latrunculorum', culture: 'Ancient Rome',         type: 'Strategy', icon: '⚔️', svg: '../assets/icons/latrunculi.svg', badge: 'Strategy · 2P', maxPlayers: 2 },
+    { key: 'tien-len',    name: 'Tiến Lên',          culture: 'Vietnam',              type: 'Card',     icon: '🃏', svg: '../assets/icons/tien-len.svg',    badge: 'Card · 4P',    maxPlayers: 4,
+      rules: ['Play cards in ascending rank order, beating the previous play or pass.', 'Combos: pairs, triples, sequences — all must be beaten by a higher combo of the same type.', 'First player to empty their hand wins the round.'] },
+    { key: 'mahjong',     name: 'Hong Kong Mahjong',  culture: 'China',                type: 'Tile',     icon: '🀄', svg: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPGcgdHJhbnNmb3JtPSJyb3RhdGUoLTE0IDIwIDI5KSI+CiAgICA8cmVjdCB4PSI4IiB5PSIxNCIgd2lkdGg9IjIyIiBoZWlnaHQ9IjMwIiByeD0iMyIgZmlsbD0iI2M4YTQ2ZSIgc3Ryb2tlPSIjN2E1MDIwIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogICAgPHJlY3QgeD0iMTEiIHk9IjE3IiB3aWR0aD0iMTYiIGhlaWdodD0iMjQiIHJ4PSIxLjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2IwODA0MCIgc3Ryb2tlLXdpZHRoPSIwLjgiLz4KICAgIDxjaXJjbGUgY3g9IjE5IiBjeT0iMjkiIHI9IjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2IwODA0MCIgc3Ryb2tlLXdpZHRoPSIwLjgiLz4KICAgIDxjaXJjbGUgY3g9IjE5IiBjeT0iMjkiIHI9IjEuNSIgZmlsbD0iI2IwODA0MCIvPgogIDwvZz4KICAKICA8cmVjdCB4PSIyNCIgeT0iMjIiIHdpZHRoPSIyMiIgaGVpZ2h0PSIzMCIgcng9IjMiIGZpbGw9IiMxYTA4MDAiIG9wYWNpdHk9IjAuMTgiLz4KICAKICA8cmVjdCB4PSIyMiIgeT0iMTkiIHdpZHRoPSIyMiIgaGVpZ2h0PSIzMCIgcng9IjMiIGZpbGw9IiNGQkY1RTYiIHN0cm9rZT0iIzVhMzAxMCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHJlY3QgeD0iMjUiIHk9IjIyIiB3aWR0aD0iMTYiIGhlaWdodD0iMjQiIHJ4PSIxLjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0M4OUIzQyIgc3Ryb2tlLXdpZHRoPSIxLjIiLz4KCiAgPGxpbmUgeDE9IjMzIiB5MT0iMjUiIHgyPSIzMyIgeTI9IjQzIiBzdHJva2U9IiNjYzIyMDAiIHN0cm9rZS13aWR0aD0iMi4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cmVjdCB4PSIyNy41IiB5PSIyOC41IiB3aWR0aD0iMTEiIGhlaWdodD0iMTAiIHJ4PSIwLjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2NjMjIwMCIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPg==', badge: 'Tile · 4P',    maxPlayers: 4,
+      rules: ['Draw and discard tiles each turn to build a winning hand.', 'A hand = 4 sets (sequences or triplets) + 1 pair. Declare Mahjong to win.', 'Special hands (e.g. all pairs) also win. Flower tiles score bonus points.'] },
+    { key: 'oware',       name: 'Oware',              culture: 'West Africa',          type: 'Board',    icon: '🟤', svg: '../assets/icons/oware.svg',       badge: 'Board · 2P',   maxPlayers: 2,
+      rules: ['Pick up seeds from any pit on your side and sow them counter-clockwise.', 'Capture when your last seed lands in an opponent\'s pit holding 2 or 3 seeds.', 'Most seeds captured (out of 48) wins.'] },
+    { key: 'o-an-quan',   name: 'Ô Ăn Quan',          culture: 'Vietnam',              type: 'Board',    icon: '⚫', svg: '../assets/icons/o-an-quan.svg',  badge: 'Board · 2P',   maxPlayers: 2,
+      rules: ['Sow stones from any pit on your side in either direction.', 'Capture all stones in the next pit if it is empty, then keep going if the following pit is also empty.', 'Game ends when both Quan (mandarin) pits are empty. Most stones wins.'] },
+    { key: 'fanorona',    name: 'Fanorona',            culture: 'Madagascar',           type: 'Board',    icon: '⬡',  svg: '../assets/icons/fanorona.svg',   badge: 'Board · 2P',   maxPlayers: 2,
+      rules: ['Move a piece to an adjacent intersection along a line.', 'Capture by approach (move into line with opponent) or withdrawal (move away from a line).', 'Eliminate all opponent pieces to win.'] },
+    { key: 'pallanguzhi', name: 'Pallanguzhi',         culture: 'South India',          type: 'Board',    icon: '🐚', svg: '../assets/icons/pallanguzhi.svg',badge: 'Board · 2P',   maxPlayers: 2,
+      rules: ['Sow shells counter-clockwise from any pit on your side.', 'If your last shell lands in a pit with shells, pick them up and continue sowing.', 'Capture the next pit\'s contents when you land in an empty pit. Most shells wins.'] },
+    { key: 'patolli',     name: 'Patolli',             culture: 'Mesoamerica',          type: 'Dice',     icon: '🟩', svg: '../assets/icons/patolli.svg',    badge: 'Dice · 2P',    maxPlayers: 2,
+      rules: ['Race 6 markers around a cross-shaped board by rolling marked beans.', 'Land on an opponent\'s marker to send it back to start. Certain squares grant safe passage.', 'First to move all markers off the board wins.'] },
+    { key: 'puluc',       name: 'Puluc',               culture: 'Mesoamerica',          type: 'Dice',     icon: '🪵', svg: '../assets/icons/puluc.svg',      badge: 'Dice · 2P',    maxPlayers: 2,
+      rules: ['Move your pieces toward the opponent\'s end of a 9-square strip using stick dice.', 'Land on an opponent\'s piece to capture and carry it. Land on a stack to capture the whole stack.', 'Clear all enemy pieces from the board to win.'] },
+    { key: 'bau-cua',     name: 'Bầu Cua Tôm Cá',     culture: 'Vietnam',              type: 'Dice',     icon: '🎲', svg: '../assets/icons/bau-cua.svg',    badge: 'Dice · Group', maxPlayers: 8,
+      rules: ['Place bets on any of 6 symbols: gourd, shrimp, crab, fish, deer, rooster.', 'Banker rolls 3 dice. Win 1× your bet for each die showing your symbol.', 'No match = you lose your bet. Match all 3 = win 3×.'] },
+    { key: 'hnefatafl',   name: 'Hnefatafl',           culture: 'Norse',                type: 'Strategy', icon: '♟',  svg: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPCEtLSBCb2FyZCBiYWNrZ3JvdW5kIC0tPgogIDxyZWN0IHg9IjQiIHk9IjQiIHdpZHRoPSI1NiIgaGVpZ2h0PSI1NiIgcng9IjQiIGZpbGw9IiMzRDMyMjgiLz4KICA8IS0tIDPDlzMgZ3JpZDogMTZweCBjZWxscywgMnB4IGdhcHMsIDJweCBtYXJnaW4g4oCUIHBlcmZlY3RseSBjZW50cmVkIGluIDU2w5c1NiAtLT4KICA8IS0tIFJvdyAxIC0tPgogIDxyZWN0IHg9IjYiICB5PSI2IiAgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iIzJhMjAxYSIvPgogIDxyZWN0IHg9IjI0IiB5PSI2IiAgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iI0M0QTI2NSIgb3BhY2l0eT0iMC45Ii8+CiAgPHJlY3QgeD0iNDIiIHk9IjYiICB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHJ4PSIxIiBmaWxsPSIjMmEyMDFhIi8+CiAgPCEtLSBSb3cgMiAtLT4KICA8cmVjdCB4PSI2IiAgeT0iMjQiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgcng9IjEiIGZpbGw9IiNDNEEyNjUiIG9wYWNpdHk9IjAuOSIvPgogIDxyZWN0IHg9IjI0IiB5PSIyNCIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iIzVDMUExQSIgb3BhY2l0eT0iMC45NSIvPgogIDxyZWN0IHg9IjQyIiB5PSIyNCIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iI0M0QTI2NSIgb3BhY2l0eT0iMC45Ii8+CiAgPCEtLSBSb3cgMyAtLT4KICA8cmVjdCB4PSI2IiAgeT0iNDIiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgcng9IjEiIGZpbGw9IiMyYTIwMWEiLz4KICA8cmVjdCB4PSIyNCIgeT0iNDIiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgcng9IjEiIGZpbGw9IiNDNEEyNjUiIG9wYWNpdHk9IjAuOSIvPgogIDxyZWN0IHg9IjQyIiB5PSI0MiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iIzJhMjAxYSIvPgogIDwhLS0gS2luZyBvbiB0aHJvbmUgKGNlbnRyZSBjZWxsIGNlbnRyZWQgYXQgMzIsMzIpIC0tPgogIDxjaXJjbGUgY3g9IjMyIiBjeT0iMzIiIHI9IjciIGZpbGw9IiNENEEwMTciIHN0cm9rZT0iIzVhMzAxMCIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8bGluZSB4MT0iMzIiIHkxPSIyNyIgeDI9IjMyIiB5Mj0iMzciIHN0cm9rZT0iIzVhMzAxMCIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxsaW5lIHgxPSIyNyIgeTE9IjMyIiB4Mj0iMzciIHkyPSIzMiIgc3Ryb2tlPSIjNWEzMDEwIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPCEtLSBBdHRhY2tlciBwaWVjZSAocmVkKSBpbiBib3R0b20tY2VudHJlIGNlbGwgKGNlbnRyZWQgYXQgMzIsNTApIC0tPgogIDxjaXJjbGUgY3g9IjMyIiBjeT0iNTAiIHI9IjUuNSIgZmlsbD0iIzhCMjAyMCIgc3Ryb2tlPSIjM2EwODA4IiBzdHJva2Utd2lkdGg9IjEuMiIvPgogIDwhLS0gRGVmZW5kZXIgcGllY2UgKGJvbmUpIGluIHJpZ2h0LWNlbnRyZSBjZWxsIChjZW50cmVkIGF0IDUwLDMyKSAtLT4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjMyIiByPSI1LjUiIGZpbGw9IiNGMEU2QzgiIHN0cm9rZT0iIzdhNTAyMCIgc3Ryb2tlLXdpZHRoPSIxLjIiLz4KPC9zdmc+Cg==', badge: 'Strategy · 2P', maxPlayers: 2, seatRoles: ['attacker', 'defender'],
+      rules: ['Attackers (24 pieces) try to surround and capture the King. Defenders escort the King to any corner.', 'Pieces move like rooks in chess. Capture by sandwiching an opponent\'s piece between two of yours.', 'Attackers win by capturing the King. Defenders win if the King reaches a corner.'] },
+    { key: 'ganjifa',     name: 'Ganjifa',             culture: 'Mughal India',         type: 'Card',     icon: '🃏', svg: '../assets/icons/ganjifa.svg',    badge: 'Card · 4P',    maxPlayers: 4,
+      rules: ['Circular hand-painted cards organised into suits with a trump suit each round.', 'Lead any card; others must follow suit if able. Highest card of the led suit (or trump) wins the trick.', 'Most tricks at the end of the hand wins.'] },
+    { key: 'latrunculi',  name: 'Ludus Latrunculorum', culture: 'Ancient Rome',         type: 'Strategy', icon: '⚔️', svg: '../assets/icons/latrunculi.svg', badge: 'Strategy · 2P', maxPlayers: 2,
+      rules: ['Move any piece orthogonally any number of squares (like a rook in chess).', 'Capture an opponent\'s piece by sandwiching it between two of yours on a row or column.', 'Player who captures the most pieces, or leaves the opponent with no legal moves, wins.'] },
     { key: 'pachisi',     name: 'Pachisi',             culture: 'Indian Subcontinent',  type: 'Dice',     icon: '🎯', svg: '../assets/icons/pachisi.svg',    badge: 'Dice · 4P',    maxPlayers: 4,
+      rules: ['Race 4 pieces around a cross-shaped board back to the centre using cowrie-shell dice.', 'Land on an opponent\'s piece (not on a safe square) to send it back to start.', 'First player to move all 4 pieces home wins.'],
       gameModes: [
         { value: '2player', label: '2 Players', hint: '1 v 1' },
         { value: '4player', label: '4 Players', hint: 'Teams A & B' },
       ]},
     { key: 'cachos',      name: 'Cachos',              culture: 'Latin America',         type: 'Dice',     icon: '🎲', svg: '../assets/icons/cachos.svg',     badge: 'Dice · Bluffing', maxPlayers: 6,
+      rules: ['Everyone rolls 5 dice secretly under a cup. Only you see your own.', 'Bid how many of a face you think exist across ALL cups combined. Each bid must go higher.', 'Call \u00a1Dudo! to challenge. If the bid was wrong, the bidder loses a die — if right, the challenger does. Last dice standing wins.'],
       gameModes: [
         { value: '2p', label: '2 Players' },
         { value: '3p', label: '3 Players' },
@@ -181,6 +195,13 @@
       var iconInner = g.svg
         ? '<img src="' + g.svg + '" class="lobby-game-card__icon-img" alt="" aria-hidden="true" onerror="this.style.display=\'none\';this.parentNode.textContent=\'' + g.icon + '\'">'
         : g.icon;
+      var rulesHtml = (g.rules && g.rules.length)
+        ? '<div class="lobby-game-rules" hidden>' +
+            '<ul class="lobby-game-rules__list">' +
+              g.rules.map(function(r) { return '<li>' + esc(r) + '</li>'; }).join('') +
+            '</ul>' +
+          '</div>'
+        : '';
       return '<div class="lobby-game-card" role="listitem" data-name="' + esc(g.name) + '" data-culture="' + esc(g.culture || '') + '" data-type="' + esc(g.type || '') + '" data-max-players="' + (g.maxPlayers || '') + '">' +
         '<button class="lobby-star-btn' + (isFav ? ' lobby-star-btn--on' : '') + '" data-game="' + g.key + '" type="button" aria-label="' + (isFav ? 'Remove from favorites' : 'Add to favorites') + '">' + (isFav ? '★' : '☆') + '</button>' +
         '<span class="lobby-game-card__icon" aria-hidden="true">' + iconInner + '</span>' +
@@ -188,10 +209,12 @@
           '<span class="lobby-game-card__name">' + esc(g.name) + '</span>' +
           '<span class="badge badge--board" style="font-size:0.65rem;padding:2px 7px">' + esc(g.badge) + '</span>' +
         '</div>' +
+        (g.rules && g.rules.length ? '<button class="lobby-rules-btn" type="button" aria-expanded="false" aria-label="How to play ' + esc(g.name) + '">? Rules</button>' : '') +
         (isHost
           ? '<button class="btn btn-primary btn-sm lobby-play-direct-btn" data-game="' + g.key + '" aria-label="Play ' + esc(g.name) + '"' + (tooFew ? ' disabled title="Need at least 2 players to start"' : '') + '>▶ Play</button>'
           : '<button class="btn btn-teal btn-sm lobby-suggest-btn" data-game="' + g.key + '" aria-label="Suggest ' + esc(g.name) + '">Suggest</button>'
         ) +
+        rulesHtml +
       '</div>';
     }).join('');
 
@@ -203,6 +226,20 @@
           Auth.toggleFavorite(btn.dataset.game);
           renderGameGrid();
         }
+      });
+    });
+
+    // Rules toggle
+    elGameGrid.querySelectorAll('.lobby-rules-btn').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var card  = btn.closest('.lobby-game-card');
+        var panel = card && card.querySelector('.lobby-game-rules');
+        if (!panel) return;
+        var open = !panel.hidden;
+        panel.hidden = open;
+        btn.setAttribute('aria-expanded', String(!open));
+        btn.classList.toggle('lobby-rules-btn--open', !open);
       });
     });
 
