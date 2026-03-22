@@ -57,6 +57,17 @@
   text-align: center;
   min-width: 200px;
 }
+.ca-bid-display__context {
+  font-size: var(--text-xs);
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.ca-bid-display__context span {
+  color: #D4A017;
+  font-weight: 700;
+}
 .ca-bid-display__empty {
   color: rgba(255,255,255,0.45);
   font-size: var(--text-sm);
@@ -438,6 +449,14 @@
   padding: 5px;
 }
 .ca-face-mini--large .ca-pip { width: 8px; height: 8px; }
+
+.ca-bid-hint {
+  text-align: center;
+  font-size: var(--text-xs);
+  color: rgba(255,255,255,0.38);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
 
 .ca-action-row {
   display: flex;

@@ -290,12 +290,12 @@
     var qtyEl   = document.getElementById('ca-bid-quantity');
     var faceEl  = document.getElementById('ca-bid-face');
     if (!state.currentBid) {
-      if (emptyEl) emptyEl.hidden = false;
-      if (bidEl)   bidEl.hidden   = true;
+      if (emptyEl) emptyEl.style.display = '';
+      if (bidEl)   bidEl.style.display   = 'none';
       return;
     }
-    if (emptyEl) emptyEl.hidden = true;
-    if (bidEl)   bidEl.hidden   = false;
+    if (emptyEl) emptyEl.style.display = 'none';
+    if (bidEl)   bidEl.style.display   = '';
     if (qtyEl)   qtyEl.textContent = state.currentBid.quantity;
     if (faceEl) {
       var isAce = state.currentBid.face === 1;
@@ -306,6 +306,8 @@
   function updateRoundCounter() {
     var el = document.getElementById('ca-round-counter');
     if (el) el.textContent = 'Round ' + state.round + ' \u00b7 ' + state.totalDiceInPlay + ' dice in play';
+    var td = document.getElementById('ca-total-dice');
+    if (td) td.textContent = state.totalDiceInPlay;
   }
 
   function highlightActiveTurn() {
@@ -345,8 +347,9 @@
     center.innerHTML =
       '<div class="ca-round-counter" id="ca-round-counter">Round 1</div>' +
       '<div class="ca-bid-display" id="ca-bid-display">' +
-        '<span class="ca-bid-display__empty">No bid yet \u2014 make the first bid!</span>' +
-        '<div class="ca-bid-display__bid" hidden>' +
+        '<div class="ca-bid-display__context">Claiming across <span id="ca-total-dice">' + state.totalDiceInPlay + '</span> dice total</div>' +
+        '<span class="ca-bid-display__empty">No bid yet \u2014 be the first!</span>' +
+        '<div class="ca-bid-display__bid" style="display:none">' +
           '<span class="ca-bid-quantity" id="ca-bid-quantity"></span>' +
           '<span class="ca-bid-x">\u00d7</span>' +
           '<div id="ca-bid-face"></div>' +
@@ -387,6 +390,7 @@
           '</button>';
         }).join('') +
       '</div>' +
+      '<p class="ca-bid-hint">Higher face \u2192 quantity can reset to 1. Same face \u2192 must bid more.</p>' +
       '<div class="ca-action-row">' +
         '<button class="ca-bid-btn" id="ca-place-bid-btn">Place Bid</button>' +
         '<button class="ca-challenge-btn" id="ca-challenge-btn" disabled>\u00a1Dudo!</button>' +
