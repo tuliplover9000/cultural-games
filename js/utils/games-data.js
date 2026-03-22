@@ -18,4 +18,5 @@ window.GAMES_DATA = [
   { key: 'pachisi',     name: 'Pachisi',            culture: 'Indian Subcontinent', type: 'Dice',     maxPlayers: 4 },
   { key: 'ganjifa',    name: 'Ganjifa',            culture: 'Mughal India',        type: 'Card',     maxPlayers: 4 },
   { key: 'latrunculi', name: 'Ludus Latrunculorum', culture: 'Roman Empire',        type: 'Strategy', maxPlayers: 2, id: 'latrunculi', region: 'Europe', description: 'Ancient Roman strategy game of capture and command', href: 'pages/games/latrunculi.html', iconPath: 'assets/icons/latrunculi.svg' },
+  { key: 'cachos',     name: 'Cachos',             culture: 'Latin America',       type: 'Dice',     maxPlayers: 6 },
 ];

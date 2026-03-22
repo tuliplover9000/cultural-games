@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Play Cachos — the classic Latin American bluffing dice game. Shake the cup, place your bid, call the bluff. Free, no account required." />
+  <title>Cachos — Cultural Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="../shared/theme.js"></script>
+  <script src="../js/rooms/room-mode.js"></script>
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../shared/theme.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../shared/toggle.css" />
+  <link rel="stylesheet" href="../shared/tutorial.css" />
+  <link rel="stylesheet" href="../css/auth.css" />
+  <link rel="stylesheet" href="../css/games.css" />
+  <link rel="stylesheet" href="../shared/achievements.css" />
+  <link rel="stylesheet" href="../shared/fullscreen.css" />
+  <link rel="stylesheet" href="cachos.css" />
+</head>
+<body>
+
+  <button id="tt-trigger" class="tt-trigger" type="button" aria-label="How to play">
+    <span class="tt-trigger__icon" aria-hidden="true">?</span>
+    <span class="tt-trigger__badge" id="tt-badge" hidden>New</span>
+  </button>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../index.html" class="nav-logo" aria-label="Cultural Games — Home">
+        <span class="nav-logo-icon" aria-hidden="true">🎲</span>
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="../pages/browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="../pages/rooms.html"  class="nav-link nav-link--rooms">Rooms</a></li>
+        <li><a href="../pages/about.html"  class="nav-link">About</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+
+      <div class="game-nav-bar">
+        <a href="../pages/browse.html" class="back-link">Back to Browse</a>
+      </div>
+
+      <header class="game-header">
+        <div class="game-header__icon" aria-hidden="true">
+          <img src="../assets/icons/cachos.svg" alt="" />
+        </div>
+        <h1 class="game-header__title">Cachos</h1>
+        <p class="game-header__origin">
+          Latin America &nbsp;&middot;&nbsp;
+          <span class="badge badge--dice" style="display:inline-flex; vertical-align:middle; margin-left:4px;">Dice · Bluffing</span>
+        </p>
+      </header>
+
+      <!-- Game Container -->
+      <div id="fs-game-wrap" class="fs-game-wrap">
+        <button id="fs-toggle" class="fs-toggle" aria-label="Enter fullscreen" title="Enter fullscreen">
+          <svg class="fs-toggle__icon fs-toggle__icon--enter" viewBox="0 0 18 18" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round">
+            <path d="M1 6V1h5M12 1h5v5M17 12v5h-5M6 17H1v-5"/>
+          </svg>
+          <svg class="fs-toggle__icon fs-toggle__icon--exit" viewBox="0 0 18 18" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" style="display:none">
+            <path d="M6 1v5H1M17 6h-5V1M12 17v-5h5M1 12h5v5"/>
+          </svg>
+        </button>
+        <div class="fs-sr-only" id="fs-announce" aria-live="polite"></div>
+        <div class="game-container" id="game-container" aria-label="Game area">
+          <p style="text-align:center; color:var(--color-text-muted); padding:var(--space-8);">
+            Game loading…
+          </p>
+        </div>
+      </div><!-- /#fs-game-wrap -->
+
+      <!-- Disclaimer -->
+      <div class="game-disclaimer" role="note">
+        🎲 Virtual only — no real money involved. Cachos is played for fun.
+      </div>
+
+      <!-- How to Play -->
+      <details class="accordion" open>
+        <summary class="accordion__trigger">
+          <span class="accordion__title">How to Play</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Cachos is a bluffing dice game for 2–6 players. Each player shakes
+            <strong>5 dice</strong> under a leather cup — only you can see your own dice.
+          </p>
+          <ol>
+            <li><strong>Bid:</strong> the first player declares a bid — "There are at least <em>X</em> fours under all the cups." Each bid must claim a higher quantity or higher face than the previous one.</li>
+            <li><strong>Raise or challenge:</strong> the next player must either raise the bid or call <em>"¡Dudo!"</em> (I doubt it!) to challenge.</li>
+            <li><strong>Reveal:</strong> when challenged, all cups are lifted. Count the matching dice — aces (1s) are wild and count as any face.</li>
+            <li><strong>Lose a life:</strong> if the bid was too high, the bidder loses a life. If the bid was accurate, the challenger loses a life. Losing a life removes one die from your cup.</li>
+            <li><strong>Last cup standing:</strong> the last player with dice remaining wins.</li>
+          </ol>
+          <p><em>Note: Calza (calling the exact bid) is not included in this version.</em></p>
+        </div>
+      </details>
+
+      <!-- Cultural Context -->
+      <details class="accordion">
+        <summary class="accordion__trigger">
+          <span class="accordion__title">Cultural Context</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Cachos is a bluffing dice game popular across Latin America, particularly
+            in Ecuador, Peru, Chile, Colombia, and Venezuela. The name comes from
+            Latin American Spanish <em>cachos</em> — a colloquial term for horns,
+            used regionally to describe the dice cup.
+          </p>
+          <p>
+            The game belongs to the international <em>Dudo</em> ("I doubt it") family,
+            which spread through South America during the colonial period and became
+            deeply embedded in local social culture. Today it is a fixture of homes,
+            bars, and family gatherings across the continent.
+          </p>
+          <p>
+            Regional variants abound: Ecuadorian Cacho has codified hand rankings
+            similar to poker; Venezuelan Perudo (internationally marketed as
+            <em>Liar's Dice</em>) uses slightly different wild rules and was
+            popularised globally in the 1980s. The game appears in
+            <em>Pirates of the Caribbean: Dead Man's Chest</em> as Liar's Dice.
+          </p>
+          <p>
+            The bluffing mechanic reflects the social, performative nature of Latin
+            American game culture — reading opponents, managing risk, and playing
+            to the crowd are all part of the experience.
+          </p>
+        </div>
+      </details>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <span class="footer-brand">Cultural Games</span>
+      <p class="footer-mission">Preserving cultural heritage through play — one game at a time.</p>
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links" role="list">
+          <li><a href="../pages/browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="../pages/about.html"  class="footer-link">About</a></li>
+        </ul>
+      </nav>
+      <div class="footer-divider"></div>
+      <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
+    </div>
+  </footer>
+
+  <script src="../js/utils/helpers.js"></script>
+  <script src="../js/utils/navigation.js"></script>
+  <script src="../js/utils/auth.js"></script>
+  <script src="../shared/achievement-queue.js"></script>
+  <script src="../shared/achievements.js"></script>
+  <script src="../js/rooms/game-bridge.js"></script>
+  <script src="../shared/tutorial.js"></script>
+  <script src="../shared/fullscreen.js"></script>
+  <script src="cachos.js"></script>
+
+</body>
+</html>

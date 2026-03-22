@@ -27,6 +27,14 @@
         { value: '2player', label: '2 Players', hint: '1 v 1' },
         { value: '4player', label: '4 Players', hint: 'Teams A & B' },
       ]},
+    { key: 'cachos',      name: 'Cachos',              culture: 'Latin America',         type: 'Dice',     icon: '🎲', svg: '../assets/icons/cachos.svg',     badge: 'Dice · Bluffing', maxPlayers: 6,
+      gameModes: [
+        { value: '2p', label: '2 Players' },
+        { value: '3p', label: '3 Players' },
+        { value: '4p', label: '4 Players' },
+        { value: '5p', label: '5 Players' },
+        { value: '6p', label: '6 Players' },
+      ]},
   ];
 
   // ── DOM refs ───────────────────────────────────────────────────────────────

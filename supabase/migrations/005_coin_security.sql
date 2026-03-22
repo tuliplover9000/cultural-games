@@ -52,7 +52,7 @@ DECLARE
   v_valid_games text[] := ARRAY[
     'tien-len','bau-cua','o-an-quan','oware','patolli',
     'puluc','pallanguzhi','fanorona','hnefatafl','mahjong',
-    'pachisi','ganjifa','latrunculi'
+    'pachisi','ganjifa','latrunculi','cachos'
   ];
   v_base_coins  int := 0;
   v_bet_coins   int := 0;

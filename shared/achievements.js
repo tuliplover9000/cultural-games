@@ -64,13 +64,18 @@
     { id: 'lt_first_win',  gameId: 'latrunculi',  title: 'Victor of Rome',    description: 'Win your first game of Ludus Latrunculorum',             tier: 'bronze', category: 'combat', condition: { type: 'stat', game: 'latrunculi',  stat: 'wins', threshold: 1  } },
     { id: 'lt_wins_10',    gameId: 'latrunculi',  title: 'Praetorian Guard',  description: 'Win 10 games of Ludus Latrunculorum',                    tier: 'silver', category: 'combat', condition: { type: 'stat', game: 'latrunculi',  stat: 'wins', threshold: 10 } },
     { id: 'lt_wins_50',    gameId: 'latrunculi',  title: 'Consul of the Board','description': 'Win 50 games of Ludus Latrunculorum',                  tier: 'gold',   category: 'combat', condition: { type: 'stat', game: 'latrunculi',  stat: 'wins', threshold: 50 } },
+    { id: 'ca_first_win',  gameId: 'cachos',      title: 'First Shake',       description: 'Win your first game of Cachos',                          tier: 'bronze', category: 'combat', condition: { type: 'stat', game: 'cachos',       stat: 'wins', threshold: 1  } },
+    { id: 'ca_wins_10',    gameId: 'cachos',      title: 'Cup Master',        description: 'Win 10 games of Cachos',                                 tier: 'silver', category: 'combat', condition: { type: 'stat', game: 'cachos',       stat: 'wins', threshold: 10 } },
+    { id: 'ca_wins_50',    gameId: 'cachos',      title: 'El Gran Tah\u00far',description: 'Win 50 games of Cachos',                                 tier: 'gold',   category: 'combat', condition: { type: 'stat', game: 'cachos',       stat: 'wins', threshold: 50 } },
+    { id: 'ca_bluff_catch',gameId: 'cachos',      title: 'Caught Red-Handed', description: 'Successfully call a bluff',                              tier: 'bronze', category: 'combat', condition: { type: 'action', action: 'ca_bluff_caught'  } },
+    { id: 'ca_survivor',   gameId: 'cachos',      title: 'Last Cup Standing', description: 'Win a 6-player game of Cachos',                          tier: 'silver', category: 'combat', condition: { type: 'action', action: 'ca_win_6player'   } },
 
     /* ── Explorer (cross-game) ── */
     { id: 'exp_play_3',   gameId: null, title: 'Curious Traveller', description: 'Play 3 different games',               tier: 'bronze', category: 'explorer', condition: { type: 'games_played', threshold: 3  } },
     { id: 'exp_play_6',   gameId: null, title: 'Cultural Explorer', description: 'Play 6 different games',               tier: 'silver', category: 'explorer', condition: { type: 'games_played', threshold: 6  } },
-    { id: 'exp_play_all', gameId: null, title: 'World Game Master', description: 'Play every game on the site',          tier: 'gold',   category: 'explorer', condition: { type: 'games_played', threshold: 12 } },
+    { id: 'exp_play_all', gameId: null, title: 'World Game Master', description: 'Play every game on the site',          tier: 'gold',   category: 'explorer', condition: { type: 'games_played', threshold: 14 } },
     { id: 'exp_win_3',    gameId: null, title: 'Renaissance Player','description': 'Win in 3 different games',           tier: 'silver', category: 'explorer', condition: { type: 'games_won', threshold: 3  } },
-    { id: 'exp_win_all',  gameId: null, title: 'Grand Tour',        description: 'Win at least one game of every title', tier: 'gold',   category: 'explorer', condition: { type: 'games_won', threshold: 12 } },
+    { id: 'exp_win_all',  gameId: null, title: 'Grand Tour',        description: 'Win at least one game of every title', tier: 'gold',   category: 'explorer', condition: { type: 'games_won', threshold: 14 } },
     { id: 'exp_favorite', gameId: null, title: 'Patron of Culture', description: 'Save a favourite game',                tier: 'bronze', category: 'explorer', condition: { type: 'action', action: 'set_favorite' } },
 
     /* ── Social (multiplayer) ── */

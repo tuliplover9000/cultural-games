@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Cup rim -->
+  <rect x="6" y="6" width="32" height="6" rx="3" fill="currentColor"/>
+  <!-- Cup body: trapezoid, wider at top -->
+  <path d="M8 12 L36 12 L32 54 L12 54 Z" fill="currentColor" opacity="0.88"/>
+  <!-- Die 1: large, rotated, upper right -->
+  <rect x="37" y="4" width="20" height="20" rx="3.5" fill="currentColor" transform="rotate(18 47 14)"/>
+  <!-- Die 2: smaller, lower right -->
+  <rect x="41" y="34" width="16" height="16" rx="3" fill="currentColor" transform="rotate(-14 49 42)" opacity="0.72"/>
+</svg>
