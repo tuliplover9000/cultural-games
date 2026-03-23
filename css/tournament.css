@@ -11,22 +11,7 @@
 }
 
 /* ── Tournament entry card on rooms landing ────────────────── */
-.rooms-entry-card--tournament {
-  border: 2px dashed var(--tn-gold);
-  background: linear-gradient(135deg,
-    color-mix(in srgb, var(--tn-gold) 8%, var(--color-bg-card)),
-    var(--color-bg-card)
-  );
-  cursor: pointer;
-  transition: border-color 200ms, box-shadow 200ms;
-}
-.rooms-entry-card--tournament:hover {
-  border-color: var(--tn-gold);
-  box-shadow: 0 0 18px color-mix(in srgb, var(--tn-gold) 25%, transparent);
-}
-.rooms-entry-card--tournament .rooms-entry-card__icon {
-  font-size: 2.2rem;
-}
+/* Inherits all .rooms-entry-card base styles — no overrides needed */
 
 /* ── Tournament panel wrapper ─────────────────────────────── */
 #rooms-tournament {
