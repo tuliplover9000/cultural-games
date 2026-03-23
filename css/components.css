@@ -784,6 +784,11 @@
   padding: 1.5rem 1rem 0.5rem;
   max-width: 560px;
   margin: 0 auto;
+  min-height: 9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .sp-quote__text {

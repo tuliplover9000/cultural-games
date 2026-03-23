@@ -639,8 +639,14 @@
         sourceEl.style.opacity = '0';
         setTimeout(function () {
           current = idx;
-          textEl.textContent   = '\u201c' + quotes[idx].text + '\u201d';
-          sourceEl.textContent = '\u2014 ' + quotes[idx].source;
+          var q = quotes[idx];
+          textEl.textContent   = '\u201c' + q.text + '\u201d';
+          sourceEl.textContent = '\u2014 ' + q.source;
+          // Scale font size down for longer quotes so height stays fixed
+          var len = q.text.length;
+          textEl.style.fontSize = len > 120 ? 'var(--text-sm)'
+                                : len > 80  ? 'var(--text-base)'
+                                : 'var(--text-lg)';
           textEl.style.opacity   = '1';
           sourceEl.style.opacity = '1';
           dotsEl.querySelectorAll('.sp-quote__dot').forEach(function (d, i) {
