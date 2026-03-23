@@ -98,6 +98,9 @@
     if (r.status === 'endscreen' && _cbs.onEndscreen) {
       _cbs.onEndscreen(r);
     }
+    if (r.status === 'finished' && _cbs.onFinished) {
+      _cbs.onFinished(r);
+    }
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────

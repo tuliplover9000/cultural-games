@@ -621,6 +621,12 @@
       onEndscreen: function(room) {
         if (window.Endscreen) window.Endscreen.show(room);
       },
+      onFinished: function() {
+        // Host left — persist any local coin changes before redirecting
+        if (window.Auth && Auth.persistCoins) Auth.persistCoins();
+        showError('The host left the room. Your coins have been saved.');
+        setTimeout(function() { window.location.href = 'rooms.html'; }, 3000);
+      },
       onChatUpdate: function(messages) {
         renderChat(messages);
       },

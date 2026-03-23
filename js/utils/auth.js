@@ -263,6 +263,14 @@
     _emit();
   }
 
+  function persistCoins() {
+    // Write the current local coin balance to the DB. Call this after games
+    // that modify coins client-side (e.g. Bầu Cua real-coin mode) so the
+    // balance survives page navigation.
+    if (!_user || !_accessToken) return;
+    _pgFetch('PATCH', 'profiles?id=eq.' + _user.id, { coins: _coins });
+  }
+
   async function toggleFavorite(gameKey) {
     if (!_user || !_accessToken) return false;
     if (_favorites.has(gameKey)) {
@@ -834,6 +842,7 @@
     toggleFavorite: toggleFavorite,
     getCoins:       getCoins,
     addCoins:       addCoins,
+    persistCoins:   persistCoins,
     GAMES:          GAMES,
   };
 
