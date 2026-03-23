@@ -51,7 +51,7 @@
     { id: 'pallanguzhi', name: 'Pallanguzhi',          iconPath: 'assets/icons/pallanguzhi.svg',  href: 'games/pallanguzhi.html' },
     { id: 'fanorona',    name: 'Fanorona',             iconPath: 'assets/icons/fanorona.svg',     href: 'games/fanorona.html' },
     { id: 'hnefatafl',   name: 'Hnefatafl',            iconPath: 'assets/icons/hnefatafl.svg',    href: 'games/hnefatafl.html' },
-    { id: 'mahjong',     name: 'Hong Kong Mahjong',    iconPath: '',                               href: 'games/mahjong.html' },
+    { id: 'mahjong',     name: 'Hong Kong Mahjong',    iconPath: 'assets/icons/mahjong.svg',      href: 'games/mahjong.html' },
     { id: 'pachisi',     name: 'Pachisi',              iconPath: 'assets/icons/pachisi.svg',      href: 'games/pachisi.html' },
     { id: 'ganjifa',     name: 'Ganjifa',              iconPath: 'assets/icons/ganjifa.svg',      href: 'games/ganjifa.html' },
     { id: 'latrunculi',  name: 'Ludus Latrunculorum',  iconPath: 'assets/icons/latrunculi.svg',   href: 'games/latrunculi.html' },
