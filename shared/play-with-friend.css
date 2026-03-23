@@ -1,0 +1,106 @@
+/* =============================================================================
+   play-with-friend.css — "Play with a Friend" CTA banner (Phase C)
+   Injected below game canvas on every game page. pwf- prefix.
+============================================================================= */
+
+.pwf-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin: 1.25rem 0;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.pwf-banner:hover {
+  border-color: var(--color-accent-gold);
+  box-shadow: 0 2px 12px rgba(200, 155, 60, 0.12);
+}
+
+.pwf-banner__icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  background: var(--color-accent-gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pwf-banner__icon svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pwf-banner__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.pwf-banner__title {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-base);
+  color: var(--color-text);
+  margin: 0 0 0.15rem;
+}
+
+.pwf-banner__sub {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.pwf-banner__btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--color-accent-red);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  padding: 0.6rem 1.1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  white-space: nowrap;
+  min-height: 44px;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.pwf-banner__btn:hover {
+  background: #a02a2a;
+  transform: translateY(-1px);
+}
+
+.pwf-banner__btn:active {
+  transform: translateY(0);
+}
+
+/* Inside room iframes — hidden via JS, but also as a CSS guard */
+.pwf-banner--hidden {
+  display: none !important;
+}
+
+@media (max-width: 500px) {
+  .pwf-banner {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .pwf-banner__btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

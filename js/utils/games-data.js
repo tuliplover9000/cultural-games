@@ -3,6 +3,27 @@
  * Add or remove entries here and all stat displays update automatically.
  *
  * Exposes: window.GAMES_DATA
+ *
+ * CANONICAL NAME REFERENCE (Phase A)
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Canonical Name          | key           | Culture
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Tiến Lên               | tien-len      | Vietnam
+ * Bầu Cua Tôm Cá         | bau-cua       | Vietnam
+ * Ô Ăn Quan              | o-an-quan     | Vietnam
+ * Oware                  | oware         | West Africa
+ * Patolli                | patolli       | Mesoamerica
+ * Puluc                  | puluc         | Mesoamerica
+ * Pallanguzhi            | pallanguzhi   | South India
+ * Fanorona               | fanorona      | Madagascar
+ * Hnefatafl              | hnefatafl     | Norse
+ * Hong Kong Mahjong      | mahjong       | China
+ * Pachisi                | pachisi       | Indian Subcontinent
+ * Ganjifa                | ganjifa       | Mughal India
+ * Ludus Latrunculorum    | latrunculi    | Roman Empire
+ * Cachos                 | cachos        | Latin America
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Total: 14 games, 11 unique cultures
  */
 window.GAMES_DATA = [
   { key: 'tien-len',    name: 'Tiến Lên',          culture: 'Vietnam',             type: 'Card',     maxPlayers: 4 },

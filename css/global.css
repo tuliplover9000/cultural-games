@@ -276,3 +276,56 @@ main {
 .room-mode .game-page .container {
   padding-inline: var(--space-3);
 }
+
+/* =============================================================================
+   PHASE I — Mobile Audit Fixes
+============================================================================= */
+
+/* Canvas overflow prevention */
+canvas {
+  max-width: 100%;
+}
+
+#game-container {
+  overflow-x: hidden;
+}
+
+/* Minimum touch targets for all game buttons */
+@media (max-width: 600px) {
+  .btn, button, [role="button"], select {
+    min-height: 44px;
+  }
+
+  /* Modals must not overflow viewport */
+  .rooms-modal,
+  .rooms-modal-backdrop > div,
+  .ec-modal {
+    max-height: 90dvh;
+    overflow-y: auto;
+  }
+
+  /* Footer email form stacks on small screens */
+  .ec-footer-signup__form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ec-footer-signup__btn {
+    width: 100%;
+  }
+}
+
+/* iOS Safari: use dvh everywhere heights were fixed */
+@supports (height: 100dvh) {
+  .rooms-modal-backdrop,
+  .ec-modal-backdrop {
+    height: 100dvh;
+  }
+}
+
+/* Fixed button cluster — ensure non-overlap at 375px */
+@media (max-width: 400px) {
+  .tt-trigger {
+    right: 5.5rem;
+  }
+}

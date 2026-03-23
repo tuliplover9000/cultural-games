@@ -1719,6 +1719,127 @@
 }
 
 /* Empty / Error */
+/* Phase D: two-path empty state ──────────────────────────────────────────── */
+.rm-empty-state {
+  padding: var(--space-6) 0 var(--space-4);
+}
+
+.rm-empty-state__paths {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1.5rem;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.rm-empty-state__path {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.75rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.rm-empty-state__path-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.rm-empty-state__path h3 {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.rm-empty-state__path p {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+  line-height: 1.5;
+  max-width: 22ch;
+}
+
+.rm-empty-state__divider {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.rm-empty-state__featured {
+  text-align: center;
+}
+
+.rm-empty-state__featured-label {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  margin: 0 0 0.75rem;
+}
+
+.rm-empty-state__game-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.rm-game-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+  min-height: 36px;
+}
+
+.rm-game-chip:hover {
+  border-color: var(--color-accent-gold);
+  background: var(--color-surface);
+}
+
+/* Persistent solo strip above room list */
+.rm-solo-strip {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  padding: 0.5rem 0 0.75rem;
+  text-align: center;
+}
+
+.rm-solo-strip a {
+  color: var(--color-accent-gold);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.rm-solo-strip a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .rm-empty-state__paths {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .rm-empty-state__divider {
+    text-align: center;
+    padding: 0.25rem 0;
+  }
+}
+
 .rb-empty, .rb-error {
   text-align: center;
   padding: var(--space-6) 0;

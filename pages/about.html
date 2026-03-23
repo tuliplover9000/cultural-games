@@ -4,7 +4,11 @@
   <meta charset="UTF-8" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="About Cultural Games — we built a Vietnamese Tết game we couldn't find online. Then we kept going." />
+  <meta name="description" content="About Cultural Games — we built a Vietnamese Tết game we couldn't find online. Then we kept going. Free traditional games from 11 cultures." />
+  <meta property="og:title" content="About — Cultural Games" />
+  <meta property="og:description" content="A student project that started with one missing game and grew into a platform for cultural games from around the world." />
+  <meta property="og:image" content="https://playculturalgames.com/assets/og-image.jpg" />
+  <link rel="canonical" href="https://playculturalgames.com/pages/about.html" />
   <title>About — Cultural Games</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -20,6 +24,7 @@
   <link rel="stylesheet" href="../css/components.css" />
   <link rel="stylesheet" href="../shared/toggle.css" />
   <link rel="stylesheet" href="../css/auth.css" />
+  <link rel="stylesheet" href="../shared/email-capture.css" />
   <script src="../js/three.min.js"></script>
 </head>
 <body>
@@ -251,9 +256,20 @@
       <nav aria-label="Footer navigation">
         <ul class="footer-links" role="list">
           <li><a href="browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="rooms.html"  class="footer-link">Rooms</a></li>
           <li><a href="about.html"  class="footer-link">About</a></li>
         </ul>
       </nav>
+      <div class="ec-footer-signup" id="ec-footer-signup">
+        <p class="ec-footer-signup__label">New games drop regularly.</p>
+        <div class="ec-footer-signup__form">
+          <input type="email" id="ec-email-input" class="ec-footer-signup__input" placeholder="your@email.com" aria-label="Email address for game updates" autocomplete="email" />
+          <button class="ec-footer-signup__btn" id="ec-submit-btn">Notify me</button>
+        </div>
+        <p class="ec-footer-signup__small">No spam. Just new games.</p>
+        <p class="ec-footer-signup__success" id="ec-success" hidden>&#10003; You&rsquo;re in!</p>
+        <p class="ec-footer-signup__error" id="ec-error" hidden></p>
+      </div>
       <div class="footer-divider"></div>
       <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
     </div>
@@ -290,6 +306,8 @@
     }());
   </script>
   <script src="../js/utils/navigation.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="../js/utils/auth.js"></script>
+  <script src="../shared/email-capture.js"></script>
 </body>
 </html>

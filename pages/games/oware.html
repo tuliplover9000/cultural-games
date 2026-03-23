@@ -91,6 +91,9 @@
         🪙 This game uses <strong>virtual seeds only</strong>. No real money is involved.
       </div>
 
+      <!-- Play with a Friend (Phase C) -->
+      <div id="pwf-mount"></div>
+
       <!-- How to Play -->
       <details class="accordion" open>
         <summary class="accordion__trigger">
@@ -111,6 +114,7 @@
             <li>The game ends when one player has captured <strong>25 or more seeds</strong>, or fewer than 12 seeds remain on the board. Each player then claims the seeds on their own side.</li>
             <li>The player with the most captured seeds wins.</li>
           </ol>
+          <p style="margin-top:1rem;"><a href="../../how-to-play/oware/" style="color:var(--color-accent-gold);font-weight:600;">Full rules guide &amp; cultural history →</a></p>
         </div>
       </details>
 
@@ -172,5 +176,7 @@
   <script src="../../shared/tutorial.js"></script>
   <script src="../../shared/fullscreen.js"></script>
   <script src="../../js/games/oware.js"></script>
+  <script src="../../shared/play-with-friend.js"></script>
+  <script>if (window.PWF) PWF.init("oware");</script>
 </body>
 </html>

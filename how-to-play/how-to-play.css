@@ -1,0 +1,256 @@
+/* =============================================================================
+   how-to-play.css — Shared styles for SEO how-to-play article pages.
+============================================================================= */
+
+/* ── Article layout ─────────────────────────────────────────────────────── */
+.htp-article {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+/* Breadcrumb */
+.htp-breadcrumb {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.htp-breadcrumb a {
+  color: var(--color-accent-gold);
+  text-decoration: none;
+}
+
+.htp-breadcrumb a:hover { text-decoration: underline; }
+
+.htp-breadcrumb__sep {
+  color: var(--color-text-muted);
+}
+
+/* Article header */
+.htp-header {
+  margin-bottom: 2.5rem;
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: 1.5rem;
+}
+
+.htp-header__eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--color-accent-gold);
+  margin: 0 0 0.6rem;
+}
+
+.htp-header h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 0.75rem;
+  line-height: 1.15;
+}
+
+.htp-header__intro {
+  font-size: 1.05rem;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+  margin: 0;
+  max-width: 65ch;
+}
+
+/* Sections */
+.htp-article h2 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 2.25rem 0 0.75rem;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--color-accent-gold);
+}
+
+.htp-article h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 1.25rem 0 0.4rem;
+}
+
+.htp-article p {
+  font-size: var(--text-base);
+  color: var(--color-text);
+  line-height: 1.7;
+  margin: 0.75rem 0;
+}
+
+.htp-article ol,
+.htp-article ul {
+  padding-left: 1.5rem;
+  margin: 0.75rem 0;
+}
+
+.htp-article li {
+  font-size: var(--text-base);
+  line-height: 1.65;
+  color: var(--color-text);
+  margin-bottom: 0.4rem;
+}
+
+.htp-article strong {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+/* Symbol table */
+.htp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+  margin: 0.75rem 0 1.25rem;
+}
+
+.htp-table th {
+  background: var(--color-surface-alt);
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.htp-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+
+.htp-table tr:last-child td { border-bottom: none; }
+
+/* CTA box */
+.htp-cta {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: 14px;
+  padding: 1.5rem 1.75rem;
+  margin: 2.5rem 0;
+  flex-wrap: wrap;
+}
+
+.htp-cta__text {
+  flex: 1;
+  min-width: 180px;
+}
+
+.htp-cta__title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 0.3rem;
+  color: #fff;
+}
+
+.htp-cta__sub {
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.65);
+  margin: 0;
+}
+
+.htp-cta__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.7rem 1.4rem;
+  background: var(--color-accent-gold);
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  border-radius: 8px;
+  text-decoration: none;
+  min-height: 44px;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.htp-cta__btn:hover { background: #d4a83e; }
+
+/* Related games */
+.htp-related {
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.5rem;
+  margin-top: 2.5rem;
+}
+
+.htp-related > p {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  margin: 0 0 0.75rem;
+}
+
+.htp-related__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.htp-related__links a {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.9rem;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  text-decoration: none;
+  min-height: 36px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.htp-related__links a:hover {
+  border-color: var(--color-accent-gold);
+  background: var(--color-surface);
+}
+
+/* Strategy tip boxes */
+.htp-tips {
+  background: var(--color-surface-alt);
+  border-left: 3px solid var(--color-accent-teal);
+  border-radius: 0 8px 8px 0;
+  padding: 0.9rem 1.1rem;
+  margin: 0.75rem 0;
+}
+
+.htp-tips ul { margin: 0; }
+
+/* Fanorona SVG board diagram */
+.htp-board-diagram {
+  display: block;
+  margin: 1rem auto;
+  max-width: 100%;
+}
+
+@media (max-width: 600px) {
+  .htp-article {
+    padding: 1.25rem 1rem 3rem;
+  }
+  .htp-cta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .htp-cta__btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

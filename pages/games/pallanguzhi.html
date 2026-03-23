@@ -80,6 +80,9 @@
       <div class="game-container" id="game-container" aria-label="Game area"></div>
       </div><!-- /#fs-game-wrap -->
 
+      <!-- Play with a Friend (Phase C) -->
+      <div id="pwf-mount"></div>
+
       <!-- How to Play -->
       <details class="accordion" open>
         <summary class="accordion__trigger">
@@ -100,6 +103,7 @@
             <li><strong>Empty-cup capture:</strong> if the last shell lands in a cup that was empty, check the directly opposite cup. If it has shells, capture them into your store. Your turn then ends.</li>
             <li><strong>Win condition:</strong> when a player's row is empty, all remaining shells are swept to their owners' stores. The player with the most shells wins.</li>
           </ol>
+          <p style="margin-top:1rem;"><a href="../../how-to-play/pallanguzhi/" style="color:var(--color-accent-gold);font-weight:600;">Full rules guide &amp; cultural history →</a></p>
         </div>
       </details>
 
@@ -161,5 +165,7 @@
   <script src="../../shared/tutorial.js"></script>
   <script src="../../shared/fullscreen.js"></script>
   <script src="../../js/games/pallanguzhi.js"></script>
+  <script src="../../shared/play-with-friend.js"></script>
+  <script>if (window.PWF) PWF.init("pallanguzhi");</script>
 </body>
 </html>

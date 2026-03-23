@@ -104,6 +104,9 @@
       </div>
       </div><!-- /#fs-game-wrap -->
 
+      <!-- Play with a Friend (Phase C) -->
+      <div id="pwf-mount"></div>
+
       <!-- How to Play -->
       <details class="accordion" open>
         <summary class="accordion__trigger">
@@ -129,6 +132,7 @@
             <li><strong>Gold diamonds</strong> on the board mark "strong points" — pieces here can move diagonally as well as orthogonally.</li>
             <li>The player who captures all of their opponent's pieces wins.</li>
           </ol>
+          <p style="margin-top:1rem;"><a href="../../how-to-play/fanorona/" style="color:var(--color-accent-gold);font-weight:600;">Full rules guide &amp; cultural history →</a></p>
         </div>
       </details>
 
@@ -178,5 +182,7 @@
   <script src="../../shared/tutorial.js"></script>
   <script src="../../shared/fullscreen.js"></script>
   <script src="../../js/games/fanorona.js"></script>
+  <script src="../../shared/play-with-friend.js"></script>
+  <script>if (window.PWF) PWF.init("fanorona");</script>
 </body>
 </html>

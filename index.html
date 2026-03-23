@@ -4,7 +4,12 @@
   <meta charset="UTF-8" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Cultural Games — Play traditional games from Vietnam, West Africa, Mesoamerica, South India, Madagascar, China, and the Norse world, preserved and brought to life in your browser." />
+  <meta name="description" content="Cultural Games — free traditional board games from Vietnam, West Africa, Mesoamerica, South India, Madagascar, China, the Norse world and more. Play in your browser, no account needed." />
+  <meta property="og:title" content="Cultural Games — Play Traditional Games from Around the World" />
+  <meta property="og:description" content="Free collection of traditional games from 11 cultures. Oware, Tiến Lên, Mahjong, Patolli and more — play in your browser." />
+  <meta property="og:image" content="https://playculturalgames.com/assets/og-image.jpg" />
+  <meta property="og:type" content="website" />
+  <link rel="canonical" href="https://playculturalgames.com/" />
   <title>Cultural Games — Play Traditional Games from Around the World</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -21,6 +26,7 @@
   <link rel="stylesheet" href="shared/toggle.css" />
   <link rel="stylesheet" href="css/auth.css" />
   <link rel="stylesheet" href="shared/achievements.css" />
+  <link rel="stylesheet" href="shared/email-capture.css" />
 </head>
 <body>
 
@@ -61,21 +67,27 @@
 
         <!-- Left: text content -->
         <div class="hero__content">
-          <span class="hero__eyebrow" id="hero-eyebrow">11 Games &middot; 8 Cultures &middot; Free to Play</span>
+          <p class="hero__eyebrow" id="hero-eyebrow">A student project. A real story.</p>
 
           <h1 class="hero__title">
-            Play the games
-            <span class="hero__title-accent">that carry culture.</span>
+            We couldn't find our Tết game online.
+            <span class="hero__title-accent">So we built it.</span>
           </h1>
 
           <p class="hero__tagline">
-            Discover and play traditional games from Vietnam, West Africa, Mesoamerica,
-            South India, Madagascar, China, and the Norse world — preserved and brought to life in your browser.
+            Cultural Games is a free collection of traditional games from around the world —
+            built by Vietnamese students who couldn't find their family's games anywhere.
           </p>
 
+          <div class="hero__stats" aria-label="Site stats">
+            <span id="hero-game-count">14</span> Games &middot;
+            <span id="hero-culture-count">11</span> Cultures &middot;
+            Free Forever
+          </div>
+
           <div class="hero__actions">
-            <a href="pages/browse.html" class="btn btn-primary btn-lg">Browse All Games</a>
-            <a href="pages/about.html"  class="btn btn-secondary btn-lg">Our Story</a>
+            <a href="pages/browse.html" class="btn btn-primary btn-lg">Browse Games</a>
+            <a href="pages/about.html"  class="btn btn-secondary btn-lg">Read the Story &rarr;</a>
           </div>
         </div>
 
@@ -86,6 +98,31 @@
 
       </div>
     </section>
+
+    <!-- ════════════════════════════════════════════════════════
+         SOCIAL PROOF — stats bar + quote (Phase E)
+    ════════════════════════════════════════════════════════ -->
+    <div class="sp-stats-bar" id="sp-stats-bar">
+      <div class="sp-stat">
+        <span class="sp-stat__number" id="sp-games-played">&mdash;</span>
+        <span class="sp-stat__label">games played</span>
+      </div>
+      <div class="sp-stat">
+        <span class="sp-stat__number" id="sp-players">&mdash;</span>
+        <span class="sp-stat__label">players</span>
+      </div>
+      <div class="sp-stat">
+        <span class="sp-stat__number" id="sp-game-count">14</span>
+        <span class="sp-stat__label">cultural games</span>
+      </div>
+    </div>
+
+    <div class="sp-quote" id="sp-quote">
+      <blockquote class="sp-quote__text">
+        &ldquo;I had no idea Pallanguzhi was even a game &mdash; now I can&rsquo;t stop playing it.&rdquo;
+      </blockquote>
+      <cite class="sp-quote__source">&mdash; Discord community member</cite>
+    </div>
 
     <!-- ════════════════════════════════════════════════════════
          GAME TICKER
@@ -146,11 +183,11 @@
 
         <div class="mission__stats" role="list" aria-label="Site stats">
           <div class="stat" role="listitem" data-anim data-anim-delay="0">
-            <div class="stat__number" data-stat="games" data-countup="12">12</div>
+            <div class="stat__number" data-stat="games" data-countup="14">14</div>
             <div class="stat__label">Traditional Games</div>
           </div>
           <div class="stat" role="listitem" data-anim data-anim-delay="100">
-            <div class="stat__number" data-stat="cultures" data-countup="9">9</div>
+            <div class="stat__number" data-stat="cultures" data-countup="11">11</div>
             <div class="stat__label">Cultures</div>
           </div>
           <div class="stat" role="listitem" data-anim data-anim-delay="200">
@@ -287,13 +324,53 @@
       <nav aria-label="Footer navigation">
         <ul class="footer-links" role="list">
           <li><a href="pages/browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="pages/rooms.html"  class="footer-link">Rooms</a></li>
           <li><a href="pages/about.html"  class="footer-link">About</a></li>
         </ul>
       </nav>
+
+      <!-- Email signup (Phase F) -->
+      <div class="ec-footer-signup" id="ec-footer-signup">
+        <p class="ec-footer-signup__label">New games drop regularly.</p>
+        <div class="ec-footer-signup__form">
+          <input
+            type="email"
+            id="ec-email-input"
+            class="ec-footer-signup__input"
+            placeholder="your@email.com"
+            aria-label="Email address for game updates"
+            autocomplete="email"
+          />
+          <button class="ec-footer-signup__btn" id="ec-submit-btn">Notify me</button>
+        </div>
+        <p class="ec-footer-signup__small">No spam. Just new games.</p>
+        <p class="ec-footer-signup__success" id="ec-success" hidden>
+          &#10003; You&rsquo;re in! We&rsquo;ll let you know when new games drop.
+        </p>
+        <p class="ec-footer-signup__error" id="ec-error" hidden></p>
+      </div>
+
       <div class="footer-divider"></div>
       <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
     </div>
   </footer>
+
+  <!-- Exit intent modal (Phase F) -->
+  <div id="ec-exit-modal-backdrop" class="ec-modal-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="ec-modal-title">
+    <div class="ec-modal">
+      <button class="ec-modal__close" id="ec-modal-close" aria-label="Close">&times;</button>
+      <p class="ec-modal__eyebrow">Before you go &mdash;</p>
+      <h2 id="ec-modal-title" class="ec-modal__title">New games drop regularly.</h2>
+      <p class="ec-modal__sub">Get notified when the next cultural game launches. No spam, ever.</p>
+      <div class="ec-modal__form">
+        <input type="email" id="ec-exit-email" placeholder="your@email.com" autocomplete="email" aria-label="Email address" />
+        <button id="ec-exit-submit">Notify me</button>
+        <p class="ec-modal__error" id="ec-exit-error" hidden></p>
+        <p class="ec-modal__success" id="ec-exit-success" hidden>&#10003; You&rsquo;re in!</p>
+      </div>
+      <button class="ec-modal__skip" id="ec-modal-skip">No thanks</button>
+    </div>
+  </div>
 
   <!-- Three.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
@@ -305,11 +382,25 @@
       var gameCount    = games.length;
       var cultureCount = new Set(games.map(function (g) { return g.culture; })).size;
 
-      var eyebrow = document.getElementById('hero-eyebrow');
-      if (eyebrow) eyebrow.textContent = gameCount + ' Games \u00b7 ' + cultureCount + ' Cultures \u00b7 Free to Play';
+      // Hero stats
+      var heroGame    = document.getElementById('hero-game-count');
+      var heroCulture = document.getElementById('hero-culture-count');
+      if (heroGame)    heroGame.textContent    = gameCount;
+      if (heroCulture) heroCulture.textContent = cultureCount;
 
-      document.querySelectorAll('[data-stat="games"]').forEach(function (el) { el.textContent = gameCount; });
-      document.querySelectorAll('[data-stat="cultures"]').forEach(function (el) { el.textContent = cultureCount; });
+      // Social proof count
+      var spGame = document.getElementById('sp-game-count');
+      if (spGame) spGame.textContent = gameCount;
+
+      // Mission stats (also update data-countup so count-up animation is accurate)
+      document.querySelectorAll('[data-stat="games"]').forEach(function (el) {
+        el.textContent       = gameCount;
+        el.dataset.countup   = gameCount;
+      });
+      document.querySelectorAll('[data-stat="cultures"]').forEach(function (el) {
+        el.textContent       = cultureCount;
+        el.dataset.countup   = cultureCount;
+      });
 
       var featLink = document.getElementById('featured-link');
       if (featLink) featLink.textContent = 'Browse all ' + gameCount + ' games \u2192';
@@ -519,8 +610,80 @@
   </script>
 
   <script src="js/utils/navigation.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="js/utils/auth.js"></script>
   <script src="shared/achievement-queue.js"></script>
   <script src="shared/achievements.js"></script>
+  <script src="shared/email-capture.js"></script>
+
+  <!-- Phase E: Social proof stats ─────────────────────────────────────── -->
+  <script>
+    (function () {
+      'use strict';
+      var SB_URL = 'https://pnyvlqgllrpslhgimgve.supabase.co';
+      var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBueXZscWdsbHJwc2xoZ2ltZ3ZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwMjQ3OTMsImV4cCI6MjA4ODYwMDc5M30.7MwZTEJuYGSLaOjfs0EP4wFAi3CanDzSRMbTvPiIasw';
+
+      function fmt(n) {
+        if (!n || n === 0) return '\u2014';
+        if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
+        return String(n);
+      }
+
+      function animateCount(el, target, duration) {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          el.textContent = fmt(target); return;
+        }
+        var start = performance.now();
+        (function step(now) {
+          var p = Math.min((now - start) / duration, 1);
+          el.textContent = fmt(Math.floor(p * target));
+          if (p < 1) requestAnimationFrame(step);
+          else el.textContent = fmt(target);
+        })(start);
+      }
+
+      async function loadStats() {
+        try {
+          if (!window.supabase) return;
+          var sb = window.supabase.createClient(SB_URL, SB_KEY, {
+            auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+          });
+          // Try the public stats RPC first, fall back to direct counts
+          var data, err;
+          try {
+            var rpc = await sb.rpc('get_public_stats');
+            if (!rpc.error && rpc.data) {
+              data = rpc.data;
+            }
+          } catch (e) { /* RPC not set up yet */ }
+
+          var gamesPlayed = (data && data.games_played) || 0;
+          var players     = (data && data.players)      || 0;
+
+          if (!data) {
+            // Fallback: direct count queries (requires public SELECT policy)
+            var r1 = await sb.from('game_results').select('*', { count: 'exact', head: true });
+            var r2 = await sb.from('profiles').select('*', { count: 'exact', head: true });
+            gamesPlayed = r1.count || 0;
+            players     = r2.count || 0;
+          }
+
+          var elGP = document.getElementById('sp-games-played');
+          var elP  = document.getElementById('sp-players');
+          if (elGP && gamesPlayed > 0) animateCount(elGP, gamesPlayed, 1200);
+          if (elP  && players > 0)     animateCount(elP,  players,     1200);
+        } catch (e) {
+          var bar = document.getElementById('sp-stats-bar');
+          if (bar) bar.hidden = true;
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadStats);
+      } else {
+        loadStats();
+      }
+    }());
+  </script>
 </body>
 </html>

@@ -321,4 +321,35 @@
     elJoinBtn.click();
   }());
 
+  // Phase D: empty-state "Create a Room" button → same as main create button
+  document.addEventListener('DOMContentLoaded', function () {
+    var emptyCreate = document.getElementById('rm-empty-create-btn');
+    if (emptyCreate && elCreateBtn) {
+      emptyCreate.addEventListener('click', function () {
+        elCreateBtn.click();
+      });
+    }
+  });
+
+  // Phase C: ?create=game-key pre-selects the game on the rooms page
+  (function () {
+    var params = new URLSearchParams(location.search);
+    var createKey = params.get('create');
+    if (!createKey) return;
+    // Clean the URL so a page refresh doesn't retrigger
+    window.history.replaceState({}, '', location.pathname);
+    // Scroll to the Create card and click Create Room after a brief delay
+    // (so the page is fully rendered)
+    setTimeout(function () {
+      if (elCreateBtn) {
+        if (elCreateBtn.scrollIntoView) {
+          elCreateBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        // Store the pre-selected game for the lobby to pick up
+        try { sessionStorage.setItem('cg_preselect_game', createKey); } catch (e) {}
+        elCreateBtn.click();
+      }
+    }, 300);
+  }());
+
 }());

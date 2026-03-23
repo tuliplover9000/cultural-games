@@ -4,7 +4,11 @@
   <meta charset="UTF-8" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Browse the full library of traditional cultural games — Dice, Board, and Card games from Vietnam, West Africa, Mesoamerica, and South India." />
+  <meta name="description" content="Browse 14 traditional cultural games — Board, Card, and Dice games from Vietnam, West Africa, Mesoamerica, South India, Madagascar, and more. Free, no account needed." />
+  <meta property="og:title" content="Browse Games — Cultural Games" />
+  <meta property="og:description" content="14 traditional games from 11 cultures. Oware, Tiến Lên, Mahjong, Patolli and more — free in your browser." />
+  <meta property="og:image" content="https://playculturalgames.com/assets/og-image.jpg" />
+  <link rel="canonical" href="https://playculturalgames.com/pages/browse.html" />
   <title>Browse Games — Cultural Games</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -20,6 +24,7 @@
   <link rel="stylesheet" href="../css/components.css" />
   <link rel="stylesheet" href="../shared/toggle.css" />
   <link rel="stylesheet" href="../css/auth.css" />
+  <link rel="stylesheet" href="../shared/email-capture.css" />
 </head>
 <body>
 
@@ -60,8 +65,8 @@
       <div class="container">
         <p class="browse-hero__label" data-anim data-anim-delay="0">Game Library</p>
         <h1 class="browse-hero__title" data-anim data-anim-delay="120">Browse All Games</h1>
-        <p class="browse-hero__desc" data-anim data-anim-delay="240">
-          Twelve traditional games from nine cultures — playable in your browser, free, no account required.
+        <p class="browse-hero__desc" data-anim data-anim-delay="240" id="browse-hero-desc">
+          Traditional games from cultures around the world — playable in your browser, free, no account required.
         </p>
       </div>
     </header>
@@ -436,9 +441,20 @@
       <nav aria-label="Footer navigation">
         <ul class="footer-links" role="list">
           <li><a href="browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="rooms.html"  class="footer-link">Rooms</a></li>
           <li><a href="about.html"  class="footer-link">About</a></li>
         </ul>
       </nav>
+      <div class="ec-footer-signup" id="ec-footer-signup">
+        <p class="ec-footer-signup__label">New games drop regularly.</p>
+        <div class="ec-footer-signup__form">
+          <input type="email" id="ec-email-input" class="ec-footer-signup__input" placeholder="your@email.com" aria-label="Email address for game updates" autocomplete="email" />
+          <button class="ec-footer-signup__btn" id="ec-submit-btn">Notify me</button>
+        </div>
+        <p class="ec-footer-signup__small">No spam. Just new games.</p>
+        <p class="ec-footer-signup__success" id="ec-success" hidden>&#10003; You&rsquo;re in!</p>
+        <p class="ec-footer-signup__error" id="ec-error" hidden></p>
+      </div>
       <div class="footer-divider"></div>
       <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
     </div>
@@ -673,7 +689,9 @@
   </script>
 
   <script src="../js/utils/navigation.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="../js/utils/auth.js"></script>
+  <script src="../shared/email-capture.js"></script>
   <script>
   /* ── Lottery ── */
   (function () {
@@ -829,6 +847,16 @@
       searchInput.addEventListener('input',  applyFilters);
       typeSelect.addEventListener('change',  applyFilters);
       regionSelect.addEventListener('change', applyFilters);
+    }());
+  </script>
+  <script src="../js/utils/games-data.js"></script>
+  <script>
+    (function () {
+      var games        = window.GAMES_DATA || [];
+      var gameCount    = games.length;
+      var cultureCount = new Set(games.map(function (g) { return g.culture; })).size;
+      var el = document.getElementById('browse-hero-desc');
+      if (el) el.textContent = gameCount + ' traditional games from ' + cultureCount + ' cultures \u2014 playable in your browser, free, no account required.';
     }());
   </script>
 </body>

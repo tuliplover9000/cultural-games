@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
+  <!-- Core pages -->
   <url>
     <loc>https://playculturalgames.com/</loc>
     <priority>1.0</priority>
@@ -18,6 +19,7 @@
     <priority>0.7</priority>
   </url>
 
+  <!-- Game pages -->
   <url>
     <loc>https://playculturalgames.com/pages/games/tien-len.html</loc>
     <priority>0.8</priority>
@@ -68,6 +70,28 @@
   </url>
   <url>
     <loc>https://playculturalgames.com/pages/games/latrunculi.html</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://playculturalgames.com/cachos/index.html</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- How-to-play SEO pages -->
+  <url>
+    <loc>https://playculturalgames.com/how-to-play/oware/</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://playculturalgames.com/how-to-play/bau-cua/</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://playculturalgames.com/how-to-play/pallanguzhi/</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://playculturalgames.com/how-to-play/fanorona/</loc>
     <priority>0.8</priority>
   </url>
 

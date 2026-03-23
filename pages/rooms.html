@@ -4,7 +4,11 @@
   <meta charset="UTF-8" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Create or join a multiplayer room to play cultural games with friends — free, no account required." />
+  <meta name="description" content="Create or join a multiplayer room to play traditional cultural games with friends — free, real-time, no account required." />
+  <meta property="og:title" content="Game Rooms — Cultural Games" />
+  <meta property="og:description" content="Play traditional games with friends online. Create a room, share the code, and play live — free." />
+  <meta property="og:image" content="https://playculturalgames.com/assets/og-image.jpg" />
+  <link rel="canonical" href="https://playculturalgames.com/pages/rooms.html" />
   <title>Game Rooms — Cultural Games</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -22,6 +26,7 @@
   <link rel="stylesheet" href="../css/auth.css" />
   <link rel="stylesheet" href="../css/rooms.css" />
   <link rel="stylesheet" href="../shared/achievements.css" />
+  <link rel="stylesheet" href="../shared/email-capture.css" />
 </head>
 <body>
 
@@ -133,6 +138,11 @@
 
         <hr class="rb-divider" />
 
+        <!-- Solo strip — always visible above rooms list -->
+        <div class="rm-solo-strip">
+          Want to play right now? <a href="browse.html">Browse solo games &rarr;</a>
+        </div>
+
         <section class="rb-browser" id="rb-browser">
           <div class="rb-browser__header">
             <h2 class="rb-browser__title">Open Rooms</h2>
@@ -159,8 +169,46 @@
 
           <ul class="rb-list" id="rb-list" role="list" aria-live="polite" aria-label="Public rooms"></ul>
 
+          <!-- Phase D: Cold-start two-path empty state -->
           <div class="rb-empty" id="rb-empty" hidden>
-            <p>No open rooms right now — create one above!</p>
+            <div class="rm-empty-state">
+              <div class="rm-empty-state__paths">
+                <div class="rm-empty-state__path">
+                  <div class="rm-empty-state__path-icon" aria-hidden="true">🎮</div>
+                  <h3>Play solo right now</h3>
+                  <p>Jump into any of our games against the AI — no waiting, no account needed.</p>
+                  <a href="browse.html" class="btn btn-primary">Browse Games</a>
+                </div>
+                <div class="rm-empty-state__divider" aria-hidden="true">or</div>
+                <div class="rm-empty-state__path">
+                  <div class="rm-empty-state__path-icon" aria-hidden="true">🚪</div>
+                  <h3>Start a room</h3>
+                  <p>Create a room, share the link, and play with anyone in the world.</p>
+                  <button class="btn btn-primary" id="rm-empty-create-btn">Create a Room</button>
+                </div>
+              </div>
+              <div class="rm-empty-state__featured">
+                <p class="rm-empty-state__featured-label">Popular for multiplayer:</p>
+                <div class="rm-empty-state__game-chips">
+                  <a href="games/tien-len.html" class="rm-game-chip">
+                    <img src="../assets/icons/tien-len.svg" alt="" width="20" height="20" />
+                    Tiến Lên
+                  </a>
+                  <a href="games/mahjong.html" class="rm-game-chip">
+                    <img src="../assets/icons/mahjong.svg" alt="" width="20" height="20" onerror="this.style.display='none'" />
+                    Mahjong
+                  </a>
+                  <a href="games/oware.html" class="rm-game-chip">
+                    <img src="../assets/icons/oware.svg" alt="" width="20" height="20" />
+                    Oware
+                  </a>
+                  <a href="games/fanorona.html" class="rm-game-chip">
+                    <img src="../assets/icons/fanorona.svg" alt="" width="20" height="20" />
+                    Fanorona
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="rb-error" id="rb-error" hidden>
@@ -192,6 +240,16 @@
           <li><a href="about.html"  class="footer-link">About</a></li>
         </ul>
       </nav>
+      <div class="ec-footer-signup" id="ec-footer-signup">
+        <p class="ec-footer-signup__label">New games drop regularly.</p>
+        <div class="ec-footer-signup__form">
+          <input type="email" id="ec-email-input" class="ec-footer-signup__input" placeholder="your@email.com" aria-label="Email address for game updates" autocomplete="email" />
+          <button class="ec-footer-signup__btn" id="ec-submit-btn">Notify me</button>
+        </div>
+        <p class="ec-footer-signup__small">No spam. Just new games.</p>
+        <p class="ec-footer-signup__success" id="ec-success" hidden>&#10003; You&rsquo;re in!</p>
+        <p class="ec-footer-signup__error" id="ec-error" hidden></p>
+      </div>
       <div class="footer-divider"></div>
       <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
     </div>
@@ -294,6 +352,7 @@
   <script src="../shared/achievements.js"></script>
   <script src="../js/utils/room.js"></script>
   <script src="../js/rooms/entry.js"></script>
+  <script src="../shared/email-capture.js"></script>
 
 
 </body>

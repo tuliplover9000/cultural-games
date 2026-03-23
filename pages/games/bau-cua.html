@@ -89,6 +89,9 @@
         Signed-in players can opt in to use their site coin balance.
       </div>
 
+      <!-- Play with a Friend (Phase C) -->
+      <div id="pwf-mount"></div>
+
       <!-- How to Play -->
       <details class="accordion" open>
         <summary class="accordion__trigger">
@@ -109,6 +112,7 @@
             <li><strong>2 matches</strong> — win 2× your bet. <strong>3 matches</strong> — win 3× your bet.</li>
             <li>Your coin wallet updates after every round. The game ends when you hit 0 coins.</li>
           </ol>
+          <p style="margin-top:1rem;"><a href="../../how-to-play/bau-cua/" style="color:var(--color-accent-gold);font-weight:600;">Full rules guide &amp; cultural history →</a></p>
         </div>
       </details>
 
@@ -168,5 +172,7 @@
   <script src="../../shared/tutorial.js"></script>
   <script src="../../shared/fullscreen.js"></script>
   <script src="../../js/games/bau-cua.js"></script>
+  <script src="../../shared/play-with-friend.js"></script>
+  <script>if (window.PWF) PWF.init("bau-cua");</script>
 </body>
 </html>
