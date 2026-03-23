@@ -35,11 +35,25 @@
   flex-shrink: 0;
 }
 
-.nav-logo-img {
+.nav-logo-icon {
+  display: inline-block;
+  width: 2rem;
   height: 2rem;
-  width: auto;
-  display: block;
+  font-size: 0;
   flex-shrink: 0;
+  background-image: url("../assets/icons/vsg-logo.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
+.nav-logo-text {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-accent-gold);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
 }
 
 /* ── Nav Links ── */
