@@ -272,7 +272,7 @@
     if (!hand.length) {
       state.phase  = 'gameover';
       state.winner = playerIdx;
-      if (window.Auth && Auth.isLoggedIn())
+      if (!vsOnline && window.Auth && Auth.isLoggedIn())
         Auth.recordResult('tien-len', playerIdx === myPS() ? 'win' : 'loss');
       if (vsOnline) syncOnlineState(); // sync game-over state before render
       render();

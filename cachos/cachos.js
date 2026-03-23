@@ -787,9 +787,6 @@
     state.gameOver = true;
     state.winner   = state.activePlayers[0];
     var isHumanWin = state.winner === state.humanId;
-    if (window.Auth && Auth.recordResult) {
-      Auth.recordResult('cachos', isHumanWin ? 'win' : 'loss', null);
-    }
     if (window.Achievements) {
       Achievements.evaluate();
       if (isHumanWin) {
@@ -800,6 +797,10 @@
     if (_inRoom) {
       window.parent.postMessage({ type: 'game-win', instance: _roomInstance, gen: _roomGen, winnerSeat: state.winner, score: null }, '*');
       return true;
+    }
+    // Solo only — room games are recorded by the endscreen to avoid double-counting
+    if (window.Auth && Auth.recordResult) {
+      Auth.recordResult('cachos', isHumanWin ? 'win' : 'loss', null);
     }
     setTimeout(showGameOver, 700);
     return true;
