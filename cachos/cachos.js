@@ -49,12 +49,12 @@
   var _lastAppliedVersion    = -1;
   var _pendingRoomState      = null;
 
-  // Version = monotonically increasing game position; same value on all iframes.
-  // Supabase bounces own state back, so we need a version that both sides agree on.
+  // Version = monotonically increasing bid/challenge counter.
+  // Using round*200+currentTurn caused the version to oscillate (e.g. 201→200)
+  // and the stale-state guard dropped valid updates, softlocking both players.
   function stateVersion(s) {
     if (!s) return -1;
-    var base = (s.round || 1) * 200 + (s.currentTurn || 0);
-    return s.phase === 'reveal' ? base + 100 : base;
+    return s.bidCount || 0;
   }
 
   /* ════════════════════════════════════════════════════
@@ -160,6 +160,7 @@
       currentTurn:     0,
       phase:           'bidding',
       round:           1,
+      bidCount:        0,
       lastChallenge:   null,
       gameOver:        false,
       winner:          null,
@@ -541,6 +542,7 @@
       version:        stateVersion(state),
       phase:          state.phase,
       round:          state.round,
+      bidCount:       state.bidCount || 0,
       currentTurn:    state.currentTurn,
       activePlayers:  state.activePlayers.slice(),
       currentBid:     state.currentBid,
@@ -582,6 +584,7 @@
     // Apply incoming state
     state.phase          = data.phase;
     state.round          = data.round;
+    state.bidCount       = data.bidCount || 0;
     state.currentTurn    = data.currentTurn;
     state.activePlayers  = data.activePlayers;
     state.currentBid     = data.currentBid;
@@ -654,6 +657,7 @@
 
   function placeBid(bid) {
     state.currentBid = bid;
+    state.bidCount = (state.bidCount || 0) + 1;
     updateBidDisplay();
     var cBtn = document.getElementById('ca-challenge-btn');
     if (cBtn) cBtn.disabled = false;
@@ -670,6 +674,7 @@
     if (!state.currentBid) return;
     state.phase     = 'reveal';
     state.animating = true;
+    state.bidCount  = (state.bidCount || 0) + 1;
     setControlsEnabled(false);
 
     var bid     = state.currentBid;
