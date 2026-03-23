@@ -36,15 +36,10 @@
 }
 
 .nav-logo-icon {
-  display: inline-block;
+  display: block;
   width: 2rem;
   height: 2rem;
-  font-size: 0;
   flex-shrink: 0;
-  background-image: url("../assets/icons/globe.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
 }
 
 .nav-logo-text {
