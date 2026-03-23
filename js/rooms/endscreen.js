@@ -115,6 +115,24 @@
         var winnerPid = (instances[0] || {}).winner_pid;
         var isWinner  = myPid === winnerPid;
         Auth.recordResult(gameId, isWinner ? 'win' : 'loss', roomId);
+
+        // Tournament bracket advancement: if I won, advance myself to the next round.
+        // Only the winner calls advance_winner (avoids race conditions).
+        var matchId = room.tournament_match_id;
+        if (matchId && isWinner && window._user && window._user.id) {
+          (function(mId, uid) {
+            var sbUrl = 'https://pnyvlqgllrpslhgimgve.supabase.co';
+            var sbKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBueXZscWdsbHJwc2xoZ2ltZ3ZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwMjQ3OTMsImV4cCI6MjA4ODYwMDc5M30.7MwZTEJuYGSLaOjfs0EP4wFAia3CanDzSRMbTvPiIasw';
+            var sb = window.supabase && window.supabase.createClient
+              ? window.supabase.createClient(sbUrl, sbKey, { auth: { persistSession: false } })
+              : null;
+            if (!sb) return;
+            sb.rpc('advance_winner', { p_match_id: mId, p_winner_id: uid }).then(function(res) {
+              if (res.error) console.warn('advance_winner error:', res.error.message);
+              if (window.Achievements) Achievements.checkAction('tn_match_won');
+            });
+          }(matchId, window._user.id));
+        }
       } else {
         // Dual instance: check if current player won either of the two sub-games
         var dualWon = (instances[0] || {}).winner_pid === myPid || (instances[1] || {}).winner_pid === myPid;

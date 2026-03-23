@@ -48,6 +48,18 @@
     }
   });
 
+  // Spectator: inject a visible banner and block all input
+  var isSpectatorMode = (role === 'spectator');
+  if (isSpectatorMode) {
+    document.addEventListener('DOMContentLoaded', function () {
+      var banner = document.createElement('div');
+      banner.id  = 'spectator-banner';
+      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(44,122,122,0.9);color:#fff;text-align:center;padding:6px 12px;font-size:0.82rem;font-weight:600;letter-spacing:0.04em;pointer-events:none;';
+      banner.textContent = '\uD83D\uDC41\uFE0F Spectating — view only';
+      document.body.appendChild(banner);
+    });
+  }
+
   window.RoomBridge = {
 
     isActive:      function () { return true; },
@@ -57,12 +69,14 @@
     getMode:       function () { return mode; },
     getAiSeats:    function () { return aiSeats; },
     isRoomHost:    function () { return isRoomHost; },
+    isSpectator:   function () { return isSpectatorMode; },
 
     /**
      * Send a full game-state blob to the parent.
-     * The parent will forward it to other iframes and persist to Supabase.
+     * No-op for spectators — they only receive state, never send it.
      */
     sendState: function (blob) {
+      if (isSpectatorMode) return;  // spectators cannot modify board state
       try {
         parent.postMessage({ type: 'game-sync', instance: instance, gen: gen, data: blob }, '*');
       } catch (err) { /* cross-origin safety, should never fire */ }
@@ -70,11 +84,12 @@
 
     /**
      * Report that this game instance has a winner.
-     * Only call once per game; RoomBridge itself guards against duplicates.
+     * Spectators cannot report wins — no-op if in spectator mode.
      * @param {number} winnerSeat - 0-based seat index of the winner
      * @param {*}      score      - optional score to display on end screen
      */
     reportWin: function (winnerSeat, score) {
+      if (isSpectatorMode) return;  // spectators cannot report wins
       if (_winReported) return;
       _winReported = true;
       try {

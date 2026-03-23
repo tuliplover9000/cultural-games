@@ -29,6 +29,8 @@
   <link rel="stylesheet" href="../css/rooms.css" />
   <link rel="stylesheet" href="../shared/achievements.css" />
   <link rel="stylesheet" href="../shared/email-capture.css" />
+  <link rel="stylesheet" href="../css/tournament.css" />
+  <link rel="stylesheet" href="../css/bracket.css" />
 </head>
 <body>
 
@@ -136,6 +138,18 @@
             <p id="rooms-join-error" class="rooms-error" hidden></p>
           </div>
 
+          <!-- Tournament card -->
+          <div class="rooms-entry-card rooms-entry-card--tournament">
+            <div class="rooms-entry-card__icon" aria-hidden="true">🏆</div>
+            <h2 class="rooms-entry-card__title">Tournaments</h2>
+            <p class="rooms-entry-card__desc">
+              Host or join a bracketed tournament with prizes, entry fees, and real-time brackets.
+            </p>
+            <button id="tn-open-btn" class="btn btn-primary btn-lg rooms-action-btn" style="background:var(--tn-gold,#D4A017);border-color:var(--tn-gold,#D4A017)">
+              View Tournaments
+            </button>
+          </div>
+
         </div><!-- /.rooms-entry-cards -->
 
         <hr class="rb-divider" />
@@ -227,6 +241,145 @@
           <p id="rooms-loading-msg" class="rooms-loading__msg">Creating room…</p>
         </div>
       </div>
+
+      <!-- ══ TOURNAMENT PANEL ═══════════════════════════════════════════════ -->
+      <div id="rooms-tournament" hidden>
+
+        <!-- Header -->
+        <div class="tn-panel-header">
+          <button id="tn-back-btn" class="tn-back-btn">← Back</button>
+          <h2 class="tn-panel-title" id="tn-panel-title">Tournaments</h2>
+        </div>
+
+        <!-- Sub-nav -->
+        <nav class="tn-subnav" id="tn-subnav" aria-label="Tournament navigation">
+          <button class="tn-subnav__btn tn-subnav__btn--active" data-tn-tab="browse">Browse</button>
+          <button class="tn-subnav__btn" data-tn-tab="create">Host a Tournament</button>
+          <button class="tn-subnav__btn" data-tn-tab="join">Join by Code</button>
+        </nav>
+
+        <!-- Browse pane -->
+        <div id="tn-browse">
+          <div class="tn-browse-header">
+            <button id="tn-browse-refresh" class="btn btn-ghost btn-sm">⟳ Refresh</button>
+          </div>
+          <p id="tn-browse-loading" hidden>Loading tournaments…</p>
+          <ul id="tn-browse-list" class="tn-browse-list" role="list" aria-label="Open tournaments"></ul>
+          <p id="tn-browse-empty" class="tn-browse-empty" hidden>No open tournaments right now. Host one!</p>
+          <p id="tn-browse-error" class="tn-browse-error" hidden>Could not load tournaments.</p>
+        </div>
+
+        <!-- Create pane -->
+        <div id="tn-create" hidden>
+          <div class="tn-form">
+            <label class="tn-form__label">Tournament Name
+              <input type="text" id="tn-name" maxlength="50" placeholder="e.g. Friday Fanorona Open" class="tn-form__input" autocomplete="off" />
+            </label>
+            <label class="tn-form__label">Game
+              <select id="tn-game" class="tn-form__select">
+                <option value="">— Select a game —</option>
+              </select>
+            </label>
+            <label class="tn-form__label">Max Players
+              <select id="tn-max-players" class="tn-form__select">
+                <option value="4">4 players</option>
+                <option value="8" selected>8 players</option>
+                <option value="16">16 players</option>
+                <option value="32">32 players</option>
+              </select>
+            </label>
+            <label class="tn-form__label">Entry Fee (coins per player)
+              <input type="number" id="tn-entry-fee" min="0" max="10000" value="0" class="tn-form__input" />
+              <span class="tn-form__hint">Set to 0 for a free tournament</span>
+            </label>
+            <label class="tn-form__label">Your Prize Contribution (coins)
+              <input type="number" id="tn-host-seed" min="0" value="0" class="tn-form__input" />
+              <p class="tn-form__hint">Minimum: <strong id="tn-min-seed-display">1200</strong> coins (150 × max players)</p>
+            </label>
+            <label class="tn-form__label">Match Time Limit
+              <select id="tn-match-limit" class="tn-form__select">
+                <option value="15">15 minutes</option>
+                <option value="30" selected>30 minutes</option>
+                <option value="60">1 hour</option>
+              </select>
+            </label>
+            <label class="tn-form__label">Tournament Expiry
+              <select id="tn-expiry" class="tn-form__select">
+                <option value="24">24 hours</option>
+                <option value="48" selected>48 hours</option>
+                <option value="72">72 hours</option>
+              </select>
+            </label>
+            <label class="tn-form__checkbox">
+              <input type="checkbox" id="tn-is-public" checked />
+              Public tournament (visible in browser)
+            </label>
+            <div class="tn-form__prize-preview">
+              <p class="tn-prize-preview__title">Estimated Prize Pool (if full)</p>
+              <div class="tn-prize-preview__row"><span>🥇 1st place (60%)</span><span id="tn-prize-1st">—</span></div>
+              <div class="tn-prize-preview__row"><span>🥈 2nd place (30%)</span><span id="tn-prize-2nd">—</span></div>
+              <div class="tn-prize-preview__row"><span>🥉 3rd place (10%)</span><span id="tn-prize-3rd">—</span></div>
+            </div>
+            <p class="tn-form__cost-summary">
+              Cost to you: <strong id="tn-total-cost">—</strong> &nbsp;·&nbsp; Balance: <span id="tn-coin-balance">—</span>
+            </p>
+            <p id="tn-create-error" class="tn-form__error" hidden></p>
+            <button class="btn btn-primary" id="tn-create-btn">Create Tournament</button>
+          </div>
+        </div>
+
+        <!-- Join pane -->
+        <div id="tn-join" hidden>
+          <h3 style="margin:0 0 var(--space-3);font-size:var(--text-lg)">Join a Tournament</h3>
+          <div class="tn-join-form">
+            <input type="text" id="tn-join-code" maxlength="6" placeholder="TOUR4X" class="tn-form__input tn-code-input" autocomplete="off" spellcheck="false" aria-label="Tournament code" />
+            <button class="btn btn-primary" id="tn-join-btn">Join</button>
+          </div>
+          <p class="tn-join__hint">Ask the tournament host for the 6-character code.</p>
+          <p id="tn-join-error" class="tn-join-error" hidden></p>
+        </div>
+
+        <!-- Lobby pane -->
+        <div id="tn-lobby" hidden>
+          <div class="tn-lobby__header">
+            <h3 class="tn-lobby__name" id="tn-lobby-name"></h3>
+            <span class="tn-lobby__game" id="tn-lobby-game"></span>
+          </div>
+          <div class="tn-lobby__info">
+            <div class="tn-lobby__stat">
+              <span id="tn-lobby-players">0 / 8</span>
+              <span>players</span>
+            </div>
+            <div class="tn-lobby__stat">
+              <span id="tn-lobby-prize">0</span>
+              <span>coin prize pool</span>
+            </div>
+            <div class="tn-lobby__stat">
+              <span id="tn-lobby-expiry">—</span>
+              <span>until expiry</span>
+            </div>
+          </div>
+          <div class="tn-lobby__share">
+            <span>Invite with code:</span>
+            <span class="tn-lobby__code" id="tn-lobby-code"></span>
+            <button class="btn btn-ghost btn-sm" id="tn-copy-code">Copy Link</button>
+          </div>
+          <ul class="tn-lobby__players" id="tn-lobby-player-list" role="list"></ul>
+          <div class="tn-host-controls" id="tn-host-controls" hidden>
+            <button class="btn btn-primary" id="tn-start-bracket-btn">Seed Bracket &amp; Start Tournament</button>
+            <button class="btn btn-ghost btn-sm" id="tn-close-registration-btn">Close Registration</button>
+            <button class="btn btn--danger btn-sm" id="tn-cancel-btn">Cancel Tournament</button>
+          </div>
+          <p class="tn-lobby__waiting" id="tn-lobby-waiting">Waiting for the host to start the tournament…</p>
+        </div>
+
+        <!-- Bracket pane -->
+        <div id="tn-bracket" hidden>
+          <p class="tn-bracket-info" id="tn-bracket-info" hidden></p>
+          <div class="tn-bracket" id="tn-bracket-view"></div>
+        </div>
+
+      </div><!-- /#rooms-tournament -->
 
     </div><!-- /.container -->
   </main>
@@ -354,6 +507,9 @@
   <script src="../shared/achievements.js"></script>
   <script src="../js/utils/room.js"></script>
   <script src="../js/rooms/entry.js"></script>
+  <script src="../js/utils/tournament-data.js"></script>
+  <script src="../js/rooms/bracket.js"></script>
+  <script src="../js/rooms/tournament.js"></script>
   <script src="../shared/email-capture.js"></script>
 
 

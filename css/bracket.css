@@ -1,0 +1,189 @@
+/* ============================================================
+   bracket.css — Tournament bracket visualisation
+   ============================================================ */
+
+/* ── Container ────────────────────────────────────────────── */
+.tn-bracket {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 40px;
+  overflow-x: auto;
+  padding: var(--space-4) var(--space-2);
+  -webkit-overflow-scrolling: touch;
+}
+
+.tn-bracket__loading,
+.tn-bracket__error {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+}
+.tn-bracket__error { color: #c0392b; }
+
+/* ── Round column ─────────────────────────────────────────── */
+.tn-bracket__round {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex-shrink: 0;
+  min-width: 196px;
+}
+.tn-bracket__round-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  margin: 0 0 4px;
+}
+
+/* ── Match card ───────────────────────────────────────────── */
+.tn-match {
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: 10px;
+  padding: 11px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+  position: relative;
+  transition: border-color 300ms ease, box-shadow 300ms ease;
+}
+
+/* Status-driven border colours */
+.tn-match[data-status="ready"] {
+  border-color: var(--tn-gold);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--tn-gold) 30%, transparent);
+  animation: tn-ready-pulse 2.2s ease-in-out infinite;
+}
+@keyframes tn-ready-pulse {
+  0%, 100% { box-shadow: 0 0 8px  color-mix(in srgb, var(--tn-gold) 20%, transparent); }
+  50%       { box-shadow: 0 0 20px color-mix(in srgb, var(--tn-gold) 45%, transparent); }
+}
+.tn-match[data-status="in_progress"] {
+  border-color: var(--tn-match-in-progress, #2C7A7A);
+}
+.tn-match[data-status="completed"] {
+  border-color: var(--color-border);
+  opacity: 0.92;
+}
+.tn-match[data-status="walkover"] {
+  border-color: var(--color-border);
+  opacity: 0.8;
+}
+.tn-match[data-status="bye"] {
+  border-color: var(--color-border);
+  opacity: 0.55;
+}
+.tn-match[data-status="pending"] {
+  border-style: dashed;
+}
+
+/* ── Player rows ──────────────────────────────────────────── */
+.tn-match__player {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-sm);
+  min-height: 24px;
+}
+.tn-match__player-name {
+  font-weight: 500;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140px;
+}
+.tn-match__player--winner .tn-match__player-name {
+  color: var(--tn-gold);
+  font-weight: 700;
+}
+.tn-match__player--loser .tn-match__player-name {
+  opacity: 0.38;
+  text-decoration: line-through;
+}
+
+/* ── Separator row ───────────────────────────────────────── */
+.tn-match__sep {
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+.tn-match__bye-label,
+.tn-match__walkover-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--color-text-muted);
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+/* ── Actions ──────────────────────────────────────────────── */
+.tn-match__actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+.tn-match__play-btn {
+  background: var(--tn-gold);
+  color: #fff;
+  border: none;
+  padding: 5px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 150ms;
+  width: 100%;
+}
+.tn-match__play-btn:hover { background: #b8880f; }
+.tn-match__watch-btn {
+  display: block;
+  text-align: center;
+  background: var(--tn-match-in-progress, #2C7A7A);
+  color: #fff;
+  padding: 5px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+.tn-match__watch-btn:hover { opacity: 0.9; }
+.tn-match__ready-label {
+  font-size: 0.7rem;
+  color: var(--tn-gold);
+  font-weight: 600;
+  text-align: center;
+  width: 100%;
+}
+
+/* ── Mobile: stack rounds vertically ─────────────────────── */
+@media (max-width: 768px) {
+  .tn-bracket {
+    flex-direction: column;
+    gap: 28px;
+    padding: var(--space-3) var(--space-2);
+  }
+  .tn-bracket__round {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+    min-width: unset;
+  }
+  .tn-match {
+    min-width: 150px;
+    flex: 1 1 150px;
+  }
+  .tn-match__player-name { max-width: 110px; }
+}

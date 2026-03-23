@@ -464,6 +464,16 @@
       var res = await db().from('rooms').update({ is_public: !!isPublic }).eq('id', roomId);
       if (res.error) throw res.error;
     },
+
+    // ── Spectator support (Phase C) ───────────────────────────────────────────
+    // Joins a room as a spectator via SECURITY DEFINER function.
+    // Returns { success, error? }.
+    joinAsSpectator: async function(roomId) {
+      var pid = getPlayerId();
+      var res = await db().rpc('join_as_spectator', { p_room_id: roomId, p_pid: pid });
+      if (res.error) return { success: false, error: res.error.message };
+      return res.data || { success: true };
+    },
   };
 
 }());
