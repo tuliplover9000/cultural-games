@@ -69,6 +69,11 @@
         <div class="hero__content">
           <span class="hero__eyebrow" id="hero-eyebrow">14 Games &middot; 11 Cultures &middot; Free to Play</span>
 
+          <p class="hero__origin-story">
+            We couldn&rsquo;t find our T&#7871;t game online.<br>
+            So we built it. Then kept going.
+          </p>
+
           <h1 class="hero__title">
             Play the games
             <span class="hero__title-accent">that carry culture.</span>
@@ -630,16 +635,18 @@
       });
 
       function goTo(idx) {
-        textEl.style.opacity = '0';
+        textEl.style.opacity   = '0';
+        sourceEl.style.opacity = '0';
         setTimeout(function () {
           current = idx;
           textEl.textContent   = '\u201c' + quotes[idx].text + '\u201d';
           sourceEl.textContent = '\u2014 ' + quotes[idx].source;
-          textEl.style.opacity = '1';
+          textEl.style.opacity   = '1';
+          sourceEl.style.opacity = '1';
           dotsEl.querySelectorAll('.sp-quote__dot').forEach(function (d, i) {
             d.classList.toggle('sp-quote__dot--active', i === idx);
           });
-        }, 300);
+        }, 350);
       }
 
       // Auto-advance every 5 seconds

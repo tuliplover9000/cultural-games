@@ -693,6 +693,16 @@
   animation: heroFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
 }
 
+.hero__origin-story {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.55;
+  margin: 0 0 var(--space-5);
+  animation: heroFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+
 .hero__title {
   font-size: clamp(2.5rem, 5vw, 5rem);
   font-weight: var(--weight-bold);
@@ -783,12 +793,14 @@
   color: var(--color-text);
   margin: 0 0 0.5rem;
   line-height: 1.5;
+  transition: opacity 0.35s ease;
 }
 
 .sp-quote__source {
   font-size: var(--text-sm);
   color: var(--color-text-muted);
   font-style: normal;
+  transition: opacity 0.35s ease;
 }
 
 .sp-quote__dots {
