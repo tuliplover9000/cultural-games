@@ -791,6 +791,33 @@
   font-style: normal;
 }
 
+.sp-quote__dots {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: center;
+  margin-top: 0.75rem;
+}
+
+.sp-quote__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.sp-quote__dot:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.sp-quote__dot--active {
+  background: var(--color-accent-gold);
+  transform: scale(1.2);
+}
+
 /* ── Game ticker ── */
 .game-ticker {
   background-color: var(--color-primary);

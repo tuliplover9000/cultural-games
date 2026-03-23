@@ -67,27 +67,21 @@
 
         <!-- Left: text content -->
         <div class="hero__content">
-          <p class="hero__eyebrow" id="hero-eyebrow">A student project. A real story.</p>
+          <span class="hero__eyebrow" id="hero-eyebrow">14 Games &middot; 11 Cultures &middot; Free to Play</span>
 
           <h1 class="hero__title">
-            We couldn't find our Tết game online.
-            <span class="hero__title-accent">So we built it.</span>
+            Play the games
+            <span class="hero__title-accent">that carry culture.</span>
           </h1>
 
           <p class="hero__tagline">
-            Cultural Games is a free collection of traditional games from around the world —
-            built by Vietnamese students who couldn't find their family's games anywhere.
+            Discover and play traditional games from Vietnam, West Africa, Mesoamerica,
+            South India, Madagascar, China, and the Norse world — preserved and brought to life in your browser.
           </p>
 
-          <div class="hero__stats" aria-label="Site stats">
-            <span id="hero-game-count">14</span> Games &middot;
-            <span id="hero-culture-count">11</span> Cultures &middot;
-            Free Forever
-          </div>
-
           <div class="hero__actions">
-            <a href="pages/browse.html" class="btn btn-primary btn-lg">Browse Games</a>
-            <a href="pages/about.html"  class="btn btn-secondary btn-lg">Read the Story &rarr;</a>
+            <a href="pages/browse.html" class="btn btn-primary btn-lg">Browse All Games</a>
+            <a href="pages/about.html"  class="btn btn-secondary btn-lg">Our Story</a>
           </div>
         </div>
 
@@ -117,11 +111,12 @@
       </div>
     </div>
 
-    <div class="sp-quote" id="sp-quote">
-      <blockquote class="sp-quote__text">
+    <div class="sp-quote" id="sp-quote" aria-live="polite">
+      <blockquote class="sp-quote__text" id="sp-quote-text">
         &ldquo;I had no idea Pallanguzhi was even a game &mdash; now I can&rsquo;t stop playing it.&rdquo;
       </blockquote>
-      <cite class="sp-quote__source">&mdash; Discord community member</cite>
+      <cite class="sp-quote__source" id="sp-quote-source">&mdash; Discord community member</cite>
+      <div class="sp-quote__dots" id="sp-quote-dots" aria-hidden="true"></div>
     </div>
 
     <!-- ════════════════════════════════════════════════════════
@@ -382,11 +377,9 @@
       var gameCount    = games.length;
       var cultureCount = new Set(games.map(function (g) { return g.culture; })).size;
 
-      // Hero stats
-      var heroGame    = document.getElementById('hero-game-count');
-      var heroCulture = document.getElementById('hero-culture-count');
-      if (heroGame)    heroGame.textContent    = gameCount;
-      if (heroCulture) heroCulture.textContent = cultureCount;
+      // Hero eyebrow
+      var eyebrow = document.getElementById('hero-eyebrow');
+      if (eyebrow) eyebrow.textContent = gameCount + ' Games \u00b7 ' + cultureCount + ' Cultures \u00b7 Free to Play';
 
       // Social proof count
       var spGame = document.getElementById('sp-game-count');
@@ -606,6 +599,53 @@
           el.style.opacity = '1';
         }, 350);
       }, 2800);
+    }());
+  </script>
+
+  <!-- Cycling quotes -->
+  <script>
+    (function () {
+      var quotes = [
+        { text: 'I had no idea Pallanguzhi was even a game \u2014 now I can\u2019t stop playing it.', source: 'Discord community member' },
+        { text: 'Finally found Ba\u0300u Cua online. This brings back so many Tet memories.', source: 'Vietnamese-American player' },
+        { text: 'Fanorona is genuinely one of the deepest strategy games I\u2019ve ever played.', source: 'Beta tester' },
+        { text: 'The cultural context sections are what make this site special.', source: 'Discord community member' },
+        { text: 'I showed my grandma the Oware game and she was shocked it existed online.', source: 'Player from Ghana' },
+      ];
+
+      var textEl   = document.getElementById('sp-quote-text');
+      var sourceEl = document.getElementById('sp-quote-source');
+      var dotsEl   = document.getElementById('sp-quote-dots');
+      if (!textEl || !sourceEl) return;
+
+      var current = 0;
+
+      // Build dots
+      quotes.forEach(function (_, i) {
+        var dot = document.createElement('button');
+        dot.className = 'sp-quote__dot' + (i === 0 ? ' sp-quote__dot--active' : '');
+        dot.setAttribute('aria-label', 'Quote ' + (i + 1));
+        dot.addEventListener('click', function () { goTo(i); });
+        dotsEl.appendChild(dot);
+      });
+
+      function goTo(idx) {
+        textEl.style.opacity = '0';
+        setTimeout(function () {
+          current = idx;
+          textEl.textContent   = '\u201c' + quotes[idx].text + '\u201d';
+          sourceEl.textContent = '\u2014 ' + quotes[idx].source;
+          textEl.style.opacity = '1';
+          dotsEl.querySelectorAll('.sp-quote__dot').forEach(function (d, i) {
+            d.classList.toggle('sp-quote__dot--active', i === idx);
+          });
+        }, 300);
+      }
+
+      // Auto-advance every 5 seconds
+      setInterval(function () {
+        goTo((current + 1) % quotes.length);
+      }, 5000);
     }());
   </script>
 
