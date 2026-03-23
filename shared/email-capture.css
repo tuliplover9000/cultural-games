@@ -94,6 +94,10 @@
 }
 
 /* ── Exit intent modal ────────────────────────────────────────────────────── */
+.ec-modal-backdrop[hidden] {
+  display: none !important;
+}
+
 .ec-modal-backdrop {
   position: fixed;
   inset: 0;
