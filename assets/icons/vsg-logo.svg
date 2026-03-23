@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+  <!-- Outer badge -->
+  <rect x="1.5" y="1.5" width="37" height="37" rx="8" fill="#1A0E06" stroke="#C89B3C" stroke-width="2.5"/>
+  <!-- Inner decorative ring -->
+  <rect x="4.5" y="4.5" width="31" height="31" rx="5.5" fill="none" stroke="#C89B3C" stroke-width="0.7" opacity="0.3"/>
+
+  <!-- Bold geometric V (top section) -->
+  <polyline points="9,10 20,23 31,10"
+    fill="none" stroke="#C89B3C" stroke-width="4"
+    stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Thin rule -->
+  <line x1="10" y1="27.5" x2="30" y2="27.5" stroke="#C89B3C" stroke-width="0.8" opacity="0.5"/>
+
+  <!-- SG label -->
+  <text x="20" y="35.5"
+    text-anchor="middle"
+    font-family="Arial Black, Arial, sans-serif"
+    font-weight="900"
+    font-size="9"
+    letter-spacing="3"
+    fill="#C89B3C">SG</text>
+</svg>
