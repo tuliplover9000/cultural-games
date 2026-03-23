@@ -817,7 +817,10 @@
     // Re-roll dice after a short pause (cups are closed)
     setTimeout(function () {
       resetRound(firstPlayerId);
-      if (_inRoom) broadcastState();  // broadcast new round dice to all players
+      if (_inRoom) {
+        state.bidCount = (state.bidCount || 0) + 1; // new round needs a higher version
+        broadcastState();
+      }
       renderAllDice();
       renderAllLives();
       updateBidDisplay();
