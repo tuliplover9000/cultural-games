@@ -178,14 +178,16 @@
     var p = window.location.pathname.replace(/\\/g, '/');
     if (p.indexOf('/pages/games/') !== -1) return 'games';
     if (p.indexOf('/pages/')       !== -1) return 'pages';
-    if (p.indexOf('/cachos/')      !== -1) return 'pages'; // /cachos/ is one level deep
-    if (p.indexOf('/how-to-play/') !== -1) return 'pages'; // /how-to-play/x/ is one level deep
+    if (p.indexOf('/cachos/')      !== -1) return 'pages';
+    if (p.indexOf('/how-to-play/') !== -1) return 'pages';
+    if (p.indexOf('/profile/')     !== -1) return 'profile';
     return 'root';
   }
   function _accountHref() {
     var d = _depth();
-    if (d === 'games') return '../../profile/';
-    if (d === 'pages') return '../profile/';
+    if (d === 'games')   return '../../profile/';
+    if (d === 'pages')   return '../profile/';
+    if (d === 'profile') return './';
     return 'profile/';
   }
 
