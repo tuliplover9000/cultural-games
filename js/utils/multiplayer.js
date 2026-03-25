@@ -1,5 +1,5 @@
 /**
- * multiplayer.js — Online room management via Supabase Realtime.
+ * multiplayer.js - Online room management via Supabase Realtime.
  * Exposes window.Multiplayer for game modules to use.
  */
 (function () {
@@ -81,7 +81,7 @@
 
     joinRoom: async function (code, game, cbs) {
       _cbs = cbs || {};
-      // Look up by code only — avoids any game-name or status mismatch issues
+      // Look up by code only - avoids any game-name or status mismatch issues
       var res = await db().from('rooms')
         .select().eq('code', code.toUpperCase().trim()).limit(1);
       if (res.error || !res.data || !res.data.length) {

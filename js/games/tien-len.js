@@ -1,5 +1,5 @@
 /**
- * tien-len.js — Tiến Lên (Vietnamese shedding card game)
+ * tien-len.js - Tiến Lên (Vietnamese shedding card game)
  * Supports local play (vs 3 AI) and 2-player online (host + guest, 2 AI fill remaining seats).
  *
  * Online seat layout:
@@ -49,7 +49,7 @@
   }
   // Perspective-aware name
   function pName(idx) {
-    if (idx < 0) return '—';
+    if (idx < 0) return '-';
     if (vsOnline) return ['You','Left','Across','Right'][(idx - mySeat + 4) % 4];
     return SEAT_NAMES[idx] || '?';
   }
@@ -295,7 +295,7 @@
       state.current         = state.pileOwner;
       state.leader          = state.pileOwner;
       state.pileJustChanged = true;
-      addLog(-1, `— New round — ${pName(state.pileOwner)} leads.`);
+      addLog(-1, `- New round - ${pName(state.pileOwner)} leads.`);
 
       if (vsOnline) {
         if (isHost || playerIdx === mySeat) syncOnlineState();
@@ -472,8 +472,8 @@
       statusInner = `${pName(state.current)} is thinking <span class="tl-thinking-dots"><span></span><span></span><span></span></span>`;
     } else if (isYT) {
       statusInner = state.pile.length
-        ? 'Your turn — beat the play or <em>pass</em>'
-        : 'Your turn — lead any hand';
+        ? 'Your turn - beat the play or <em>pass</em>'
+        : 'Your turn - lead any hand';
       statusCls = 'your-turn';
     } else {
       statusInner = `${pName(state.current)}'s turn`;
@@ -642,7 +642,7 @@
     el.querySelector('#tl-new')?.addEventListener('click', () => {
       if (vsOnline) {
         if (isHost) {
-          // Re-deal in the same room — guest receives via subscription
+          // Re-deal in the same room - guest receives via subscription
           newGameOnline();
           syncOnlineState();
         }
@@ -687,7 +687,7 @@
         showHint('✗ First play must include the 3♠'); return;
       }
       if (state.pileType && !beats(info, state.pileType)) {
-        showHint('✗ Doesn\'t beat current play — try higher or pass'); return;
+        showHint('✗ Doesn\'t beat current play - try higher or pass'); return;
       }
 
       selected.clear();
@@ -746,7 +746,7 @@
 
   function receiveOnlineState(data) {
     if (!data || !vsOnline) return;
-    // Echo suppression — works for both Multiplayer and RoomBridge paths
+    // Echo suppression - works for both Multiplayer and RoomBridge paths
     if (window.RoomBridge && RoomBridge.isActive()) {
       if (data.last_actor === 'room:' + RoomBridge.getSeat()) return;
     } else if (window.Multiplayer) {
@@ -831,7 +831,7 @@
 
     function startOnlineGame(role) {
       vsOnline  = true;
-      twoPlayer = true; // online is always 1v1 — no AI
+      twoPlayer = true; // online is always 1v1 - no AI
       isHost    = (role === 'host');
       mySeat    = isHost ? 0 : 2;
 
@@ -981,7 +981,7 @@ function _fsResize() {
   }, 50);
 }
 
-// DOM-based game — re-render to let CSS fill the new available space
+// DOM-based game - re-render to let CSS fill the new available space
 window.GameResize = function (availW, availH) {
   if (typeof render === 'function') render();
 };

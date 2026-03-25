@@ -1,5 +1,5 @@
 /**
- * games-data.js — Single source of truth for the game catalogue.
+ * games-data.js - Single source of truth for the game catalogue.
  * Add or remove entries here and all stat displays update automatically.
  *
  * Exposes: window.GAMES_DATA

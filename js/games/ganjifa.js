@@ -1,4 +1,4 @@
-/* ganjifa.js — Mughal Ganjifa trick-taking card game
+/* ganjifa.js - Mughal Ganjifa trick-taking card game
  * 96 cards, 8 suits × 12 ranks, 4 players (1 human south + 3 AI)
  * Multi-round scoring to 50 points.
  */
@@ -259,7 +259,7 @@
 
   // ── Card Cache (offscreen canvases) ────────────────────────────────────────
 
-  var DPR = 1;  // device pixel ratio — set in init()
+  var DPR = 1;  // device pixel ratio - set in init()
   var cardCache = {};
   var diamondPattern = null;
 
@@ -1309,13 +1309,13 @@
     var isLeading = !state.ledSuit;
     var legal = getLegalPlays(state.hands[mySeat], state.ledSuit, isLeading);
     var isLegal = legal.some(function (c) { return c.id === card.id; });
-    if (!isLegal) return;  // Dimmed card — ignore
+    if (!isLegal) return;  // Dimmed card - ignore
 
     if (state.selectedCard && state.selectedCard.id === card.id) {
-      // Second click on same card — play it
+      // Second click on same card - play it
       playCard(mySeat, card);
     } else {
-      // First click — select
+      // First click - select
       state.selectedCard = card;
       drawFrame();
       // Animate the selection ring
@@ -1650,7 +1650,7 @@
       {
         target: '#gj-canvas',
         title: 'The 8 Suits',
-        body: 'Ganjifa has 8 suits. One suit is trump — trump cards outrank all non-trump cards regardless of value.',
+        body: 'Ganjifa has 8 suits. One suit is trump - trump cards outrank all non-trump cards regardless of value.',
         position: 'top',
         highlight: true,
         beforeStep: null, afterStep: null,
@@ -1666,7 +1666,7 @@
       {
         target: '#gj-canvas',
         title: 'Following Suit',
-        body: 'You must play a card of the same suit as the lead card. If you have none, you may play any card — including trump.',
+        body: 'You must play a card of the same suit as the lead card. If you have none, you may play any card - including trump.',
         position: 'top',
         highlight: true,
         beforeStep: null, afterStep: null,

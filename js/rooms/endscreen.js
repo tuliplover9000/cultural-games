@@ -1,5 +1,5 @@
 /**
- * endscreen.js — End screen + session leaderboard controller (Phase I).
+ * endscreen.js - End screen + session leaderboard controller (Phase I).
  * Handles: winner display, dual-instance results, leaderboard, rematch, back to lobby.
  *
  * Exposes window.Endscreen for lobby.js to call.
@@ -81,8 +81,8 @@
 
       var inst0 = instances[0] || {};
       var inst1 = instances[1] || {};
-      var name0 = names[inst0.winner_pid] || '—';
-      var name1 = names[inst1.winner_pid] || '—';
+      var name0 = names[inst0.winner_pid] || '-';
+      var name1 = names[inst1.winner_pid] || '-';
 
       elDualA.innerHTML = winnerHTML(name0);
       elDualB.innerHTML = winnerHTML(name1);
@@ -92,7 +92,7 @@
       elDual.hidden   = true;
 
       var inst = instances[0] || {};
-      var winnerName = names[inst.winner_pid] || '—';
+      var winnerName = names[inst.winner_pid] || '-';
 
       elAvatar.textContent = (winnerName[0] || '?').toUpperCase();
       elName.textContent   = winnerName;
@@ -109,7 +109,7 @@
       var gameId = room.selected_game || 'unknown';
       var roomId = room.id || null;
       // Bet resolution is now handled server-side inside record_game_result
-      // when roomId is provided — no separate addCoins call needed.
+      // when roomId is provided - no separate addCoins call needed.
 
       if (!dual) {
         var winnerPid = (instances[0] || {}).winner_pid;
@@ -157,7 +157,7 @@
     }
   }
 
-  // Buttons — hide endscreen immediately for instant feedback, then fire DB update.
+  // Buttons - hide endscreen immediately for instant feedback, then fire DB update.
   if (elRematchBtn) {
     elRematchBtn.addEventListener('click', async function() {
       elRematchBtn.disabled = true;

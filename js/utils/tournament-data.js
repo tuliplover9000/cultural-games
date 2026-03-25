@@ -1,5 +1,5 @@
 /**
- * tournament-data.js — Shared tournament utilities.
+ * tournament-data.js - Shared tournament utilities.
  * Exposes window.TournamentData for tournament.js and bracket.js.
  */
 (function () {
@@ -17,7 +17,7 @@
     return _db;
   }
 
-  // Tournament-eligible games only (no bau-cua — group betting, not bracket-compatible)
+  // Tournament-eligible games only (no bau-cua - group betting, not bracket-compatible)
   var GAMES = [
     { key: 'fanorona',    name: 'Fanorona',            maxPlayers: 2 },
     { key: 'hnefatafl',   name: 'Hnefatafl',           maxPlayers: 2 },

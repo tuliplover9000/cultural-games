@@ -1,5 +1,5 @@
 /**
- * fanorona.js — Fanorona (Madagascar strategy game)
+ * fanorona.js - Fanorona (Madagascar strategy game)
  * Approach / withdrawal capture mechanics on a 5×9 intersection grid.
  */
 (function () {
@@ -127,7 +127,7 @@
         moves.push({ from: fromIdx, to: to, dc: dc, dr: dr, type: 'withdrawal', captures: wCaps });
       }
 
-      // Paika (non-capture) — only if not in forced-capture mode
+      // Paika (non-capture) - only if not in forced-capture mode
       if (!captureOnly) {
         moves.push({ from: fromIdx, to: to, dc: dc, dr: dr, type: 'paika', captures: [] });
       }
@@ -524,7 +524,7 @@
     var nextMoves = allMoves(state.board, state.turn, null, null, null);
     if (nextMoves.length === 0) {
       state.phase = 'over';
-      setStatus('No moves available — draw!');
+      setStatus('No moves available - draw!');
       updateScore(); render(); return;
     }
 
@@ -535,7 +535,7 @@
       setStatus('AI is thinking…');
       scheduleAIMove();
     } else {
-      setStatus(state.turn === BLACK ? 'Your turn — select a piece.' : 'Player 2 — select a piece.');
+      setStatus(state.turn === BLACK ? 'Your turn - select a piece.' : 'Player 2 - select a piece.');
     }
     if (vsRoom) syncRoomState();
   }
@@ -659,7 +659,7 @@
     gameVersion++;
     state = freshState();
     updateScore();
-    setStatus('Your turn — select a dark piece.');
+    setStatus('Your turn - select a dark piece.');
     render();
   }
 
@@ -679,7 +679,7 @@
     state.winner          = null;
     state.aiThinking      = false;
     updateScore();
-    setStatus('Your turn — select a dark piece.');
+    setStatus('Your turn - select a dark piece.');
     render();
   }
 
@@ -796,7 +796,7 @@
     state = freshState();
     resizeCanvas();
     updateScore();
-    setStatus('Your turn — select a dark piece.');
+    setStatus('Your turn - select a dark piece.');
     initRoomMode();
   }
 
@@ -812,7 +812,7 @@
       {
         target: '#fn-canvas',
         title: 'The Board',
-        body: 'This is the Fanorona board — 5×9 intersections connected by lines. Pieces move along these lines, one step at a time.',
+        body: 'This is the Fanorona board - 5×9 intersections connected by lines. Pieces move along these lines, one step at a time.',
         position: 'bottom',
         highlight: true,
         beforeStep: null, afterStep: null,

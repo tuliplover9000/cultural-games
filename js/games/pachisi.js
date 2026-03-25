@@ -1,5 +1,5 @@
 /**
- * pachisi.js — Pachisi (Indian cross-and-circle race game)
+ * pachisi.js - Pachisi (Indian cross-and-circle race game)
  * 9×9 logical grid, cowrie-shell dice, 2 or 4 players, AI for red/green.
  */
 (function () {
@@ -75,7 +75,7 @@
     ]
   };
 
-  // Castle (safe) squares — O(1) lookup
+  // Castle (safe) squares - O(1) lookup
   var CASTLE_SET = (function () {
     var squares = [
       '0,4','2,3','3,0','4,8',
@@ -315,7 +315,7 @@
 
       // Board piece
       var newIdx = piece.pathIndex + roll;
-      if (newIdx > PATH_LENGTH) return; // overshoot — can't move
+      if (newIdx > PATH_LENGTH) return; // overshoot - can't move
       if (newIdx === PATH_LENGTH) {
         // Exactly home
         valid.push(piece);
@@ -349,7 +349,7 @@
     if (!pos) return;
     var r = pos[0], c = pos[1];
 
-    if (isCastle(r, c)) return; // safe square — no captures
+    if (isCastle(r, c)) return; // safe square - no captures
 
     state.players.forEach(function (pl) {
       if (pl === piece.owner) return;
@@ -365,7 +365,7 @@
             var p2 = piecePos(e2);
             return p2 && p2[0] === r && p2[1] === c;
           });
-          if (sameSquare.length >= 2) return; // blockade — can't capture
+          if (sameSquare.length >= 2) return; // blockade - can't capture
           // Capture
           ep.state = 'yard';
           ep.pathIndex = -1;
@@ -486,7 +486,7 @@
     size = size || 1;
     var r = CELL * 0.26 * size;
     ctx.save();
-    // White halo ring — ensures piece is visible on any background colour
+    // White halo ring - ensures piece is visible on any background colour
     ctx.beginPath();
     ctx.arc(x, y, r * 1.38, 0, Math.PI * 2);
     ctx.fillStyle = 'rgba(255,255,255,0.55)';
@@ -733,7 +733,7 @@
   function drawPieces() {
     if (!state) return;
 
-    // Draw yard pieces — placed on the 4 circular spots
+    // Draw yard pieces - placed on the 4 circular spots
     state.players.forEach(function (pl) {
       var pieces = playerPieces(pl).filter(function (p) { return p.state === 'yard'; });
       pieces.forEach(function (piece, idx) {
@@ -967,7 +967,7 @@
     var valid = validMoves(state.currentPlayer, roll);
     if (!valid.length) return null;
 
-    // Yard pieces — distance to spot center
+    // Yard pieces - distance to spot center
     var yardPcs = playerPieces(state.currentPlayer).filter(function (p) { return p.state === 'yard'; });
     for (var i = 0; i < yardPcs.length; i++) {
       var yp = yardPcs[i];
@@ -977,7 +977,7 @@
       if (Math.sqrt(dx*dx + dy*dy) < CELL * 0.42) return yp;
     }
 
-    // Board pieces — cell hit test
+    // Board pieces - cell hit test
     var cell = cellFromPx(x, y);
     if (cell) {
       var r = cell[0], c = cell[1];
@@ -1099,7 +1099,7 @@
       setStatus(state.currentPlayer.charAt(0).toUpperCase() + state.currentPlayer.slice(1) + ' gets a bonus roll!');
     } else {
       nextPlayer();
-      setStatus(state.currentPlayer.charAt(0).toUpperCase() + state.currentPlayer.slice(1) + "'s turn — roll the shells.");
+      setStatus(state.currentPlayer.charAt(0).toUpperCase() + state.currentPlayer.slice(1) + "'s turn - roll the shells.");
       if (isAIPlayer(state.currentPlayer)) {
         triggerAITurn();
       } else {
@@ -1117,7 +1117,7 @@
     var roll = state.rollResult;
     var valid = validMoves(state.currentPlayer, roll);
     if (valid.length === 0) {
-      setStatus('No valid moves for ' + state.currentPlayer + ' — auto-passing…');
+      setStatus('No valid moves for ' + state.currentPlayer + ' - auto-passing…');
       var isBonus2 = (roll === 6 || roll === 25);
       setTimeout(function () {
         if (isBonus2) {
@@ -1133,7 +1133,7 @@
           }
         } else {
           nextPlayer();
-          setStatus(state.currentPlayer.charAt(0).toUpperCase() + state.currentPlayer.slice(1) + "'s turn — roll the shells.");
+          setStatus(state.currentPlayer.charAt(0).toUpperCase() + state.currentPlayer.slice(1) + "'s turn - roll the shells.");
           updateHUD();
           if (isAIPlayer(state.currentPlayer)) triggerAITurn();
         }
@@ -1160,7 +1160,7 @@
       updateRollResult();
       var valid = validMoves(state.currentPlayer, roll);
       if (!valid.length) {
-        setStatus('No valid moves for ' + state.currentPlayer + ' — auto-passing…');
+        setStatus('No valid moves for ' + state.currentPlayer + ' - auto-passing…');
         setTimeout(function () {
           var isBonus3 = (roll === 6 || roll === 25);
           if (isBonus3) {
@@ -1244,11 +1244,11 @@
       var isBonus5 = (roll === 6 || roll === 25);
       var note = isBonus5 ? ' (bonus roll earned!)' : '';
       setStatus(state.currentPlayer.charAt(0).toUpperCase() + state.currentPlayer.slice(1) +
-        ' rolled ' + roll + note + ' — pick a piece.');
+        ' rolled ' + roll + note + ' - pick a piece.');
 
       var valid = validMoves(state.currentPlayer, roll);
       if (!valid.length) {
-        setStatus('Rolled ' + roll + ' — no valid moves. Auto-passing…');
+        setStatus('Rolled ' + roll + ' - no valid moves. Auto-passing…');
         setTimeout(function () {
           if (isBonus5) {
             state.rollResult = null;
@@ -1257,7 +1257,7 @@
             updateHUD();
           } else {
             nextPlayer();
-            setStatus(state.currentPlayer.charAt(0).toUpperCase() + state.currentPlayer.slice(1) + "'s turn — roll the shells.");
+            setStatus(state.currentPlayer.charAt(0).toUpperCase() + state.currentPlayer.slice(1) + "'s turn - roll the shells.");
             updateHUD();
             if (isAIPlayer(state.currentPlayer)) triggerAITurn();
           }
@@ -1277,7 +1277,7 @@
     var vsAI = true; // always vs AI for local play
     state = freshState(mode, vsAI);
 
-    // Show game, hide lobby (use style.display — CSS display:flex overrides [hidden])
+    // Show game, hide lobby (use style.display - CSS display:flex overrides [hidden])
     var lobby = document.getElementById('pc-lobby');
     var game  = document.getElementById('pc-game');
     if (lobby) lobby.style.display = 'none';
@@ -1288,7 +1288,7 @@
 
     _hoveredPiece = null;
     renderCowries(null, false);
-    setStatus("Yellow's turn — roll the shells.");
+    setStatus("Yellow's turn - roll the shells.");
     redraw();
     updateHUD();
   }
@@ -1299,7 +1299,7 @@
     state = freshState(mode, true);
     _hoveredPiece = null;
     renderCowries(null, false);
-    setStatus("Yellow's turn — roll the shells.");
+    setStatus("Yellow's turn - roll the shells.");
     redraw();
     updateHUD();
   }
@@ -1337,7 +1337,7 @@
     state.humanSeat = seat;
     state.aiSeats   = aiSeatsList;
 
-    // Skip the pre-game lobby (use style.display — CSS display:flex overrides [hidden])
+    // Skip the pre-game lobby (use style.display - CSS display:flex overrides [hidden])
     var lobbyEl = document.getElementById('pc-lobby');
     var gameEl  = document.getElementById('pc-game');
     if (lobbyEl) lobbyEl.style.display = 'none';
@@ -1348,7 +1348,7 @@
 
     _hoveredPiece = null;
     renderCowries(null, false);
-    setStatus("Yellow's turn — roll the shells.");
+    setStatus("Yellow's turn - roll the shells.");
     redraw();
     updateHUD();
 
@@ -1381,9 +1381,9 @@
       } else {
         var capName = state.currentPlayer.charAt(0).toUpperCase() + state.currentPlayer.slice(1);
         if (state.rollResult !== null && !state.rollUsed) {
-          setStatus(capName + ' rolled ' + state.rollResult + ' — pick a piece.');
+          setStatus(capName + ' rolled ' + state.rollResult + ' - pick a piece.');
         } else {
-          setStatus(capName + "'s turn — roll the shells.");
+          setStatus(capName + "'s turn - roll the shells.");
         }
       }
     });
@@ -1446,7 +1446,7 @@
       {
         target: '#pc-board',
         title: 'The Board',
-        body: 'This is the Pachisi cross — four arms meeting at a center square. Each player\'s pieces travel around the board and race to reach the center.',
+        body: 'This is the Pachisi cross - four arms meeting at a center square. Each player\'s pieces travel around the board and race to reach the center.',
         position: 'right',
         highlight: true,
         beforeStep: null, afterStep: null,
@@ -1478,7 +1478,7 @@
       {
         target: '#pc-board',
         title: 'Castle Squares',
-        body: 'Marked squares on the board are Castles — safe zones where your pieces cannot be captured.',
+        body: 'Marked squares on the board are Castles - safe zones where your pieces cannot be captured.',
         position: 'right',
         highlight: true,
         beforeStep: null, afterStep: null,

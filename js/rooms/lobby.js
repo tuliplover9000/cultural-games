@@ -1,5 +1,5 @@
 /**
- * lobby.js — Room lobby controller.
+ * lobby.js - Room lobby controller.
  * Handles: player list, mini game browser, suggestions, host-pick/lottery,
  * chat, ready state, and transitions to the assignment modal / in-game view.
  *
@@ -11,7 +11,7 @@
   // ── Game catalogue ─────────────────────────────────────────────────────────
   var GAMES = [
     { key: 'tien-len',    name: 'Tiến Lên',          culture: 'Vietnam',              type: 'Card',     icon: '🃏', svg: '../assets/icons/tien-len.svg',    badge: 'Card · 4P',    maxPlayers: 4,
-      rules: ['Play cards in ascending rank order, beating the previous play or pass.', 'Combos: pairs, triples, sequences — all must be beaten by a higher combo of the same type.', 'First player to empty their hand wins the round.'] },
+      rules: ['Play cards in ascending rank order, beating the previous play or pass.', 'Combos: pairs, triples, sequences - all must be beaten by a higher combo of the same type.', 'First player to empty their hand wins the round.'] },
     { key: 'mahjong',     name: 'Hong Kong Mahjong',  culture: 'China',                type: 'Tile',     icon: '🀄', svg: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPGcgdHJhbnNmb3JtPSJyb3RhdGUoLTE0IDIwIDI5KSI+CiAgICA8cmVjdCB4PSI4IiB5PSIxNCIgd2lkdGg9IjIyIiBoZWlnaHQ9IjMwIiByeD0iMyIgZmlsbD0iI2M4YTQ2ZSIgc3Ryb2tlPSIjN2E1MDIwIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogICAgPHJlY3QgeD0iMTEiIHk9IjE3IiB3aWR0aD0iMTYiIGhlaWdodD0iMjQiIHJ4PSIxLjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2IwODA0MCIgc3Ryb2tlLXdpZHRoPSIwLjgiLz4KICAgIDxjaXJjbGUgY3g9IjE5IiBjeT0iMjkiIHI9IjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2IwODA0MCIgc3Ryb2tlLXdpZHRoPSIwLjgiLz4KICAgIDxjaXJjbGUgY3g9IjE5IiBjeT0iMjkiIHI9IjEuNSIgZmlsbD0iI2IwODA0MCIvPgogIDwvZz4KICAKICA8cmVjdCB4PSIyNCIgeT0iMjIiIHdpZHRoPSIyMiIgaGVpZ2h0PSIzMCIgcng9IjMiIGZpbGw9IiMxYTA4MDAiIG9wYWNpdHk9IjAuMTgiLz4KICAKICA8cmVjdCB4PSIyMiIgeT0iMTkiIHdpZHRoPSIyMiIgaGVpZ2h0PSIzMCIgcng9IjMiIGZpbGw9IiNGQkY1RTYiIHN0cm9rZT0iIzVhMzAxMCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHJlY3QgeD0iMjUiIHk9IjIyIiB3aWR0aD0iMTYiIGhlaWdodD0iMjQiIHJ4PSIxLjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0M4OUIzQyIgc3Ryb2tlLXdpZHRoPSIxLjIiLz4KCiAgPGxpbmUgeDE9IjMzIiB5MT0iMjUiIHgyPSIzMyIgeTI9IjQzIiBzdHJva2U9IiNjYzIyMDAiIHN0cm9rZS13aWR0aD0iMi4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cmVjdCB4PSIyNy41IiB5PSIyOC41IiB3aWR0aD0iMTEiIGhlaWdodD0iMTAiIHJ4PSIwLjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2NjMjIwMCIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPg==', badge: 'Tile · 4P',    maxPlayers: 4,
       rules: ['Draw and discard tiles each turn to build a winning hand.', 'A hand = 4 sets (sequences or triplets) + 1 pair. Declare Mahjong to win.', 'Special hands (e.g. all pairs) also win. Flower tiles score bonus points.'] },
     { key: 'oware',       name: 'Oware',              culture: 'West Africa',          type: 'Board',    icon: '🟤', svg: '../assets/icons/oware.svg',       badge: 'Board · 2P',   maxPlayers: 2,
@@ -41,7 +41,7 @@
         { value: '4player', label: '4 Players', hint: 'Teams A & B' },
       ]},
     { key: 'cachos',      name: 'Cachos',              culture: 'Latin America',         type: 'Dice',     icon: '🎲', svg: '../assets/icons/cachos.svg',     badge: 'Dice · Bluffing', maxPlayers: 6,
-      rules: ['Everyone rolls 5 dice secretly under a cup. Only you see your own.', 'Bid how many of a face you think exist across ALL cups combined. Each bid must go higher.', 'Call \u00a1Dudo! to challenge. If the bid was wrong, the bidder loses a die — if right, the challenger does. Last dice standing wins.'],
+      rules: ['Everyone rolls 5 dice secretly under a cup. Only you see your own.', 'Bid how many of a face you think exist across ALL cups combined. Each bid must go higher.', 'Call \u00a1Dudo! to challenge. If the bid was wrong, the bidder loses a die - if right, the challenger does. Last dice standing wins.'],
       gameModes: [
         { value: '2p', label: '2 Players' },
         { value: '3p', label: '3 Players' },
@@ -218,7 +218,7 @@
       '</div>';
     }).join('');
 
-    // Star buttons — toggle favorite
+    // Star buttons - toggle favorite
     elGameGrid.querySelectorAll('.lobby-star-btn').forEach(function(btn) {
       btn.addEventListener('click', function(e) {
         e.stopPropagation();
@@ -612,7 +612,7 @@
         elAssignModal.hidden = true;
         var boardsEl = document.getElementById('ingame-boards');
         if (boardsEl && !boardsEl.hidden) {
-          // Already showing game — just push latest board state to iframes
+          // Already showing game - just push latest board state to iframes
           if (window.Ingame && window.Ingame.syncBoardState) window.Ingame.syncBoardState(room);
         } else {
           if (window.Ingame) window.Ingame.launch(room);
@@ -622,7 +622,7 @@
         if (window.Endscreen) window.Endscreen.show(room);
       },
       onFinished: function() {
-        // Host left — persist any local coin changes before redirecting
+        // Host left - persist any local coin changes before redirecting
         if (window.Auth && Auth.persistCoins) Auth.persistCoins();
         showError('The host left the room. Your coins have been saved.');
         setTimeout(function() { window.location.href = 'rooms.html'; }, 3000);
@@ -637,7 +637,7 @@
       if (!room) return; // error already shown
       // Set page title to include room code
       var titleName = (room.room_name && room.room_name.trim()) || ('Room ' + room.code);
-      document.title = titleName + ' — Cultural Games';
+      document.title = titleName + ' - Cultural Games';
       showLobby();
       renderLobby(room); // renderGameGrid is called inside renderLobby now
 

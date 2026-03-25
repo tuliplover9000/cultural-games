@@ -1,5 +1,5 @@
 /**
- * room.js — Global Room System v2
+ * room.js - Global Room System v2
  * Exposes window.Room for all room-aware pages.
  *
  * Architecture: full-state blob sync via postgres_changes on the rooms table.
@@ -319,7 +319,7 @@
       await db().from('rooms').update({ game_instances: instances }).eq('id', _room.id);
     },
 
-    // endGameWithWin — single atomic update that increments player_wins AND marks
+    // endGameWithWin - single atomic update that increments player_wins AND marks
     // the instance finished. One DB write → one subscription event → no race condition
     // where endscreen shows before wins are updated, or a stale subscription overwrites
     // game_instances after a rematch.

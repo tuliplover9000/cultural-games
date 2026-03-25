@@ -1,5 +1,5 @@
 /**
- * tournament.js — Tournament tab controller for rooms.html.
+ * tournament.js - Tournament tab controller for rooms.html.
  * Manages: open/close panel, browse/create/join sub-tabs,
  * tournament lobby, bracket view, match-ready notifications.
  *

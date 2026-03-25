@@ -1,5 +1,5 @@
 /**
- * oware.js — Oware (Akan / West Africa)
+ * oware.js - Oware (Akan / West Africa)
  * Phase 5
  *
  * Board layout (player's perspective, CCW sowing):
@@ -28,8 +28,8 @@
 
   /* ── State ── */
   let state = {};
-  let difficulty = 'hard'; // 'easy' | 'hard' — persists across games
-  let mode = 'vs-ai';      // 'vs-ai' | 'vs-human' — persists across games
+  let difficulty = 'hard'; // 'easy' | 'hard' - persists across games
+  let mode = 'vs-ai';      // 'vs-ai' | 'vs-human' - persists across games
   let vsRoom     = false;
   let myRoomSeat = 0;
 
@@ -58,7 +58,7 @@
 
   /**
    * Apply one sow+capture move to a state snapshot.
-   * Returns a new snapshot — the original is not mutated.
+   * Returns a new snapshot - the original is not mutated.
    */
   function applyMove(snap, fromPit, player) {
     const pits   = [...snap.pits];
@@ -164,7 +164,7 @@
     if (!moves.length) return -1;
 
     if (difficulty === 'easy') {
-      // Easy: pick a random valid move — no lookahead
+      // Easy: pick a random valid move - no lookahead
       return moves[Math.floor(Math.random() * moves.length)];
     }
 
@@ -178,7 +178,7 @@
   }
 
   /* ════════════════════════════════════════════════════════════
-     Sowing animation — shared by player and AI
+     Sowing animation - shared by player and AI
   ════════════════════════════════════════════════════════════ */
 
   function doSow(fromPit) {
@@ -256,9 +256,9 @@
         Auth.recordResult('oware', state.winner === PLAYER ? 'win' : state.winner === 2 ? 'draw' : 'loss');
       const gp1 = mode === 'vs-human' ? 'Player 1 wins!' : 'you win!';
       const gp2 = mode === 'vs-human' ? 'Player 2 wins.' : 'opponent wins.';
-      addLog(state.winner === PLAYER ? `Game over — ${gp1}`
-           : state.winner === AI     ? `Game over — ${gp2}`
-                                     : 'Game over — it\'s a draw!');
+      addLog(state.winner === PLAYER ? `Game over - ${gp1}`
+           : state.winner === AI     ? `Game over - ${gp2}`
+                                     : 'Game over - it\'s a draw!');
       if (vsRoom) syncRoomState();
       render();
       return;
@@ -350,7 +350,7 @@
     const snap    = { pits: [...state.pits], scores: [...state.scores], phase: state.phase };
     const vsHuman = mode === 'vs-human';
 
-    // Clickable pits — in room mode only highlight the LOCAL player's pits on their turn
+    // Clickable pits - in room mode only highlight the LOCAL player's pits on their turn
     const myTurn   = vsRoom ? state.current === myRoomSeat : true;
     const botIdle  = state.phase === 'idle' && state.current === PLAYER && (!vsRoom || myRoomSeat === PLAYER);
     const topIdle  = vsHuman && state.phase === 'idle' && state.current === AI && (!vsRoom || myRoomSeat === AI);
@@ -370,11 +370,11 @@
         : (state.current === PLAYER ? 'Sowing…'          : 'Opponent sowing…');
     } else {
       statusMsg = vsHuman
-        ? (state.current === PLAYER ? 'Player 1 — click a highlighted pit' : 'Player 2 — click a highlighted pit')
-        : 'Your turn — click a highlighted pit to sow';
+        ? (state.current === PLAYER ? 'Player 1 - click a highlighted pit' : 'Player 2 - click a highlighted pit')
+        : 'Your turn - click a highlighted pit to sow';
     }
 
-    // Board rows — flip for seat 1 so each player sees their pits at the bottom
+    // Board rows - flip for seat 1 so each player sees their pits at the bottom
     const flip = vsRoom && myRoomSeat === 1;
 
     // Store / row labels
@@ -434,7 +434,7 @@
 </div>`;
   }
 
-  /** Deterministic but varied rotation per seed — avoids obvious patterns */
+  /** Deterministic but varied rotation per seed - avoids obvious patterns */
   function seedRot(pit, i) {
     const h = ((pit + 1) * 31 + i * 79 + (pit + 1) * (i + 1) * 13) % 160;
     return h - 80; // -80 … +79 degrees
@@ -496,7 +496,7 @@
   <div class="ow-gameover">
     <div class="ow-gameover__icon">${icon}</div>
     <h2>${title}</h2>
-    <p>Final score: ${p1name} <strong>${ps}</strong> — ${p2name} <strong>${as}</strong></p>
+    <p>Final score: ${p1name} <strong>${ps}</strong> - ${p2name} <strong>${as}</strong></p>
     <button class="ow-btn ow-btn--primary" id="ow-new">Play Again</button>
   </div>
 </div>`;
@@ -593,7 +593,7 @@
       {
         target: '#game-container',
         title: 'The Oware Board',
-        body: 'This is Oware — a 2×6 pit mancala from West Africa. Each pit starts with 4 seeds. Your row is the one nearest to you.',
+        body: 'This is Oware - a 2×6 pit mancala from West Africa. Each pit starts with 4 seeds. Your row is the one nearest to you.',
         position: 'bottom', highlight: true, beforeStep: null, afterStep: null,
       },
       {
@@ -611,7 +611,7 @@
       {
         target: '#game-container',
         title: 'Grand Slam Rule',
-        body: 'You cannot capture all of your opponent\'s seeds in one move — you must leave them able to play. Such moves are illegal.',
+        body: 'You cannot capture all of your opponent\'s seeds in one move - you must leave them able to play. Such moves are illegal.',
         position: 'top', highlight: true, beforeStep: null, afterStep: null,
       },
       {
@@ -636,7 +636,7 @@
     }, 50);
   }
 
-  // DOM-based game — re-render to let CSS fill the new available space
+  // DOM-based game - re-render to let CSS fill the new available space
   window.GameResize = function (availW, availH) {
     if (typeof render === 'function') render();
   };

@@ -1,5 +1,5 @@
 /**
- * theme.js — Cultural Games theme toggle.
+ * theme.js - Cultural Games theme toggle.
  *
  * Runs in <head> BEFORE any CSS loads to prevent flash.
  * Wires the toggle button after DOMContentLoaded.
@@ -110,7 +110,7 @@
     if (navAuth) {
       _doInsert();
     } else {
-      // auth.js injects #nav-auth after Supabase resolves — wait for it
+      // auth.js injects #nav-auth after Supabase resolves - wait for it
       // before inserting so the toggle never appears in the wrong place.
       var obs = new MutationObserver(function (mutations, o) {
         if (document.getElementById('nav-auth')) {

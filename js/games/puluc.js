@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────────────────────
-   Puluc — Maya / Mesoamerica
+   Puluc - Maya / Mesoamerica
    js/games/puluc.js  |  CSS prefix: pu-
 
    Rules (Brewster/Acosta version):
@@ -53,7 +53,7 @@
 
   // ── New game ──────────────────────────────────────────────────────────
   function newGame() {
-    // stacks start empty — pieces enter one at a time via entry moves
+    // stacks start empty - pieces enter one at a time via entry moves
     state = {
       phase:       'idle',   // idle | choosingMove | moving | ai-thinking | over
       turn:        PLAYER,
@@ -67,7 +67,7 @@
     };
     render();
     elRollBtn.disabled = false;
-    setStatus(p1Name() + ' — roll the sticks!');
+    setStatus(p1Name() + ' - roll the sticks!');
   }
 
   // ── Dice ──────────────────────────────────────────────────────────────
@@ -100,7 +100,7 @@
     var moves  = [];
     var stacks = state.stacks[who];
 
-    // Entry move — place a new piece from off-board
+    // Entry move - place a new piece from off-board
     if (state.offBoard[who] > 0) {
       var entryPos = (who === PLAYER) ? (roll - 1) : (TRACK_LEN - roll);
       if (!ownAt(who, entryPos)) {
@@ -252,8 +252,8 @@
     } else {
       elRollBtn.disabled = false;
       var msg = mode === 'vs-human'
-        ? playerName(next) + ' — roll the sticks!'
-        : 'Your turn — roll the sticks!';
+        ? playerName(next) + ' - roll the sticks!'
+        : 'Your turn - roll the sticks!';
       setStatus(msg);
       render();
     }
@@ -356,7 +356,7 @@
     for (var s = 0; s < TRACK_LEN; s++) {
       var piecesHtml = '';
 
-      // AI pieces — prisoners first (bottom), then lead piece (top)
+      // AI pieces - prisoners first (bottom), then lead piece (top)
       state.stacks[AI].forEach(function (stack, idx) {
         if (stack.pos !== s) return;
         for (var pr = 0; pr < stack.prisoners; pr++) {
@@ -368,7 +368,7 @@
           '" data-who="1" data-stack-idx="' + idx + '"></div>';
       });
 
-      // Player pieces — prisoners first (bottom), then lead piece (top)
+      // Player pieces - prisoners first (bottom), then lead piece (top)
       state.stacks[PLAYER].forEach(function (stack, idx) {
         if (stack.pos !== s) return;
         for (var pr = 0; pr < stack.prisoners; pr++) {
@@ -447,7 +447,7 @@
     var moves = getValidMoves(curTurn, roll);
     if (moves.length === 0) {
       addLog(playerName(curTurn) + ' has no valid moves.');
-      setStatus(playerName(curTurn) + ' has no valid moves — passing turn.');
+      setStatus(playerName(curTurn) + ' has no valid moves - passing turn.');
       render();
       setTimeout(function () { endTurn(curTurn); }, 800);
       return;
@@ -460,7 +460,7 @@
 
     // Auto-move if only one option
     if (moves.length === 1) {
-      setStatus(playerName(curTurn) + ' rolled ' + roll + ' — moving automatically…');
+      setStatus(playerName(curTurn) + ' rolled ' + roll + ' - moving automatically…');
       setTimeout(function () {
         state._validMoves = null;
         state.phase       = 'moving';
@@ -473,7 +473,7 @@
     var hint = hasEnter
       ? 'Click your entry zone or a highlighted piece.'
       : 'Click a highlighted piece to move.';
-    setStatus(playerName(curTurn) + ' rolled ' + roll + ' — ' + hint);
+    setStatus(playerName(curTurn) + ' rolled ' + roll + ' - ' + hint);
   }
 
   // ── Track click handler ───────────────────────────────────────────────
@@ -612,7 +612,7 @@ if (window.CGTutorial) {
     {
       target:   '#pu-status',
       title:    'Game Status',
-      body:     'Follow the action here — whose turn it is, roll results, captures, and who wins the round are all announced in this bar.',
+      body:     'Follow the action here - whose turn it is, roll results, captures, and who wins the round are all announced in this bar.',
       position: 'bottom',
     },
     {
@@ -649,7 +649,7 @@ function _fsResize() {
   }, 50);
 }
 
-// DOM-based game — re-render to let CSS fill the new available space
+// DOM-based game - re-render to let CSS fill the new available space
 window.GameResize = function (availW, availH) {
   if (typeof render === 'function') render();
 };

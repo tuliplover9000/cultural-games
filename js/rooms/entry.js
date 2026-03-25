@@ -1,5 +1,5 @@
 /**
- * entry.js — Rooms landing page logic.
+ * entry.js - Rooms landing page logic.
  * Handles Create Room / Join Room flows, the guest name modal, and the
  * Public Room Browser (rb- prefix).
  */

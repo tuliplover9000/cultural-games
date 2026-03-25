@@ -1,5 +1,5 @@
 /**
- * profile.js — Profile & Achievements page logic.
+ * profile.js - Profile & Achievements page logic.
  * Reads from Auth, Achievements, and GAMES_DATA.
  */
 (function () {

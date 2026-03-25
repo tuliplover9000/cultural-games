@@ -1,5 +1,5 @@
 /**
- * game-bridge.js — Room System bridge for game iframes (Phase H).
+ * game-bridge.js - Room System bridge for game iframes (Phase H).
  *
  * When a game is loaded inside a room iframe, this script detects the
  * ?roomId= URL param and exposes window.RoomBridge so the game can:
@@ -16,13 +16,13 @@
   var params   = new URLSearchParams(location.search);
   var roomId   = params.get('roomId');
 
-  // Not running inside a Room iframe — leave RoomBridge null.
+  // Not running inside a Room iframe - leave RoomBridge null.
   if (!roomId) {
     window.RoomBridge = null;
     return;
   }
 
-  // Hide site chrome (nav, back link, footer) — only the game should show.
+  // Hide site chrome (nav, back link, footer) - only the game should show.
   document.documentElement.classList.add('room-mode');
 
   var seat       = parseInt(params.get('seat') || '-1', 10);
@@ -55,7 +55,7 @@
       var banner = document.createElement('div');
       banner.id  = 'spectator-banner';
       banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(44,122,122,0.9);color:#fff;text-align:center;padding:6px 12px;font-size:0.82rem;font-weight:600;letter-spacing:0.04em;pointer-events:none;';
-      banner.textContent = '\uD83D\uDC41\uFE0F Spectating — view only';
+      banner.textContent = '\uD83D\uDC41\uFE0F Spectating - view only';
       document.body.appendChild(banner);
     });
   }
@@ -73,7 +73,7 @@
 
     /**
      * Send a full game-state blob to the parent.
-     * No-op for spectators — they only receive state, never send it.
+     * No-op for spectators - they only receive state, never send it.
      */
     sendState: function (blob) {
       if (isSpectatorMode) return;  // spectators cannot modify board state
@@ -84,7 +84,7 @@
 
     /**
      * Report that this game instance has a winner.
-     * Spectators cannot report wins — no-op if in spectator mode.
+     * Spectators cannot report wins - no-op if in spectator mode.
      * @param {number} winnerSeat - 0-based seat index of the winner
      * @param {*}      score      - optional score to display on end screen
      */

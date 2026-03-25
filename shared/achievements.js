@@ -1,5 +1,5 @@
 /**
- * achievements.js — Cultural Games Achievement Engine
+ * achievements.js - Cultural Games Achievement Engine
  *
  * Exposes: window.Achievements
  *
@@ -382,7 +382,7 @@
     var newOnes = queued.filter(function (id) { return !_unlocked[id]; });
     if (!newOnes.length) return;
 
-    // Batch insert — insert each one individually (simple, avoids conflict logic)
+    // Batch insert - insert each one individually (simple, avoids conflict logic)
     for (var i = 0; i < newOnes.length; i++) {
       var id = newOnes[i];
       _unlocked[id] = true;
@@ -428,7 +428,7 @@
     var user = Auth.getUser();
     if (!user) return;
 
-    // We need the raw user id — read from localStorage session
+    // We need the raw user id - read from localStorage session
     try {
       var session = JSON.parse(localStorage.getItem('cg_session'));
       if (session && session.user && session.user.id) {
@@ -453,7 +453,7 @@
   if (window.Auth) {
     Auth.onAuthChange(function () { init(); });
   } else {
-    // Auth not yet loaded — wait for DOMContentLoaded and try again
+    // Auth not yet loaded - wait for DOMContentLoaded and try again
     document.addEventListener('DOMContentLoaded', function () {
       if (window.Auth) Auth.onAuthChange(function () { init(); });
       init();

@@ -1,5 +1,5 @@
 /**
- * auth.js — Cultural Games account system (Phase 2: Supabase Auth + DB)
+ * auth.js - Cultural Games account system (Phase 2: Supabase Auth + DB)
  * Real email/password auth with sessions that persist across devices.
  *
  * Supabase setup (run once in your Supabase SQL Editor):
@@ -58,7 +58,7 @@
     { id: 'cachos',      name: 'Cachos',               iconPath: 'assets/icons/cachos.svg',       href: 'games/cachos.html' },
   ];
 
-  /* ── Session storage key (custom — NOT the Supabase internal key) ── */
+  /* ── Session storage key (custom - NOT the Supabase internal key) ── */
   var SB_SESSION_KEY = 'cg_session';
 
   /* ── In-memory state ── */
@@ -112,7 +112,7 @@
     try {
       var s = JSON.parse(localStorage.getItem(SB_SESSION_KEY));
       if (!s || !s.access_token || !s.user) return null;
-      return s; // return even if expired — _boot() handles refresh
+      return s; // return even if expired - _boot() handles refresh
     } catch (e) { return null; }
   }
 
@@ -155,7 +155,7 @@
     if (token) headers['Authorization'] = 'Bearer ' + token;
     var resp = await _withTimeout(
       fetch(SB_URL + '/auth/v1' + path, { method: 'POST', headers: headers, body: JSON.stringify(body) }),
-      12000, 'Request timed out — check your connection and try again.'
+      12000, 'Request timed out - check your connection and try again.'
     );
     var data = await resp.json();
     return { ok: resp.ok, data: data };
@@ -191,14 +191,14 @@
     return 'profile/';
   }
 
-  /* ── Favorites — direct REST calls (bypasses Supabase JS auth override) ── */
+  /* ── Favorites - direct REST calls (bypasses Supabase JS auth override) ── */
   function _favCacheKey(userId) { return 'cg_favs_' + userId; }
 
   function _saveFavCache(userId) {
     try { localStorage.setItem(_favCacheKey(userId), JSON.stringify(Array.from(_favorites))); } catch (e) {}
   }
 
-  // Raw PostgREST fetch — guarantees our JWT reaches RLS, no Supabase client interference
+  // Raw PostgREST fetch - guarantees our JWT reaches RLS, no Supabase client interference
   function _pgFetch(method, path, body, extra) {
     var headers = {
       'apikey':        SB_KEY,
@@ -212,7 +212,7 @@
     return fetch(SB_URL + '/rest/v1/' + path, opts);
   }
 
-  // RPC call helper — used for SECURITY DEFINER server-side functions.
+  // RPC call helper - used for SECURITY DEFINER server-side functions.
   // Does NOT set Prefer:return=minimal so the response JSON is returned.
   function _rpcFetch(fnName, params) {
     return fetch(SB_URL + '/rest/v1/rpc/' + fnName, {
@@ -235,7 +235,7 @@
       if (Array.isArray(cached)) _favorites = new Set(cached);
     } catch (e) {}
 
-    // Confirm from server via raw fetch — explicit JWT header, no client override
+    // Confirm from server via raw fetch - explicit JWT header, no client override
     try {
       var resp = await _pgFetch('GET', 'favorites?select=game_key&user_id=eq.' + userId);
       if (resp.ok) {
@@ -255,7 +255,7 @@
   function getCoins() { return _coins; }
 
   function addCoins(delta) {
-    // Local-only update — the server balance is the authority, confirmed via
+    // Local-only update - the server balance is the authority, confirmed via
     // the record_game_result RPC. This keeps the UI responsive while the
     // server write is in flight.
     if (typeof delta !== 'number') return;
@@ -401,7 +401,7 @@
     return _stats[gameId] || { wins: 0, losses: 0, played: 0 };
   }
 
-  // Coin reward table — long-form games pay more for both outcomes.
+  // Coin reward table - long-form games pay more for both outcomes.
   // Short-form games: win = 100, loss = 0.
   var COIN_REWARDS = {
     'mahjong':  { win: 500, loss: 150 },
@@ -443,7 +443,7 @@
 
     // ── Server-side authoritative write ───────────────────────────────────
     // Validates the result, upserts stats, resolves any room bet, and updates
-    // profiles.coins — all in one atomic DB function. Coins from the server
+    // profiles.coins - all in one atomic DB function. Coins from the server
     // response overwrite the optimistic local value once confirmed.
     if (!_user || !_accessToken) return;
     var sessionKey = _user.id + '_' + gameId + '_' +
@@ -461,7 +461,7 @@
         _coins = data.new_balance;
         _emit();
       }
-    }).catch(function() { /* non-fatal — optimistic state already shown */ });
+    }).catch(function() { /* non-fatal - optimistic state already shown */ });
   }
 
   function onAuthChange(fn) { _listeners.push(fn); }

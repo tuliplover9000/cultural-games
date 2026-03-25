@@ -1,5 +1,5 @@
 /**
- * mahjong.js — Hong Kong (Cantonese) Mahjong
+ * mahjong.js - Hong Kong (Cantonese) Mahjong
  * 4 players · 136 tiles · 16-tile hands (13 + draw) · fan-based scoring
  *
  * Seat layout from human's perspective (seat 0 = bottom):
@@ -530,7 +530,7 @@
     const rightD = buildCenterDiscards(viewSeat(1));
     const botD   = buildCenterDiscards(viewSeat(0));
 
-    // Wall ring — tiles fill clockwise: top→right→bottom→left
+    // Wall ring - tiles fill clockwise: top→right→bottom→left
     // Show up to 24 tiles; each visible tile = a back-face tile
     const W_H = 8, W_V = 4; // slots across top/bottom and down left/right
     const TOTAL = 2 * W_H + 2 * W_V; // 24
@@ -650,7 +650,7 @@
       return `<div class="mj-wrap">
   <div class="mj-start-area">
     <p style="color:var(--mj-gold-light);text-align:center;margin-bottom:1rem;font-size:1.1rem">
-      Hong Kong Mahjong — 4 Players
+      Hong Kong Mahjong - 4 Players
     </p>
     <div style="text-align:center">
       <button class="mj-btn" id="mj-start-btn">Deal Tiles</button>
@@ -727,7 +727,7 @@
       declareWin(ps, 'self-draw');
     });
 
-    // Player hand — tile selection & drag-to-reorder
+    // Player hand - tile selection & drag-to-reorder
     const handEl = el.querySelector('#mj-player-hand');
     if (handEl) {
       // Click to select tile for discard
@@ -740,7 +740,7 @@
         render();
       });
 
-      // HTML5 drag to reorder — bind dragstart/dragend directly on each tile
+      // HTML5 drag to reorder - bind dragstart/dragend directly on each tile
       // (dragstart delegation via container is unreliable in all browsers)
       handEl.querySelectorAll('.mj-tile[data-uid]').forEach(tileEl => {
         tileEl.addEventListener('dragstart', e => {
@@ -753,7 +753,7 @@
           tileEl.classList.remove('mj-tile--dragging');
           handEl.querySelectorAll('.mj-tile--drag-over')
                 .forEach(t => t.classList.remove('mj-tile--drag-over'));
-          // If drop didn't fire (drag cancelled), dragSrcUid is still set — clean up
+          // If drop didn't fire (drag cancelled), dragSrcUid is still set - clean up
           if (dragSrcUid !== null) {
             dragSrcUid = null; dragOverUid = null;
           }
@@ -877,7 +877,7 @@
       if (srcUid === null) return;
 
       if (!hasMoved) {
-        // Tap — treat as tile selection click
+        // Tap - treat as tile selection click
         clearDragVisuals();
         if (state.phase === 'player-discard' && state.turnIdx === myPS()) {
           state.selectedTileUid = (state.selectedTileUid === srcUid) ? null : srcUid;
@@ -943,14 +943,14 @@
       startPlayerDiscard();
       if (vsOnline) syncOnlineState(); // share full deal (hands + wall) with others
     } else if (vsOnline && !isAISeat(state.dealer)) {
-      // Remote human dealer — host deals, signals them to discard
+      // Remote human dealer - host deals, signals them to discard
       state.turnIdx = state.dealer;
       state.phase   = 'player-discard';
       render();
       syncOnlineState();
     } else {
       state.turnIdx = state.dealer;
-      startAiTurn(state.dealer, true); // skip draw — dealer already has 14
+      startAiTurn(state.dealer, true); // skip draw - dealer already has 14
       if (vsOnline) syncOnlineState();
     }
   }
@@ -975,8 +975,8 @@
   function exhaustedDraw() {
     state.phase          = 'round-over';
     state.isDraw         = true;
-    state.overlayContent = '<h2>Draw Round</h2><p>The wall is exhausted — no winner. Dealer redeals.</p>';
-    addLog('Wall exhausted — draw round.');
+    state.overlayContent = '<h2>Draw Round</h2><p>The wall is exhausted - no winner. Dealer redeals.</p>';
+    addLog('Wall exhausted - draw round.');
     render();
   }
 
@@ -1031,7 +1031,7 @@
       recordClaimDecision(ps, 'pass');
     }
 
-    // Decisions for all other seats — slight stagger so they don't all fire simultaneously
+    // Decisions for all other seats - slight stagger so they don't all fire simultaneously
     [1, 2, 3].forEach(s => {
       const absSeat = s;
       if (absSeat !== discardingSeat) {
@@ -1082,15 +1082,15 @@
     );
     if (chower)  { executeClaim(chower.seat, chower.action, tile, discardingSeat); return; }
 
-    // No claims — advance turn to the next player
+    // No claims - advance turn to the next player
     const nextSeat = (discardingSeat + 1) % 4;
     state.turnIdx  = nextSeat;
     if (nextSeat === myPS()) {
       state.phase = 'player-draw';
-      setStatus('Your turn — draw a tile.');
+      setStatus('Your turn - draw a tile.');
       render();
     } else if (vsOnline && !isAISeat(nextSeat)) {
-      // Remote human's turn — let them draw themselves from their synced wall
+      // Remote human's turn - let them draw themselves from their synced wall
       state.phase = 'player-draw';
       render();
       syncOnlineState(); // guest receives player-draw phase and draws their own tile
@@ -1108,7 +1108,7 @@
     if (di !== -1) dp.splice(di, 1);
 
     state.turnIdx = claimingSeat;
-    addLog(`${seatName(claimingSeat)} claims — ${actionType}.`);
+    addLog(`${seatName(claimingSeat)} claims - ${actionType}.`);
 
     if (actionType === 'win') {
       state.hands[claimingSeat].push(tile);
@@ -1155,7 +1155,7 @@
     if (claimingSeat === myPS()) {
       startPlayerDiscard();
     } else if (vsOnline && !isAISeat(claimingSeat)) {
-      // Remote human claimed — signal them to discard
+      // Remote human claimed - signal them to discard
       state.phase = 'player-discard';
       render();
       syncOnlineState();
@@ -1189,7 +1189,7 @@
     const winHand  = state.hands[winningSeat].map(t => tileHTML(t, {})).join('');
     const winMelds = state.melds[winningSeat].map(meldHTML).join('');
     const payDesc  = winType === 'self-draw'
-      ? 'Self-draw (自摸) — all pay'
+      ? 'Self-draw (自摸) - all pay'
       : `Won on ${seatName(fromSeat)}'s discard`;
 
     state.overlayContent = `
@@ -1271,7 +1271,7 @@
   }
 
   function aiShouldChow(seatIdx) {
-    // Chow if we have fewer than 2 open melds — still building the hand
+    // Chow if we have fewer than 2 open melds - still building the hand
     return state.melds[seatIdx].length < 2;
   }
 
@@ -1317,7 +1317,7 @@
 
       if (!skipDraw) {
         const tile = drawTile(seatIdx);
-        if (!tile) return; // wall exhausted — exhaustedDraw already called
+        if (!tile) return; // wall exhausted - exhaustedDraw already called
       }
 
       // Check self-draw win
@@ -1388,7 +1388,7 @@
 
   function receiveOnlineState(data) {
     if (!data || !vsOnline) return;
-    // Echo suppression — works for both Multiplayer and RoomBridge paths
+    // Echo suppression - works for both Multiplayer and RoomBridge paths
     if (window.RoomBridge && RoomBridge.isActive()) {
       if (data.last_actor === 'room:' + RoomBridge.getSeat()) return;
     } else if (window.Multiplayer) {
@@ -1444,7 +1444,7 @@
     // If it's my turn after opponent's move
     if (state.turnIdx === mySeat) {
       if (state.phase === 'player-draw') {
-        setStatus('Your turn — draw a tile.');
+        setStatus('Your turn - draw a tile.');
         render();
       } else if (state.phase === 'player-discard') {
         startPlayerDiscard();
@@ -1609,7 +1609,7 @@ if (window.CGTutorial) {
     {
       target:   '#game-container',
       title:    'Drawing & Discarding',
-      body:     'On your turn a tile is drawn automatically. Select a tile in your hand to discard — you must always keep exactly 13 tiles (14 when it\'s your turn to discard).',
+      body:     'On your turn a tile is drawn automatically. Select a tile in your hand to discard - you must always keep exactly 13 tiles (14 when it\'s your turn to discard).',
       position: 'top',
     },
     {
@@ -1646,7 +1646,7 @@ function _fsResize() {
   }, 50);
 }
 
-// DOM-based game — re-render to let CSS fill the new available space
+// DOM-based game - re-render to let CSS fill the new available space
 window.GameResize = function (availW, availH) {
   if (typeof render === 'function') render();
 };

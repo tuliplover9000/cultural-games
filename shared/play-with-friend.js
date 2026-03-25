@@ -1,5 +1,5 @@
 /**
- * play-with-friend.js — "Play with a Friend" CTA banner (Phase C).
+ * play-with-friend.js - "Play with a Friend" CTA banner (Phase C).
  * Injects a banner below the game canvas on every game page.
  * Suppressed when running inside a room iframe.
  *
@@ -15,7 +15,7 @@
     var mount = document.getElementById('pwf-mount');
     if (!mount || !gameKey) return;
 
-    // Rooms page URL — works from pages/games/ depth (../../pages/rooms.html)
+    // Rooms page URL - works from pages/games/ depth (../../pages/rooms.html)
     var roomsUrl = '../../pages/rooms.html?create=' + encodeURIComponent(gameKey);
 
     mount.innerHTML =
@@ -30,7 +30,7 @@
         '</div>' +
         '<div class="pwf-banner__content">' +
           '<p class="pwf-banner__title">Play with a friend</p>' +
-          '<p class="pwf-banner__sub">Create a room and share the link — they can join in seconds.</p>' +
+          '<p class="pwf-banner__sub">Create a room and share the link - they can join in seconds.</p>' +
         '</div>' +
         '<a href="' + roomsUrl + '" class="pwf-banner__btn" id="pwf-create-btn">' +
           'Create Room \u2192' +

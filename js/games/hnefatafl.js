@@ -1,5 +1,5 @@
 /**
- * hnefatafl.js — Hnefatafl (Copenhagen rules, 11×11)
+ * hnefatafl.js - Hnefatafl (Copenhagen rules, 11×11)
  * Asymmetric Viking board game.
  * Defenders escort the King to a corner; attackers try to capture him.
  */
@@ -51,7 +51,7 @@
 
   // ── Canvas / sizing ───────────────────────────────────────────────────────
   var canvas, ctx;
-  var CELL = 50;   // px per cell — recalculated on resize
+  var CELL = 50;   // px per cell - recalculated on resize
   var PAD  = 28;   // canvas padding around board
 
   function csz() { return PAD * 2 + SIZE * CELL; }
@@ -330,10 +330,10 @@
 
     if (state.selected) {
       var sr = state.selected[0], sc = state.selected[1];
-      // Valid destination — execute
+      // Valid destination - execute
       var isValid = state.validMoves.some(function(m){ return m[0]===r && m[1]===c; });
       if (isValid) { executeMove(sr, sc, r, c); return; }
-      // Another own piece — switch selection
+      // Another own piece - switch selection
       if (isOwnPiece(piece, state.turn)) { selectPiece(r, c); return; }
       // Deselect
       state.selected   = null;
@@ -716,14 +716,14 @@
     } else if (role === 'spectator') {
       humanSide = -1; // spectators control neither side
     } else {
-      humanSide = ATTACKER; // 'attacker' or unset — default
+      humanSide = ATTACKER; // 'attacker' or unset - default
     }
 
     var modeRow = document.querySelector('.ht-mode-row');
     if (modeRow) modeRow.style.display = 'none';
     RoomBridge.onState(receiveRoomState);
 
-    // Attacker (seat 0) moves first — send initial state; defender waits
+    // Attacker (seat 0) moves first - send initial state; defender waits
     if (humanSide === ATTACKER) {
       syncRoomState();
     } else {
@@ -794,7 +794,7 @@
       {
         target: '#ht-canvas',
         title: 'The Board',
-        body: 'This is the 11×11 Hnefatafl board. Corner squares are the Attackers\' goal — the King must reach one to escape.',
+        body: 'This is the 11×11 Hnefatafl board. Corner squares are the Attackers\' goal - the King must reach one to escape.',
         position: 'bottom',
         highlight: true,
         beforeStep: null, afterStep: null,
@@ -810,7 +810,7 @@
       {
         target: '#ht-canvas',
         title: 'Movement',
-        body: 'All pieces move like rooks in chess — any number of squares in a straight line. No jumping over others.',
+        body: 'All pieces move like rooks in chess - any number of squares in a straight line. No jumping over others.',
         position: 'top',
         highlight: true,
         beforeStep: null, afterStep: null,

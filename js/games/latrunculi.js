@@ -1,5 +1,5 @@
 /**
- * latrunculi.js — Ludus Latrunculorum (Roman Empire strategy game)
+ * latrunculi.js - Ludus Latrunculorum (Roman Empire strategy game)
  * Custodian capture on a rectangular board with rook-sliding pieces and a Dux commander.
  */
 (function () {
@@ -97,13 +97,13 @@
 
     var duxCol = mode === '8x8' ? 3 : 5;
 
-    // White — rows 0 and 1
+    // White - rows 0 and 1
     for (c = 0; c < cfg.cols; c++) {
       board[0][c] = (c === duxCol) ? PIECE.WHITE_DUX : PIECE.WHITE;
       board[1][c] = PIECE.WHITE;
     }
 
-    // Black — rows rows-1 and rows-2
+    // Black - rows rows-1 and rows-2
     var lastRow = cfg.rows - 1;
     var secLast = cfg.rows - 2;
     for (c = 0; c < cfg.cols; c++) {
@@ -243,7 +243,7 @@
 
     // 50-move draw rule
     if (state.noCaptureMoves >= 50) {
-      endGame(null, '50 moves without capture — Draw');
+      endGame(null, '50 moves without capture - Draw');
       return;
     }
 
@@ -254,7 +254,7 @@
       if (state.positionHistory[i] === key) count++;
     }
     if (count >= 3) {
-      endGame(null, 'Threefold repetition — Draw');
+      endGame(null, 'Threefold repetition - Draw');
     }
   }
 
@@ -551,7 +551,7 @@
     ctx.fillStyle = BORDER_BG;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Gold meander lines — simplified repeating L-shapes
+    // Gold meander lines - simplified repeating L-shapes
     ctx.strokeStyle = GOLD;
     ctx.lineWidth = 1.5;
 
@@ -644,7 +644,7 @@
   function renderHighlights(cs) {
     var i, vm, x, y;
 
-    // Selected cell — gold ring
+    // Selected cell - gold ring
     if (state.selectedCell) {
       var sc = state.selectedCell;
       x = BORDER_W + sc.col * cs;
@@ -654,7 +654,7 @@
       ctx.strokeRect(x + 2, y + 2, cs - 4, cs - 4);
     }
 
-    // Valid moves — semi-transparent overlay
+    // Valid moves - semi-transparent overlay
     for (i = 0; i < state.validMoves.length; i++) {
       vm = state.validMoves[i];
       x = BORDER_W + vm.col * cs;
@@ -747,7 +747,7 @@
       ctx.restore();
     }
 
-    // Dux marker — gold inner circle
+    // Dux marker - gold inner circle
     if (dux) {
       ctx.strokeStyle = GOLD;
       ctx.lineWidth = 2;
@@ -872,7 +872,7 @@
       {
         target: '#ll-board',
         title: 'Moving Pieces',
-        body: 'Regular soldiers (latrones) slide any number of squares orthogonally — like a chess rook. They are blocked by any piece in their path.',
+        body: 'Regular soldiers (latrones) slide any number of squares orthogonally - like a chess rook. They are blocked by any piece in their path.',
         position: 'bottom',
         highlight: true
       },

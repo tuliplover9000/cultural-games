@@ -1,6 +1,6 @@
 /**
- * bau-cua.js — Bầu Cua Tôm Cá
- * Full game implementation — Phase 2.
+ * bau-cua.js - Bầu Cua Tôm Cá
+ * Full game implementation - Phase 2.
  *
  * Requires helpers.js (Helpers.randInt) to be loaded first.
  *
@@ -155,9 +155,9 @@
       '  <div class="bc-dice-area">',
       '    <div class="bc-dice-label">Dice</div>',
       '    <div class="bc-dice-row" aria-label="Dice" aria-live="polite">',
-      '      <div class="bc-die" id="bc-die-0" aria-label="Die 1">—</div>',
-      '      <div class="bc-die" id="bc-die-1" aria-label="Die 2">—</div>',
-      '      <div class="bc-die" id="bc-die-2" aria-label="Die 3">—</div>',
+      '      <div class="bc-die" id="bc-die-0" aria-label="Die 1">-</div>',
+      '      <div class="bc-die" id="bc-die-1" aria-label="Die 2">-</div>',
+      '      <div class="bc-die" id="bc-die-2" aria-label="Die 3">-</div>',
       '    </div>',
       '  </div>',
 
@@ -308,7 +308,7 @@
     if (!useRealCoins) {
       var balance = window.Auth && Auth.getCoins ? Auth.getCoins() : 0;
       if (balance <= 0) {
-        setStatus('No coins available — earn some by playing games in rooms!');
+        setStatus('No coins available - earn some by playing games in rooms!');
         return;
       }
       useRealCoins    = true;
@@ -518,7 +518,7 @@
     // Reset dice
     els.dice.forEach(function (die) {
       die.classList.remove('rolling', 'settled');
-      die.textContent = '—';
+      die.textContent = '-';
     });
 
     // Reset zones
@@ -561,7 +561,7 @@
     if (useRealCoins) {
       var balance = window.Auth && Auth.getCoins ? Auth.getCoins() : 0;
       if (balance <= 0) {
-        // No real coins left — silently fall back to practice
+        // No real coins left - silently fall back to practice
         useRealCoins = false;
         state.wallet = 100;
       } else {
@@ -580,7 +580,7 @@
 
     els.dice.forEach(function (die) {
       die.classList.remove('rolling', 'settled');
-      die.textContent = '—';
+      die.textContent = '-';
     });
 
     els.zones.forEach(function (zone) {
@@ -812,7 +812,7 @@ if (window.CGTutorial) {
     {
       target:   '#bc-wallet',
       title:    'Your Wallet',
-      body:     'This is your coin balance. Place bets wisely — if your wallet hits zero the game is over!',
+      body:     'This is your coin balance. Place bets wisely - if your wallet hits zero the game is over!',
       position: 'bottom',
     },
     {
@@ -824,13 +824,13 @@ if (window.CGTutorial) {
     {
       target:   '#bc-roll-btn',
       title:    'Roll the Dice',
-      body:     'Once bets are placed, click Roll. Three dice are shaken — each one that matches your bet pays 1:1. Hit all three of a symbol and win triple!',
+      body:     'Once bets are placed, click Roll. Three dice are shaken - each one that matches your bet pays 1:1. Hit all three of a symbol and win triple!',
       position: 'top',
     },
     {
       target:   '#bc-status',
       title:    'Round Status',
-      body:     'Follow the game flow here — betting phase, roll results, and winnings are all announced in this bar.',
+      body:     'Follow the game flow here - betting phase, roll results, and winnings are all announced in this bar.',
       position: 'bottom',
     },
     {
@@ -856,7 +856,7 @@ function _fsResize() {
   }, 50);
 }
 
-// DOM-based game — re-render to let CSS fill the new available space
+// DOM-based game - re-render to let CSS fill the new available space
 window.GameResize = function (availW, availH) {
   if (typeof refresh === 'function') refresh();
 };

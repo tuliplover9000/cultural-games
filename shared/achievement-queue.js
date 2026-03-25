@@ -1,5 +1,5 @@
 /**
- * achievement-queue.js — Offline queue for achievements.
+ * achievement-queue.js - Offline queue for achievements.
  * When not logged in, queues achievement IDs in localStorage.
  * On sign-in, the queue is flushed by achievements.js.
  *

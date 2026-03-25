@@ -1,12 +1,12 @@
 /**
- * o-an-quan.js — Ô Ăn Quan (Mandarin's Squares)
+ * o-an-quan.js - Ô Ăn Quan (Mandarin's Squares)
  * Phase 3: Vietnamese mancala-style board game.
  *
  * Board index layout (counterclockwise circuit):
  *   0–4  : Player 1 pits (bottom row, left → right)
- *   5    : Q1 — Player 1's quan (right side)
+ *   5    : Q1 - Player 1's quan (right side)
  *   6–10 : Player 2 pits (top row, right → left in CCW order)
- *   11   : Q2 — Player 2's quan (left side)
+ *   11   : Q2 - Player 2's quan (left side)
  *
  * Visual grid:
  *   [Q2=11] [pit10] [pit9] [pit8] [pit7] [pit6] [Q1=5]
@@ -319,7 +319,7 @@
         return;
       }
       // Skip this player (they forfeit their turn)
-      addLog(state.currentPlayer, `P${state.currentPlayer} has no moves — skipping.`);
+      addLog(state.currentPlayer, `P${state.currentPlayer} has no moves - skipping.`);
       state.currentPlayer = other;
     }
 
@@ -451,7 +451,7 @@
     return (h / 100 - 0.5) * 6; // ±3 px offset
   }
 
-  // Golden angle in radians — drives sunflower spiral (no obvious rings)
+  // Golden angle in radians - drives sunflower spiral (no obvious rings)
   const GOLDEN_ANGLE = 2.399963;
 
   // ── Sunflower spiral: seeds spread from centre outward, fills the whole pit
@@ -461,7 +461,7 @@
     const show = Math.min(count, maxShown);
     let html = `<div class="${cls}">`;
     for (let i = 0; i < show; i++) {
-      // sqrt gives even area coverage — centre seeds are densely placed
+      // sqrt gives even area coverage - centre seeds are densely placed
       const r   = show === 1 ? 0 : Math.sqrt((i + 0.5) / show) * maxR;
       const ang = i * GOLDEN_ANGLE;
       const jx  = show > 1 ? seedJitter(pitIdx, i, 0) * 0.5 : 0;
@@ -475,13 +475,13 @@
     return html;
   }
 
-  // Small pits — max 12 shown, radius ~20px
+  // Small pits - max 12 shown, radius ~20px
   function circleSeeds(count, pitIdx) {
     if (count === 0) return '<span class="oaq-seed-none"></span>';
     return spiralSeeds(count, pitIdx, 12, 20, '');
   }
 
-  // Quan stores — max 18 shown, larger radius to fill the taller store
+  // Quan stores - max 18 shown, larger radius to fill the taller store
   function quanSeeds(count, pitIdx) {
     return spiralSeeds(count, pitIdx, 18, 28, 'oaq-quan-seeds');
   }
@@ -633,7 +633,7 @@
   function receiveRoomState(data) {
     if (!data || data.last_actor === 'room:' + myRoomSeat) return;
 
-    // Opponent started sowing — replay their animation locally in parallel.
+    // Opponent started sowing - replay their animation locally in parallel.
     if (data.sowFrom !== undefined && data.phase === 'sowing') {
       if (_isSowingAsReplay) return; // already animating
       state.board = Array.isArray(data.board) ? data.board.slice() : state.board;
@@ -654,7 +654,7 @@
       return;
     }
 
-    // Final state arrived while replaying — buffer it; apply after animation.
+    // Final state arrived while replaying - buffer it; apply after animation.
     if (_isSowingAsReplay) {
       _pendingFinalState = data;
       return;
@@ -718,7 +718,7 @@ if (window.CGTutorial) {
     {
       target:   '#game-container',
       title:    'Mandarin Squares',
-      body:     'The large squares at each end hold many seeds. Capturing a Mandarin square is a huge gain — but landing there ends your turn with no capture.',
+      body:     'The large squares at each end hold many seeds. Capturing a Mandarin square is a huge gain - but landing there ends your turn with no capture.',
       position: 'top',
     },
     {
@@ -743,7 +743,7 @@ function _fsResize() {
   }, 50);
 }
 
-// DOM-based game — re-render to let CSS fill the new available space
+// DOM-based game - re-render to let CSS fill the new available space
 window.GameResize = function (availW, availH) {
   var container = document.getElementById('game-container');
   if (container && typeof renderBoard === 'function') renderBoard();

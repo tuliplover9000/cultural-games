@@ -1,5 +1,5 @@
 /**
- * email-capture.js — Footer email signup + exit-intent modal (Phase F).
+ * email-capture.js - Footer email signup + exit-intent modal (Phase F).
  *
  * SETUP REQUIRED IN SUPABASE (run once):
  *   CREATE TABLE email_signups (
@@ -40,7 +40,7 @@
         email: email.toLowerCase().trim(),
         source: source,
       });
-      // Duplicate email — treat as success (don't reveal)
+      // Duplicate email - treat as success (don't reveal)
       if (result.error && result.error.code === '23505') { if (onSuccess) onSuccess(); return; }
       if (result.error) throw result.error;
       if (onSuccess) onSuccess();

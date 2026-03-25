@@ -1,5 +1,5 @@
 /**
- * bracket.js — Tournament bracket renderer.
+ * bracket.js - Tournament bracket renderer.
  * Exposes window.Bracket for tournament.js to call.
  *
  * Handles: bracket DOM building, match status updates, Realtime subscription.

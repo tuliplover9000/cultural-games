@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────────────────────
-   Pallanguzhi — South Indian Mancala
+   Pallanguzhi - South Indian Mancala
    js/games/pallanguzhi.js  |  CSS prefix: pg-
 
    Board layout (player's perspective, CCW sowing):
@@ -204,7 +204,7 @@
         : 'Your turn \u2014 click a highlighted cup to sow';
     }
 
-    // Board rows — flip for seat 1 so each player sees their cups at the bottom
+    // Board rows - flip for seat 1 so each player sees their cups at the bottom
     var flip = vsRoom && myRoomSeat === 1;
     var aiRow = '';
     var aiOrder = flip ? [6,5,4,3,2,1,0] : [0,1,2,3,4,5,6];
@@ -517,7 +517,7 @@
     state.aiSelectingCup = -1;
     addLog('AI picks cup ' + (cup + 1) + ' (' + state.cups[cup] + ' shells)');
     state.phase = 'sowing';
-    // Don't reset skipSowing here — let it cascade so one skip gets player to their turn
+    // Don't reset skipSowing here - let it cascade so one skip gets player to their turn
     render();
 
     await sow(cup);
@@ -594,7 +594,7 @@
       {
         target: '#game-container',
         title: 'Capturing',
-        body: 'When your last shell lands in a cup, skip over the next cup. If the cup after that has shells, capture them — then keep going.',
+        body: 'When your last shell lands in a cup, skip over the next cup. If the cup after that has shells, capture them - then keep going.',
         position: 'top', highlight: true, beforeStep: null, afterStep: null,
       },
       {
@@ -631,7 +631,7 @@
     }, 50);
   }
 
-  // DOM-based game — re-render to let CSS fill the new available space
+  // DOM-based game - re-render to let CSS fill the new available space
   window.GameResize = function (availW, availH) {
     if (typeof render === 'function') render();
   };

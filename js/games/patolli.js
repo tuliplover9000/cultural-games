@@ -1,5 +1,5 @@
 /**
- * patolli.js — Patolli (Phase 6)
+ * patolli.js - Patolli (Phase 6)
  * Ancient Aztec cross-shaped race game with bean dice.
  * Board: 44-cell perimeter path on a 13×13 cross grid.
  * (Historical boards have 52 spaces; this playable version uses 44.)
@@ -10,7 +10,7 @@
   var PLAYER = 0, AI = 1;
   var TOTAL_PIECES = 6;
   var MOVE_MS = 130;
-  var mode = 'vs-ai'; // 'vs-ai' | 'vs-human' — persists across games
+  var mode = 'vs-ai'; // 'vs-ai' | 'vs-human' - persists across games
   var vsRoom     = false;
   var myRoomSeat = 0;
 
@@ -177,9 +177,9 @@
     var pDone = state.pieces[PLAYER].filter(function (p) { return p === TRACK_LENGTH; }).length;
     var aDone = state.pieces[AI].filter(function (p) { return p === TRACK_LENGTH; }).length;
     elScore.innerHTML =
-      '<span><span class="pt-score__label" style="color:#3a9abf">' + p1Name() + '</span> — ' +
+      '<span><span class="pt-score__label" style="color:#3a9abf">' + p1Name() + '</span> - ' +
         pDone + '/6 done &middot; ' + state.coins[PLAYER] + ' coins</span>' +
-      '<span><span class="pt-score__label" style="color:#d45a20">' + p2Name() + '</span> — ' +
+      '<span><span class="pt-score__label" style="color:#d45a20">' + p2Name() + '</span> - ' +
         aDone + '/6 done &middot; ' + state.coins[AI] + ' coins</span>';
   }
 
@@ -221,7 +221,7 @@
       if (pos === TRACK_LENGTH) continue;
       var tgt = targetPos(pos, roll);
       if (tgt < 0) continue;
-      // Finishing is always valid — multiple pieces can exit
+      // Finishing is always valid - multiple pieces can exit
       if (tgt === TRACK_LENGTH) { valid.push(pi); continue; }
       // Not blocked by own on-board piece
       var blocked = state.pieces[player].some(function (p, pj) {
@@ -357,11 +357,11 @@
 
     var valid = getValidMoves(curTurn, result.value);
     state.validPieces = valid;
-    addLog(playerName(curTurn) + ' rolled ' + result.value + (result.again ? ' — roll again!' : ''));
+    addLog(playerName(curTurn) + ' rolled ' + result.value + (result.again ? ' - roll again!' : ''));
 
     if (valid.length === 0) {
       setStatus('No valid moves. Turn passes.');
-      addLog('No valid moves — turn passes.');
+      addLog('No valid moves - turn passes.');
       state.phase = 'idle';
       render();
       setTimeout(function () { endTurn(curTurn); }, 900);
@@ -467,11 +467,11 @@
       state.roll   = result.value;
       state.rollDetail = result.detail;
       renderDice();
-      addLog('AI rolled ' + result.value + (result.again ? ' — rolls again!' : ''));
+      addLog('AI rolled ' + result.value + (result.again ? ' - rolls again!' : ''));
 
       var choice = aiChooseMove(result.value);
       if (choice === null) {
-        addLog('AI has no valid moves — turn passes.');
+        addLog('AI has no valid moves - turn passes.');
         setTimeout(function () { endTurn(AI); }, 600);
         return;
       }
@@ -501,7 +501,7 @@
     render();
     if (vsRoom) {
       syncRoomState();
-      // Disable own button and show waiting status — receiveRoomState re-enables when it's our turn
+      // Disable own button and show waiting status - receiveRoomState re-enables when it's our turn
       elRollBtn.disabled = true;
       setStatus('Waiting for ' + playerName(next) + ' to roll the beans…');
     } else if (next === AI && mode === 'vs-ai') {
@@ -510,8 +510,8 @@
     } else {
       elRollBtn.disabled = false;
       var turnMsg = mode === 'vs-human'
-        ? playerName(next) + ' — roll the beans!'
-        : 'Your turn — roll the beans!';
+        ? playerName(next) + ' - roll the beans!'
+        : 'Your turn - roll the beans!';
       setStatus(turnMsg);
     }
   }
@@ -531,7 +531,7 @@
       setStatus('<div class="pt-gameover"><div class="pt-gameover__title">' + wName + ' Wins</div>' +
         '<div class="pt-gameover__sub">' + wName + ' completed first · ' + lName + '\'s coins: ' + p1coins + '</div></div>');
     }
-    addLog('Game over — ' + wName + ' wins! ' +
+    addLog('Game over - ' + wName + ' wins! ' +
            p1Name() + ': ' + p1coins + ' coins · ' + p2Name() + ': ' + p2coins + ' coins');
     renderScore();
     if (vsRoom) syncRoomState();
@@ -544,7 +544,7 @@
     elDiceRow.innerHTML = '';
     elScore.innerHTML = '';
     var startMsg = mode === 'vs-human'
-      ? 'Player 1 — roll the beans!'
+      ? 'Player 1 - roll the beans!'
       : 'Roll the beans to begin!';
     setStatus(startMsg);
     render();
@@ -589,7 +589,7 @@
     var myTurn = state.turn === myRoomSeat && state.phase === 'idle';
     elRollBtn.disabled = !myTurn;
     if (myTurn) {
-      setStatus(playerName(myRoomSeat) + ' — roll the beans!');
+      setStatus(playerName(myRoomSeat) + ' - roll the beans!');
     } else {
       setStatus('Waiting for ' + playerName(state.turn) + ' to roll the beans…');
     }
@@ -604,7 +604,7 @@
     if (myRoomSeat === 0) {
       syncRoomState();
     } else {
-      // newGame() enabled the roll button for everyone — fix it for non-P1 seats.
+      // newGame() enabled the roll button for everyone - fix it for non-P1 seats.
       elRollBtn.disabled = true;
       setStatus('Waiting for Player 1 to roll the beans…');
     }
@@ -667,7 +667,7 @@ if (window.CGTutorial) {
     {
       target:   '#pt-board',
       title:    'The Patolli Board',
-      body:     'This X-shaped cross track is the Patolli board. Your pieces travel around its path — the goal is to move all your pieces off the board before your opponent.',
+      body:     'This X-shaped cross track is the Patolli board. Your pieces travel around its path - the goal is to move all your pieces off the board before your opponent.',
       position: 'bottom',
     },
     {
@@ -685,7 +685,7 @@ if (window.CGTutorial) {
     {
       target:   '#pt-score',
       title:    'Score Tracker',
-      body:     'Scores accumulate each round. Patolli was historically a wagering game — track who holds the lead here.',
+      body:     'Scores accumulate each round. Patolli was historically a wagering game - track who holds the lead here.',
       position: 'bottom',
     },
     {
@@ -716,7 +716,7 @@ function _fsResize() {
   }, 50);
 }
 
-// DOM-based game — re-render to let CSS fill the new available space
+// DOM-based game - re-render to let CSS fill the new available space
 window.GameResize = function (availW, availH) {
   if (typeof render === 'function') render();
 };

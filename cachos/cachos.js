@@ -253,7 +253,7 @@
   function renderDiceForPlayer(player) {
     var wrap = document.getElementById('ca-dice-' + player.id);
     if (!wrap) return;
-    // Remove only die elements — preserve the cup-cover overlay
+    // Remove only die elements - preserve the cup-cover overlay
     wrap.querySelectorAll('.ca-die-wrap').forEach(function (el) { el.remove(); });
     player.dice.forEach(function (val) {
       wrap.appendChild(createDieEl(val));
@@ -525,7 +525,7 @@
       setControlsEnabled(true);
     } else if (player.isRemote) {
       setControlsEnabled(false);
-      // Wait — their iframe will broadcast next state
+      // Wait - their iframe will broadcast next state
     } else {
       setControlsEnabled(false);
       aiTimeout = setTimeout(function () { aiTakeTurn(player); }, 800 + Math.random() * 700);
@@ -604,7 +604,7 @@
 
     if (state.gameOver) { showGameOver(); return; }
 
-    // Remote player challenged — run reveal animation locally
+    // Remote player challenged - run reveal animation locally
     if (data.phase === 'reveal' && prevPhase === 'bidding') {
       state.animating = true;
       setControlsEnabled(false);
@@ -620,7 +620,7 @@
       return;
     }
 
-    // New round started — transition with animation
+    // New round started - transition with animation
     if (data.round !== prevRound) {
       clearTimeout(aiTimeout);
       state.players.forEach(function (p) { if (!p.isEliminated) lowerCup(p.id); });
@@ -798,7 +798,7 @@
       window.parent.postMessage({ type: 'game-win', instance: _roomInstance, gen: _roomGen, winnerSeat: state.winner, score: null }, '*');
       return true;
     }
-    // Solo only — room games are recorded by the endscreen to avoid double-counting
+    // Solo only - room games are recorded by the endscreen to avoid double-counting
     if (window.Auth && Auth.recordResult) {
       Auth.recordResult('cachos', isHumanWin ? 'win' : 'loss', null);
     }

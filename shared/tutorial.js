@@ -2,7 +2,7 @@
   'use strict';
 
   /**
-   * Tutorial Tooltip Engine — Cultural Games
+   * Tutorial Tooltip Engine - Cultural Games
    *
    * Step schema:
    * {
@@ -104,7 +104,7 @@
     // Show backdrop
     _el.backdrop.hidden = false;
 
-    // Keyboard handler — attached only while active
+    // Keyboard handler - attached only while active
     _state.keyHandler = function (e) {
       if (e.key === 'Escape')                              { skipTutorial(); return; }
       if (e.key === 'ArrowRight' || e.key === 'Enter')     { _onNext();      return; }
@@ -357,7 +357,7 @@
     _el.tooltip.className = 'tt-tooltip tt-tooltip--' + chosen;
     if (_state.isActive) _el.tooltip.classList.add('tt-tooltip--visible');
 
-    // Arrow offset — point at target center
+    // Arrow offset - point at target center
     var cx = r.left + r.width  / 2;
     var cy = r.top  + r.height / 2;
     if (chosen === 'top' || chosen === 'bottom') {

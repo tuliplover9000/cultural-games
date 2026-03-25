@@ -1,5 +1,5 @@
 /**
- * ingame.js — In-game wrapper controller (Phase G).
+ * ingame.js - In-game wrapper controller (Phase G).
  * Handles: iframe embedding, player strip, chat sidebar toggle,
  * postMessage bridge, spectator mode, dual-instance layout.
  *
@@ -21,7 +21,7 @@
   var elCenterTitle   = document.getElementById('center-panel-title');
   var elCenterPanel   = document.querySelector('.room-panel--games');
 
-  // Rules panel paths — same convention as GAME_PATHS in buildSrc
+  // Rules panel paths - same convention as GAME_PATHS in buildSrc
   var RULES_PAGE_PATHS = {
     'cachos': '../cachos/index.html',
   };
@@ -153,7 +153,7 @@
   window.addEventListener('message', function(e) {
     if (!e.data) return;
 
-    // Game iframe reports a move — forward to the other iframe and persist
+    // Game iframe reports a move - forward to the other iframe and persist
     if (e.data.type === 'game-sync') {
       if (String(e.data.gen) !== String(_launchGen)) return;
       var instanceId = e.data.instance || '0';
@@ -180,7 +180,7 @@
       }
     }
 
-    // Game iframe is ready — push latest board_state so reconnecting players sync up
+    // Game iframe is ready - push latest board_state so reconnecting players sync up
     if (e.data.type === 'game-ready') {
       if (String(e.data.gen) !== String(_launchGen)) return;
       var readyInst = e.data.instance || '0';
@@ -227,7 +227,7 @@
     Room.endGameWithWin(instanceId, winnerPid);
   }
 
-  // ── Launch — shows game inline in the lobby center panel ──────────────────
+  // ── Launch - shows game inline in the lobby center panel ──────────────────
   function launch(room) {
     if (!elBoards) return;
 
@@ -251,7 +251,7 @@
       }
     }
 
-    // Show "? Rules" button — fetches the game's standalone page and extracts accordion sections
+    // Show "? Rules" button - fetches the game's standalone page and extracts accordion sections
     if (elRulesBtn) {
       elRulesBtn.hidden = false;
       elRulesBtn.onclick = function () {
@@ -303,14 +303,14 @@
       elBoards.classList.add('ingame-boards--dual');
       var fr0 = document.createElement('iframe');
       fr0.className = 'ingame-frame ingame-frame--half';
-      fr0.title     = room.selected_game + ' — Match 1';
+      fr0.title     = room.selected_game + ' - Match 1';
       fr0.src       = buildSrc(room, '0');
       fr0.setAttribute('allow', 'autoplay');
       fr0.setAttribute('allowfullscreen', '');
 
       var fr1 = document.createElement('iframe');
       fr1.className = 'ingame-frame ingame-frame--half';
-      fr1.title     = room.selected_game + ' — Match 2';
+      fr1.title     = room.selected_game + ' - Match 2';
       fr1.src       = buildSrc(room, '1');
       fr1.setAttribute('allow', 'autoplay');
       fr1.setAttribute('allowfullscreen', '');
@@ -328,7 +328,7 @@
     }
   }
 
-  // ── hideBoardFrame — restore game selector in center panel ─────────────────
+  // ── hideBoardFrame - restore game selector in center panel ─────────────────
   function hideBoardFrame() {
     if (!elBoards) return;
     elBoards.hidden = true;

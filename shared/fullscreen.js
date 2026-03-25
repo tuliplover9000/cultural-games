@@ -1,5 +1,5 @@
 /**
- * fullscreen.js — Fullscreen engine for Cultural Games.
+ * fullscreen.js - Fullscreen engine for Cultural Games.
  * Exposes window.FSMode with enter/exit/toggle + onEnter/onExit hooks.
  * Supports native Fullscreen API with CSS fallback (iOS Safari).
  */
@@ -34,7 +34,7 @@
 
   // ── State ──────────────────────────────────────────────────────────────────
   var FSMode = {
-    // Hooks — game pages override these
+    // Hooks - game pages override these
     onEnter: function () {},
     onExit:  function () {},
   };
@@ -128,7 +128,7 @@
   // ── Resize dispatcher ──────────────────────────────────────────────────────
   //
   // Approach: physically move the canvas to be a DIRECT child of
-  // #fs-game-wrap. This removes all containing-block ambiguity — no CSS
+  // #fs-game-wrap. This removes all containing-block ambiguity - no CSS
   // specificity battle, no intermediate-wrapper interference.
   //
   // After moving, call GameResize so the game re-renders at the new size.
@@ -210,7 +210,7 @@
       if (!naturalH || !naturalW) return;
       var scale = Math.min(availW / naturalW, availH / naturalH);
       if (scale <= 1.01) {
-        // Content already fills or overflows — restore height and allow scroll.
+        // Content already fills or overflows - restore height and allow scroll.
         gameRoot.style.setProperty('height',     '100%', 'important');
         gameRoot.style.setProperty('min-height', '0',    'important');
         return;
