@@ -938,10 +938,13 @@
   margin-bottom: var(--space-4);
 }
 
-.mission__stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
+.mission__tagline {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-muted);
+  letter-spacing: 0.06em;
+  text-align: center;
+  margin-top: var(--space-4);
 }
 
 .stat {
