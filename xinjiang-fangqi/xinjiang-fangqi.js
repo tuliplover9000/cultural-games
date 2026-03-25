@@ -39,7 +39,9 @@
     humanColor: BLACK,
     aiEnabled: true,
     animating: false,
-    cellSize: 80
+    cellSize: 80,
+    padX: PADDING,
+    padY: PADDING
   };
 
   var canvas, ctx;
@@ -259,8 +261,8 @@
   // ── Rendering ──────────────────────────────────────────────────────
   function getCellXY(row, col) {
     return {
-      x: PADDING + col * state.cellSize,
-      y: PADDING + row * state.cellSize
+      x: state.padX + col * state.cellSize,
+      y: state.padY + row * state.cellSize
     };
   }
 
@@ -275,21 +277,21 @@
     // Grid lines
     ctx.strokeStyle = '#2C1810';
     ctx.lineWidth = 1.5;
+    var gridEnd = (BOARD_SIZE - 1) * state.cellSize;
     for (var i = 0; i < BOARD_SIZE; i++) {
-      var startX = PADDING + i * state.cellSize;
-      var startY = PADDING + i * state.cellSize;
-      var endXY  = PADDING + (BOARD_SIZE - 1) * state.cellSize;
+      var startX = state.padX + i * state.cellSize;
+      var startY = state.padY + i * state.cellSize;
 
       // Vertical line
       ctx.beginPath();
-      ctx.moveTo(startX, PADDING);
-      ctx.lineTo(startX, PADDING + (BOARD_SIZE - 1) * state.cellSize);
+      ctx.moveTo(startX, state.padY);
+      ctx.lineTo(startX, state.padY + gridEnd);
       ctx.stroke();
 
       // Horizontal line
       ctx.beginPath();
-      ctx.moveTo(PADDING, startY);
-      ctx.lineTo(PADDING + (BOARD_SIZE - 1) * state.cellSize, startY);
+      ctx.moveTo(state.padX, startY);
+      ctx.lineTo(state.padX + gridEnd, startY);
       ctx.stroke();
     }
 
@@ -308,10 +310,10 @@
   function renderBorder() {
     // Xinjiang stepped-diamond geometric border (terracotta on parchment)
     var boardPx = (BOARD_SIZE - 1) * state.cellSize;
-    var x0 = PADDING;
-    var y0 = PADDING;
-    var x1 = PADDING + boardPx;
-    var y1 = PADDING + boardPx;
+    var x0 = state.padX;
+    var y0 = state.padY;
+    var x1 = state.padX + boardPx;
+    var y1 = state.padY + boardPx;
     var margin = 18;
 
     ctx.save();
@@ -575,8 +577,8 @@
     var x = (e.clientX - rect.left) * scaleX;
     var y = (e.clientY - rect.top)  * scaleY;
     // Adjust for padding, then snap to nearest intersection
-    var col = Math.round((x - PADDING) / state.cellSize);
-    var row = Math.round((y - PADDING) / state.cellSize);
+    var col = Math.round((x - state.padX) / state.cellSize);
+    var row = Math.round((y - state.padY) / state.cellSize);
     if (col < 0 || col >= BOARD_SIZE || row < 0 || row >= BOARD_SIZE) return null;
     // Snap distance check
     var snapX = PADDING + col * state.cellSize;
@@ -808,15 +810,15 @@
     // Register tutorial
     if (window.CGTutorial) CGTutorial.register('xinjiang-fangqi', xfTutorialSteps);
 
-    // Responsive CSS scaling (internal res stays 560x560)
+    // Responsive CSS scaling for normal (non-fullscreen) display
     function resizeCanvas() {
+      if (window.FSMode && window.FSMode.isActive()) return;
       var container = canvas.parentElement;
-      var maxSize   = Math.min(container.clientWidth, 520);
+      var maxSize   = Math.min(container ? container.clientWidth : 520, 520);
       var size      = Math.max(280, maxSize);
       canvas.style.width  = size + 'px';
       canvas.style.height = size + 'px';
-      // cellSize stays 80, PADDING stays 40, canvas internal stays 560x560
-      render();
+      // Internal buffer stays 560x560; CSS scaling handles display size
     }
 
     resizeCanvas();
@@ -826,10 +828,32 @@
       resizeTimer = setTimeout(resizeCanvas, 60);
     });
 
-    // Fullscreen resize hook
-    window.GameResize = function() {
-      resizeCanvas();
+    // Fullscreen resize — called by fullscreen.js with the available viewport size.
+    // Resizes the canvas buffer to fill the viewport and re-centres the board.
+    window.GameResize = function(availW, availH) {
+      if (!canvas || !ctx) return;
+      var newCell = Math.floor((Math.min(availW, availH) - 2 * PADDING) / (BOARD_SIZE - 1));
+      if (newCell < 30) newCell = 30;
+      state.cellSize = newCell;
+      var boardPx = (BOARD_SIZE - 1) * newCell;
+      state.padX = Math.max(PADDING, Math.round((availW - boardPx) / 2));
+      state.padY = Math.max(PADDING, Math.round((availH - boardPx) / 2));
+      canvas.width  = availW;
+      canvas.height = availH;
+      render();
     };
+
+    // Re-render on fullscreen enter/exit
+    if (window.FSMode) {
+      FSMode.onExit = function() {
+        setTimeout(function() {
+          canvas.style.removeProperty('width');
+          canvas.style.removeProperty('height');
+          resizeCanvas();
+          render();
+        }, 50);
+      };
+    }
 
     initGame();
   });
