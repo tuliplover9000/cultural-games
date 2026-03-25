@@ -31,7 +31,7 @@
 #fd-board {
   display: block;
   width: 100%;
-  max-width: 520px;
+  max-width: 100%;
   height: auto;
   cursor: pointer;
   border-radius: 4px;

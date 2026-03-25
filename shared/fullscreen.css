@@ -168,6 +168,31 @@ html.fs-css-only  .fs-toggle { display: flex; }
   overflow: auto;
 }
 
+/* ── XF + FD: sidebar floats over canvas in fullscreen ── */
+.fs-game-wrap.fs-active .xf-sidebar,
+.fs-game-wrap:fullscreen .xf-sidebar,
+.fs-game-wrap:-webkit-full-screen .xf-sidebar,
+.fs-game-wrap.fs-active .fd-sidebar,
+.fs-game-wrap:fullscreen .fd-sidebar,
+.fs-game-wrap:-webkit-full-screen .fd-sidebar {
+  position: fixed !important;
+  top: 1rem !important;
+  right: 1rem !important;
+  z-index: 1300 !important;
+  max-width: 190px !important;
+  background: rgba(10,5,2,0.85) !important;
+  padding: 0.75rem !important;
+  border-radius: 8px !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  overflow-y: auto !important;
+  max-height: calc(100vh - 2rem) !important;
+  --color-surface: rgba(255,255,255,0.08);
+  --color-border: rgba(255,255,255,0.18);
+  --color-text: rgba(255,255,255,0.90);
+  --color-text-muted: rgba(255,255,255,0.55);
+}
+
 /* ── Screen reader only ── */
 .fs-sr-only {
   position: absolute;
