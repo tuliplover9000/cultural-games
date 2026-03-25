@@ -167,18 +167,18 @@
     if (blackEliminated) { triggerGameOver(WHITE); return true; }
     if (whiteEliminated) { triggerGameOver(BLACK); return true; }
 
-    // RECONSTRUCTED: board-full tiebreaker
+    // All pieces placed: end game by piece count (board rarely fills with 40 pieces on 49 spots)
     var allPlaced = (blackInHand === 0 && whiteInHand === 0);
-    var emptyCount = getAllValidPlacements().length;
-    var boardFull  = (emptyCount === 0);
-
-    if (allPlaced && boardFull) {
+    if (allPlaced) {
       if (blackOnBoard > whiteOnBoard) triggerGameOver(BLACK);
       else if (whiteOnBoard > blackOnBoard) triggerGameOver(WHITE);
       else triggerGameOver('draw');
       return true;
     }
-    if (!allPlaced && boardFull) { triggerGameOver('draw'); return true; }
+
+    // Board full before all pieces placed
+    var boardFull = (getAllValidPlacements().length === 0);
+    if (boardFull) { triggerGameOver('draw'); return true; }
     return false;
   }
 
