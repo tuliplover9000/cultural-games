@@ -1,0 +1,308 @@
+/* ═══════════════════════════════════════════════════════════════
+   xinjiang-fangqi.css
+   Xinjiang Fangqi — Silk Road earth-tone board game styles
+   Namespace: xf-
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Game container layout ─────────────────────────────────── */
+.xf-game-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--space-6, 1.5rem);
+  padding: var(--space-4, 1rem) 0;
+  position: relative;
+}
+
+/* ── Board wrap ────────────────────────────────────────────── */
+.xf-board-wrap {
+  position: relative;
+  flex-shrink: 0;
+  background: #1A0A04;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow:
+    0 4px 24px rgba(0,0,0,0.55),
+    inset 0 1px 0 rgba(255,200,100,0.08);
+}
+
+#xf-board {
+  display: block;
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+  cursor: crosshair;
+  border-radius: 4px;
+  touch-action: none;
+}
+
+/* ── Sidebar ───────────────────────────────────────────────── */
+.xf-sidebar {
+  flex: 1;
+  min-width: 180px;
+  max-width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 1rem);
+  padding-top: 4px;
+}
+
+/* ── Turn indicator ────────────────────────────────────────── */
+.xf-turn-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+}
+
+.xf-turn-disc {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background 0.25s;
+}
+
+.xf-turn-disc[data-color="black"],
+#xf-turn-indicator[data-color="black"] ~ .xf-turn-disc {
+  background: #1A1008;
+  border: 2px solid #5a3010;
+  box-shadow: inset 0 1px 3px rgba(255,255,255,0.12);
+}
+
+.xf-turn-disc[data-color="white"] {
+  background: #F0EAD6;
+  border: 2px solid #2C1810;
+}
+
+.xf-turn-disc[data-color="draw"] {
+  background: linear-gradient(135deg, #1A1008 50%, #F0EAD6 50%);
+  border: 2px solid #8B4513;
+}
+
+/* Sync the disc color with turn indicator data-color */
+.xf-turn-wrap[data-turn="black"] .xf-turn-disc { background:#1A1008; border-color:#5a3010; }
+.xf-turn-wrap[data-turn="white"] .xf-turn-disc { background:#F0EAD6; border-color:#2C1810; }
+
+.xf-turn-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-text, #e8e0d0);
+  transition: color 0.25s;
+}
+
+#xf-turn-indicator[data-color="black"] { color: #d4b896; }
+#xf-turn-indicator[data-color="white"] { color: #c8b98a; }
+#xf-turn-indicator[data-color="draw"]  { color: #a0906a; }
+
+/* ── Piece counters ────────────────────────────────────────── */
+.xf-counters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.xf-counter {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.03);
+}
+
+.xf-counter--black {
+  border-left: 3px solid #5a3010;
+}
+
+.xf-counter--white {
+  border-left: 3px solid #a09070;
+}
+
+.xf-counter__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.xf-counter__disc {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.xf-counter__disc--black {
+  background: #1A1008;
+  border: 1.5px solid #5a3010;
+}
+
+.xf-counter__disc--white {
+  background: #F0EAD6;
+  border: 1.5px solid #2C1810;
+}
+
+.xf-counter__name {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--color-text, #e8e0d0);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.xf-counter__stats {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.xf-counter__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.xf-counter__row dt {
+  font-size: 0.8rem;
+  color: var(--color-text-muted, #888);
+  font-weight: 400;
+}
+
+.xf-counter__row dd {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #D4A017;
+  min-width: 24px;
+  text-align: right;
+}
+
+/* ── Move counter ──────────────────────────────────────────── */
+.xf-moves {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted, #888);
+  text-align: center;
+}
+
+/* ── AI toggle ─────────────────────────────────────────────── */
+.xf-ai-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: var(--color-text-muted, #888);
+  user-select: none;
+}
+
+.xf-ai-label input[type="checkbox"] {
+  accent-color: #D4A017;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* ── Button row ────────────────────────────────────────────── */
+.xf-btn-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Game over overlay ─────────────────────────────────────── */
+.xf-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background: rgba(10, 5, 2, 0.88);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 10;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.xf-overlay[hidden] { display: none; }
+
+.xf-overlay__msg {
+  margin: 0;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 700;
+  color: #D4A017;
+  text-shadow: 0 2px 12px rgba(212, 160, 23, 0.5);
+  font-family: 'Playfair Display', serif;
+  letter-spacing: 0.02em;
+}
+
+.xf-overlay__sub {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #c8b080;
+  text-align: center;
+  max-width: 280px;
+}
+
+/* ── Fullscreen adjustments ────────────────────────────────── */
+.fs-mode .xf-game-container {
+  justify-content: center;
+}
+
+.fs-mode .xf-sidebar {
+  max-width: 200px;
+}
+
+/* ── Mobile: stack canvas above sidebar ────────────────────── */
+@media (max-width: 600px) {
+  .xf-game-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .xf-board-wrap {
+    width: 100%;
+    padding: 8px;
+  }
+
+  #xf-board {
+    max-width: 100%;
+  }
+
+  .xf-sidebar {
+    max-width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--space-3, 0.75rem);
+    align-items: flex-start;
+  }
+
+  .xf-turn-wrap {
+    width: 100%;
+  }
+
+  .xf-counters {
+    flex-direction: row;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .xf-counter {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .xf-btn-row {
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .xf-btn-row .btn {
+    flex: 1;
+  }
+}

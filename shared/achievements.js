@@ -69,13 +69,18 @@
     { id: 'ca_wins_50',    gameId: 'cachos',      title: 'El Gran Tah\u00far',description: 'Win 50 games of Cachos',                                 tier: 'gold',   category: 'combat', condition: { type: 'stat', game: 'cachos',       stat: 'wins', threshold: 50 } },
     { id: 'ca_bluff_catch',gameId: 'cachos',      title: 'Caught Red-Handed', description: 'Successfully call a bluff',                              tier: 'bronze', category: 'combat', condition: { type: 'action', action: 'ca_bluff_caught'  } },
     { id: 'ca_survivor',   gameId: 'cachos',      title: 'Last Cup Standing', description: 'Win a 6-player game of Cachos',                          tier: 'silver', category: 'combat', condition: { type: 'action', action: 'ca_win_6player'   } },
+    { id: 'xf_first_win',  gameId: 'xinjiang-fangqi', title: 'Silk Road Victor',  description: 'Win your first game of Xinjiang Fangqi',              tier: 'bronze', category: 'combat', condition: { type: 'stat', game: 'xinjiang-fangqi', stat: 'wins', threshold: 1  } },
+    { id: 'xf_wins_10',    gameId: 'xinjiang-fangqi', title: 'Square Master',     description: 'Win 10 games of Xinjiang Fangqi',                     tier: 'silver', category: 'combat', condition: { type: 'stat', game: 'xinjiang-fangqi', stat: 'wins', threshold: 10 } },
+    { id: 'xf_wins_50',    gameId: 'xinjiang-fangqi', title: 'Khan of the Board', description: 'Win 50 games of Xinjiang Fangqi',                     tier: 'gold',   category: 'combat', condition: { type: 'stat', game: 'xinjiang-fangqi', stat: 'wins', threshold: 50 } },
+    { id: 'xf_mass_capture',gameId:'xinjiang-fangqi', title: 'The Great Sweep',   description: 'Capture 4 or more enemy stones in a single placement', tier: 'silver', category: 'combat', condition: { type: 'action', action: 'xf_mass_capture'  } },
+    { id: 'xf_comeback_win',gameId:'xinjiang-fangqi', title: 'Last Stone Standing','description': 'Win with 3 or fewer stones remaining on the board', tier: 'gold',   category: 'combat', condition: { type: 'action', action: 'xf_comeback_win' } },
 
     /* ── Explorer (cross-game) ── */
     { id: 'exp_play_3',   gameId: null, title: 'Curious Traveller', description: 'Play 3 different games',               tier: 'bronze', category: 'explorer', condition: { type: 'games_played', threshold: 3  } },
     { id: 'exp_play_6',   gameId: null, title: 'Cultural Explorer', description: 'Play 6 different games',               tier: 'silver', category: 'explorer', condition: { type: 'games_played', threshold: 6  } },
-    { id: 'exp_play_all', gameId: null, title: 'World Game Master', description: 'Play every game on the site',          tier: 'gold',   category: 'explorer', condition: { type: 'games_played', threshold: 14 } },
+    { id: 'exp_play_all', gameId: null, title: 'World Game Master', description: 'Play every game on the site',          tier: 'gold',   category: 'explorer', condition: { type: 'games_played', threshold: 15 } },
     { id: 'exp_win_3',    gameId: null, title: 'Renaissance Player','description': 'Win in 3 different games',           tier: 'silver', category: 'explorer', condition: { type: 'games_won', threshold: 3  } },
-    { id: 'exp_win_all',  gameId: null, title: 'Grand Tour',        description: 'Win at least one game of every title', tier: 'gold',   category: 'explorer', condition: { type: 'games_won', threshold: 14 } },
+    { id: 'exp_win_all',  gameId: null, title: 'Grand Tour',        description: 'Win at least one game of every title', tier: 'gold',   category: 'explorer', condition: { type: 'games_won', threshold: 15 } },
     { id: 'exp_favorite', gameId: null, title: 'Patron of Culture', description: 'Save a favourite game',                tier: 'bronze', category: 'explorer', condition: { type: 'action', action: 'set_favorite' } },
 
     /* ── Social (multiplayer) ── */

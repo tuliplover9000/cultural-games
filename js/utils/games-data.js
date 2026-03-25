@@ -22,8 +22,9 @@
  * Ganjifa                | ganjifa       | Mughal India
  * Ludus Latrunculorum    | latrunculi    | Roman Empire
  * Cachos                 | cachos        | Latin America
+ * Xinjiang Fangqi        | xinjiang-fangqi | Xinjiang
  * ─────────────────────────────────────────────────────────────────────────────
- * Total: 14 games, 11 unique cultures
+ * Total: 15 games, 12 unique cultures
  */
 window.GAMES_DATA = [
   { key: 'tien-len',    name: 'Tiến Lên',          culture: 'Vietnam',             type: 'Card',     maxPlayers: 4 },
@@ -39,5 +40,6 @@ window.GAMES_DATA = [
   { key: 'pachisi',     name: 'Pachisi',            culture: 'Indian Subcontinent', type: 'Dice',     maxPlayers: 4 },
   { key: 'ganjifa',    name: 'Ganjifa',            culture: 'Mughal India',        type: 'Card',     maxPlayers: 4 },
   { key: 'latrunculi', name: 'Ludus Latrunculorum', culture: 'Roman Empire',        type: 'Strategy', maxPlayers: 2, id: 'latrunculi', region: 'Europe', description: 'Ancient Roman strategy game of capture and command', href: 'pages/games/latrunculi.html', iconPath: 'assets/icons/latrunculi.svg' },
-  { key: 'cachos',     name: 'Cachos',             culture: 'Latin America',       type: 'Dice',     maxPlayers: 6 },
+  { key: 'cachos',          name: 'Cachos',             culture: 'Latin America',       type: 'Dice',     maxPlayers: 6 },
+  { key: 'xinjiang-fangqi', name: 'Xinjiang Fangqi',   culture: 'Xinjiang',            type: 'Strategy', maxPlayers: 2 },
 ];

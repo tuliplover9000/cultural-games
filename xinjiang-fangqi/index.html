@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VWXNSYLPZE"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VWXNSYLPZE');</script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Play Xinjiang Fangqi - the traditional Uyghur square-formation strategy game from Xinjiang, China. Form 2x2 squares to capture enemy stones." />
+  <title>Xinjiang Fangqi - Cultural Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="../shared/theme.js"></script>
+  <script src="../js/rooms/room-mode.js"></script>
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../shared/theme.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../shared/toggle.css" />
+  <link rel="stylesheet" href="../shared/tutorial.css" />
+  <link rel="stylesheet" href="../css/auth.css" />
+  <link rel="stylesheet" href="../shared/achievements.css" />
+  <link rel="stylesheet" href="../shared/fullscreen.css" />
+  <link rel="stylesheet" href="../shared/play-with-friend.css" />
+  <link rel="stylesheet" href="xinjiang-fangqi.css" />
+</head>
+<body>
+  <button id="tt-trigger" class="tt-trigger" type="button" aria-label="How to play">
+    <span class="tt-trigger__icon" aria-hidden="true">?</span>
+    <span class="tt-trigger__badge" id="tt-badge" hidden>New</span>
+  </button>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../index.html" class="nav-logo" aria-label="Cultural Games - Home">
+        <img src="../favicon.svg" width="32" height="32" alt="" class="nav-logo-icon" aria-hidden="true">
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="../pages/browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="../pages/rooms.html"  class="nav-link nav-link--rooms">Rooms</a></li>
+        <li><a href="../pages/about.html"  class="nav-link">About</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+
+      <div class="game-nav-bar">
+        <a href="../pages/browse.html" class="back-link">Back to Browse</a>
+      </div>
+
+      <header class="game-header">
+        <div class="game-header__icon" aria-hidden="true">
+          <img src="../assets/icons/xinjiang-fangqi.svg" alt="" />
+        </div>
+        <h1 class="game-header__title">Xinjiang Fangqi</h1>
+        <p class="game-header__origin">
+          Xinjiang, China &nbsp;&middot;&nbsp;
+          <span class="badge badge--board" style="display:inline-flex; vertical-align:middle; margin-left:4px;">Board</span>
+        </p>
+      </header>
+
+      <!-- Game Container -->
+      <div id="fs-game-wrap" class="fs-game-wrap">
+      <button id="fs-toggle" class="fs-toggle" aria-label="Enter fullscreen" title="Enter fullscreen">
+        <svg class="fs-toggle__icon fs-toggle__icon--enter" viewBox="0 0 18 18" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round">
+          <path d="M1 6V1h5M12 1h5v5M17 12v5h-5M6 17H1v-5"/>
+        </svg>
+        <svg class="fs-toggle__icon fs-toggle__icon--exit" viewBox="0 0 18 18" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" style="display:none">
+          <path d="M6 1v5H1M17 6h-5V1M12 17v-5h5M1 12h5v5"/>
+        </svg>
+      </button>
+      <div class="fs-sr-only" id="fs-announce" aria-live="polite"></div>
+
+      <div class="xf-game-container" id="game-container" aria-label="Game area">
+
+        <!-- Board -->
+        <div class="xf-board-wrap">
+          <canvas id="xf-board" width="560" height="560"
+            aria-label="Xinjiang Fangqi game board - 7 by 7 grid of intersections"
+            role="img"></canvas>
+
+          <!-- Game over overlay -->
+          <div class="xf-overlay" id="xf-overlay" hidden>
+            <p class="xf-overlay__msg" id="xf-overlay-msg">Black wins!</p>
+            <p class="xf-overlay__sub" id="xf-overlay-sub"></p>
+            <button class="btn btn-primary" id="xf-play-again">Play Again</button>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="xf-sidebar">
+
+          <!-- Turn indicator -->
+          <div class="xf-turn-wrap">
+            <span class="xf-turn-disc" id="xf-turn-disc" data-color="black"></span>
+            <span class="xf-turn-label" id="xf-turn-indicator" data-color="black">Black's turn</span>
+          </div>
+
+          <!-- Piece counters -->
+          <div class="xf-counters">
+            <div class="xf-counter xf-counter--black">
+              <div class="xf-counter__header">
+                <span class="xf-counter__disc xf-counter__disc--black"></span>
+                <span class="xf-counter__name">Black</span>
+              </div>
+              <dl class="xf-counter__stats">
+                <div class="xf-counter__row">
+                  <dt>In hand</dt>
+                  <dd id="xf-black-hand">20</dd>
+                </div>
+                <div class="xf-counter__row">
+                  <dt>On board</dt>
+                  <dd id="xf-black-board">0</dd>
+                </div>
+                <div class="xf-counter__row">
+                  <dt>Captured</dt>
+                  <dd id="xf-black-captured">0</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="xf-counter xf-counter--white">
+              <div class="xf-counter__header">
+                <span class="xf-counter__disc xf-counter__disc--white"></span>
+                <span class="xf-counter__name">White</span>
+              </div>
+              <dl class="xf-counter__stats">
+                <div class="xf-counter__row">
+                  <dt>In hand</dt>
+                  <dd id="xf-white-hand">20</dd>
+                </div>
+                <div class="xf-counter__row">
+                  <dt>On board</dt>
+                  <dd id="xf-white-board">0</dd>
+                </div>
+                <div class="xf-counter__row">
+                  <dt>Captured</dt>
+                  <dd id="xf-white-captured">0</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+
+          <!-- Move count -->
+          <p class="xf-moves">Move <span id="xf-move-count">0</span></p>
+
+          <!-- AI toggle -->
+          <label class="xf-ai-label">
+            <input type="checkbox" id="xf-ai-toggle" checked />
+            <span>vs AI</span>
+          </label>
+
+          <!-- Buttons -->
+          <div class="xf-btn-row">
+            <button class="btn btn-secondary btn-sm" id="xf-new-game">New Game</button>
+            <button class="btn btn-ghost btn-sm"      id="xf-resign">Resign</button>
+          </div>
+
+        </aside>
+      </div>
+      </div><!-- /#fs-game-wrap -->
+
+      <!-- Play with a Friend -->
+      <div id="pwf-mount"></div>
+
+      <!-- How to Play -->
+      <details class="accordion" open>
+        <summary class="accordion__trigger">
+          <span class="accordion__title">How to Play</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Xinjiang Fangqi is played on a <strong>7×7 grid of intersections</strong>. Players alternate placing one stone per turn on any empty intersection.
+          </p>
+          <ol>
+            <li>
+              <strong>Placement:</strong> On your turn, click any empty intersection to place one of your stones there.
+            </li>
+            <li>
+              <strong>Square capture:</strong> When your four stones form a <strong>2×2 square</strong>, all enemy stones orthogonally adjacent to any corner of that square are immediately captured and removed from the board.
+            </li>
+            <li>
+              <strong>Preview:</strong> Hover over an intersection to see a <span style="color:#D4A017;font-weight:600;">gold dashed square</span> preview if your move would complete a capturing 2×2.
+            </li>
+            <li>
+              <strong>Stones:</strong> Each player has <strong>20 stones</strong> to place. Stones already on the board cannot be moved.
+            </li>
+            <li>
+              <strong>Win condition:</strong> A player loses when all their stones have been captured and they have no stones left to place. The last player with stones wins.
+            </li>
+            <li>
+              <strong>Tiebreaker:</strong> If the board fills with no winner, the player with more stones on the board wins.
+            </li>
+          </ol>
+          <p style="margin-top:0.75rem; font-style:italic; color:var(--color-text-muted); font-size:0.9em;">
+            Note: Some rules in this implementation are reconstructed from historical sources - see the Cultural Context section for details.
+          </p>
+        </div>
+      </details>
+
+      <!-- Cultural Context -->
+      <details class="accordion">
+        <summary class="accordion__trigger">
+          <span class="accordion__title">Cultural Context</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Xinjiang Fangqi (新疆方棋, "Xinjiang Square Chess") is a traditional abstract strategy game associated with the Uyghur and other peoples of the Xinjiang region in northwestern China, situated at the heart of the ancient Silk Road trade network.
+          </p>
+          <p>
+            The game belongs to the broader family of <em>fangqi</em> (square-chess) games found across Central and East Asia. Its core mechanic - forming a 2×2 square of stones to capture surrounding enemy pieces - reflects a geometric elegance characteristic of steppe and oasis cultures, where patterns of encirclement carried both strategic and symbolic significance.
+          </p>
+          <p>
+            Xinjiang's position as a crossroads between Chinese, Persian, Turkic, and Mongol cultures means its traditional games carry layers of cultural influence. The geometric border motifs used in this implementation draw from Uyghur textile and architectural decoration - stepped diamonds, interlocking lozenges, and terracotta-on-parchment color palettes that echo the region's famous hand-woven carpets and tilework.
+          </p>
+          <p>
+            <strong>Reconstruction note:</strong> Full primary sources for Xinjiang Fangqi's historical rules are limited in English-language scholarship. This implementation follows the core mechanic (7×7 board, 2×2 square capture) confirmed by multiple secondary sources, with rules for multi-square captures, piece count, and tiebreaking reconstructed using conventions from the broader Alquerque and placement-game family. The game is presented here as a living reconstruction, not a definitive historical document.
+          </p>
+        </div>
+      </details>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <span class="footer-brand">Cultural Games</span>
+      <p class="footer-mission">Preserving cultural heritage through play - one game at a time.</p>
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links" role="list">
+          <li><a href="../pages/browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="../pages/about.html"  class="footer-link">About</a></li>
+        </ul>
+      </nav>
+      <div class="footer-divider"></div>
+      <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../js/utils/games-data.js"></script>
+  <script src="../js/utils/navigation.js"></script>
+  <script src="../js/utils/auth.js"></script>
+  <script src="../shared/achievement-queue.js"></script>
+  <script src="../shared/achievements.js"></script>
+  <script src="../shared/tutorial.js"></script>
+  <script src="../shared/fullscreen.js"></script>
+  <script src="../shared/play-with-friend.js"></script>
+  <script src="../js/rooms/game-bridge.js"></script>
+  <script src="../js/rooms/room-mode.js"></script>
+  <script src="xinjiang-fangqi.js"></script>
+</body>
+</html>

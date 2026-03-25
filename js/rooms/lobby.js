@@ -40,6 +40,8 @@
         { value: '2player', label: '2 Players', hint: '1 v 1' },
         { value: '4player', label: '4 Players', hint: 'Teams A & B' },
       ]},
+    { key: 'xinjiang-fangqi', name: 'Xinjiang Fangqi',  culture: 'Xinjiang, China',      type: 'Strategy', icon: '⬜', svg: '../assets/icons/xinjiang-fangqi.svg', badge: 'Strategy · 2P', maxPlayers: 2,
+      rules: ['Place one stone per turn on any empty intersection of the 7x7 grid.', 'When your 4 stones form a 2x2 square, enemy stones adjacent to that square are captured.', 'Eliminate all opponent stones (with none left in hand) to win.'] },
     { key: 'cachos',      name: 'Cachos',              culture: 'Latin America',         type: 'Dice',     icon: '🎲', svg: '../assets/icons/cachos.svg',     badge: 'Dice · Bluffing', maxPlayers: 6,
       rules: ['Everyone rolls 5 dice secretly under a cup. Only you see your own.', 'Bid how many of a face you think exist across ALL cups combined. Each bid must go higher.', 'Call \u00a1Dudo! to challenge. If the bid was wrong, the bidder loses a die - if right, the challenger does. Last dice standing wins.'],
       gameModes: [
