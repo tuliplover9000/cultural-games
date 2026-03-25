@@ -1,0 +1,301 @@
+/* ═══════════════════════════════════════════════════════════════
+   filipino-dama.css
+   Filipino Dama — Philippine checkers board game styles
+   Namespace: fd-
+   Uses CSS variables so both light and dark themes work correctly.
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Game container layout ─────────────────────────────────── */
+.fd-game-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--space-6, 1.5rem);
+  padding: var(--space-4, 1rem) 0;
+  position: relative;
+}
+
+/* ── Board wrap ────────────────────────────────────────────── */
+.fd-board-wrap {
+  position: relative;
+  flex-shrink: 0;
+  background: #2A0E00;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow:
+    0 4px 24px rgba(0,0,0,0.45),
+    inset 0 1px 0 rgba(255,200,100,0.08);
+}
+
+#fd-board {
+  display: block;
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+  cursor: pointer;
+  border-radius: 4px;
+  touch-action: none;
+}
+
+/* ── Sidebar ───────────────────────────────────────────────── */
+.fd-sidebar {
+  flex: 1;
+  min-width: 180px;
+  max-width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 1rem);
+  padding-top: 4px;
+}
+
+/* ── Turn indicator ────────────────────────────────────────── */
+.fd-turn-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.fd-turn-disc {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background 0.25s;
+}
+
+.fd-turn-disc[data-color="light"] {
+  background: #FFF0C0;
+  border: 2px solid #A07830;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
+}
+
+.fd-turn-disc[data-color="dark"] {
+  background: #C41E3A;
+  border: 2px solid #7A0020;
+  box-shadow: inset 0 1px 3px rgba(255,255,255,0.12);
+}
+
+.fd-turn-disc[data-color="draw"] {
+  background: linear-gradient(135deg, #FFF0C0 50%, #C41E3A 50%);
+  border: 2px solid #8B4513;
+}
+
+.fd-turn-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  transition: color 0.25s;
+}
+
+/* ── Piece counters ────────────────────────────────────────── */
+.fd-counters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fd-counter {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.fd-counter--light {
+  border-left: 3px solid #A07830;
+}
+
+.fd-counter--dark {
+  border-left: 3px solid #C41E3A;
+}
+
+.fd-counter__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.fd-counter__disc {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.fd-counter__disc--light {
+  background: #FFF0C0;
+  border: 1.5px solid #A07830;
+}
+
+.fd-counter__disc--dark {
+  background: #C41E3A;
+  border: 1.5px solid #7A0020;
+}
+
+.fd-counter__name {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.fd-counter__stats {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.fd-counter__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fd-counter__row dt {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.fd-counter__row dd {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-accent-gold, #C89B3C);
+  min-width: 24px;
+  text-align: right;
+}
+
+/* ── Move counter ──────────────────────────────────────────── */
+.fd-moves {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* ── AI toggle ─────────────────────────────────────────────── */
+.fd-ai-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+  user-select: none;
+}
+
+.fd-ai-label input[type="checkbox"] {
+  accent-color: var(--color-accent-gold, #C89B3C);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* ── Button row ────────────────────────────────────────────── */
+.fd-btn-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Game over overlay ─────────────────────────────────────── */
+.fd-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background: rgba(10, 5, 2, 0.88);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 10;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.fd-overlay[hidden] { display: none; }
+
+.fd-overlay__msg {
+  margin: 0;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 700;
+  color: #D4A017;
+  text-shadow: 0 2px 12px rgba(212,160,23,0.5);
+  font-family: 'Playfair Display', serif;
+  letter-spacing: 0.02em;
+}
+
+.fd-overlay__sub {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #c8b080;
+  text-align: center;
+  max-width: 280px;
+}
+
+/* ── Fullscreen adjustments ────────────────────────────────── */
+.fs-mode .fd-game-container {
+  justify-content: center;
+}
+
+.fs-mode .fd-sidebar {
+  max-width: 200px;
+}
+
+/* ── Mobile: stack canvas above sidebar ────────────────────── */
+@media (max-width: 600px) {
+  .fd-game-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .fd-board-wrap {
+    width: 100%;
+    padding: 8px;
+  }
+
+  #fd-board {
+    max-width: 100%;
+  }
+
+  .fd-sidebar {
+    max-width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--space-3, 0.75rem);
+    align-items: flex-start;
+  }
+
+  .fd-turn-wrap {
+    width: 100%;
+  }
+
+  .fd-counters {
+    flex-direction: row;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .fd-counter {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .fd-btn-row {
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .fd-btn-row .btn {
+    flex: 1;
+  }
+}

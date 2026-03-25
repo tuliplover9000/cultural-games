@@ -74,13 +74,17 @@
     { id: 'xf_wins_50',    gameId: 'xinjiang-fangqi', title: 'Khan of the Board', description: 'Win 50 games of Xinjiang Fangqi',                     tier: 'gold',   category: 'combat', condition: { type: 'stat', game: 'xinjiang-fangqi', stat: 'wins', threshold: 50 } },
     { id: 'xf_mass_capture',gameId:'xinjiang-fangqi', title: 'The Great Sweep',   description: 'Capture 4 or more enemy stones in a single placement', tier: 'silver', category: 'combat', condition: { type: 'action', action: 'xf_mass_capture'  } },
     { id: 'xf_comeback_win',gameId:'xinjiang-fangqi', title: 'Last Stone Standing','description': 'Win with 3 or fewer stones remaining on the board', tier: 'gold',   category: 'combat', condition: { type: 'action', action: 'xf_comeback_win' } },
+    { id: 'fd_first_win',  gameId: 'filipino-dama', title: 'Mananalo',          description: 'Win your first game of Filipino Dama',                  tier: 'bronze', category: 'combat', condition: { type: 'stat',   game: 'filipino-dama', stat: 'wins', threshold: 1  } },
+    { id: 'fd_wins_10',    gameId: 'filipino-dama', title: 'Dama Majestro',     description: 'Win 10 games of Filipino Dama',                         tier: 'silver', category: 'combat', condition: { type: 'stat',   game: 'filipino-dama', stat: 'wins', threshold: 10 } },
+    { id: 'fd_wins_50',    gameId: 'filipino-dama', title: 'Hari ng Dama',      description: 'Win 50 games of Filipino Dama',                         tier: 'gold',   category: 'combat', condition: { type: 'stat',   game: 'filipino-dama', stat: 'wins', threshold: 50 } },
+    { id: 'fd_clean_sweep',gameId: 'filipino-dama', title: 'Walang Natira',     description: 'Win by capturing every last enemy piece',               tier: 'silver', category: 'combat', condition: { type: 'action', action: 'fd_clean_sweep' } },
 
     /* ── Explorer (cross-game) ── */
     { id: 'exp_play_3',   gameId: null, title: 'Curious Traveller', description: 'Play 3 different games',               tier: 'bronze', category: 'explorer', condition: { type: 'games_played', threshold: 3  } },
     { id: 'exp_play_6',   gameId: null, title: 'Cultural Explorer', description: 'Play 6 different games',               tier: 'silver', category: 'explorer', condition: { type: 'games_played', threshold: 6  } },
-    { id: 'exp_play_all', gameId: null, title: 'World Game Master', description: 'Play every game on the site',          tier: 'gold',   category: 'explorer', condition: { type: 'games_played', threshold: 15 } },
+    { id: 'exp_play_all', gameId: null, title: 'World Game Master', description: 'Play every game on the site',          tier: 'gold',   category: 'explorer', condition: { type: 'games_played', threshold: 16 } },
     { id: 'exp_win_3',    gameId: null, title: 'Renaissance Player','description': 'Win in 3 different games',           tier: 'silver', category: 'explorer', condition: { type: 'games_won', threshold: 3  } },
-    { id: 'exp_win_all',  gameId: null, title: 'Grand Tour',        description: 'Win at least one game of every title', tier: 'gold',   category: 'explorer', condition: { type: 'games_won', threshold: 15 } },
+    { id: 'exp_win_all',  gameId: null, title: 'Grand Tour',        description: 'Win at least one game of every title', tier: 'gold',   category: 'explorer', condition: { type: 'games_won', threshold: 16 } },
     { id: 'exp_favorite', gameId: null, title: 'Patron of Culture', description: 'Save a favourite game',                tier: 'bronze', category: 'explorer', condition: { type: 'action', action: 'set_favorite' } },
 
     /* ── Social (multiplayer) ── */

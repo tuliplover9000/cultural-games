@@ -24,7 +24,9 @@
  * Cachos                 | cachos        | Latin America
  * Xinjiang Fangqi        | xinjiang-fangqi | Xinjiang
  * ─────────────────────────────────────────────────────────────────────────────
- * Total: 15 games, 12 unique cultures
+ * Filipino Dama         | filipino-dama | Philippines
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Total: 16 games, 13 unique cultures
  */
 window.GAMES_DATA = [
   { key: 'tien-len',    name: 'Tiến Lên',          culture: 'Vietnam',             type: 'Card',     maxPlayers: 4 },
@@ -42,4 +44,5 @@ window.GAMES_DATA = [
   { key: 'latrunculi', name: 'Ludus Latrunculorum', culture: 'Roman Empire',        type: 'Strategy', maxPlayers: 2, id: 'latrunculi', region: 'Europe', description: 'Ancient Roman strategy game of capture and command', href: 'pages/games/latrunculi.html', iconPath: 'assets/icons/latrunculi.svg' },
   { key: 'cachos',          name: 'Cachos',             culture: 'Latin America',       type: 'Dice',     maxPlayers: 6 },
   { key: 'xinjiang-fangqi', name: 'Xinjiang Fangqi',   culture: 'Xinjiang',            type: 'Strategy', maxPlayers: 2 },
+  { key: 'filipino-dama',   name: 'Filipino Dama',     culture: 'Philippines',         type: 'Board',    maxPlayers: 2 },
 ];

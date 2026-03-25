@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VWXNSYLPZE"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VWXNSYLPZE');</script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Play Filipino Dama - the traditional Philippine draughts game where pieces capture in all directions and Dama kings slide the full diagonal." />
+  <title>Filipino Dama - Cultural Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="../shared/theme.js"></script>
+  <script src="../js/rooms/room-mode.js"></script>
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../shared/theme.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/games.css" />
+  <link rel="stylesheet" href="../shared/toggle.css" />
+  <link rel="stylesheet" href="../shared/tutorial.css" />
+  <link rel="stylesheet" href="../css/auth.css" />
+  <link rel="stylesheet" href="../shared/achievements.css" />
+  <link rel="stylesheet" href="../shared/fullscreen.css" />
+  <link rel="stylesheet" href="../shared/play-with-friend.css" />
+  <link rel="stylesheet" href="filipino-dama.css" />
+</head>
+<body>
+  <button id="tt-trigger" class="tt-trigger" type="button" aria-label="How to play">
+    <span class="tt-trigger__icon" aria-hidden="true">?</span>
+    <span class="tt-trigger__badge" id="tt-badge" hidden>New</span>
+  </button>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../index.html" class="nav-logo" aria-label="Cultural Games - Home">
+        <img src="../favicon.svg" width="32" height="32" alt="" class="nav-logo-icon" aria-hidden="true">
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="../pages/browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="../pages/rooms.html"  class="nav-link nav-link--rooms">Rooms</a></li>
+        <li><a href="../pages/about.html"  class="nav-link">About</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+
+      <div class="game-nav-bar">
+        <a href="../pages/browse.html" class="back-link">Back to Browse</a>
+      </div>
+
+      <header class="game-header">
+        <div class="game-header__icon" aria-hidden="true">
+          <img src="../assets/icons/filipino-dama.svg" alt="" />
+        </div>
+        <h1 class="game-header__title">Filipino Dama</h1>
+        <p class="game-header__origin">
+          Philippines &nbsp;&middot;&nbsp;
+          <span class="badge badge--board" style="display:inline-flex; vertical-align:middle; margin-left:4px;">Board</span>
+        </p>
+      </header>
+
+      <!-- Game Container -->
+      <div id="fs-game-wrap" class="fs-game-wrap">
+      <button id="fs-toggle" class="fs-toggle" aria-label="Enter fullscreen" title="Enter fullscreen">
+        <svg class="fs-toggle__icon fs-toggle__icon--enter" viewBox="0 0 18 18" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round">
+          <path d="M1 6V1h5M12 1h5v5M17 12v5h-5M6 17H1v-5"/>
+        </svg>
+        <svg class="fs-toggle__icon fs-toggle__icon--exit" viewBox="0 0 18 18" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" style="display:none">
+          <path d="M6 1v5H1M17 6h-5V1M12 17v-5h5M1 12h5v5"/>
+        </svg>
+      </button>
+      <div class="fs-sr-only" id="fs-announce" aria-live="polite"></div>
+
+      <div class="game-container fd-game-container" id="game-container" aria-label="Game area">
+
+        <!-- Board -->
+        <div class="fd-board-wrap">
+          <canvas id="fd-board" width="560" height="560"
+            aria-label="Filipino Dama game board - 8 by 8 checkerboard"
+            role="img"></canvas>
+
+          <!-- Game over overlay -->
+          <div class="fd-overlay" id="fd-overlay" hidden>
+            <p class="fd-overlay__msg" id="fd-overlay-msg">Light wins!</p>
+            <p class="fd-overlay__sub" id="fd-overlay-sub"></p>
+            <button class="btn btn-primary" id="fd-play-again">Play Again</button>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="fd-sidebar">
+
+          <!-- Turn indicator -->
+          <div class="fd-turn-wrap">
+            <span class="fd-turn-disc" id="fd-turn-disc" data-color="light"></span>
+            <span class="fd-turn-label" id="fd-turn-indicator" data-color="light">Light's turn</span>
+          </div>
+
+          <!-- Piece counters -->
+          <div class="fd-counters">
+            <div class="fd-counter fd-counter--light">
+              <div class="fd-counter__header">
+                <span class="fd-counter__disc fd-counter__disc--light"></span>
+                <span class="fd-counter__name">Light</span>
+              </div>
+              <dl class="fd-counter__stats">
+                <div class="fd-counter__row">
+                  <dt>Pieces</dt>
+                  <dd id="fd-light-pieces">12</dd>
+                </div>
+                <div class="fd-counter__row">
+                  <dt>Dama ★</dt>
+                  <dd id="fd-light-dama">0</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="fd-counter fd-counter--dark">
+              <div class="fd-counter__header">
+                <span class="fd-counter__disc fd-counter__disc--dark"></span>
+                <span class="fd-counter__name">Dark</span>
+              </div>
+              <dl class="fd-counter__stats">
+                <div class="fd-counter__row">
+                  <dt>Pieces</dt>
+                  <dd id="fd-dark-pieces">12</dd>
+                </div>
+                <div class="fd-counter__row">
+                  <dt>Dama ★</dt>
+                  <dd id="fd-dark-dama">0</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+
+          <!-- Move count -->
+          <p class="fd-moves">Move <span id="fd-move-count">0</span></p>
+
+          <!-- AI toggle -->
+          <label class="fd-ai-label">
+            <input type="checkbox" id="fd-ai-toggle" checked />
+            <span>vs AI</span>
+          </label>
+
+          <!-- Buttons -->
+          <div class="fd-btn-row">
+            <button class="btn btn-secondary btn-sm" id="fd-new-game">New Game</button>
+            <button class="btn btn-ghost btn-sm"      id="fd-resign">Resign</button>
+          </div>
+
+        </aside>
+      </div>
+      </div><!-- /#fs-game-wrap -->
+
+      <!-- Play with a Friend -->
+      <div id="pwf-mount"></div>
+
+      <!-- How to Play -->
+      <details class="accordion" open>
+        <summary class="accordion__trigger">
+          <span class="accordion__title">How to Play</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Filipino Dama is played on an <strong>8×8 board</strong>. Pieces occupy only the dark squares. Each player starts with <strong>12 pieces</strong> — Light at the bottom, Dark at the top.
+          </p>
+          <ol>
+            <li>
+              <strong>Movement:</strong> Regular pieces move one square diagonally forward only. Click a highlighted piece to select it, then click a highlighted square to move.
+            </li>
+            <li>
+              <strong>Capturing:</strong> Jump over an adjacent enemy piece to capture it — the landing square must be empty. Unlike Western draughts, you can capture in <strong>all four diagonal directions</strong> (including backward).
+            </li>
+            <li>
+              <strong>Mandatory capture:</strong> If a capture is available, you <em>must</em> capture. You cannot make a non-capture move when captures are possible.
+            </li>
+            <li>
+              <strong>Multi-jump:</strong> After a capture, if another capture is available with the same piece, you must continue jumping. Captured pieces are removed only at the <em>end</em> of the chain.
+            </li>
+            <li>
+              <strong>Dama (★):</strong> Reach the far end of the board to promote to a Dama. A Dama slides <em>any number</em> of squares diagonally and captures long-range in all four directions.
+            </li>
+            <li>
+              <strong>Winning:</strong> Capture all opponent pieces, or leave them with no legal moves.
+            </li>
+          </ol>
+          <p style="margin-top:0.75rem; font-style:italic; color:var(--color-text-muted); font-size:0.9em;">
+            Note: Some rules (40-move draw, mid-chain promotion behaviour) are reconstructed — see Cultural Context for details.
+          </p>
+        </div>
+      </details>
+
+      <!-- Cultural Context -->
+      <details class="accordion">
+        <summary class="accordion__trigger">
+          <span class="accordion__title">Cultural Context</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Filipino Dama (also called Filipino Draughts) is the traditional checkers variant of the Philippines, where the game has been played for centuries across the archipelago's diverse island communities. The word <em>dama</em> — borrowed from Spanish <em>damas</em>, meaning "draughts" or "ladies" — also names the promoted king piece, a double meaning that is central to the game's strategy.
+          </p>
+          <p>
+            What sets Filipino Dama apart from its Western counterpart is the capture rule: while standard draughts only allows forward captures for regular pieces, Filipino Dama permits capturing in <strong>all four diagonal directions</strong>. This makes the game significantly more tactical, as no piece is ever truly "safe" behind a front line.
+          </p>
+          <p>
+            The Dama piece itself is more powerful than the Western king — rather than moving one square at a time, it slides the full diagonal (like a bishop in chess) and captures long-range by jumping over an enemy anywhere along a diagonal and landing on any empty square beyond. This long-range ability makes Dama promotion a decisive turning point in most games.
+          </p>
+          <p>
+            Filipino Dama is still played recreationally throughout the Philippines, particularly in provincial towns and barangay plazas, often using improvised boards and bottle caps as pieces. The game is part of a broader Southeast Asian draughts family that includes variants from Thailand, Indonesia, and Malaysia.
+          </p>
+          <p>
+            <strong>Reconstruction note:</strong> The core rules (8×8 board, 12 pieces, all-direction capture, Dama long-range) are well-documented. The 40-move no-capture draw rule and the behaviour of mid-chain promotion (ending the jump chain) follow conventions from the broader international draughts family and are marked as reconstructed.
+          </p>
+        </div>
+      </details>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <span class="footer-brand">Cultural Games</span>
+      <p class="footer-mission">Preserving cultural heritage through play - one game at a time.</p>
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links" role="list">
+          <li><a href="../pages/browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="../pages/about.html"  class="footer-link">About</a></li>
+        </ul>
+      </nav>
+      <div class="footer-divider"></div>
+      <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../js/utils/games-data.js"></script>
+  <script src="../js/utils/navigation.js"></script>
+  <script src="../js/utils/auth.js"></script>
+  <script src="../shared/achievement-queue.js"></script>
+  <script src="../shared/achievements.js"></script>
+  <script src="../shared/tutorial.js"></script>
+  <script src="../shared/fullscreen.js"></script>
+  <script src="../shared/play-with-friend.js"></script>
+  <script src="../js/rooms/game-bridge.js"></script>
+  <script src="../js/rooms/room-mode.js"></script>
+  <script src="filipino-dama.js"></script>
+</body>
+</html>
