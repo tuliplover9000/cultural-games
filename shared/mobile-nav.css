@@ -1,3 +1,171 @@
 /* =============================================================
-   shared/mobile-nav.css — Bottom Tab Bar (stub — Phase B)
+   shared/mobile-nav.css — Bottom Tab Bar Navigation
+   Only visible at ≤ 430px. Prefix: mb-nav-
    ============================================================= */
+
+/* ── Tab bar ── */
+.mb-nav-bar {
+  display: none; /* shown only on mobile via JS */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: calc(56px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: rgba(26, 14, 6, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(200, 155, 60, 0.25);
+  transition: transform 0.25s ease;
+}
+
+@media (max-width: 430px) {
+  .mb-nav-bar {
+    display: flex;
+  }
+}
+
+.mb-nav-bar.mb-nav-hidden {
+  transform: translateY(100%);
+}
+
+/* ── Tab list ── */
+.mb-nav-tabs {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: 56px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Individual tab ── */
+.mb-nav-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 4px 4px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: rgba(240, 230, 208, 0.45);
+  font-family: var(--font-body, 'Outfit', sans-serif);
+  font-size: 10px;
+  font-weight: 500;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: color 0.15s ease;
+  border-top: 2px solid transparent;
+  position: relative;
+}
+
+.mb-nav-tab:active {
+  color: var(--color-accent-gold, #C89B3C);
+}
+
+.mb-nav-tab svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  fill: currentColor;
+}
+
+.mb-nav-tab span {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* ── Active tab ── */
+.mb-nav-tab.mb-nav-active {
+  color: var(--color-accent-gold, #C89B3C);
+  border-top-color: var(--color-accent-gold, #C89B3C);
+}
+
+/* ── More drawer overlay ── */
+.mb-nav-drawer-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.mb-nav-drawer-overlay.mb-nav-drawer-open {
+  display: block;
+}
+
+/* ── More drawer panel ── */
+.mb-nav-drawer {
+  position: fixed;
+  bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+  left: 0;
+  right: 0;
+  z-index: 1001;
+  background: #1E1309;
+  border-top: 1px solid rgba(200, 155, 60, 0.25);
+  border-radius: 16px 16px 0 0;
+  padding: 12px 0 8px;
+  transform: translateY(100%);
+  transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.5);
+}
+
+.mb-nav-drawer.mb-nav-drawer-open {
+  transform: translateY(0);
+}
+
+.mb-nav-drawer-handle {
+  width: 36px;
+  height: 4px;
+  background: rgba(240, 230, 208, 0.25);
+  border-radius: 2px;
+  margin: 0 auto 12px;
+}
+
+.mb-nav-drawer-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 24px;
+  color: rgba(240, 230, 208, 0.85);
+  font-family: var(--font-body, 'Outfit', sans-serif);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.mb-nav-drawer-item:active,
+.mb-nav-drawer-item:hover {
+  background: rgba(200, 155, 60, 0.12);
+  color: var(--color-accent-gold, #C89B3C);
+}
+
+.mb-nav-drawer-item svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  fill: currentColor;
+  opacity: 0.75;
+}
+
+/* ── Hide desktop top nav links on mobile ── */
+@media (max-width: 430px) {
+  .nav-links {
+    display: none !important;
+  }
+  .nav-hamburger {
+    display: none !important;
+  }
+}
