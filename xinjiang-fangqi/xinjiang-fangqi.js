@@ -433,6 +433,7 @@
 
     var row = state.hoverCell.row;
     var col = state.hoverCell.col;
+    if (state.board[row][col] !== EMPTY) return;  // don't overwrite placed pieces
     var player = state.currentTurn;
 
     // Temporarily place to check captures
