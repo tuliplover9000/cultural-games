@@ -1,73 +1,86 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="6 5 52 55">
-  <defs>
-    <!-- Rounded hexagon clip for the whole die -->
-    <clipPath id="dieClip">
-      <path d="M28.5,10.9 Q32,9 35.5,10.9
-               L50.5,19.1 Q54,21 54,25
-               L54,39    Q54,43 50.5,44.9
-               L35.5,53.1 Q32,55 28.5,53.1
-               L13.5,44.9 Q10,43 10,39
-               L10,25    Q10,21 13.5,19.1 Z"/>
-    </clipPath>
-    <linearGradient id="gTop" x1="20%" y1="0%" x2="80%" y2="100%">
-      <stop offset="0%"   stop-color="#FFFFFF"/>
-      <stop offset="100%" stop-color="#EBEBEB"/>
-    </linearGradient>
-    <linearGradient id="gRight" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%"   stop-color="#D6D6D6"/>
-      <stop offset="100%" stop-color="#BFBFBF"/>
-    </linearGradient>
-    <linearGradient id="gLeft" x1="100%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%"   stop-color="#C0C0C0"/>
-      <stop offset="100%" stop-color="#A8A8A8"/>
-    </linearGradient>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-140 -140 280 280" width="280" height="280">
+  <!-- Outermost ring: coral/red -->
+  <circle r="128" fill="none" stroke="#E24B4A" stroke-width="2.5"/>
+  <circle r="121" fill="none" stroke="#E24B4A" stroke-width="0.5" stroke-dasharray="4 3" opacity="0.6"/>
 
-  <!-- Drop shadow -->
-  <ellipse cx="32" cy="58" rx="16" ry="3.5" fill="black" opacity="0.20"/>
-
-  <!-- Die body clipped to rounded hex -->
-  <g clip-path="url(#dieClip)">
-    <!-- Left face -->
-    <polygon points="10,21 32,33 32,55 10,43" fill="url(#gLeft)"/>
-    <!-- Right face -->
-    <polygon points="32,33 54,21 54,43 32,55" fill="url(#gRight)"/>
-    <!-- Top face -->
-    <polygon points="10,21 32,9 54,21 32,33" fill="url(#gTop)"/>
-
-    <!-- Internal edges -->
-    <line x1="10" y1="21" x2="32" y2="33" stroke="#AAAAAA" stroke-width="0.8"/>
-    <line x1="54" y1="21" x2="32" y2="33" stroke="#AAAAAA" stroke-width="0.8"/>
-    <line x1="32" y1="33" x2="32" y2="55" stroke="#999999" stroke-width="0.8"/>
-
-    <!-- TOP FACE — 5 dots rotated to match rhombus: corners + center -->
-    <circle cx="32" cy="14" r="2.5" fill="#C41E3A"/>
-    <circle cx="44" cy="21" r="2.5" fill="#C41E3A"/>
-    <circle cx="32" cy="21" r="2.5" fill="#C41E3A"/>
-    <circle cx="20" cy="21" r="2.5" fill="#C41E3A"/>
-    <circle cx="32" cy="28" r="2.5" fill="#C41E3A"/>
-
-    <!-- LEFT FACE — 3 dots: center=(21,38), basis a=(11,6) b=(0,11) -->
-    <circle cx="16" cy="30" r="2.4" fill="#C41E3A"/>
-    <circle cx="21" cy="38" r="2.4" fill="#C41E3A"/>
-    <circle cx="26" cy="46" r="2.4" fill="#C41E3A"/>
-
-    <!-- RIGHT FACE — 2 dots: center=(43,38), basis a=(11,-6) b=(0,11) -->
-    <circle cx="39" cy="36" r="2.4" fill="#C41E3A"/>
-    <circle cx="47" cy="40" r="2.4" fill="#C41E3A"/>
+  <!-- 20 calendar dots -->
+  <g fill="#E24B4A" opacity="0.9">
+    <circle r="3.5" cx="0" cy="-121" transform="rotate(0)"/>
+    <circle r="2"   cx="0" cy="-121" transform="rotate(18)"  opacity="0.5"/>
+    <circle r="3.5" cx="0" cy="-121" transform="rotate(36)"/>
+    <circle r="2"   cx="0" cy="-121" transform="rotate(54)"  opacity="0.5"/>
+    <circle r="3.5" cx="0" cy="-121" transform="rotate(72)"/>
+    <circle r="2"   cx="0" cy="-121" transform="rotate(90)"  opacity="0.5"/>
+    <circle r="3.5" cx="0" cy="-121" transform="rotate(108)"/>
+    <circle r="2"   cx="0" cy="-121" transform="rotate(126)" opacity="0.5"/>
+    <circle r="3.5" cx="0" cy="-121" transform="rotate(144)"/>
+    <circle r="2"   cx="0" cy="-121" transform="rotate(162)" opacity="0.5"/>
+    <circle r="3.5" cx="0" cy="-121" transform="rotate(180)"/>
+    <circle r="2"   cx="0" cy="-121" transform="rotate(198)" opacity="0.5"/>
+    <circle r="3.5" cx="0" cy="-121" transform="rotate(216)"/>
+    <circle r="2"   cx="0" cy="-121" transform="rotate(234)" opacity="0.5"/>
+    <circle r="3.5" cx="0" cy="-121" transform="rotate(252)"/>
+    <circle r="2"   cx="0" cy="-121" transform="rotate(270)" opacity="0.5"/>
+    <circle r="3.5" cx="0" cy="-121" transform="rotate(288)"/>
+    <circle r="2"   cx="0" cy="-121" transform="rotate(306)" opacity="0.5"/>
+    <circle r="3.5" cx="0" cy="-121" transform="rotate(324)"/>
+    <circle r="2"   cx="0" cy="-121" transform="rotate(342)" opacity="0.5"/>
   </g>
 
-  <!-- Outer rounded border -->
-  <path d="M28.5,10.9 Q32,9 35.5,10.9
-           L50.5,19.1 Q54,21 54,25
-           L54,39    Q54,43 50.5,44.9
-           L35.5,53.1 Q32,55 28.5,53.1
-           L13.5,44.9 Q10,43 10,39
-           L10,25    Q10,21 13.5,19.1 Z"
-    fill="none" stroke="#BBBBBB" stroke-width="1"/>
+  <!-- 8 step teeth: amber -->
+  <g fill="#BA7517" fill-opacity="0.5" stroke="#EF9F27" stroke-width="0.8">
+    <rect x="-7" y="-116" width="14" height="15" rx="2" transform="rotate(0)"/>
+    <rect x="-7" y="-116" width="14" height="15" rx="2" transform="rotate(45)"/>
+    <rect x="-7" y="-116" width="14" height="15" rx="2" transform="rotate(90)"/>
+    <rect x="-7" y="-116" width="14" height="15" rx="2" transform="rotate(135)"/>
+    <rect x="-7" y="-116" width="14" height="15" rx="2" transform="rotate(180)"/>
+    <rect x="-7" y="-116" width="14" height="15" rx="2" transform="rotate(225)"/>
+    <rect x="-7" y="-116" width="14" height="15" rx="2" transform="rotate(270)"/>
+    <rect x="-7" y="-116" width="14" height="15" rx="2" transform="rotate(315)"/>
+  </g>
 
-  <!-- Top highlight (bright rim on top two edges) -->
-  <path d="M13.5,19.1 Q10,21 10,25 L10,25 Q10,21 13.5,19.1
-           M13.5,19.1 L28.5,10.9 Q32,9 35.5,10.9 L50.5,19.1"
-    fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" opacity="0.75"/>
+  <!-- 4 main cardinal spikes: amber/gold -->
+  <g fill="#EF9F27">
+    <polygon points="0,-108 -14,-52 14,-52"/>
+    <polygon points="0,108 -14,52 14,52"/>
+    <polygon points="-108,0 -52,-14 -52,14"/>
+    <polygon points="108,0 52,-14 52,14"/>
+  </g>
+
+  <!-- 4 intercardinal spikes: coral -->
+  <g fill="#E24B4A" transform="rotate(45)">
+    <polygon points="0,-100 -9,-56 9,-56"/>
+    <polygon points="0,100 -9,56 9,56"/>
+    <polygon points="-100,0 -56,-9 -56,9"/>
+    <polygon points="100,0 56,-9 56,9"/>
+  </g>
+
+  <!-- Mid ring: teal -->
+  <circle r="50" fill="none" stroke="#1D9E75" stroke-width="1.8"/>
+  <circle r="44" fill="none" stroke="#1D9E75" stroke-width="0.5" opacity="0.5"/>
+
+  <!-- Rotated inner square ring: amber -->
+  <rect x="-50" y="-50" width="100" height="100" rx="4" fill="none" stroke="#EF9F27" stroke-width="1.2" transform="rotate(45)"/>
+
+  <!-- 8 short rays -->
+  <g stroke="#FAC775" stroke-width="1.5" stroke-linecap="round" opacity="0.7">
+    <line x1="0" y1="-38" x2="0" y2="-42" transform="rotate(0)"/>
+    <line x1="0" y1="-38" x2="0" y2="-42" transform="rotate(45)"/>
+    <line x1="0" y1="-38" x2="0" y2="-42" transform="rotate(90)"/>
+    <line x1="0" y1="-38" x2="0" y2="-42" transform="rotate(135)"/>
+    <line x1="0" y1="-38" x2="0" y2="-42" transform="rotate(180)"/>
+    <line x1="0" y1="-38" x2="0" y2="-42" transform="rotate(225)"/>
+    <line x1="0" y1="-38" x2="0" y2="-42" transform="rotate(270)"/>
+    <line x1="0" y1="-38" x2="0" y2="-42" transform="rotate(315)"/>
+  </g>
+
+  <!-- Center disc -->
+  <circle r="30" fill="#2C1A04"/>
+  <circle r="28" fill="none" stroke="#EF9F27" stroke-width="0.8" opacity="0.4"/>
+
+  <!-- Eye -->
+  <path d="M-20,0 Q0,-16 20,0 Q0,16 -20,0 Z" fill="#EF9F27"/>
+  <circle r="9" fill="#FAC775"/>
+  <circle r="4" fill="#2C1A04"/>
+  <circle r="1.8" cx="3" cy="-3" fill="white" opacity="0.6"/>
 </svg>
