@@ -602,7 +602,7 @@
     var rem = state.currentTurn === BLACK ? state.blackRemaining : state.whiteRemaining;
     if (rem <= 0) return;
 
-    placePiece(row, col, state.humanColor);
+    placePiece(row, col, state.currentTurn);
   }
 
   // ── AI ─────────────────────────────────────────────────────────────
