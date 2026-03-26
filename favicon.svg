@@ -40,12 +40,12 @@
     <line x1="54" y1="21" x2="32" y2="33" stroke="#AAAAAA" stroke-width="0.8"/>
     <line x1="32" y1="33" x2="32" y2="55" stroke="#999999" stroke-width="0.8"/>
 
-    <!-- TOP FACE — 5 dots: s=±0.38 t=±0.38 keeps dots safely inside rhombus -->
-    <circle cx="24" cy="17" r="2.5" fill="#C41E3A"/>
-    <circle cx="40" cy="17" r="2.5" fill="#C41E3A"/>
+    <!-- TOP FACE — 5 dots rotated to match rhombus: corners + center -->
+    <circle cx="32" cy="14" r="2.5" fill="#C41E3A"/>
+    <circle cx="44" cy="21" r="2.5" fill="#C41E3A"/>
     <circle cx="32" cy="21" r="2.5" fill="#C41E3A"/>
-    <circle cx="24" cy="25" r="2.5" fill="#C41E3A"/>
-    <circle cx="40" cy="25" r="2.5" fill="#C41E3A"/>
+    <circle cx="20" cy="21" r="2.5" fill="#C41E3A"/>
+    <circle cx="32" cy="28" r="2.5" fill="#C41E3A"/>
 
     <!-- LEFT FACE — 3 dots: center=(21,38), basis a=(11,6) b=(0,11) -->
     <circle cx="16" cy="30" r="2.4" fill="#C41E3A"/>
