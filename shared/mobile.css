@@ -1,0 +1,36 @@
+/* =============================================================
+   shared/mobile.css — Cultural Games Mobile Foundation
+   ============================================================= */
+
+/* ── Global touch optimisations ── */
+*, *::before, *::after {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button, a, [role="button"], label, select, input, textarea {
+  touch-action: manipulation;
+}
+
+canvas {
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: none;
+}
+
+/* ── Safe area / notch support ── */
+:root {
+  --mb-phone-max: 430px;
+  --mb-phone-min: 360px;
+  --mb-nav-height: 56px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top:    env(safe-area-inset-top,    0px);
+  --safe-left:   env(safe-area-inset-left,   0px);
+  --safe-right:  env(safe-area-inset-right,  0px);
+}
+
+/* ── Body padding so content isn't hidden behind bottom tab bar ── */
+@media (max-width: 430px) {
+  body {
+    padding-bottom: calc(var(--mb-nav-height) + var(--safe-bottom));
+  }
+}
