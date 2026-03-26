@@ -1,34 +1,60 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- 3D dice — top face + right face + left face (isometric-ish) -->
+  <defs>
+    <!-- Subtle gradient on top face for roundness -->
+    <linearGradient id="topFace" x1="30%" y1="0%" x2="70%" y2="100%">
+      <stop offset="0%"  stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E8E8E8"/>
+    </linearGradient>
+    <linearGradient id="rightFace" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"  stop-color="#D4D4D4"/>
+      <stop offset="100%" stop-color="#BEBEBE"/>
+    </linearGradient>
+    <linearGradient id="leftFace" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#B8B8B8"/>
+      <stop offset="100%" stop-color="#A0A0A0"/>
+    </linearGradient>
+  </defs>
 
   <!-- Drop shadow -->
-  <ellipse cx="33" cy="58" rx="18" ry="4" fill="black" opacity="0.25"/>
+  <ellipse cx="32" cy="58" rx="15" ry="3" fill="black" opacity="0.22"/>
 
-  <!-- Left face (darker white) — shows 3 dots -->
-  <polygon points="10,20 32,32 32,54 10,42" fill="#C8C8C8"/>
-  <circle cx="17" cy="30" r="2.8" fill="#C41E3A"/>
-  <circle cx="21" cy="41" r="2.8" fill="#C41E3A"/>
-  <circle cx="25" cy="33" r="2.8" fill="#C41E3A"/>
+  <!-- Left face -->
+  <polygon points="10,21 32,33 32,55 10,43" fill="url(#leftFace)"/>
 
-  <!-- Right face (medium white) — shows 2 dots -->
-  <polygon points="32,32 54,20 54,42 32,54" fill="#E8E8E8"/>
-  <circle cx="44" cy="28" r="2.8" fill="#C41E3A"/>
-  <circle cx="42" cy="46" r="2.8" fill="#C41E3A"/>
+  <!-- Right face -->
+  <polygon points="32,33 54,21 54,43 32,55" fill="url(#rightFace)"/>
 
-  <!-- Top face (bright white) — shows 5 dots -->
-  <polygon points="10,20 32,8 54,20 32,32" fill="#FFFFFF"/>
-  <circle cx="22" cy="17" r="2.8" fill="#C41E3A"/>
-  <circle cx="42" cy="17" r="2.8" fill="#C41E3A"/>
-  <circle cx="32" cy="21" r="2.8" fill="#C41E3A"/>
-  <circle cx="22" cy="25" r="2.8" fill="#C41E3A"/>
-  <circle cx="42" cy="25" r="2.8" fill="#C41E3A"/>
+  <!-- Top face -->
+  <polygon points="10,21 32,9 54,21 32,33" fill="url(#topFace)"/>
 
-  <!-- Edges -->
-  <polygon points="10,20 32,8 54,20 32,32" fill="none" stroke="#999" stroke-width="0.8"/>
-  <polygon points="10,20 32,32 32,54 10,42" fill="none" stroke="#999" stroke-width="0.8"/>
-  <polygon points="32,32 54,20 54,42 32,54" fill="none" stroke="#999" stroke-width="0.8"/>
+  <!-- Outer silhouette (rounded stroke trick) -->
+  <polygon points="10,21 32,9 54,21 54,43 32,55 10,43"
+    fill="none" stroke="#C8C8C8" stroke-width="1" stroke-linejoin="round"/>
+  <!-- Inner edges -->
+  <line x1="10" y1="21" x2="32" y2="33" stroke="#C8C8C8" stroke-width="0.9"/>
+  <line x1="54" y1="21" x2="32" y2="33" stroke="#C0C0C0" stroke-width="0.9"/>
+  <line x1="32" y1="33" x2="32" y2="55" stroke="#B0B0B0" stroke-width="0.9"/>
 
-  <!-- Corner highlight on top edge -->
-  <line x1="10" y1="20" x2="32" y2="8" stroke="white" stroke-width="1.2" opacity="0.6"/>
-  <line x1="32" y1="8" x2="54" y2="20" stroke="white" stroke-width="1.2" opacity="0.6"/>
+  <!-- Top highlight edge -->
+  <line x1="10" y1="21" x2="32" y2="9" stroke="white" stroke-width="1.4" opacity="0.8"/>
+  <line x1="32" y1="9" x2="54" y2="21" stroke="white" stroke-width="1.4" opacity="0.5"/>
+
+  <!-- TOP FACE — 5 dots -->
+  <!-- Using face basis: center=(32,21), a=(11,0) skewed, b=(0,-6) skewed -->
+  <circle cx="22" cy="15" r="2.6" fill="#C41E3A"/>
+  <circle cx="42" cy="15" r="2.6" fill="#C41E3A"/>
+  <circle cx="32" cy="21" r="2.6" fill="#C41E3A"/>
+  <circle cx="22" cy="27" r="2.6" fill="#C41E3A"/>
+  <circle cx="42" cy="27" r="2.6" fill="#C41E3A"/>
+
+  <!-- LEFT FACE — 3 dots (diagonal) -->
+  <!-- face center=(21,38), basis a=(11,6), b=(0,11) -->
+  <circle cx="16" cy="29" r="2.4" fill="#C41E3A" opacity="0.85"/>
+  <circle cx="21" cy="38" r="2.4" fill="#C41E3A" opacity="0.85"/>
+  <circle cx="27" cy="47" r="2.4" fill="#C41E3A" opacity="0.85"/>
+
+  <!-- RIGHT FACE — 2 dots (diagonal) -->
+  <!-- face center=(43,38), basis a=(11,-6), b=(0,11) -->
+  <circle cx="38" cy="35" r="2.4" fill="#C41E3A" opacity="0.85"/>
+  <circle cx="48" cy="41" r="2.4" fill="#C41E3A" opacity="0.85"/>
 </svg>
