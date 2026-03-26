@@ -189,15 +189,17 @@
     state.winner   = winner;
     state.phase    = 'gameover';
     var humanColor = state.humanColor;
-    if (winner === humanColor) {
-      var humanOnBoard = countPieces(humanColor);
-      if (humanOnBoard <= 3 && window.Achievements) Achievements.checkAction('xf_comeback_win');
-      if (window.Auth) Auth.recordResult('xinjiang-fangqi', 'win');
-    } else if (winner !== 'draw') {
-      if (window.Auth) Auth.recordResult('xinjiang-fangqi', 'loss');
-    }
-    if (window.Achievements) {
-      Achievements.evaluate({ gameId: 'xinjiang-fangqi', result: winner === humanColor ? 'win' : (winner === 'draw' ? 'draw' : 'loss') });
+    if (state.aiEnabled) {
+      if (winner === humanColor) {
+        var humanOnBoard = countPieces(humanColor);
+        if (humanOnBoard <= 3 && window.Achievements) Achievements.checkAction('xf_comeback_win');
+        if (window.Auth) Auth.recordResult('xinjiang-fangqi', 'win');
+      } else if (winner !== 'draw') {
+        if (window.Auth) Auth.recordResult('xinjiang-fangqi', 'loss');
+      }
+      if (window.Achievements) {
+        Achievements.evaluate({ gameId: 'xinjiang-fangqi', result: winner === humanColor ? 'win' : (winner === 'draw' ? 'draw' : 'loss') });
+      }
     }
     render();
     showOverlay(winner);
@@ -593,11 +595,11 @@
     if (state.gameOver) return;
     if (state.animating) return;
     if (window.CGTutorial && CGTutorial.isActive) return;
-    if (state.currentTurn !== state.humanColor) return;
+    if (state.aiEnabled && state.currentTurn !== state.humanColor) return;
 
     var row = cell.row, col = cell.col;
     if (!isValidPlacement(row, col)) return;
-    var rem = state.humanColor === BLACK ? state.blackRemaining : state.whiteRemaining;
+    var rem = state.currentTurn === BLACK ? state.blackRemaining : state.whiteRemaining;
     if (rem <= 0) return;
 
     placePiece(row, col, state.humanColor);

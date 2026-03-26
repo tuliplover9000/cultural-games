@@ -305,19 +305,20 @@
     state.validMoves = [];
     state.selected  = null;
 
-    if (winner === state.humanColor) {
-      if (window.Auth) Auth.recordResult('filipino-dama', 'win');
-      // Clean sweep: opponent has zero pieces
-      var opp_count = countPieces(opp(state.humanColor));
-      if (opp_count === 0 && window.Achievements) Achievements.checkAction('fd_clean_sweep');
-    } else if (winner !== 'draw') {
-      if (window.Auth) Auth.recordResult('filipino-dama', 'loss');
-    }
-    if (window.Achievements) {
-      Achievements.evaluate({
-        gameId: 'filipino-dama',
-        result: winner === state.humanColor ? 'win' : (winner === 'draw' ? 'draw' : 'loss')
-      });
+    if (state.aiEnabled) {
+      if (winner === state.humanColor) {
+        if (window.Auth) Auth.recordResult('filipino-dama', 'win');
+        var opp_count = countPieces(opp(state.humanColor));
+        if (opp_count === 0 && window.Achievements) Achievements.checkAction('fd_clean_sweep');
+      } else if (winner !== 'draw') {
+        if (window.Auth) Auth.recordResult('filipino-dama', 'loss');
+      }
+      if (window.Achievements) {
+        Achievements.evaluate({
+          gameId: 'filipino-dama',
+          result: winner === state.humanColor ? 'win' : (winner === 'draw' ? 'draw' : 'loss')
+        });
+      }
     }
     render();
     showOverlay(winner);
@@ -361,11 +362,12 @@
     if (!cell) return;
     if (state.gameOver || state.animating) return;
     if (window.CGTutorial && CGTutorial.isActive) return;
-    if (state.currentTurn !== state.humanColor) return;
+    if (state.aiEnabled && state.currentTurn !== state.humanColor) return;
     if (!isDarkSq(cell.row, cell.col)) return;
 
     var r = cell.row, c = cell.col;
     var piece = state.board[r][c];
+    var activeColor = state.currentTurn;
 
     // If a piece is selected, try to execute a move to clicked cell
     if (state.selected) {
@@ -374,7 +376,7 @@
     }
 
     // Click own piece that has legal moves: select it
-    if (isPieceOf(piece, state.humanColor) && pieceHasMoves(r, c)) {
+    if (isPieceOf(piece, activeColor) && pieceHasMoves(r, c)) {
       state.selected = { row: r, col: c };
       render();
       return;
