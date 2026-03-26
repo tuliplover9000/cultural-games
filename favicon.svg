@@ -1,15 +1,73 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Shadow -->
-  <rect x="6" y="8" width="52" height="52" rx="12" fill="black" opacity="0.18"/>
-  <!-- Dice face -->
-  <rect x="4" y="4" width="52" height="52" rx="11" fill="white"/>
-  <!-- Subtle inner bevel -->
-  <rect x="4" y="4" width="52" height="52" rx="11" fill="none" stroke="#E0E0E0" stroke-width="1.5"/>
+  <defs>
+    <!-- Rounded hexagon clip for the whole die -->
+    <clipPath id="dieClip">
+      <path d="M28.5,10.9 Q32,9 35.5,10.9
+               L50.5,19.1 Q54,21 54,25
+               L54,39    Q54,43 50.5,44.9
+               L35.5,53.1 Q32,55 28.5,53.1
+               L13.5,44.9 Q10,43 10,39
+               L10,25    Q10,21 13.5,19.1 Z"/>
+    </clipPath>
+    <linearGradient id="gTop" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%"   stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#EBEBEB"/>
+    </linearGradient>
+    <linearGradient id="gRight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#D6D6D6"/>
+      <stop offset="100%" stop-color="#BFBFBF"/>
+    </linearGradient>
+    <linearGradient id="gLeft" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#C0C0C0"/>
+      <stop offset="100%" stop-color="#A8A8A8"/>
+    </linearGradient>
+  </defs>
 
-  <!-- 5 dots -->
-  <circle cx="18" cy="18" r="5" fill="#C41E3A"/>
-  <circle cx="46" cy="18" r="5" fill="#C41E3A"/>
-  <circle cx="32" cy="32" r="5" fill="#C41E3A"/>
-  <circle cx="18" cy="46" r="5" fill="#C41E3A"/>
-  <circle cx="46" cy="46" r="5" fill="#C41E3A"/>
+  <!-- Drop shadow -->
+  <ellipse cx="32" cy="58" rx="16" ry="3.5" fill="black" opacity="0.20"/>
+
+  <!-- Die body clipped to rounded hex -->
+  <g clip-path="url(#dieClip)">
+    <!-- Left face -->
+    <polygon points="10,21 32,33 32,55 10,43" fill="url(#gLeft)"/>
+    <!-- Right face -->
+    <polygon points="32,33 54,21 54,43 32,55" fill="url(#gRight)"/>
+    <!-- Top face -->
+    <polygon points="10,21 32,9 54,21 32,33" fill="url(#gTop)"/>
+
+    <!-- Internal edges -->
+    <line x1="10" y1="21" x2="32" y2="33" stroke="#AAAAAA" stroke-width="0.8"/>
+    <line x1="54" y1="21" x2="32" y2="33" stroke="#AAAAAA" stroke-width="0.8"/>
+    <line x1="32" y1="33" x2="32" y2="55" stroke="#999999" stroke-width="0.8"/>
+
+    <!-- TOP FACE — 5 dots: center=(32,21), grid via (32+22s, 21-12t) -->
+    <circle cx="21" cy="15" r="2.7" fill="#C41E3A"/>
+    <circle cx="43" cy="15" r="2.7" fill="#C41E3A"/>
+    <circle cx="32" cy="21" r="2.7" fill="#C41E3A"/>
+    <circle cx="21" cy="27" r="2.7" fill="#C41E3A"/>
+    <circle cx="43" cy="27" r="2.7" fill="#C41E3A"/>
+
+    <!-- LEFT FACE — 3 dots: center=(21,38), basis a=(11,6) b=(0,11) -->
+    <circle cx="16" cy="30" r="2.4" fill="#C41E3A"/>
+    <circle cx="21" cy="38" r="2.4" fill="#C41E3A"/>
+    <circle cx="26" cy="46" r="2.4" fill="#C41E3A"/>
+
+    <!-- RIGHT FACE — 2 dots: center=(43,38), basis a=(11,-6) b=(0,11) -->
+    <circle cx="39" cy="36" r="2.4" fill="#C41E3A"/>
+    <circle cx="47" cy="40" r="2.4" fill="#C41E3A"/>
+  </g>
+
+  <!-- Outer rounded border -->
+  <path d="M28.5,10.9 Q32,9 35.5,10.9
+           L50.5,19.1 Q54,21 54,25
+           L54,39    Q54,43 50.5,44.9
+           L35.5,53.1 Q32,55 28.5,53.1
+           L13.5,44.9 Q10,43 10,39
+           L10,25    Q10,21 13.5,19.1 Z"
+    fill="none" stroke="#BBBBBB" stroke-width="1"/>
+
+  <!-- Top highlight (bright rim on top two edges) -->
+  <path d="M13.5,19.1 Q10,21 10,25 L10,25 Q10,21 13.5,19.1
+           M13.5,19.1 L28.5,10.9 Q32,9 35.5,10.9 L50.5,19.1"
+    fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" opacity="0.75"/>
 </svg>
