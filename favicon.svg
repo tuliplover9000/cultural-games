@@ -1,7 +1,192 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-  <circle cx="12" cy="12" r="12" fill="#2C1A04"/>
-  <circle cx="12" cy="12" r="10" fill="none" stroke="#C89B3C" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-  <ellipse cx="12" cy="12" rx="4.5" ry="10" fill="none" stroke="#C89B3C" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-  <line x1="2" y1="9" x2="22" y2="9" stroke="#C89B3C" stroke-width="1.7" stroke-linecap="round"/>
-  <line x1="2" y1="15" x2="22" y2="15" stroke="#C89B3C" stroke-width="1.7" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-120 -120 240 240" width="240" height="240">
+  <defs>
+    <clipPath id="g"><circle r="90"/></clipPath>
+    <radialGradient id="sph" cx="35%" cy="30%" r="65%">
+      <stop offset="0%"  stop-color="#4A2C08"/>
+      <stop offset="60%" stop-color="#2C1A04"/>
+      <stop offset="100%" stop-color="#140C02"/>
+    </radialGradient>
+    <radialGradient id="sh" cx="30%" cy="25%" r="50%">
+      <stop offset="0%"  stop-color="#FAC775" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#FAC775" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <circle r="90" fill="url(#sph)"/>
+
+  <g clip-path="url(#g)">
+    <!-- Latitude ellipses -->
+    <ellipse cx="0" cy="-87" rx="23" ry="6"  fill="none" stroke="#BA7517" stroke-width="0.5" opacity="0.45"/>
+    <ellipse cx="0" cy="87"  rx="23" ry="6"  fill="none" stroke="#BA7517" stroke-width="0.5" opacity="0.45"/>
+    <ellipse cx="0" cy="-78" rx="45" ry="11" fill="none" stroke="#BA7517" stroke-width="0.6" opacity="0.55"/>
+    <ellipse cx="0" cy="78"  rx="45" ry="11" fill="none" stroke="#BA7517" stroke-width="0.6" opacity="0.55"/>
+    <ellipse cx="0" cy="-64" rx="64" ry="16" fill="none" stroke="#EF9F27" stroke-width="0.7" opacity="0.5"/>
+    <ellipse cx="0" cy="64"  rx="64" ry="16" fill="none" stroke="#EF9F27" stroke-width="0.7" opacity="0.5"/>
+    <ellipse cx="0" cy="-45" rx="78" ry="20" fill="none" stroke="#BA7517" stroke-width="0.7" opacity="0.6"/>
+    <ellipse cx="0" cy="45"  rx="78" ry="20" fill="none" stroke="#BA7517" stroke-width="0.7" opacity="0.6"/>
+    <ellipse cx="0" cy="-23" rx="87" ry="22" fill="none" stroke="#BA7517" stroke-width="0.6" opacity="0.45"/>
+    <ellipse cx="0" cy="23"  rx="87" ry="22" fill="none" stroke="#BA7517" stroke-width="0.6" opacity="0.45"/>
+    <ellipse cx="0" cy="0"   rx="90" ry="23" fill="none" stroke="#EF9F27" stroke-width="1.1" opacity="0.75"/>
+    <!-- Longitude ellipses -->
+    <ellipse cx="0" cy="0" rx="2"  ry="90" fill="none" stroke="#BA7517" stroke-width="0.5" opacity="0.4"/>
+    <ellipse cx="0" cy="0" rx="45" ry="90" fill="none" stroke="#BA7517" stroke-width="0.5" opacity="0.4" transform="rotate(30)"/>
+    <ellipse cx="0" cy="0" rx="78" ry="90" fill="none" stroke="#BA7517" stroke-width="0.5" opacity="0.4" transform="rotate(60)"/>
+    <ellipse cx="0" cy="0" rx="90" ry="90" fill="none" stroke="#EF9F27" stroke-width="0.9" opacity="0.55" transform="rotate(90)"/>
+    <ellipse cx="0" cy="0" rx="78" ry="90" fill="none" stroke="#BA7517" stroke-width="0.5" opacity="0.4" transform="rotate(120)"/>
+    <ellipse cx="0" cy="0" rx="45" ry="90" fill="none" stroke="#BA7517" stroke-width="0.5" opacity="0.4" transform="rotate(150)"/>
+
+    <!-- SEED top-left -->
+    <g transform="translate(-32,-48) rotate(20)">
+      <ellipse rx="4" ry="9" fill="#D85A30"/>
+      <ellipse rx="2" ry="5" fill="#FAC775" opacity="0.5"/>
+    </g>
+    <!-- SEED top-right -->
+    <g transform="translate(32,-48) rotate(-25)">
+      <ellipse rx="4" ry="9" fill="#D85A30"/>
+      <ellipse rx="2" ry="5" fill="#FAC775" opacity="0.5"/>
+    </g>
+    <!-- SEED bottom-left -->
+    <g transform="translate(-38,44) rotate(15)">
+      <ellipse rx="4" ry="9" fill="#EF9F27"/>
+      <ellipse rx="2" ry="5" fill="#FAC775" opacity="0.5"/>
+    </g>
+    <!-- SEED bottom-right -->
+    <g transform="translate(38,44) rotate(-10)">
+      <ellipse rx="4" ry="9" fill="#EF9F27"/>
+      <ellipse rx="2" ry="5" fill="#FAC775" opacity="0.5"/>
+    </g>
+    <!-- COWRIE left -->
+    <g transform="translate(-58,8) rotate(10)">
+      <ellipse rx="7" ry="5" fill="#FAC775"/>
+      <ellipse rx="7" ry="5" fill="none" stroke="#BA7517" stroke-width="0.8"/>
+      <ellipse rx="4" ry="2" cy="1.5" fill="#BA7517" opacity="0.6"/>
+      <line x1="-3" y1="1.5" x2="3" y2="1.5" stroke="#2C1A04" stroke-width="0.6"/>
+    </g>
+    <!-- COWRIE right -->
+    <g transform="translate(58,-8) rotate(-15)">
+      <ellipse rx="7" ry="5" fill="#FAC775"/>
+      <ellipse rx="7" ry="5" fill="none" stroke="#BA7517" stroke-width="0.8"/>
+      <ellipse rx="4" ry="2" cy="1.5" fill="#BA7517" opacity="0.6"/>
+      <line x1="-3" y1="1.5" x2="3" y2="1.5" stroke="#2C1A04" stroke-width="0.6"/>
+    </g>
+    <!-- DICE upper-right -->
+    <g transform="translate(52,-36) rotate(12)">
+      <rect x="-7" y="-7" width="14" height="14" rx="3" fill="#FAC775" stroke="#BA7517" stroke-width="0.8"/>
+      <circle cx="-3" cy="-3" r="1.5" fill="#2C1A04"/>
+      <circle cx="3"  cy="-3" r="1.5" fill="#2C1A04"/>
+      <circle cx="-3" cy="3"  r="1.5" fill="#2C1A04"/>
+      <circle cx="3"  cy="3"  r="1.5" fill="#2C1A04"/>
+      <circle cx="0"  cy="0"  r="1.5" fill="#2C1A04"/>
+    </g>
+    <!-- DICE lower-left -->
+    <g transform="translate(-52,36) rotate(-18)">
+      <rect x="-7" y="-7" width="14" height="14" rx="3" fill="#FAC775" stroke="#BA7517" stroke-width="0.8"/>
+      <circle cx="0"  cy="-3" r="1.5" fill="#2C1A04"/>
+      <circle cx="0"  cy="3"  r="1.5" fill="#2C1A04"/>
+      <circle cx="0"  cy="0"  r="1.5" fill="#2C1A04"/>
+    </g>
+    <!-- CARD upper-center -->
+    <g transform="translate(14,-60) rotate(6)">
+      <rect x="-6" y="-9" width="12" height="18" rx="2" fill="#E24B4A" stroke="#FAC775" stroke-width="0.8"/>
+      <text x="0" y="3" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#FAC775">♦</text>
+      <text x="0" y="-3" text-anchor="middle" font-family="Georgia,serif" font-size="6" fill="#FAC775">A</text>
+    </g>
+    <!-- CARD lower-center -->
+    <g transform="translate(-14,60) rotate(-4)">
+      <rect x="-6" y="-9" width="12" height="18" rx="2" fill="#1D4A6E" stroke="#9FE1CB" stroke-width="0.8"/>
+      <text x="0" y="3" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#9FE1CB">♠</text>
+      <text x="0" y="-3" text-anchor="middle" font-family="Georgia,serif" font-size="6" fill="#9FE1CB">K</text>
+    </g>
+    <!-- DOMINO upper-left -->
+    <g transform="translate(-60,-40) rotate(40)">
+      <rect x="-4" y="-10" width="8" height="20" rx="2" fill="#FAC775" stroke="#BA7517" stroke-width="0.7"/>
+      <line x1="-3" y1="0" x2="3" y2="0" stroke="#BA7517" stroke-width="0.7"/>
+      <circle cx="0" cy="-4" r="1.5" fill="#2C1A04"/>
+      <circle cx="0" cy="5"  r="1.5" fill="#2C1A04"/>
+      <circle cx="0" cy="2"  r="1.5" fill="#2C1A04"/>
+    </g>
+    <!-- DOMINO lower-right -->
+    <g transform="translate(60,42) rotate(-25)">
+      <rect x="-4" y="-10" width="8" height="20" rx="2" fill="#FAC775" stroke="#BA7517" stroke-width="0.7"/>
+      <line x1="-3" y1="0" x2="3" y2="0" stroke="#BA7517" stroke-width="0.7"/>
+      <circle cx="-1.5" cy="-5" r="1.3" fill="#2C1A04"/>
+      <circle cx="1.5"  cy="-5" r="1.3" fill="#2C1A04"/>
+      <circle cx="0"    cy="5"  r="1.3" fill="#2C1A04"/>
+    </g>
+    <!-- PAWN left -->
+    <g transform="translate(-22,18)">
+      <ellipse cx="0" cy="6" rx="6" ry="3.5" fill="#1D9E75"/>
+      <rect x="-3" y="-1" width="6" height="7" rx="1" fill="#1D9E75"/>
+      <circle cy="-6" r="4.5" fill="#1D9E75"/>
+      <ellipse cx="0" cy="6" rx="4" ry="2" fill="#0F6E56"/>
+      <circle cy="-6" r="2.5" fill="#0F6E56" opacity="0.4"/>
+    </g>
+    <!-- PAWN right -->
+    <g transform="translate(22,-18)">
+      <ellipse cx="0" cy="6" rx="6" ry="3.5" fill="#E24B4A"/>
+      <rect x="-3" y="-1" width="6" height="7" rx="1" fill="#E24B4A"/>
+      <circle cy="-6" r="4.5" fill="#E24B4A"/>
+      <ellipse cx="0" cy="6" rx="4" ry="2" fill="#A32D2D"/>
+      <circle cy="-6" r="2.5" fill="#A32D2D" opacity="0.4"/>
+    </g>
+    <!-- MAHJONG upper-right -->
+    <g transform="translate(62,-62) rotate(5)">
+      <rect x="-7" y="-9" width="14" height="18" rx="2" fill="#FAC775" stroke="#BA7517" stroke-width="0.8"/>
+      <rect x="-4" y="-6" width="8" height="12" rx="1" fill="none" stroke="#E24B4A" stroke-width="1"/>
+      <line x1="-2" y1="0" x2="2" y2="0" stroke="#E24B4A" stroke-width="1"/>
+    </g>
+    <!-- MAHJONG lower-left -->
+    <g transform="translate(-62,62) rotate(-8)">
+      <rect x="-7" y="-9" width="14" height="18" rx="2" fill="#FAC775" stroke="#BA7517" stroke-width="0.8"/>
+      <rect x="-4" y="-6" width="8" height="12" rx="1" fill="none" stroke="#1D9E75" stroke-width="1"/>
+      <line x1="0" y1="-4" x2="0" y2="4" stroke="#1D9E75" stroke-width="1"/>
+    </g>
+    <!-- GO STONE light -->
+    <g transform="translate(-8,-22)">
+      <circle r="7" fill="#FAC775" stroke="#BA7517" stroke-width="0.8"/>
+      <ellipse cx="-2" cy="-2" rx="3" ry="2" fill="white" opacity="0.25"/>
+    </g>
+    <!-- GO STONE dark -->
+    <g transform="translate(8,22)">
+      <circle r="7" fill="#2C1A04" stroke="#EF9F27" stroke-width="1.2"/>
+      <ellipse cx="-2" cy="-2" rx="3" ry="2" fill="white" opacity="0.15"/>
+    </g>
+
+    <!-- Sheen -->
+    <circle r="90" fill="url(#sh)"/>
+  </g>
+
+  <!-- Outer ring + ticks -->
+  <circle r="90" fill="none" stroke="#EF9F27" stroke-width="2"/>
+  <circle r="97" fill="none" stroke="#BA7517" stroke-width="0.5" opacity="0.45"/>
+  <g stroke="#EF9F27" stroke-width="1.2" opacity="0.65">
+    <line x1="0" y1="-90" x2="0" y2="-97" transform="rotate(0)"/>
+    <line x1="0" y1="-90" x2="0" y2="-97" transform="rotate(30)"/>
+    <line x1="0" y1="-90" x2="0" y2="-97" transform="rotate(60)"/>
+    <line x1="0" y1="-90" x2="0" y2="-97" transform="rotate(90)"/>
+    <line x1="0" y1="-90" x2="0" y2="-97" transform="rotate(120)"/>
+    <line x1="0" y1="-90" x2="0" y2="-97" transform="rotate(150)"/>
+    <line x1="0" y1="-90" x2="0" y2="-97" transform="rotate(180)"/>
+    <line x1="0" y1="-90" x2="0" y2="-97" transform="rotate(210)"/>
+    <line x1="0" y1="-90" x2="0" y2="-97" transform="rotate(240)"/>
+    <line x1="0" y1="-90" x2="0" y2="-97" transform="rotate(270)"/>
+    <line x1="0" y1="-90" x2="0" y2="-97" transform="rotate(300)"/>
+    <line x1="0" y1="-90" x2="0" y2="-97" transform="rotate(330)"/>
+  </g>
+  <g stroke="#BA7517" stroke-width="0.7" opacity="0.45">
+    <line x1="0" y1="-90" x2="0" y2="-95" transform="rotate(15)"/>
+    <line x1="0" y1="-90" x2="0" y2="-95" transform="rotate(45)"/>
+    <line x1="0" y1="-90" x2="0" y2="-95" transform="rotate(75)"/>
+    <line x1="0" y1="-90" x2="0" y2="-95" transform="rotate(105)"/>
+    <line x1="0" y1="-90" x2="0" y2="-95" transform="rotate(135)"/>
+    <line x1="0" y1="-90" x2="0" y2="-95" transform="rotate(165)"/>
+    <line x1="0" y1="-90" x2="0" y2="-95" transform="rotate(195)"/>
+    <line x1="0" y1="-90" x2="0" y2="-95" transform="rotate(225)"/>
+    <line x1="0" y1="-90" x2="0" y2="-95" transform="rotate(255)"/>
+    <line x1="0" y1="-90" x2="0" y2="-95" transform="rotate(285)"/>
+    <line x1="0" y1="-90" x2="0" y2="-95" transform="rotate(315)"/>
+    <line x1="0" y1="-90" x2="0" y2="-95" transform="rotate(345)"/>
+  </g>
+  <circle cx="0" cy="-90" r="5" fill="#EF9F27"/>
+  <circle cx="0" cy="90"  r="5" fill="#EF9F27"/>
 </svg>
