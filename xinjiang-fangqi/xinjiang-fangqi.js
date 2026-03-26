@@ -414,24 +414,26 @@
     }
 
     // Hover ghost piece
-    if (state.hoverCell && state.currentTurn === state.humanColor && !state.gameOver && !state.animating) {
-      var hxy = getCellXY(state.hoverCell.row, state.hoverCell.col);
-      var ghostColor = state.humanColor === BLACK ? 'rgba(26,16,8,0.35)' : 'rgba(240,234,214,0.55)';
-      ctx.fillStyle = ghostColor;
-      ctx.beginPath();
-      ctx.arc(hxy.x, hxy.y, state.cellSize * 0.32, 0, Math.PI * 2);
-      ctx.fill();
+    if (state.hoverCell && !state.gameOver && !state.animating) {
+      if (!state.aiEnabled || state.currentTurn === state.humanColor) {
+        var hxy = getCellXY(state.hoverCell.row, state.hoverCell.col);
+        var ghostColor = state.currentTurn === BLACK ? 'rgba(26,16,8,0.35)' : 'rgba(240,234,214,0.55)';
+        ctx.fillStyle = ghostColor;
+        ctx.beginPath();
+        ctx.arc(hxy.x, hxy.y, state.cellSize * 0.32, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
   }
 
   function renderSquareIndicators() {
     if (!state.hoverCell) return;
-    if (state.currentTurn !== state.humanColor) return;
+    if (state.aiEnabled && state.currentTurn !== state.humanColor) return;
     if (state.gameOver || state.animating) return;
 
     var row = state.hoverCell.row;
     var col = state.hoverCell.col;
-    var player = state.humanColor;
+    var player = state.currentTurn;
 
     // Temporarily place to check captures
     state.board[row][col] = player;
@@ -786,7 +788,7 @@
 
     // Canvas hover
     canvas.addEventListener('mousemove', function(e) {
-      if (state.gameOver || state.animating || state.currentTurn !== state.humanColor) {
+      if (state.gameOver || state.animating || (state.aiEnabled && state.currentTurn !== state.humanColor)) {
         if (state.hoverCell) { state.hoverCell = null; render(); }
         return;
       }
