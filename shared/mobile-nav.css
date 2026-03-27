@@ -34,6 +34,7 @@
 .mb-nav-tabs {
   display: flex;
   align-items: stretch;
+  justify-content: space-between;
   width: 100%;
   height: 56px;
   list-style: none;
@@ -42,8 +43,11 @@
 }
 
 .mb-nav-tabs > li {
-  flex: 1;
+  flex: 1 1 0;
   display: flex;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
 }
 
 /* ── Individual tab ── */
