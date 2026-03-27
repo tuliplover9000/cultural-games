@@ -1,5 +1,6 @@
 /* =============================================================
    shared/mobile.css — Cultural Games Mobile Foundation
+   Covers phases A, C, D, E, F, H, I, J of mobile overhaul.
    ============================================================= */
 
 /* ── Global touch optimisations ── */
@@ -32,5 +33,507 @@ canvas {
 @media (max-width: 430px) {
   body {
     padding-bottom: calc(var(--mb-nav-height) + var(--safe-bottom));
+  }
+}
+
+/* =============================================================
+   PHASE C — Browse Page
+   ============================================================= */
+@media (max-width: 430px) {
+
+  /* Two-column card grid on phone (already 1-col at 560px via components.css) */
+  .games-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  /* Card body text tighten */
+  .game-card__description {
+    display: none; /* save space on phone */
+  }
+
+  .game-card__footer .btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* Filters: full-width stacked */
+  .browse-dropdowns {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .browse-select-wrap {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .browse-lottery-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* Search: prevent iOS zoom (font-size ≥ 16px) */
+  .browse-search__input {
+    font-size: 16px;
+    min-height: 48px;
+  }
+
+  .browse-select {
+    font-size: 16px;
+    min-height: 44px;
+  }
+
+  .browse-hero {
+    padding: var(--space-6) 0 var(--space-4);
+  }
+
+  .browse-hero__title {
+    font-size: var(--text-2xl);
+  }
+
+  .browse-hero__desc {
+    font-size: var(--text-sm);
+  }
+}
+
+/* =============================================================
+   PHASE D — Modal & Overlay Mobile Pass
+   ============================================================= */
+@media (max-width: 430px) {
+
+  /* Auth overlay: allow full-height bottom sheet */
+  .auth-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  /* Auth card: bottom sheet */
+  .auth-card {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 16px 16px 0 0;
+    margin: 0;
+    padding: var(--space-5) var(--space-4) calc(var(--space-4) + var(--safe-bottom));
+    max-height: 92vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* Form inputs: 48px touch targets, no iOS zoom */
+  .form-input {
+    font-size: 16px;
+    min-height: 48px;
+    padding: 12px var(--space-2);
+  }
+
+  /* Submit button full-width, tall */
+  .auth-submit {
+    min-height: 48px;
+    font-size: var(--text-base);
+  }
+
+  /* Achievement toasts: top of screen, not bottom (avoids tab bar) */
+  .achievement-toast,
+  .ach-toast {
+    bottom: auto !important;
+    top: calc(var(--safe-top) + 12px) !important;
+    left: var(--space-3) !important;
+    right: var(--space-3) !important;
+    width: auto !important;
+    max-width: 100% !important;
+  }
+
+  /* Generic modals → bottom sheets (opt-in via selector, no mb-no-sheet escape) */
+  .modal:not(.mb-no-sheet),
+  .share-modal:not(.mb-no-sheet),
+  .rooms-modal:not(.mb-no-sheet),
+  .bet-modal:not(.mb-no-sheet),
+  .tournament-modal:not(.mb-no-sheet) {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 16px 16px 0 0 !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    top: auto !important;
+    max-height: 90vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* Coin bet modal: large +/- buttons */
+  .bet-minus,
+  .bet-plus {
+    min-width: 48px;
+    min-height: 48px;
+  }
+
+  /* Email capture: single column */
+  .email-capture-form {
+    flex-direction: column;
+  }
+
+  .email-capture-form input,
+  .email-capture-form button {
+    width: 100%;
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  /* Tournament bracket: horizontal scroll */
+  .bracket-container,
+  .tournament-bracket {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+}
+
+/* =============================================================
+   PHASE E — Game Page Shell
+   ============================================================= */
+@media (max-width: 430px) {
+
+  .game-page {
+    padding-block: var(--space-3) var(--space-6);
+  }
+
+  /* Back link: large tap target */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: var(--text-sm);
+  }
+
+  /* Game header: compact, centered */
+  .game-header {
+    padding: var(--space-4) var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .game-header__icon img {
+    width: 52px;
+    height: 52px;
+  }
+
+  .game-header__title {
+    font-size: var(--text-xl);
+  }
+
+  .game-header__origin {
+    font-size: var(--text-xs);
+  }
+
+  /* Game container: no horizontal scroll */
+  .game-container,
+  [id="game-container"] {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  /* Accordion: How to Play closed on mobile by default (JS adds [open] on desktop) */
+  .accordion[data-desktop-open]:not([open]) {
+    /* closed state is default */
+  }
+
+  /* Accordion trigger: 44px tap target */
+  .accordion__trigger {
+    min-height: 44px;
+    padding: var(--space-3) var(--space-3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Play With Friend: full-width on mobile */
+  .pwf-cta,
+  .pwf-btn,
+  #pwf-mount .btn {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  /* Game control buttons: minimum tap targets */
+  .fn-controls .btn,
+  .ht-controls .btn,
+  .ll-controls .btn,
+  .ow-controls .btn,
+  .pt-controls .btn,
+  .pu-controls .btn,
+  .pg-controls .btn,
+  .bc-controls .btn,
+  .fn-controls button,
+  .game-container button:not(.fs-toggle) {
+    min-height: 40px;
+  }
+}
+
+/* =============================================================
+   PHASE F — Canvas Responsive Scaling
+   All canvas elements fit their container on mobile.
+   Games use getBoundingClientRect + scaleX/scaleY for hit-test,
+   so CSS scaling is safe for all existing games.
+   ============================================================= */
+@media (max-width: 430px) {
+  canvas {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* Specific game canvases */
+  #fn-canvas,
+  #ht-canvas,
+  #ll-canvas,
+  #gj-canvas,
+  #mj-canvas,
+  #pc-board,
+  #xf-board,
+  #fd-board {
+    max-width: 100%;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Canvas wrap containers */
+  .fn-board-wrap,
+  .ht-board-wrap,
+  .ll-board-wrap,
+  .gj-board-wrap,
+  .pc-board-wrap {
+    width: 100%;
+    overflow: hidden;
+  }
+}
+
+/* =============================================================
+   PHASE H — Rooms & Lobby Mobile Pass
+   ============================================================= */
+@media (max-width: 430px) {
+
+  /* Entry cards: single column, full width */
+  .rooms-entry-cards {
+    grid-template-columns: 1fr !important;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .rooms-entry-card {
+    width: 100%;
+  }
+
+  /* Input fields: 48px tall, no iOS zoom */
+  .rooms-name-input-field,
+  .rooms-code-input {
+    min-height: 48px;
+    font-size: 16px;
+    width: 100%;
+  }
+
+  /* Action buttons: full-width */
+  .rooms-action-btn {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  /* Player count toggle: larger buttons */
+  .rooms-player-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Room browser cards: single column */
+  .rb-list,
+  .room-browser-list {
+    grid-template-columns: 1fr !important;
+  }
+
+  .rb-card,
+  .room-card {
+    width: 100%;
+  }
+
+  /* Join button in room list: full-width */
+  .rb-join-btn,
+  .room-join-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* Lobby: chat collapses */
+  .lobby-chat,
+  .room-chat {
+    display: none; /* Phase H full chat: hidden by default, toggle via JS */
+  }
+
+  /* Endscreen: full overlay, stacked buttons */
+  .room-endscreen .btn,
+  .endscreen .btn {
+    width: 100%;
+    min-height: 52px;
+    font-size: var(--text-base);
+  }
+
+  /* In-game header strip: stays slim */
+  .room-game-strip,
+  .game-strip,
+  .room-header-strip {
+    height: 40px;
+    font-size: var(--text-xs);
+  }
+}
+
+/* =============================================================
+   PHASE I — Profile, Landing, About Pages
+   ============================================================= */
+@media (max-width: 430px) {
+
+  /* ── Profile ── */
+  .prof-hero {
+    padding: var(--space-4) 0;
+  }
+
+  .prof-hero__top {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-2);
+  }
+
+  .prof-avatar {
+    width: 72px !important;
+    height: 72px !important;
+    font-size: var(--text-2xl) !important;
+  }
+
+  .prof-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: var(--space-2);
+  }
+
+  .prof-game-stats-table {
+    font-size: var(--text-xs);
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .achievements-grid,
+  .ach-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: var(--space-1);
+  }
+
+  .prof-section {
+    padding: var(--space-4) 0;
+  }
+
+  /* ── Landing / Hero ── */
+  .hero__inner {
+    flex-direction: column !important;
+    gap: var(--space-4);
+  }
+
+  .hero__content {
+    text-align: center;
+  }
+
+  .hero .btn {
+    width: 100%;
+    min-height: 52px;
+  }
+
+  .hero__bg-icon {
+    display: none;
+  }
+
+  .hero__title {
+    font-size: clamp(var(--text-2xl), 8vw, var(--text-4xl));
+  }
+
+  /* Featured games row: horizontal scroll */
+  .games-featured,
+  .featured-row {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: var(--space-3);
+    padding-bottom: var(--space-2);
+    scrollbar-width: none;
+  }
+
+  .games-featured::-webkit-scrollbar,
+  .featured-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .games-featured > *,
+  .featured-row > * {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    width: 75vw;
+    max-width: 260px;
+  }
+
+  /* "How it works" section: single column */
+  .how-it-works-grid,
+  .features-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── About page ── */
+  .about-section,
+  .about-content {
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+  }
+
+  .about-hero {
+    padding: var(--space-6) 0;
+    text-align: center;
+  }
+}
+
+/* =============================================================
+   PHASE J — Final Polish & Accessibility
+   ============================================================= */
+
+/* Scroll momentum on all scroll containers */
+.games-grid,
+.prof-game-stats-table,
+.browse-dropdowns,
+.bracket-container,
+.tournament-bracket {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Transition on tab bar show/hide (already in mobile-nav.css, but also here for safety) */
+.mb-nav-bar {
+  will-change: transform;
+}
+
+/* Minimum tap targets — global safety net */
+@media (max-width: 430px) {
+  button:not(.fs-toggle):not(.mb-nav-tab),
+  [role="button"],
+  .btn {
+    min-height: 40px;
+  }
+
+  /* Inputs: always 16px to prevent iOS zoom */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="number"],
+  input[type="tel"],
+  select,
+  textarea {
+    font-size: 16px !important;
   }
 }

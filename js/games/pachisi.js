@@ -1230,6 +1230,7 @@
     if (!isMyTurn()) return;
     if (state.rollResult !== null && !state.rollUsed) return;
 
+    if (window.MobileUtils) MobileUtils.vibrate([20, 30, 20]);
     var rollBtn = document.getElementById('pc-roll-btn');
     if (rollBtn) rollBtn.disabled = true;
 
@@ -1417,6 +1418,16 @@
     canvas.addEventListener('click', handleCanvasClick);
     canvas.addEventListener('mousemove', handleCanvasMouseMove);
     canvas.addEventListener('mouseleave', handleCanvasMouseLeave);
+    canvas.addEventListener('touchend', function (e) {
+      e.preventDefault();
+      var t = e.changedTouches[0];
+      var rect   = canvas.getBoundingClientRect();
+      var scaleX = CANVAS_SIZE / rect.width;
+      var scaleY = CANVAS_SIZE / rect.height;
+      var x = (t.clientX - rect.left) * scaleX;
+      var y = (t.clientY - rect.top)  * scaleY;
+      handleCanvasClick({ clientX: t.clientX, clientY: t.clientY });
+    }, { passive: false });
 
     // Resize
     var resizeTimer = null;

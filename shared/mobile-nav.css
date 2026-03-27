@@ -169,3 +169,10 @@
     display: none !important;
   }
 }
+
+/* ── Hide tab bar in room-mode (game running in iframe) ── */
+.room-mode .mb-nav-bar,
+.room-mode .mb-nav-drawer,
+.room-mode .mb-nav-drawer-overlay {
+  display: none !important;
+}

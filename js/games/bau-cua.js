@@ -361,6 +361,7 @@
 
   function rollDice() {
     if (state.phase !== 'locked') return;
+    if (window.MobileUtils) MobileUtils.vibrate([10, 50, 10, 50, 10]);
     state.phase = 'rolling';
     refresh();
     setStatus('Rolling…');

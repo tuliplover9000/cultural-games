@@ -6,6 +6,8 @@
   'use strict';
 
   var PHONE_MAX = 430;
+  var _resizeDebounce = null;
+  var _registeredCanvases = []; // for autoResize
 
   var MobileUtils = {
 
@@ -20,10 +22,25 @@
 
     /* ── Orientation change ── */
     onOrientationChange: function (cb) {
-      var handler = function () { cb(MobileUtils.isLandscape()); };
+      var last = MobileUtils.isLandscape();
+      var handler = function () {
+        clearTimeout(_resizeDebounce);
+        _resizeDebounce = setTimeout(function () {
+          var now = MobileUtils.isLandscape();
+          cb(now);
+          last = now;
+          // re-run all registered autoResize canvases
+          _registeredCanvases.forEach(function (reg) {
+            MobileUtils.scaleCanvas(reg.canvas, reg.logicalW, reg.logicalH);
+          });
+        }, 150);
+      };
       window.addEventListener('resize', handler);
-      handler(); // fire immediately
-      return function destroy() { window.removeEventListener('resize', handler); };
+      window.addEventListener('orientationchange', handler);
+      return function destroy() {
+        window.removeEventListener('resize', handler);
+        window.removeEventListener('orientationchange', handler);
+      };
     },
 
     /* ── Haptics ── */
@@ -35,37 +52,68 @@
 
     /* ── DPR-aware canvas scaling ──────────────────────────────────
        Sets canvas.width/height to logical × dpr, calls ctx.scale(dpr,dpr),
-       then sets CSS size to match the container.
-       Returns { scale, dpr, cssW, cssH } for hit-test remapping.
+       then sets CSS size to fit the container.
+       Stores result on canvas._mbScale for remapTouch().
+       Options: { autoResize: true } — re-runs on resize/orientation change.
+       Returns { scale, dpr, cssW, cssH }.
     ─────────────────────────────────────────────────────────────── */
-    scaleCanvas: function (canvas, logicalW, logicalH) {
+    scaleCanvas: function (canvas, logicalW, logicalH, opts) {
       var dpr = window.devicePixelRatio || 1;
       var container = canvas.parentElement || document.body;
       var maxW = container.clientWidth  || logicalW;
       var maxH = container.clientHeight || logicalH;
 
+      // Letterbox: fit inside container, never upscale
       var scale = Math.min(maxW / logicalW, maxH / logicalH, 1);
       var cssW  = Math.floor(logicalW * scale);
       var cssH  = Math.floor(logicalH * scale);
 
-      canvas.width  = cssW * dpr;
-      canvas.height = cssH * dpr;
+      canvas.width  = Math.round(cssW * dpr);
+      canvas.height = Math.round(cssH * dpr);
       canvas.style.width  = cssW + 'px';
       canvas.style.height = cssH + 'px';
 
       var ctx = canvas.getContext('2d');
       if (ctx) ctx.scale(dpr, dpr);
 
-      return { scale: scale, dpr: dpr, cssW: cssW, cssH: cssH };
+      var info = { scale: scale, dpr: dpr, cssW: cssW, cssH: cssH };
+      canvas._mbScale = info;
+
+      // Register for auto-resize if requested
+      if (opts && opts.autoResize) {
+        var existing = false;
+        for (var i = 0; i < _registeredCanvases.length; i++) {
+          if (_registeredCanvases[i].canvas === canvas) { existing = true; break; }
+        }
+        if (!existing) {
+          _registeredCanvases.push({ canvas: canvas, logicalW: logicalW, logicalH: logicalH });
+          if (_registeredCanvases.length === 1) {
+            // Set up the shared resize listener once
+            var resizeHandler = function () {
+              clearTimeout(_resizeDebounce);
+              _resizeDebounce = setTimeout(function () {
+                _registeredCanvases.forEach(function (reg) {
+                  MobileUtils.scaleCanvas(reg.canvas, reg.logicalW, reg.logicalH);
+                });
+              }, 150);
+            };
+            window.addEventListener('resize', resizeHandler);
+            window.addEventListener('orientationchange', resizeHandler);
+          }
+        }
+      }
+
+      return info;
     },
 
     /* ── Touch coordinate remapping ── */
     remapTouch: function (e, canvas, scaleInfo) {
-      var touch = e.touches ? e.touches[0] : e.changedTouches[0];
+      var touch = e.touches ? e.touches[0] : (e.changedTouches ? e.changedTouches[0] : e);
       var rect  = canvas.getBoundingClientRect();
+      var si    = scaleInfo || canvas._mbScale || { scale: 1 };
       return {
-        x: (touch.clientX - rect.left)  / scaleInfo.scale,
-        y: (touch.clientY - rect.top)   / scaleInfo.scale
+        x: (touch.clientX - rect.left)  / si.scale,
+        y: (touch.clientY - rect.top)   / si.scale
       };
     },
 
@@ -132,8 +180,74 @@
         element.removeEventListener('touchend',   onEnd);
         element.removeEventListener('touchmove',  onEnd);
       };
+    },
+
+    /* ── Landscape prompt ───────────────────────────────────────────
+       Shows a full-screen overlay asking user to rotate to landscape.
+       Dismissed by rotating OR by tapping "Play anyway".
+       Injects overlay into document.body; call once per game page.
+    ─────────────────────────────────────────────────────────────── */
+    showLandscapePrompt: function (container) {
+      if (!MobileUtils.isMobile()) return null;
+      if (sessionStorage.getItem('mbLandscapeDismissed')) return null;
+
+      var overlay = document.createElement('div');
+      overlay.className = 'mb-land-overlay';
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-label', 'Rotate device for best experience');
+      overlay.innerHTML =
+        '<div class="mb-land-icon" aria-hidden="true">📱</div>' +
+        '<h2 class="mb-land-title">Rotate for best experience</h2>' +
+        '<p class="mb-land-body">This game plays best in landscape. Turn your device sideways.</p>' +
+        '<button class="mb-land-dismiss" type="button">Play anyway</button>';
+
+      document.body.appendChild(overlay);
+
+      function update() {
+        if (MobileUtils.isLandscape()) {
+          overlay.classList.remove('mb-land-visible');
+        } else {
+          if (!sessionStorage.getItem('mbLandscapeDismissed')) {
+            overlay.classList.add('mb-land-visible');
+          }
+        }
+      }
+
+      overlay.querySelector('.mb-land-dismiss').addEventListener('click', function () {
+        sessionStorage.setItem('mbLandscapeDismissed', '1');
+        overlay.classList.remove('mb-land-visible');
+      });
+
+      var destroy = MobileUtils.onOrientationChange(update);
+      update();
+
+      return { overlay: overlay, destroy: destroy };
     }
   };
 
   window.MobileUtils = MobileUtils;
+
+  /* ── Phase E: close "How to Play" accordion on mobile by default ── */
+  document.addEventListener('DOMContentLoaded', function () {
+    if (!MobileUtils.isMobile()) return;
+
+    // Close "How to Play" (first accordion with [open]) on mobile
+    var accordions = document.querySelectorAll('details.accordion[open]');
+    accordions.forEach(function (el) {
+      var title = el.querySelector('.accordion__title');
+      if (title && title.textContent.trim().toLowerCase().indexOf('how') === 0) {
+        el.removeAttribute('open');
+        el.setAttribute('data-desktop-open', '1');
+      }
+    });
+
+    // Auto-inject landscape prompt on game pages
+    var gc = document.getElementById('game-container');
+    if (gc) {
+      // Defer until after game scripts have run
+      setTimeout(function () {
+        MobileUtils.showLandscapePrompt(gc);
+      }, 800);
+    }
+  });
 })();
