@@ -526,7 +526,7 @@ canvas {
 
   /* Decorative circle buttons must never be stretched */
   .sp-quote__dot {
-    min-height: unset !important;
+    min-height: 0 !important;
     height: 8px !important;
     width: 8px !important;
   }
