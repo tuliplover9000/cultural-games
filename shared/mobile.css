@@ -519,9 +519,16 @@ canvas {
 
 /* Minimum tap targets — global safety net */
 @media (max-width: 430px) {
-  button:not(.fs-toggle):not(.mb-nav-tab):not(.sp-quote__dot):not([class*="dot"]):not([class*="indicator"]),
+  button:not(.fs-toggle):not(.mb-nav-tab),
   .btn {
     min-height: 40px;
+  }
+
+  /* Decorative circle buttons must never be stretched */
+  .sp-quote__dot {
+    min-height: unset !important;
+    height: 8px !important;
+    width: 8px !important;
   }
 
   /* Inputs: always 16px to prevent iOS zoom */
