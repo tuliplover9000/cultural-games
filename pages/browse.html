@@ -32,6 +32,7 @@
   <link rel="stylesheet" href="../shared/mobile.css">
   <link rel="stylesheet" href="../shared/mobile-nav.css">
   <link rel="stylesheet" href="../shared/mobile-landscape.css">
+  <link rel="stylesheet" href="../shared/browse-panel.css">
   <script src="../shared/mobile.js"></script>
   <script src="../shared/mobile-nav.js"></script>
 </head>
@@ -84,7 +85,8 @@
          FILTER + GAME GRID
     ════════════════════════════════════════════════════════ -->
     <div class="browse-body">
-      <div class="container">
+      <div class="container" id="bp-browse-layout">
+        <div id="bp-games-column">
 
         <!-- Search + filters -->
         <div class="browse-controls" data-anim data-anim-delay="360">
@@ -144,7 +146,7 @@
         <div class="games-grid" id="games-grid">
 
           <!-- Bầu Cua Tôm Cá -->
-          <div class="game-card-wrapper" data-category="dice" data-region="vietnam">
+          <div class="game-card-wrapper" data-category="dice" data-region="vietnam" data-game-key="bau-cua">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--red" aria-hidden="true">
                 <img src="../assets/icons/bau-cua.svg" class="game-card__banner-icon" alt="" />
@@ -164,7 +166,7 @@
           </div>
 
           <!-- Ô Ăn Quan -->
-          <div class="game-card-wrapper" data-category="board" data-region="vietnam">
+          <div class="game-card-wrapper" data-category="board" data-region="vietnam" data-game-key="o-an-quan">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--teal" aria-hidden="true">
                 <img src="../assets/icons/o-an-quan.svg" class="game-card__banner-icon" alt="" />
@@ -184,7 +186,7 @@
           </div>
 
           <!-- Tiến Lên -->
-          <div class="game-card-wrapper" data-category="card" data-region="vietnam">
+          <div class="game-card-wrapper" data-category="card" data-region="vietnam" data-game-key="tien-len">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--gold" aria-hidden="true">
                 <img src="../assets/icons/tien-len.svg" class="game-card__banner-icon" alt="" />
@@ -204,7 +206,7 @@
           </div>
 
           <!-- Oware -->
-          <div class="game-card-wrapper" data-category="board" data-region="west-africa">
+          <div class="game-card-wrapper" data-category="board" data-region="west-africa" data-game-key="oware">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--warm" aria-hidden="true">
                 <img src="../assets/icons/oware.svg" class="game-card__banner-icon" alt="" />
@@ -224,7 +226,7 @@
           </div>
 
           <!-- Patolli -->
-          <div class="game-card-wrapper" data-category="dice" data-region="mesoamerica">
+          <div class="game-card-wrapper" data-category="dice" data-region="mesoamerica" data-game-key="patolli">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--green" aria-hidden="true">
                 <img src="../assets/icons/patolli.svg" class="game-card__banner-icon" alt="" />
@@ -244,7 +246,7 @@
           </div>
 
           <!-- Puluc -->
-          <div class="game-card-wrapper" data-category="dice" data-region="mesoamerica">
+          <div class="game-card-wrapper" data-category="dice" data-region="mesoamerica" data-game-key="puluc">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--green" aria-hidden="true">
                 <img src="../assets/icons/puluc.svg" class="game-card__banner-icon" alt="" />
@@ -264,7 +266,7 @@
           </div>
 
           <!-- Pallanguzhi -->
-          <div class="game-card-wrapper" data-category="board" data-region="south-india">
+          <div class="game-card-wrapper" data-category="board" data-region="south-india" data-game-key="pallanguzhi">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--warm" aria-hidden="true">
                 <img src="../assets/icons/pallanguzhi.svg" class="game-card__banner-icon" alt="" />
@@ -284,7 +286,7 @@
           </div>
 
           <!-- Fanorona -->
-          <div class="game-card-wrapper" data-category="board" data-region="madagascar">
+          <div class="game-card-wrapper" data-category="board" data-region="madagascar" data-game-key="fanorona">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--ochre" aria-hidden="true">
                 <img src="../assets/icons/fanorona.svg" class="game-card__banner-icon" alt="" />
@@ -304,7 +306,7 @@
           </div>
 
           <!-- Hnefatafl -->
-          <div class="game-card-wrapper" data-category="board" data-region="norse">
+          <div class="game-card-wrapper" data-category="board" data-region="norse" data-game-key="hnefatafl">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--slate" aria-hidden="true">
                 <img src="../assets/icons/hnefatafl.svg" class="game-card__banner-icon" alt="" />
@@ -324,7 +326,7 @@
           </div>
 
           <!-- Hong Kong Mahjong -->
-          <div class="game-card-wrapper" data-category="board" data-region="china">
+          <div class="game-card-wrapper" data-category="board" data-region="china" data-game-key="mahjong">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--red" aria-hidden="true">
                 <img src="../assets/icons/mahjong.svg" class="game-card__banner-icon" alt="" />
@@ -344,7 +346,7 @@
           </div>
 
           <!-- Ganjifa -->
-          <div class="game-card-wrapper" data-category="card" data-region="mughal-india">
+          <div class="game-card-wrapper" data-category="card" data-region="mughal-india" data-game-key="ganjifa">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--gold" aria-hidden="true">
                 <img src="../assets/icons/ganjifa.svg" class="game-card__banner-icon" alt="" />
@@ -364,7 +366,7 @@
           </div>
 
           <!-- Ludus Latrunculorum -->
-          <div class="game-card-wrapper" data-category="board" data-region="europe">
+          <div class="game-card-wrapper" data-category="board" data-region="europe" data-game-key="latrunculi">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--slate" aria-hidden="true">
                 <img src="../assets/icons/latrunculi.svg" class="game-card__banner-icon" alt="" />
@@ -384,7 +386,7 @@
           </div>
 
           <!-- Pachisi -->
-          <div class="game-card-wrapper" data-category="dice" data-region="india">
+          <div class="game-card-wrapper" data-category="dice" data-region="india" data-game-key="pachisi">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--pachisi" aria-hidden="true">
                 <img src="../assets/icons/pachisi.svg" class="game-card__banner-icon" alt="" />
@@ -404,7 +406,7 @@
           </div>
 
           <!-- Xinjiang Fangqi -->
-          <div class="game-card-wrapper" data-category="board" data-region="xinjiang">
+          <div class="game-card-wrapper" data-category="board" data-region="xinjiang" data-game-key="xinjiang-fangqi">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--slate" aria-hidden="true">
                 <img src="../assets/icons/xinjiang-fangqi.svg" class="game-card__banner-icon" alt="" />
@@ -424,7 +426,7 @@
           </div>
 
           <!-- Cachos -->
-          <div class="game-card-wrapper" data-category="dice" data-region="latin-america">
+          <div class="game-card-wrapper" data-category="dice" data-region="latin-america" data-game-key="cachos">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--red" aria-hidden="true">
                 <img src="../assets/icons/cachos.svg" class="game-card__banner-icon" alt="" />
@@ -444,7 +446,7 @@
           </div>
 
           <!-- Filipino Dama -->
-          <div class="game-card-wrapper" data-category="board" data-region="southeast-asia">
+          <div class="game-card-wrapper" data-category="board" data-region="southeast-asia" data-game-key="filipino-dama">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--red" aria-hidden="true">
                 <img src="../assets/icons/filipino-dama.svg" class="game-card__banner-icon" alt="" />
@@ -464,7 +466,7 @@
           </div>
 
           <!-- Cuarenta -->
-          <div class="game-card-wrapper" data-category="card" data-region="south-america">
+          <div class="game-card-wrapper" data-category="card" data-region="south-america" data-game-key="cuarenta">
             <article class="game-card">
               <div class="game-card__banner game-card__banner--gold" aria-hidden="true">
                 <img src="../assets/icons/cuarenta.svg" class="game-card__banner-icon" alt="" />
@@ -496,6 +498,72 @@
           No games found for this filter.
         </p>
 
+        </div><!-- /#bp-games-column -->
+
+        <!-- ═══════════════════════════════════════════════
+             SIDE PANEL
+        ═══════════════════════════════════════════════ -->
+        <aside id="bp-panel" aria-live="polite" aria-label="Game details panel">
+
+          <div id="bp-default">
+            <p class="bp-prompt">Hover a game to explore its origins</p>
+          </div>
+
+          <div id="bp-content" hidden>
+            <div id="bp-map-container"></div>
+            <div class="bp-culture-label">
+              <span id="bp-region-name"></span>
+              <span id="bp-category-badge" class="badge"></span>
+            </div>
+            <h2 id="bp-game-title"></h2>
+            <p id="bp-origin-story"></p>
+            <div class="bp-did-you-know">
+              <span class="bp-dyk-label">Did you know?</span>
+              <p id="bp-dyk-text"></p>
+            </div>
+            <div class="bp-meta">
+              <span id="bp-players"></span>
+              <span id="bp-complexity"></span>
+            </div>
+            <div class="bp-ctas">
+              <a id="bp-play-now" class="bp-btn-primary" href="#">Play Now</a>
+              <a id="bp-play-friends" class="bp-btn-secondary" href="#">Play With Friends</a>
+              <button id="bp-favourite" class="bp-btn-icon" aria-label="Add to favourites" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+        </aside><!-- /#bp-panel -->
+
+      </div><!-- /#bp-browse-layout / .container -->
+    </div><!-- /.browse-body -->
+
+    <!-- ═══════════════════════════════════════════════
+         MOBILE BOTTOM SHEET
+    ═══════════════════════════════════════════════ -->
+    <div id="bp-sheet-backdrop" hidden></div>
+    <div id="bp-bottom-sheet" role="dialog" aria-modal="true" aria-labelledby="bp-sheet-heading" hidden>
+      <div class="bp-sheet-handle"></div>
+      <div class="bp-sheet-header">
+        <div>
+          <h3 class="bp-sheet-title" id="bp-sheet-heading"></h3>
+          <p class="bp-sheet-culture"></p>
+        </div>
+        <button class="bp-sheet-close" id="bp-sheet-close" aria-label="Close">&times;</button>
+      </div>
+      <div id="bp-sheet-content">
+        <p class="bp-sheet-desc"></p>
+        <div class="bp-did-you-know">
+          <span class="bp-dyk-label">Did you know?</span>
+          <p class="bp-sheet-dyk"></p>
+        </div>
+        <div class="bp-sheet-ctas">
+          <a class="bp-sheet-play-now bp-btn-primary" href="#">Play Now</a>
+          <a class="bp-sheet-play-friends bp-btn-secondary" href="#">Play With Friends</a>
+        </div>
       </div>
     </div>
 
@@ -931,5 +999,6 @@
       if (el) el.textContent = gameCount + ' traditional games from ' + cultureCount + ' cultures \u2014 playable in your browser, free, no account required.';
     }());
   </script>
+  <script src="../shared/browse-panel.js"></script>
 </body>
 </html>
