@@ -6,103 +6,37 @@
 (function () {
   'use strict';
 
-  /* ── World map SVG ────────────────────────────────────────────────────
-   * Equirectangular projection. ViewBox 0 0 1000 500.
-   * svgX = (lon+180)/360*1000,  svgY = (90-lat)/180*500
-   * Base land paths (bp-map-land) draw continent shapes.
-   * data-region paths are transparent overlays that highlight on hover.
-   * Each continent is traced ~20-35 keypoints clockwise from NW corner.
+  /* ── Region → ISO 3166-1 numeric country codes ───────────────────────
+   * Used to assign data-region to D3-rendered country paths.
+   * world-atlas countries-110m uses numeric ISO codes as feature.id.
    * ──────────────────────────────────────────────────────────────────── */
-  var MAP_SVG = [
-    '<svg id="bp-world-map" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">',
-    '<rect class="bp-map-ocean" width="1000" height="500"/>',
-
-    /* ── Base land shapes ─────────────────────────────────────────────── */
-
-    /* North America — Alaska → Canada N → Labrador → E coast → Gulf →
-       Yucatan → Panama → Pacific coast → back to Alaska             */
-    '<path class="bp-map-land" d="M42,69L131,56L167,44L250,47L272,83L319,75L347,100L353,119L328,125L306,133L278,175L275,181L231,178L231,194L258,192L250,206L264,219L286,228L236,206L194,186L172,158L156,128L150,108L128,92L75,92L42,97Z"/>',
-
-    /* Greenland */
-    '<path class="bp-map-land" d="M347,39L403,19L450,36L439,53L372,72Z"/>',
-
-    /* South America — Colombia/Venezuela N coast → Brazil bulge →
-       Cape Horn → Chile W coast → Ecuador → back to Panama          */
-    '<path class="bp-map-land" d="M286,228L289,219L314,219L331,219L342,231L361,244L403,261L403,272L394,286L389,308L381,314L372,317L356,336L339,347L319,367L311,400L308,406L292,400L294,364L306,300L286,272L278,253L286,244Z"/>',
-
-    /* Iceland */
-    '<path class="bp-map-land" d="M433,67L450,67L464,69L442,75L433,75Z"/>',
-
-    /* Europe — N Norway → Finland/Russia NW → Black Sea coast →
-       Turkey W → Balkans → Adriatic → Italy → Iberia → Bay of Biscay →
-       N Sea coast → Scandinavia → N Norway                           */
-    '<path class="bp-map-land" d="M544,53L572,53L581,56L592,61L592,78L583,83L567,89L558,94L550,97L539,100L528,97L514,103L506,108L494,119L492,128L475,128L475,144L486,150L500,147L514,131L525,128L539,128L547,139L544,144L550,139L556,139L561,147L572,144L581,136L594,122L600,119L606,97L583,69Z"/>',
-
-    /* British Isles (UK main island) */
-    '<path class="bp-map-land" d="M483,89L494,89L500,108L486,111L486,100Z"/>',
-    /* Ireland */
-    '<path class="bp-map-land" d="M472,106L483,97L472,100Z"/>',
-
-    /* Africa — Morocco NW → Libya/Egypt N coast → Horn of Africa →
-       E coast → Cape of Good Hope → Namibia → W coast → Senegal →
-       Morocco W                                                       */
-    '<path class="bp-map-land" d="M461,150L528,158L589,164L619,217L642,219L617,253L611,281L597,300L583,336L550,344L542,333L533,297L525,258L508,242L492,236L467,233L458,219L453,208L453,192L461,167Z"/>',
-
-    /* Madagascar */
-    '<path class="bp-map-land" d="M619,283L636,283L639,319L622,322Z"/>',
-
-    /* Asia — Turkey W → Caucasus → Ural → N Russia → Pacific coast →
-       Japan lat → SE Asia → India S tip → India W → Arabia → Red Sea →
-       Turkey                                                          */
-    '<path class="bp-map-land" d="M581,136L600,133L619,131L639,133L667,106L667,61L722,50L833,50L950,75L1000,83L1000,122L892,153L839,183L803,217L789,247L722,228L700,189L672,181L661,189L625,217L597,172Z"/>',
-
-    /* Japan (Honshu simplified) */
-    '<path class="bp-map-land" d="M892,139L892,153L861,164L861,153Z"/>',
-
-    /* Australia */
-    '<path class="bp-map-land" d="M819,311L867,289L878,289L906,297L928,325L919,353L864,342L819,344Z"/>',
-
-    /* New Zealand (N + S island) */
-    '<path class="bp-map-land" d="M981,347L989,358L983,369L978,358Z"/>',
-    '<path class="bp-map-land" d="M970,367L978,375L970,386L964,381Z"/>',
-
-    /* ── Region highlight overlays ────────────────────────────────────── */
-
-    /* south-america: full South America shape */
-    '<path data-region="south-america" d="M286,228L289,219L314,219L342,231L361,244L403,261L403,272L394,286L389,308L381,314L356,336L339,347L319,367L311,400L308,406L292,400L294,364L306,300L286,272L278,253L286,244Z"/>',
-
-    /* mesoamerica: Mexico + Central America (US border → Panama, Pacific back) */
-    '<path data-region="mesoamerica" d="M175,167L231,178L258,189L258,192L269,222L286,228L236,206L194,186L175,186Z"/>',
-
-    /* west-africa: Senegal → Ghana coast → Gabon → Congo coast */
-    '<path data-region="west-africa" d="M453,208L508,236L525,258L497,264L453,236Z"/>',
-
-    /* north-africa: Morocco/Sahara → Egypt → Horn top → Central Africa N */
-    '<path data-region="north-africa" d="M453,147L589,147L639,217L542,236L497,236L453,208Z"/>',
-
-    /* northern-europe: Scandinavia + Baltics (lat 48–72, lon -10 to 32) */
-    '<path data-region="northern-europe" d="M472,50L592,50L606,97L583,83L567,89L558,94L550,97L539,100L528,97L514,103L472,103Z"/>',
-
-    /* southern-europe: Iberia + France + Italy + Balkans + Turkey W */
-    '<path data-region="southern-europe" d="M472,111L606,97L594,122L600,119L581,136L561,147L544,144L514,131L492,128L475,128L475,144L486,150L472,150Z"/>',
-
-    /* central-asia: Kazakhstan + stans + Xinjiang (lat 35–55, lon 50–100) */
-    '<path data-region="central-asia" d="M639,97L778,97L778,153L639,153Z"/>',
-
-    /* south-asia: Indian subcontinent (lat 5–37, lon 60–92) */
-    '<path data-region="south-asia" d="M667,147L756,172L722,236L689,228L667,189Z"/>',
-
-    /* southeast-asia: mainland SE Asia + maritime (lat -10 to 25, lon 95–130) */
-    '<path data-region="southeast-asia" d="M764,181L861,181L861,278L764,278Z"/>',
-
-    /* east-asia: China + Korea + Japan (lat 20–55, lon 100–148) */
-    '<path data-region="east-asia" d="M778,97L911,125L903,194L778,194Z"/>',
-
-    /* madagascar: highlight + glow in CSS */
-    '<path data-region="madagascar" d="M619,283L636,283L639,319L622,322Z"/>',
-
-    '</svg>',
-  ].join('');
+  var REGION_COUNTRIES = {
+    'southeast-asia':  [96,116,360,418,104,458,608,702,626,764,704],
+    // Brunei, Cambodia, Indonesia, Laos, Myanmar, Malaysia, Philippines,
+    // Singapore, Timor-Leste, Thailand, Vietnam
+    'west-africa':     [132,204,270,288,324,430,466,478,562,566,624,686,694,768,854,384],
+    // Cape Verde, Benin, Gambia, Ghana, Guinea, Liberia, Mali, Mauritania,
+    // Niger, Nigeria, Guinea-Bissau, Senegal, Sierra Leone, Togo, Burkina Faso, Ivory Coast
+    'south-asia':      [50,64,356,462,524,586,144],
+    // Bangladesh, Bhutan, India, Maldives, Nepal, Pakistan, Sri Lanka
+    'east-asia':       [156,158,392,408,410,496],
+    // China, Taiwan, Japan, North Korea, South Korea, Mongolia
+    'mesoamerica':     [84,188,222,320,340,484,558,591],
+    // Belize, Costa Rica, El Salvador, Guatemala, Honduras, Mexico, Nicaragua, Panama
+    'south-america':   [32,68,76,152,170,218,254,328,600,604,740,858,862],
+    // Argentina, Bolivia, Brazil, Chile, Colombia, Ecuador, French Guiana,
+    // Guyana, Paraguay, Peru, Suriname, Uruguay, Venezuela
+    'northern-europe': [208,233,246,352,428,440,578,752],
+    // Denmark, Estonia, Finland, Iceland, Latvia, Lithuania, Norway, Sweden
+    'southern-europe': [8,40,56,70,100,191,250,276,300,348,380,492,499,528,620,642,688,705,724,756,792,807],
+    // Albania, Austria, Belgium, Bosnia, Bulgaria, Croatia, France, Germany,
+    // Greece, Hungary, Italy, Monaco, Montenegro, Netherlands, Portugal,
+    // Romania, Serbia, Slovenia, Spain, Switzerland, Turkey, North Macedonia
+    'central-asia':    [4,31,51,156,268,364,398,417,496,762,795,860],
+    // Afghanistan, Azerbaijan, Armenia, China, Georgia, Iran, Kazakhstan,
+    // Kyrgyzstan, Mongolia, Tajikistan, Turkmenistan, Uzbekistan
+    'madagascar':      [450],
+  };
 
   /* ── Panel object ─────────────────────────────────────────────────── */
   var BrowsePanel = {
@@ -123,8 +57,58 @@
     },
 
     injectMap: function () {
-      var c = document.getElementById('bp-map-container');
-      if (c) c.innerHTML = MAP_SVG;
+      var self = this;
+      var container = document.getElementById('bp-map-container');
+      if (!container) return;
+
+      var NS = 'http://www.w3.org/2000/svg';
+      var svg = document.createElementNS(NS, 'svg');
+      svg.setAttribute('id', 'bp-world-map');
+      svg.setAttribute('viewBox', '0 0 960 500');
+      svg.setAttribute('aria-hidden', 'true');
+      svg.style.cssText = 'width:100%;height:auto;display:block;';
+
+      var bg = document.createElementNS(NS, 'rect');
+      bg.setAttribute('class', 'bp-map-ocean');
+      bg.setAttribute('width', '960');
+      bg.setAttribute('height', '500');
+      svg.appendChild(bg);
+      container.appendChild(svg);
+
+      if (!window.d3 || !window.topojson) return;
+
+      fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+        .then(function (r) { return r.json(); })
+        .then(function (world) {
+          var proj    = d3.geoNaturalEarth1().scale(153).translate([480, 250]);
+          var pathGen = d3.geoPath().projection(proj);
+          var features = topojson.feature(world, world.objects.countries).features;
+
+          features.forEach(function (feature) {
+            var d = pathGen(feature);
+            if (!d) return;
+            var iso    = +feature.id;
+            var region = self.getRegionForCountry(iso);
+            var el = document.createElementNS(NS, 'path');
+            el.setAttribute('d', d);
+            el.setAttribute('class', 'bp-map-land');
+            if (region) el.setAttribute('data-region', region);
+            svg.appendChild(el);
+          });
+
+          // Re-apply highlight if panel already showing a game
+          if (self.currentGame && self.currentGame.region) {
+            self.highlightRegion(self.currentGame.region);
+          }
+        })
+        .catch(function () { /* fail silently — map shows ocean only */ });
+    },
+
+    getRegionForCountry: function (iso) {
+      for (var r in REGION_COUNTRIES) {
+        if (REGION_COUNTRIES[r].indexOf(iso) !== -1) return r;
+      }
+      return null;
     },
 
     showFeaturedGame: function () {
@@ -201,8 +185,8 @@
       var all = map.querySelectorAll('[data-region]');
       for (var i = 0; i < all.length; i++) all[i].classList.remove('bp-region-active');
       if (regionKey) {
-        var t = map.querySelector('[data-region="' + regionKey + '"]');
-        if (t) t.classList.add('bp-region-active');
+        var targets = map.querySelectorAll('[data-region="' + regionKey + '"]');
+        for (var i = 0; i < targets.length; i++) targets[i].classList.add('bp-region-active');
       }
     },
 

@@ -109,19 +109,19 @@
 }
 #bp-world-map .bp-map-land {
   fill: var(--bp-map-land);
-  transition: fill 200ms ease;
+  opacity: 1;
+  stroke: var(--bp-map-ocean);
+  stroke-width: 0.4px;
+  transition: fill 200ms ease, opacity 200ms ease;
 }
-#bp-world-map [data-region] {
-  fill: transparent;
-  transition: fill 200ms ease;
-}
-#bp-world-map [data-region].bp-region-active {
+/* Active region: same specificity as .bp-map-land, wins by source order */
+#bp-world-map .bp-region-active {
   fill: var(--bp-map-highlight);
-  opacity: 0.82;
+  opacity: 0.85;
 }
-/* Madagascar glow — make small island visible */
+/* Madagascar glow — small island needs extra visibility */
 #bp-world-map [data-region="madagascar"].bp-region-active {
-  filter: drop-shadow(0 0 5px var(--bp-map-highlight));
+  filter: drop-shadow(0 0 6px var(--bp-map-highlight));
   opacity: 1;
 }
 
