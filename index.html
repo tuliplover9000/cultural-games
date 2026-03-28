@@ -99,9 +99,25 @@
           </div>
         </div>
 
-        <!-- Right: Three.js floating game pieces -->
+        <!-- Right: floating game icons -->
         <div class="hero__visual" aria-hidden="true">
-          <canvas id="hero-canvas"></canvas>
+          <img class="hero-icon" src="assets/icons/tien-len.svg"         alt="" style="--ico-size:48px;--ico-left:4%;  --ico-opacity:0.65;--ico-dur:15s;--ico-delay:-3s; --ico-rot-from:-8deg; --ico-rot-to:12deg; --ico-static-bottom:60%">
+          <img class="hero-icon" src="assets/icons/bau-cua.svg"          alt="" style="--ico-size:56px;--ico-left:16%; --ico-opacity:0.5; --ico-dur:12s;--ico-delay:-8s; --ico-rot-from:10deg; --ico-rot-to:-15deg;--ico-static-bottom:25%">
+          <img class="hero-icon" src="assets/icons/o-an-quan.svg"        alt="" style="--ico-size:40px;--ico-left:29%; --ico-opacity:0.7; --ico-dur:17s;--ico-delay:-1s; --ico-rot-from:-12deg;--ico-rot-to:8deg;  --ico-static-bottom:75%">
+          <img class="hero-icon" src="assets/icons/oware.svg"            alt="" style="--ico-size:52px;--ico-left:44%; --ico-opacity:0.45;--ico-dur:11s;--ico-delay:-6s; --ico-rot-from:6deg;  --ico-rot-to:-10deg;--ico-static-bottom:40%">
+          <img class="hero-icon" src="assets/icons/patolli.svg"          alt="" style="--ico-size:44px;--ico-left:58%; --ico-opacity:0.6; --ico-dur:19s;--ico-delay:-4s; --ico-rot-from:-10deg;--ico-rot-to:14deg; --ico-static-bottom:55%">
+          <img class="hero-icon" src="assets/icons/puluc.svg"            alt="" style="--ico-size:36px;--ico-left:74%; --ico-opacity:0.4; --ico-dur:13s;--ico-delay:-10s;--ico-rot-from:15deg; --ico-rot-to:-8deg; --ico-static-bottom:20%">
+          <img class="hero-icon" src="assets/icons/pallanguzhi.svg"      alt="" style="--ico-size:60px;--ico-left:85%; --ico-opacity:0.35;--ico-dur:16s;--ico-delay:-7s; --ico-rot-from:-6deg; --ico-rot-to:10deg; --ico-static-bottom:70%">
+          <img class="hero-icon" src="assets/icons/fanorona.svg"         alt="" style="--ico-size:48px;--ico-left:8%;  --ico-opacity:0.55;--ico-dur:10s;--ico-delay:-2s; --ico-rot-from:8deg;  --ico-rot-to:-12deg;--ico-static-bottom:35%">
+          <img class="hero-icon" src="assets/icons/mahjong.svg"          alt="" style="--ico-size:64px;--ico-left:22%; --ico-opacity:0.75;--ico-dur:18s;--ico-delay:-9s; --ico-rot-from:-14deg;--ico-rot-to:6deg;  --ico-static-bottom:80%">
+          <img class="hero-icon" src="assets/icons/hnefatafl.svg"        alt="" style="--ico-size:42px;--ico-left:37%; --ico-opacity:0.5; --ico-dur:12s;--ico-delay:-5s; --ico-rot-from:10deg; --ico-rot-to:-8deg; --ico-static-bottom:15%">
+          <img class="hero-icon" src="assets/icons/pachisi.svg"          alt="" style="--ico-size:50px;--ico-left:52%; --ico-opacity:0.6; --ico-dur:14s;--ico-delay:-11s;--ico-rot-from:-8deg; --ico-rot-to:12deg; --ico-static-bottom:50%">
+          <img class="hero-icon" src="assets/icons/ganjifa.svg"          alt="" style="--ico-size:38px;--ico-left:67%; --ico-opacity:0.45;--ico-dur:16s;--ico-delay:-3s; --ico-rot-from:12deg; --ico-rot-to:-6deg; --ico-static-bottom:65%">
+          <img class="hero-icon" src="assets/icons/latrunculi.svg"       alt="" style="--ico-size:54px;--ico-left:80%; --ico-opacity:0.65;--ico-dur:11s;--ico-delay:-8s; --ico-rot-from:-10deg;--ico-rot-to:8deg;  --ico-static-bottom:30%">
+          <img class="hero-icon" src="assets/icons/cachos.svg"           alt="" style="--ico-size:46px;--ico-left:12%; --ico-opacity:0.4; --ico-dur:13s;--ico-delay:-6s; --ico-rot-from:6deg;  --ico-rot-to:-14deg;--ico-static-bottom:45%">
+          <img class="hero-icon" src="assets/icons/xinjiang-fangqi.svg"  alt="" style="--ico-size:58px;--ico-left:33%; --ico-opacity:0.7; --ico-dur:15s;--ico-delay:-2s; --ico-rot-from:-16deg;--ico-rot-to:10deg; --ico-static-bottom:85%">
+          <img class="hero-icon" src="assets/icons/filipino-dama.svg"    alt="" style="--ico-size:44px;--ico-left:48%; --ico-opacity:0.55;--ico-dur:19s;--ico-delay:-12s;--ico-rot-from:8deg;  --ico-rot-to:-12deg;--ico-static-bottom:10%">
+          <img class="hero-icon" src="assets/icons/cuarenta.svg"         alt="" style="--ico-size:32px;--ico-left:63%; --ico-opacity:0.5; --ico-dur:10s;--ico-delay:-4s; --ico-rot-from:-6deg; --ico-rot-to:16deg; --ico-static-bottom:55%">
         </div>
 
       </div>
@@ -363,9 +379,6 @@
     </div>
   </div>
 
-  <!-- Three.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
-
   <script src="js/utils/games-data.js"></script>
   <script>
     (function () {
@@ -396,136 +409,6 @@
     }());
   </script>
 
-  <!-- Three.js globe -->
-  <script>
-    (function () {
-      'use strict';
-      if (!window.THREE) return;
-      var canvas = document.getElementById('hero-canvas');
-      if (!canvas) return;
-
-      var scene  = new THREE.Scene();
-      var camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-      camera.position.z = 6.5;
-
-      var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-      renderer.setClearColor(0x000000, 0);
-
-      function resize() {
-        var parent = canvas.parentElement;
-        if (!parent) return;
-        var w = parent.offsetWidth;
-        var h = parent.offsetHeight;
-        if (!w || !h) return;
-        renderer.setSize(w, h, false);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        camera.aspect = w / h;
-        camera.updateProjectionMatrix();
-      }
-
-      // ── Wireframe globe ──────────────────────────────────────
-      var globeGroup = new THREE.Group();
-      scene.add(globeGroup);
-
-      var globeMat = new THREE.MeshBasicMaterial({
-        color: 0xC89B3C,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.13,
-      });
-      globeGroup.add(new THREE.Mesh(new THREE.SphereGeometry(2.6, 40, 24), globeMat));
-
-      // ── Culture location dots ────────────────────────────────
-      // Each game culture mapped to approximate lat/lon
-      var cultures = [
-        { lat: 16,  lon: 106, color: 0xB83232 }, // Vietnam
-        { lat: 8,   lon: 0,   color: 0xC89B3C }, // West Africa
-        { lat: 18,  lon: -92, color: 0x2C7873 }, // Mesoamerica
-        { lat: 11,  lon: 80,  color: 0xD4663A }, // South India
-        { lat: -20, lon: 47,  color: 0xC89B3C }, // Madagascar
-        { lat: 35,  lon: 116, color: 0xB83232 }, // China
-        { lat: 60,  lon: 15,  color: 0x2C7873 }, // Norse/Scandinavia
-        { lat: 23,  lon: 78,  color: 0xC89B3C }, // India (Pachisi)
-      ];
-
-      var R = 2.65;
-      cultures.forEach(function (c) {
-        var phi   = (90 - c.lat) * Math.PI / 180;
-        var theta = (c.lon + 180) * Math.PI / 180;
-        var dot = new THREE.Mesh(
-          new THREE.SphereGeometry(0.055, 8, 8),
-          new THREE.MeshBasicMaterial({ color: c.color })
-        );
-        dot.position.set(
-          R * Math.sin(phi) * Math.cos(theta),
-          R * Math.cos(phi),
-          R * Math.sin(phi) * Math.sin(theta)
-        );
-        globeGroup.add(dot);
-      });
-
-      // ── Floating game pieces around the globe ────────────────
-      var pieceGeos = [
-        new THREE.BoxGeometry(0.38, 0.52, 0.05),
-        new THREE.SphereGeometry(0.16, 8, 8),
-        new THREE.OctahedronGeometry(0.2),
-        new THREE.TorusGeometry(0.15, 0.04, 6, 16),
-        new THREE.BoxGeometry(0.22, 0.22, 0.22),
-      ];
-      var piecePalette = [0xC89B3C, 0xC89B3C, 0xB83232, 0x2C7873];
-      var pieces = [];
-
-      for (var i = 0; i < 14; i++) {
-        var geo = pieceGeos[i % pieceGeos.length];
-        var mat = new THREE.MeshBasicMaterial({
-          color: piecePalette[Math.floor(Math.random() * piecePalette.length)],
-          wireframe: true,
-          transparent: true,
-          opacity: 0.08 + Math.random() * 0.14,
-        });
-        var mesh = new THREE.Mesh(geo, mat);
-        var angle  = (i / 14) * Math.PI * 2;
-        var radius = 3.4 + Math.random() * 1.2;
-        mesh.position.set(
-          Math.cos(angle) * radius,
-          (Math.random() - 0.5) * 4.5,
-          Math.sin(angle) * radius - 1.5
-        );
-        mesh.rotation.set(
-          Math.random() * Math.PI * 2,
-          Math.random() * Math.PI * 2,
-          Math.random() * Math.PI * 2
-        );
-        scene.add(mesh);
-        pieces.push({
-          mesh:      mesh,
-          rx:        (Math.random() - 0.5) * 0.007,
-          ry:        (Math.random() - 0.5) * 0.009,
-          floatAmp:  (0.3 + Math.random() * 0.7) * 0.002,
-          floatFreq: 0.3 + Math.random() * 0.8,
-          floatOff:  Math.random() * Math.PI * 2,
-        });
-      }
-
-      resize();
-      window.addEventListener('resize', resize);
-
-      var t = 0;
-      function animate() {
-        requestAnimationFrame(animate);
-        t += 0.01;
-        globeGroup.rotation.y += 0.0018;
-        for (var i = 0; i < pieces.length; i++) {
-          var p = pieces[i];
-          p.mesh.rotation.x += p.rx;
-          p.mesh.rotation.y += p.ry;
-          p.mesh.position.y += Math.sin(t * p.floatFreq + p.floatOff) * p.floatAmp;
-        }
-        renderer.render(scene, camera);
-      }
-      animate();
-    }());
-  </script>
 
   <!-- Scroll animations + count-up -->
   <script>
