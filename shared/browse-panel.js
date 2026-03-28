@@ -75,17 +75,15 @@
       svg.appendChild(bg);
       container.appendChild(svg);
 
-      if (!window.d3 || !window.topojson) return;
+      if (!window.topojson) return;
 
-      fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+      fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json')
         .then(function (r) { return r.json(); })
         .then(function (world) {
-          var proj    = d3.geoNaturalEarth1().scale(153).translate([480, 250]);
-          var pathGen = d3.geoPath().projection(proj);
           var features = topojson.feature(world, world.objects.countries).features;
 
           features.forEach(function (feature) {
-            var d = pathGen(feature);
+            var d = self.geoFeatureToPath(feature);
             if (!d) return;
             var iso    = +feature.id;
             var region = self.getRegionForCountry(iso);
@@ -96,12 +94,37 @@
             svg.appendChild(el);
           });
 
-          // Re-apply highlight if panel already showing a game
           if (self.currentGame && self.currentGame.region) {
             self.highlightRegion(self.currentGame.region);
           }
         })
-        .catch(function () { /* fail silently — map shows ocean only */ });
+        .catch(function () { /* ocean fallback */ });
+    },
+
+    /* ── Inline equirectangular projection ───────────────────────────── */
+    /* lon → x: (lon+180)/360*960,  lat → y: (90-lat)/180*500           */
+    geoProject: function (lon, lat) {
+      return [(lon + 180) * (960 / 360), (90 - lat) * (500 / 180)];
+    },
+
+    geoRingToD: function (ring) {
+      var d = '';
+      for (var i = 0; i < ring.length; i++) {
+        var p = this.geoProject(ring[i][0], ring[i][1]);
+        d += (i ? 'L' : 'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1);
+      }
+      return d + 'Z';
+    },
+
+    geoFeatureToPath: function (feature) {
+      var g = feature.geometry;
+      if (!g) return '';
+      var polys = g.type === 'Polygon'      ? [g.coordinates] :
+                  g.type === 'MultiPolygon' ?  g.coordinates  : [];
+      var self = this;
+      return polys.map(function (poly) {
+        return poly.map(function (ring) { return self.geoRingToD(ring); }).join('');
+      }).join('');
     },
 
     getRegionForCountry: function (iso) {
