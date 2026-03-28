@@ -14,10 +14,19 @@
   var TARGET     = 40;
 
   // ── State ───────────────────────────────────────────────────────────────────
-  var G          = {};
+  var G           = {};
   var selectedIdx = null;
   var aiThinkTimer = null;
-  var gameLog    = [];
+  var gameLog     = [];
+
+  // Animation flags — consumed once per render
+  var anim = {
+    dealHand:      false,   // animate player hand cards in (new deal)
+    dealAI:        false,   // animate AI card backs in
+    newTableIdx:   -1,      // index of card just placed on table (played-in from bottom)
+    aiTableIdx:    -1,      // index of card AI just placed on table (played-in from top)
+    flashMsg:      '',      // message to flash in status bar (Caída / Table cleared)
+  };
 
   // ── Deck helpers ─────────────────────────────────────────────────────────────
   function buildDeck() {
@@ -67,6 +76,8 @@
     for (var i = 0; i < 10 && G.deck.length; i++) G.aiHand.push(G.deck.pop());
     G.handsDealt++;
     selectedIdx = null;
+    anim.dealHand = true;
+    anim.dealAI   = true;
   }
 
   // ── Game logic ───────────────────────────────────────────────────────────────
@@ -135,11 +146,13 @@
         + (cap.type === 'sequence' ? ' (sequence)' : ' (pair)'));
 
       if (caida) {
+        anim.flashMsg = '⚡ Caída! +1 bonus';
         addLog(who, '⚡ Caída! ' + name + ' scored +1 bonus');
         if (who === 'player') { G.playerMesas++; if (window.Achievements) Achievements.track('cu_caida'); }
         else G.aiMesas++;
       }
       if (G.table.length === 0) {
+        anim.flashMsg = anim.flashMsg ? anim.flashMsg + ' · Table cleared! +1' : '✓ Table cleared! +1';
         addLog(who, '✓ Table cleared! ' + name + ' scored +1 mesa');
         if (who === 'player') {
           G.playerMesas++;
@@ -150,6 +163,9 @@
       }
       G.lastCapture = { who: who, cardRank: card.rank };
     } else {
+      // Track new table card index for played-in animation
+      if (who === 'player') anim.newTableIdx = G.table.length;
+      else                  anim.aiTableIdx  = G.table.length;
       G.table.push(card);
       addLog(who, name + ' placed ' + rn + sym + ' on table');
     }
@@ -270,8 +286,15 @@
     var cap   = card ? findCaptures(card) : null;
     var caida = card ? isCaida(card, 'player') : false;
 
+    // Consume flash message once
+    var flash = anim.flashMsg;
+    anim.flashMsg = '';
+
     var statusInner, statusCls = '';
-    if (G.turn === 'ai') {
+    if (flash) {
+      statusInner = flash;
+      statusCls   = 'cu-flash';
+    } else if (G.turn === 'ai') {
       statusInner = 'CPU is thinking <span class="tl-thinking-dots"><span></span><span></span><span></span></span>';
     } else if (isYT) {
       statusInner = selectedIdx !== null
@@ -297,8 +320,14 @@
     var n      = G.aiHand.length;
     var active = G.turn === 'ai' && G.phase === 'playing';
     var show   = Math.min(n, 13);
+    var dealing = anim.dealAI;
+    anim.dealAI = false;
     var backs  = '';
-    for (var i = 0; i < show; i++) backs += '<div class="tl-card-back tl-card-back--sm"></div>';
+    for (var i = 0; i < show; i++) {
+      var dcls = dealing ? ' dealing' : '';
+      var dsty = dealing ? ' style="--deal-i:' + i + '"' : '';
+      backs += '<div class="tl-card-back tl-card-back--sm' + dcls + '"' + dsty + '></div>';
+    }
     return '<div class="tl-zone tl-zone--top cu-cpu-zone">'
       + '<div class="tl-zone__name' + (active ? ' active' : '') + '">CPU' + (active ? ' ●' : '') + '</div>'
       + '<div class="tl-opp-cards--top">' + backs + '</div>'
@@ -310,8 +339,17 @@
     var hlSet = {};
     if (cap) cap.cards.forEach(function (c) { hlSet[G.table.indexOf(c)] = true; });
 
+    var newPIdx = anim.newTableIdx;
+    var aiPIdx  = anim.aiTableIdx;
+    anim.newTableIdx = -1;
+    anim.aiTableIdx  = -1;
+
     var tableCards = G.table.map(function (card, i) {
-      return cuCard(card, hlSet[i] ? 'cu-capture-hl' : '');
+      var cls = hlSet[i] ? 'cu-capture-hl' : '';
+      var sty = '';
+      if (i === newPIdx) { cls += (cls ? ' ' : '') + 'played-in'; sty = ' style="--from-y:80px;--from-x:0;--play-i:0"'; }
+      else if (i === aiPIdx) { cls += (cls ? ' ' : '') + 'played-in'; sty = ' style="--from-y:-80px;--from-x:0;--play-i:0"'; }
+      return cuCard(card, cls, undefined, sty);
     }).join('');
 
     var emptyMsg = G.table.length === 0
@@ -336,9 +374,16 @@
 
   function playerZone(isYT, cap) {
     var canPlay = isYT && selectedIdx !== null;
+    var dealing = anim.dealHand;
+    anim.dealHand = false;
     var cards = G.playerHand.map(function (card, i) {
-      var cls = (isYT ? 'clickable' : '') + (selectedIdx === i ? ' selected' : '');
-      return cuCard(card, cls, String(i));
+      var cls = [
+        isYT      ? 'clickable' : '',
+        selectedIdx === i ? 'selected' : '',
+        dealing   ? 'dealing'  : '',
+      ].filter(Boolean).join(' ');
+      var sty = dealing ? ' style="--deal-i:' + i + '"' : '';
+      return cuCard(card, cls, String(i), sty);
     }).join('');
 
     var hint = '', hintCls = '';
@@ -433,13 +478,13 @@
   }
 
   // ── Card HTML helper ─────────────────────────────────────────────────────────
-  function cuCard(card, cls, dataIdx) {
+  function cuCard(card, cls, dataIdx, styStr) {
     var colorCls = 'cu-card--' + card.suit;
     var sym      = SUIT_SYM[card.suit];
     var rn       = RANK_NAMES[card.rank];
     var dataStr  = dataIdx !== undefined ? ' data-idx="' + dataIdx + '"' : '';
     var clsStr   = cls ? ' ' + cls : '';
-    return '<div class="tl-card ' + colorCls + clsStr + '"' + dataStr + '>'
+    return '<div class="tl-card ' + colorCls + clsStr + '"' + dataStr + (styStr || '') + '>'
       + '<div class="tl-card__corner tl-card__corner--tl"><div class="tl-card__rank">' + rn + '</div><div class="tl-card__suit-s">' + sym + '</div></div>'
       + '<div class="tl-card__center">' + sym + '</div>'
       + '<div class="tl-card__corner tl-card__corner--br"><div class="tl-card__rank">' + rn + '</div><div class="tl-card__suit-s">' + sym + '</div></div>'

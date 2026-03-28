@@ -84,6 +84,23 @@
     /* CPU zone: slightly less bottom padding */
     .cu-cpu-zone { padding-bottom: var(--space-2); }
     .cu-center   { padding: var(--space-3) var(--space-4); }
+
+    /* Deal animation for card backs (AI hand) */
+    .tl-card-back.dealing {
+      animation: tl-deal 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-delay: calc(var(--deal-i, 0) * 70ms);
+    }
+
+    /* Flash message in status bar */
+    .tl-status-bar.cu-flash {
+      color: #4aff7a;
+      font-weight: 600;
+      animation: cu-flash-in 600ms ease both;
+    }
+    @keyframes cu-flash-in {
+      from { opacity: 0; transform: scale(1.08); }
+      to   { opacity: 1; transform: none; }
+    }
   </style>
 </head>
 <body>
