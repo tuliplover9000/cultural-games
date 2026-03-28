@@ -51,6 +51,8 @@
         { value: '5p', label: '5 Players' },
         { value: '6p', label: '6 Players' },
       ]},
+    { key: 'cuarenta',    name: 'Cuarenta',            culture: 'Ecuador',               type: 'Card',     icon: '🃏', svg: '../assets/icons/cuarenta.svg',   badge: 'Card · 2P',    maxPlayers: 2,
+      rules: ['Play one card per turn. Match a table card\'s rank to capture (pairs), or form a run of 3+ consecutive ranks (sequence).', '¡Caída! bonus: counter your opponent\'s rank immediately after they capture. ¡Mesa! bonus: clear the table entirely.', 'Score Ases, 7 de Oros, Sota de Oros, and Mesa bonuses. First to 40 pts wins.'] },
   ];
 
   // ── DOM refs ───────────────────────────────────────────────────────────────

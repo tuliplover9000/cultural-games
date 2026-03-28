@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VWXNSYLPZE"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VWXNSYLPZE');</script>
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="description" content="Play Cuarenta - Ecuador's national card game. Capture pairs and sequences with a 40-card Spanish deck. Free, in your browser." />
+  <title>Cuarenta - Cultural Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="../../shared/theme.js"></script>
+  <script src="../../js/rooms/room-mode.js"></script>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../shared/theme.css" />
+  <link rel="stylesheet" href="../../css/components.css" />
+  <link rel="stylesheet" href="../../shared/toggle.css" />
+  <link rel="stylesheet" href="../../shared/tutorial.css" />
+  <link rel="stylesheet" href="../../css/auth.css" />
+  <link rel="stylesheet" href="../../css/games.css" />
+  <link rel="stylesheet" href="../../shared/achievements.css" />
+  <link rel="stylesheet" href="../../shared/fullscreen.css" />
+  <link rel="stylesheet" href="../../shared/play-with-friend.css" />
+  <link rel="stylesheet" href="../../shared/mobile.css">
+  <link rel="stylesheet" href="../../shared/mobile-nav.css">
+  <link rel="stylesheet" href="../../shared/mobile-landscape.css">
+  <script src="../../shared/mobile.js"></script>
+  <script src="../../shared/mobile-nav.js"></script>
+
+  <style>
+    /* ── Cuarenta game container ── */
+    #cu-wrap {
+      position: relative;
+      width: 100%;
+    }
+    #cu-canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #cu-controls {
+      display: flex;
+      gap: var(--space-2);
+      margin-top: var(--space-2);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    #cu-play-btn {
+      min-width: 140px;
+      min-height: 44px;
+      font-size: var(--text-base);
+      background: var(--color-accent-gold);
+      color: #1a0e06;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    #cu-play-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    #cu-new-btn {
+      min-height: 44px;
+      font-size: var(--text-sm);
+      background: transparent;
+      border: 1px solid rgba(200,155,60,0.4);
+      color: var(--color-text-muted);
+      border-radius: 8px;
+      padding: 0 var(--space-3);
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    #cu-new-btn:hover { color: var(--color-accent-gold); border-color: var(--color-accent-gold); }
+
+    /* ── Overlay (round-end / game-end) ── */
+    #cu-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.72);
+      border-radius: 8px;
+      padding: var(--space-5);
+      z-index: 10;
+      text-align: center;
+    }
+    #cu-overlay[hidden] { display: none; }
+    #cu-overlay-title {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      color: var(--color-accent-gold);
+      margin-bottom: var(--space-2);
+    }
+    #cu-overlay-body {
+      color: var(--color-text);
+      font-size: var(--text-base);
+      margin-bottom: var(--space-4);
+      white-space: pre-line;
+    }
+    #cu-overlay-btn {
+      min-height: 48px;
+      min-width: 160px;
+      background: var(--color-accent-gold);
+      color: #1a0e06;
+      border: none;
+      border-radius: 8px;
+      font-size: var(--text-base);
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <button id="tt-trigger" class="tt-trigger" type="button" aria-label="How to play">
+    <span class="tt-trigger__icon" aria-hidden="true">?</span>
+    <span class="tt-trigger__badge" id="tt-badge" hidden>New</span>
+  </button>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../../index.html" class="nav-logo" aria-label="Cultural Games - Home">
+        <img src="../../favicon.svg" width="32" height="32" alt="" class="nav-logo-icon" aria-hidden="true">
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="../browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="../rooms.html"  class="nav-link nav-link--rooms">Rooms</a></li>
+        <li><a href="../about.html"  class="nav-link">About</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+
+      <div class="game-nav-bar">
+        <a href="../browse.html" class="back-link">Back to Browse</a>
+      </div>
+
+      <header class="game-header">
+        <div class="game-header__icon" aria-hidden="true">
+          <img src="../../assets/icons/cuarenta.svg" alt="" />
+        </div>
+        <h1 class="game-header__title">Cuarenta</h1>
+        <p class="game-header__origin">
+          Ecuador &nbsp;&middot;&nbsp;
+          <span class="badge badge--card" style="display:inline-flex;vertical-align:middle;margin-left:4px;">Card</span>
+        </p>
+      </header>
+
+      <!-- Game Container -->
+      <div id="fs-game-wrap" class="fs-game-wrap">
+        <button id="fs-toggle" class="fs-toggle" aria-label="Enter fullscreen" title="Enter fullscreen">
+          <svg class="fs-toggle__icon fs-toggle__icon--enter" viewBox="0 0 18 18" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round">
+            <path d="M1 6V1h5M12 1h5v5M17 12v5h-5M6 17H1v-5"/>
+          </svg>
+          <svg class="fs-toggle__icon fs-toggle__icon--exit" viewBox="0 0 18 18" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" style="display:none">
+            <path d="M6 1v5H1M17 6h-5V1M12 17v-5h5M1 12h5v5"/>
+          </svg>
+        </button>
+        <div class="fs-sr-only" id="fs-announce" aria-live="polite"></div>
+
+        <div class="game-container" id="game-container" aria-label="Game area">
+          <div id="cu-wrap">
+            <canvas id="cu-canvas" aria-label="Cuarenta game board"></canvas>
+
+            <!-- Round / game-end overlay -->
+            <div id="cu-overlay" hidden aria-modal="true" role="dialog">
+              <p id="cu-overlay-title"></p>
+              <p id="cu-overlay-body"></p>
+              <button id="cu-overlay-btn"></button>
+            </div>
+          </div>
+
+          <!-- Controls below canvas -->
+          <div id="cu-controls">
+            <button id="cu-play-btn" disabled>Jugar carta</button>
+            <button id="cu-new-btn">Nueva partida</button>
+          </div>
+        </div>
+      </div><!-- /#fs-game-wrap -->
+
+      <!-- Disclaimer -->
+      <div class="game-disclaimer" role="note">
+        🃏 This game uses <strong>virtual cards only</strong>. No real money is involved.
+      </div>
+
+      <!-- Play with a Friend -->
+      <div id="pwf-mount"></div>
+
+      <!-- How to Play -->
+      <details class="accordion" open>
+        <summary class="accordion__trigger">
+          <span class="accordion__title">How to Play</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Cuarenta uses a 40-card Spanish deck (suits: Oros, Copas, Espadas, Bastos;
+            ranks: As, 2–7, Sota, Caballo, Rey — note 8 and 9 are excluded).
+            First player to reach <strong>40 points</strong> wins.
+          </p>
+          <ol>
+            <li><strong>Setup:</strong> 5 cards are placed face-up on the mesa (table). Each player receives 10 cards.</li>
+            <li><strong>Your turn:</strong> Click a card in your hand to select it (it lifts up). Then click anywhere in the mesa zone to play it.</li>
+            <li><strong>Captures:</strong>
+              <ul>
+                <li><strong>Secuencia</strong> (sequence): if your card + 2 or more consecutive table cards form a run of 3+, you capture them all. Rank order: As–2–3–4–5–6–7–<em>Sota</em>–Caballo–Rey (7 and Sota are adjacent).</li>
+                <li><strong>Pares</strong> (pairs): if your card matches the rank of one or more table cards, you capture all matching cards.</li>
+                <li>Sequences take priority over pairs.</li>
+              </ul>
+            </li>
+            <li><strong>No capture:</strong> if neither applies, your card is added to the mesa.</li>
+            <li><strong>¡Caída!</strong> +1 bonus: if you capture immediately after your opponent captured, and you play the same rank they played — that's a Caída!</li>
+            <li><strong>¡Mesa!</strong> +1 bonus: clearing all cards from the mesa earns one Mesa point.</li>
+            <li><strong>Scoring per ronda:</strong>
+              <ul>
+                <li>Each <em>As</em> captured: 1 pt (max 4)</li>
+                <li><em>7 de Oros</em>: 1 pt</li>
+                <li><em>Sota de Oros</em>: 1 pt</li>
+                <li>Each Mesa: 1 pt</li>
+                <li>Most cards captured: 1 pt (tie = 0)</li>
+              </ul>
+            </li>
+            <li>When both hands are empty, deal 10 more cards each. When the deck runs out, score the ronda and begin a new one. First to <strong>40 pts total</strong> wins.</li>
+          </ol>
+        </div>
+      </details>
+
+      <!-- Cultural Context -->
+      <details class="accordion">
+        <summary class="accordion__trigger">
+          <span class="accordion__title">Cultural Context</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Cuarenta is Ecuador's national card game, played enthusiastically across the
+            country from Quito's urban cafés to rural communities in the Sierra and Costa.
+            The name simply means "forty" — the target score and the deck size, both rolled
+            into one. It is the card game Ecuadorians grow up with, the one played at family
+            gatherings, political meetings, and long afternoons in any tienda with a deck of
+            Spanish cards.
+          </p>
+          <p>
+            The game is played with a baraja española (Spanish-suited deck), a colonial
+            inheritance that arrived with conquistadors in the 16th century and was thoroughly
+            adopted into Andean culture. Over four centuries the Ecuadorian variant evolved
+            its own rules — particularly the Caída mechanic and the 40-point scoring
+            target — creating a game that feels distinctly local even as it shares ancestry
+            with Spanish games like Brisca and Scopa.
+          </p>
+          <p>
+            Cuarenta is serious business: national tournaments draw crowds, and skilled
+            players command real respect. The Caída — that moment when you counter your
+            opponent's rank immediately after they capture — is celebrated like a chess fork,
+            a flash of timing and anticipation that separates good players from great ones.
+          </p>
+        </div>
+      </details>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <span class="footer-brand">Cultural Games</span>
+      <p class="footer-mission">Preserving cultural heritage through play - one game at a time.</p>
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links" role="list">
+          <li><a href="../browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="../about.html"  class="footer-link">About</a></li>
+        </ul>
+      </nav>
+      <div class="footer-divider"></div>
+      <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../../js/utils/helpers.js"></script>
+  <script src="../../js/utils/navigation.js"></script>
+  <script src="../../js/utils/auth.js"></script>
+  <script src="../../shared/achievement-queue.js"></script>
+  <script src="../../shared/achievements.js"></script>
+  <script src="../../js/utils/multiplayer.js"></script>
+  <script src="../../js/rooms/game-bridge.js"></script>
+  <script src="../../shared/tutorial.js"></script>
+  <script src="../../shared/fullscreen.js"></script>
+  <script src="../../js/games/cuarenta.js"></script>
+  <script src="../../shared/play-with-friend.js"></script>
+  <script>if (window.PWF) PWF.init("cuarenta");</script>
+</body>
+</html>

@@ -25,8 +25,9 @@
  * Xinjiang Fangqi        | xinjiang-fangqi | Xinjiang
  * ─────────────────────────────────────────────────────────────────────────────
  * Filipino Dama         | filipino-dama | Philippines
+ * Cuarenta              | cuarenta      | Ecuador
  * ─────────────────────────────────────────────────────────────────────────────
- * Total: 16 games, 13 unique cultures
+ * Total: 17 games, 14 unique cultures
  */
 window.GAMES_DATA = [
   { key: 'tien-len',    name: 'Tiến Lên',          culture: 'Vietnam',             type: 'Card',     maxPlayers: 4 },
@@ -45,4 +46,5 @@ window.GAMES_DATA = [
   { key: 'cachos',          name: 'Cachos',             culture: 'Latin America',       type: 'Dice',     maxPlayers: 6 },
   { key: 'xinjiang-fangqi', name: 'Xinjiang Fangqi',   culture: 'Xinjiang',            type: 'Strategy', maxPlayers: 2 },
   { key: 'filipino-dama',   name: 'Filipino Dama',     culture: 'Philippines',         type: 'Board',    maxPlayers: 2 },
+  { key: 'cuarenta',        name: 'Cuarenta',          culture: 'Ecuador',             type: 'Card',     maxPlayers: 2 },
 ];
