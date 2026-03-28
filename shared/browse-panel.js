@@ -83,9 +83,10 @@
           var features = topojson.feature(world, world.objects.countries).features;
 
           features.forEach(function (feature) {
+            var iso = +feature.id;
+            if (iso === 10) return; /* skip Antarctica */
             var d = self.geoFeatureToPath(feature);
             if (!d) return;
-            var iso    = +feature.id;
             var region = self.getRegionForCountry(iso);
             var el = document.createElementNS(NS, 'path');
             el.setAttribute('d', d);
@@ -102,16 +103,28 @@
     },
 
     /* ── Inline equirectangular projection ───────────────────────────── */
-    /* lon → x: (lon+180)/360*960,  lat → y: (90-lat)/180*500           */
+    /* Latitude is clamped to 83°N → 57°S so Antarctica and empty       */
+    /* Arctic don't bloat the map. ViewBox stays 0 0 960 500.           */
+    _LAT_MAX: 83, _LAT_RANGE: 140, /* 83 - (-57) = 140 */
+
     geoProject: function (lon, lat) {
-      return [(lon + 180) * (960 / 360), (90 - lat) * (500 / 180)];
+      return [
+        (lon + 180) * (960 / 360),
+        (this._LAT_MAX - lat) / this._LAT_RANGE * 500,
+      ];
     },
 
     geoRingToD: function (ring) {
       var d = '';
+      var prevLon = null;
       for (var i = 0; i < ring.length; i++) {
-        var p = this.geoProject(ring[i][0], ring[i][1]);
-        d += (i ? 'L' : 'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1);
+        var lon = ring[i][0], lat = ring[i][1];
+        var p = this.geoProject(lon, lat);
+        /* Jump > 180° in lon = antimeridian crossing → lift pen */
+        var cmd = (i === 0 || (prevLon !== null && Math.abs(lon - prevLon) > 180))
+                  ? 'M' : 'L';
+        d += cmd + p[0].toFixed(1) + ',' + p[1].toFixed(1);
+        prevLon = lon;
       }
       return d + 'Z';
     },
