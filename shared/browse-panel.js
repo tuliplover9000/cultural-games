@@ -64,14 +64,14 @@
       var NS = 'http://www.w3.org/2000/svg';
       var svg = document.createElementNS(NS, 'svg');
       svg.setAttribute('id', 'bp-world-map');
-      svg.setAttribute('viewBox', '0 0 960 373');
+      svg.setAttribute('viewBox', '0 0 960 600');
       svg.setAttribute('aria-hidden', 'true');
       svg.style.cssText = 'width:100%;height:auto;display:block;';
 
       var bg = document.createElementNS(NS, 'rect');
       bg.setAttribute('class', 'bp-map-ocean');
       bg.setAttribute('width', '960');
-      bg.setAttribute('height', '373');
+      bg.setAttribute('height', '600');
       svg.appendChild(bg);
       container.appendChild(svg);
 
@@ -111,7 +111,7 @@
     geoProject: function (lon, lat) {
       return [
         (lon + 180) / 360 * 960,
-        (this._LAT_MAX - lat) / this._LAT_RANGE * 373,
+        (this._LAT_MAX - lat) / this._LAT_RANGE * 600,
       ];
     },
 
