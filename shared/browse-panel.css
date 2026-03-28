@@ -114,14 +114,15 @@
   stroke-width: 0.4px;
   transition: fill 200ms ease, opacity 200ms ease;
 }
-/* Active region: same specificity as .bp-map-land, wins by source order */
+/* Active region — highlight + glow on all regions */
 #bp-world-map .bp-region-active {
   fill: var(--bp-map-highlight);
-  opacity: 0.85;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 5px var(--bp-map-highlight));
 }
-/* Madagascar glow — small island needs extra visibility */
+/* Madagascar — bigger glow since it's a single small island */
 #bp-world-map [data-region="madagascar"].bp-region-active {
-  filter: drop-shadow(0 0 6px var(--bp-map-highlight));
+  filter: drop-shadow(0 0 10px var(--bp-map-highlight));
   opacity: 1;
 }
 

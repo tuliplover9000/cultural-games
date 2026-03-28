@@ -64,14 +64,14 @@
       var NS = 'http://www.w3.org/2000/svg';
       var svg = document.createElementNS(NS, 'svg');
       svg.setAttribute('id', 'bp-world-map');
-      svg.setAttribute('viewBox', '0 0 960 600');
+      svg.setAttribute('viewBox', '0 0 960 500');
       svg.setAttribute('aria-hidden', 'true');
       svg.style.cssText = 'width:100%;height:auto;display:block;';
 
       var bg = document.createElementNS(NS, 'rect');
       bg.setAttribute('class', 'bp-map-ocean');
       bg.setAttribute('width', '960');
-      bg.setAttribute('height', '600');
+      bg.setAttribute('height', '500');
       svg.appendChild(bg);
       container.appendChild(svg);
 
@@ -105,13 +105,19 @@
     /* ── Inline equirectangular projection ───────────────────────────── */
     /* Latitude is clamped to 83°N → 57°S so Antarctica and empty       */
     /* Arctic don't bloat the map. ViewBox stays 0 0 960 500.           */
-    /* viewBox 960×373 matches the 360°lon : 140°lat aspect ratio exactly */
-    _LAT_MAX: 83, _LAT_RANGE: 140,
+    /* Miller cylindrical projection — reduces high-latitude stretching.
+     * Constants pre-computed for lat range 83°N → 57°S:
+     *   millerY(83°N)  ≈  1.880
+     *   millerY(-57°S) ≈ -1.114   range ≈ 2.994
+     * ViewBox 960×500 chosen for panel proportions.                    */
+    _MILLER_YMAX: 1.880, _MILLER_YRANGE: 2.994,
 
     geoProject: function (lon, lat) {
+      var latRad = lat * Math.PI / 180;
+      var my = 1.25 * Math.log(Math.tan(Math.PI / 4 + 0.4 * latRad));
       return [
         (lon + 180) / 360 * 960,
-        (this._LAT_MAX - lat) / this._LAT_RANGE * 600,
+        (this._MILLER_YMAX - my) / this._MILLER_YRANGE * 500,
       ];
     },
 
