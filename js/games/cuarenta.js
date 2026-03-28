@@ -20,9 +20,9 @@
   // ── Deck constants ──────────────────────────────────────────────────────────
   var SUITS      = ['oros', 'copas', 'espadas', 'bastos'];
   var RANK_ORDER = [1, 2, 3, 4, 5, 6, 7, 10, 11, 12];
-  var RANK_NAMES = { 1: 'As', 2: '2', 3: '3', 4: '4', 5: '5',
-                     6: '6', 7: '7', 10: 'Sota', 11: 'Cab.', 12: 'Rey' };
-  var SUIT_LABELS = { oros: 'Oros', copas: 'Copas', espadas: 'Espadas', bastos: 'Bastos' };
+  var RANK_NAMES = { 1: 'A', 2: '2', 3: '3', 4: '4', 5: '5',
+                     6: '6', 7: '7', 10: 'J', 11: 'Kn', 12: 'K' };
+  var SUIT_LABELS = { oros: 'Coins', copas: 'Cups', espadas: 'Swords', bastos: 'Clubs' };
   var TARGET      = 40;
 
   // ── Canvas geometry ─────────────────────────────────────────────────────────
@@ -186,7 +186,7 @@
       cap.cards.forEach(function (c) { pile.push(c); });
 
       if (caida) {
-        msgs.push('¡Caída! +1');
+        msgs.push('Caída! +1');
         if (who === 'player') {
           G.playerMesas++;
           if (window.Achievements) Achievements.track('cu_caida');
@@ -195,7 +195,7 @@
         }
       }
       if (G.table.length === 0) {
-        msgs.push('¡Mesa! +1');
+        msgs.push('Table cleared! +1');
         if (who === 'player') {
           G.playerMesas++;
           if (G.playerMesas >= 3 && window.Achievements) Achievements.track('cu_triple_mesa');
@@ -394,10 +394,10 @@
     ctx.fillStyle = C.gold;
     ctx.font = 'bold 13px Outfit, sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText('Tú: ' + G.playerScore + ' pts', PAD, 18);
+    ctx.fillText('You: ' + G.playerScore + ' pts', PAD, 18);
     ctx.fillStyle = C.textMuted;
     ctx.font = '11px Outfit, sans-serif';
-    ctx.fillText('cap. ' + G.playerCaptured.length + '  mesas ' + G.playerMesas, PAD, 32);
+    ctx.fillText('cap. ' + G.playerCaptured.length + '  clears ' + G.playerMesas, PAD, 32);
 
     // Right: AI score
     ctx.fillStyle = C.gold;
@@ -406,17 +406,17 @@
     ctx.fillText('CPU: ' + G.aiScore + ' pts', LW - PAD, 18);
     ctx.fillStyle = C.textMuted;
     ctx.font = '11px Outfit, sans-serif';
-    ctx.fillText('cap. ' + G.aiCaptured.length + '  mesas ' + G.aiMesas, LW - PAD, 32);
+    ctx.fillText('cap. ' + G.aiCaptured.length + '  clears ' + G.aiMesas, LW - PAD, 32);
 
     // Center: deck
     ctx.fillStyle = C.textMuted;
     ctx.font = '11px Outfit, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Mazo: ' + G.deck.length, LW / 2, 18);
+    ctx.fillText('Deck: ' + G.deck.length, LW / 2, 18);
 
     // Target indicator
     ctx.fillStyle = C.textMuted;
-    ctx.fillText('Meta: ' + TARGET, LW / 2, 32);
+    ctx.fillText('Goal: ' + TARGET, LW / 2, 32);
   }
 
   function drawAIHand() {
@@ -427,7 +427,7 @@
     ctx.fillStyle = C.textMuted;
     ctx.font = '11px Outfit, sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText('CPU (' + G.aiHand.length + ' cartas)', PAD, y - 5);
+    ctx.fillText('CPU (' + G.aiHand.length + ' cards)', PAD, y - 5);
 
     G.aiHand.forEach(function (_, i) {
       drawCardShape(sx + i * sp, y, null, false, true);
@@ -447,13 +447,13 @@
     ctx.fillStyle = C.textMuted;
     ctx.font = '11px Outfit, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Mesa (' + G.table.length + ')', LW / 2, y - 16);
+    ctx.fillText('Table (' + G.table.length + ')', LW / 2, y - 16);
 
     if (G.table.length === 0) {
       ctx.fillStyle = 'rgba(255,255,255,0.07)';
       ctx.font = '14px Outfit, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('Mesa vacía', LW / 2, y + CH / 2 + 6);
+      ctx.fillText('Table is empty', LW / 2, y + CH / 2 + 6);
       return;
     }
 
@@ -474,7 +474,7 @@
       ctx.fillStyle = C.textMuted;
       ctx.font = '11px Outfit, sans-serif';
       ctx.textAlign = 'right';
-      ctx.fillText('+' + (G.table.length - 12) + ' más', LW - PAD, y + CH + 18);
+      ctx.fillText('+' + (G.table.length - 12) + ' more', LW - PAD, y + CH + 18);
     }
   }
 
@@ -486,7 +486,7 @@
     ctx.fillStyle = C.textMuted;
     ctx.font = '11px Outfit, sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText('Tú (' + G.playerHand.length + ' cartas)', PAD, y - 5);
+    ctx.fillText('You (' + G.playerHand.length + ' cards)', PAD, y - 5);
 
     G.playerHand.forEach(function (card, i) {
       var sel = G.selectedIdx === i;
@@ -502,8 +502,8 @@
       ctx.font = '12px Outfit, sans-serif';
       ctx.textAlign = 'center';
       var hint = G.highlightTable.length
-        ? 'Haz clic en la mesa para capturar'
-        : 'Haz clic en la mesa para poner carta';
+        ? 'Click the table to capture'
+        : 'Click the table to place card';
       ctx.fillText(hint, LW / 2, y - 18);
     }
   }
@@ -521,7 +521,7 @@
     ctx.fillStyle = G.turn === 'player' ? C.green : C.orange;
     ctx.font = '12px Outfit, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(G.turn === 'player' ? '— Tu turno —' : '— CPU pensando… —', LW / 2, 108);
+    ctx.fillText(G.turn === 'player' ? '— Your turn —' : '— CPU thinking… —', LW / 2, 108);
   }
 
   // ── Draw a single card ───────────────────────────────────────────────────────
@@ -613,10 +613,10 @@
   function showRoundEnd() {
     var rs = lastRoundScores();
     showOverlay(
-      'Ronda terminada',
-      'Tú +' + rs.player + ' pts · CPU +' + rs.ai + ' pts\n' +
-      'Total — Tú: ' + G.playerScore + ' · CPU: ' + G.aiScore,
-      'Nueva ronda',
+      'Round over',
+      'You +' + rs.player + ' pts · CPU +' + rs.ai + ' pts\n' +
+      'Total — You: ' + G.playerScore + ' · CPU: ' + G.aiScore,
+      'Next round',
       function () {
         // Reset ronda state but keep scores
         G.playerCaptured = []; G.aiCaptured = [];
@@ -638,9 +638,9 @@
   function showGameEnd() {
     var winner = G.playerScore >= TARGET ? 'player' : 'ai';
     showOverlay(
-      winner === 'player' ? '¡Ganaste!' : 'El CPU gana',
-      'Tú: ' + G.playerScore + ' pts · CPU: ' + G.aiScore + ' pts',
-      'Jugar de nuevo',
+      winner === 'player' ? 'You win!' : 'CPU wins',
+      'You: ' + G.playerScore + ' pts · CPU: ' + G.aiScore + ' pts',
+      'Play again',
       function () { newGame(); }
     );
     if (winner === 'player' && window.Achievements) {
@@ -681,7 +681,7 @@
     }
     if (newBtn) {
       newBtn.addEventListener('click', function () {
-        if (confirm('¿Empezar nueva partida?')) newGame();
+        if (confirm('Start a new game?')) newGame();
       });
     }
   }
@@ -709,17 +709,15 @@
     canvas = document.getElementById('cu-canvas');
     if (!canvas) return;
     ctx = canvas.getContext('2d');
-    canvas.width  = LW;
-    canvas.height = LH;
 
-    // Responsive scaling
-    if (window.MobileUtils) {
-      MobileUtils.scaleCanvas(canvas, LW, LH, { autoResize: false });
-    } else {
-      // Simple CSS scaling
-      canvas.style.maxWidth  = '100%';
-      canvas.style.height    = 'auto';
-    }
+    // Fill container at full DPR — CSS scales visually, click handler uses getBoundingClientRect
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width  = LW * dpr;
+    canvas.height = LH * dpr;
+    canvas.style.width  = '100%';
+    canvas.style.height = 'auto';
+    canvas.style.display = 'block';
+    ctx.scale(dpr, dpr);
 
     // Click
     canvas.addEventListener('click', function (e) {
