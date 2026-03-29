@@ -57,6 +57,7 @@
     },
 
     injectMap: function () {
+      if (this.isMobile) return;
       var self = this;
       var container = document.getElementById('bp-map-container');
       if (!container) return;
@@ -155,6 +156,7 @@
     },
 
     showFeaturedGame: function () {
+      if (this.isMobile) return;
       var games = window.GAMES_DATA || [];
       if (!games.length) return;
       var g = games[Math.floor(Math.random() * games.length)];
