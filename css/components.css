@@ -996,21 +996,25 @@
   transform: scale(1.2);
 }
 
-/* ── Cultural fact strip ── */
-.fact-strip {
-  background-color: var(--color-primary);
-  border-top: 1px solid rgba(200, 155, 60, 0.15);
-  border-bottom: 1px solid rgba(200, 155, 60, 0.15);
-  padding: 13px var(--space-4);
-  text-align: center;
+/* ── Gradient divider ── */
+.gradient-divider {
+  height: 3px;
+  background: linear-gradient(90deg,
+    #1a1209,
+    #8b5e1a 20%,
+    #c89b3c 40%,
+    #e8c870 50%,
+    #c89b3c 60%,
+    #8b5e1a 80%,
+    #1a1209
+  );
+  background-size: 200% 100%;
+  animation: gradient-shift 8s ease infinite;
 }
-
-.fact-strip__text {
-  font-size: var(--text-sm);
-  font-style: italic;
-  color: rgba(200, 155, 60, 0.7);
-  letter-spacing: 0.01em;
-  transition: opacity 0.6s ease;
+@keyframes gradient-shift {
+  0%   { background-position: 0% 0%; }
+  50%  { background-position: 100% 0%; }
+  100% { background-position: 0% 0%; }
 }
 
 /* Mobile: stack, hide canvas */

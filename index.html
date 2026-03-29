@@ -162,42 +162,9 @@
     </div>
 
     <!-- ════════════════════════════════════════════════════════
-         CULTURAL FACT STRIP
+         GRADIENT DIVIDER
     ════════════════════════════════════════════════════════ -->
-    <div class="fact-strip" aria-live="polite">
-      <span class="fact-strip__text" id="fact-strip-text"></span>
-    </div>
-    <script>
-      (function () {
-        var facts = [
-          "Chess was banned in Iceland for 300 years. Hnefatafl wasn't.",
-          "Oware boards have been found in ancient Egypt — the game is at least 7,000 years old.",
-          "Emperor Akbar used real palace servants as living Pachisi pieces on a giant courtyard board.",
-          "Bầu Cua is one of the only gambling games legally tolerated in Vietnam — but only during Tết.",
-          "A Roman graffito from Pompeii may be the world's oldest recorded trash talk, scratched beside a game board.",
-          "Fanorona's capture-by-approach mechanic exists in no other traditional game in the world.",
-          "The god Macuilxochitl was believed to watch every Patolli match and punish cheaters.",
-          "Mahjong swept the United States in the 1920s — American women played it in Chinese dress as a fashion statement.",
-          "Tiến Lên became a lifeline for Vietnamese diaspora — a shared game that needed no translation across generations.",
-          "Ganjifa cards are circular because round edges can't be marked to cheat.",
-          "When chess arrived in Scandinavia around 1000 AD, Hnefatafl was so established the two games coexisted for a century.",
-          "Pallanguzhi boards carved into South Indian temple steps are still playable after 800 years.",
-          "The Puluc pieces are called soldiers — a captured one isn't dead, just a prisoner waiting to be rescued.",
-        ];
-        var el = document.getElementById('fact-strip-text');
-        if (!el) return;
-        var idx = Math.floor(Math.random() * facts.length);
-        el.textContent = facts[idx];
-        setInterval(function () {
-          el.style.opacity = '0';
-          setTimeout(function () {
-            idx = (idx + 1) % facts.length;
-            el.textContent = facts[idx];
-            el.style.opacity = '1';
-          }, 600);
-        }, 6000);
-      }());
-    </script>
+    <div class="gradient-divider" aria-hidden="true"></div>
 
     <!-- ════════════════════════════════════════════════════════
          MISSION
