@@ -651,6 +651,16 @@
   z-index: 1;
 }
 
+/* "Featured Games" label above the slider */
+.hfc-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.5);
+  margin: 0 0 8px;
+}
+
 /* Slider track */
 .hfc-slider {
   position: relative;
