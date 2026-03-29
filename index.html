@@ -121,10 +121,14 @@
           </div>
         </div>
 
-        <!-- Right: featured games scroll -->
+        <!-- Right: featured game card slider -->
         <div class="hero__visual">
-          <div class="hero-games" id="hero-games-list"></div>
-          <a href="pages/browse.html" class="hero-games__all">Browse all games →</a>
+          <div class="hfc-slider" id="hfc-slider" role="region" aria-label="Featured games"></div>
+          <div class="hfc-nav">
+            <button class="hfc-arrow" id="hfc-prev" aria-label="Previous game">&#8249;</button>
+            <div class="hfc-dots" id="hfc-dots" aria-hidden="true"></div>
+            <button class="hfc-arrow" id="hfc-next" aria-label="Next game">&#8250;</button>
+          </div>
         </div>
 
       </div>
@@ -414,25 +418,73 @@
       var featLink = document.getElementById('featured-link');
       if (featLink) featLink.textContent = 'Browse all ' + gameCount + ' games \u2192';
 
-      // ── Hero featured games list ───────────────────────────────
-      var list = document.getElementById('hero-games-list');
-      if (list && games.length) {
+      // ── Hero featured game card slider ────────────────────────
+      (function () {
+        var slider  = document.getElementById('hfc-slider');
+        var dotsEl  = document.getElementById('hfc-dots');
+        var prevBtn = document.getElementById('hfc-prev');
+        var nextBtn = document.getElementById('hfc-next');
+        if (!slider || !games.length) return;
+
+        var BANNER = {
+          'Card':     'game-card__banner--red',
+          'Dice':     'game-card__banner--warm',
+          'Board':    'game-card__banner--green',
+          'Strategy': 'game-card__banner--gold',
+          'Tile':     'game-card__banner--gold',
+        };
+        var current = 0;
+        var timer;
+
         games.forEach(function (game) {
-          var href = game.path.indexOf('../') === 0
-            ? game.path.slice(3)
-            : 'pages/' + game.path;
-          var item = document.createElement('a');
-          item.href = href;
-          item.className = 'hero-game-item';
-          item.innerHTML =
-            '<img class="hero-game-item__icon" src="assets/icons/' + game.key + '.svg" alt="">' +
-            '<div class="hero-game-item__text">' +
-              '<span class="hero-game-item__name">' + game.name + '</span>' +
-              '<span class="hero-game-item__meta">' + game.culture + ' &middot; ' + game.type + '</span>' +
+          var href = game.path.indexOf('../') === 0 ? game.path.slice(3) : 'pages/' + game.path;
+          var card = document.createElement('div');
+          card.className = 'hfc-card';
+          card.innerHTML =
+            '<div class="hfc-banner ' + (BANNER[game.type] || 'game-card__banner--warm') + '">' +
+              '<img src="assets/icons/' + game.key + '.svg" alt="">' +
+            '</div>' +
+            '<div class="hfc-body">' +
+              '<p class="hfc-origin">' + game.culture + '</p>' +
+              '<h3 class="hfc-name">' + game.name + '</h3>' +
+              '<p class="hfc-fact">' + (game.didYouKnow || '') + '</p>' +
+            '</div>' +
+            '<div class="hfc-footer">' +
+              '<span class="badge badge--' + game.type.toLowerCase() + '">' + game.type + '</span>' +
+              '<a href="' + href + '" class="btn btn-primary btn-sm">Play</a>' +
             '</div>';
-          list.appendChild(item);
+          slider.appendChild(card);
         });
-      }
+
+        games.forEach(function (_, i) {
+          var dot = document.createElement('button');
+          dot.className = 'hfc-dot' + (i === 0 ? ' hfc-dot--active' : '');
+          dot.setAttribute('aria-label', 'Game ' + (i + 1));
+          dot.addEventListener('click', function () { goTo(i); startTimer(); });
+          dotsEl.appendChild(dot);
+        });
+
+        var cards = slider.querySelectorAll('.hfc-card');
+        cards[0].classList.add('hfc-card--active');
+
+        function goTo(idx) {
+          cards[current].classList.remove('hfc-card--active');
+          dotsEl.querySelectorAll('.hfc-dot').forEach(function (d, i) {
+            d.classList.toggle('hfc-dot--active', i === idx);
+          });
+          current = idx;
+          cards[current].classList.add('hfc-card--active');
+        }
+
+        function startTimer() {
+          clearInterval(timer);
+          timer = setInterval(function () { goTo((current + 1) % games.length); }, 4000);
+        }
+
+        prevBtn.addEventListener('click', function () { goTo((current - 1 + games.length) % games.length); startTimer(); });
+        nextBtn.addEventListener('click', function () { goTo((current + 1) % games.length); startTimer(); });
+        startTimer();
+      }());
     }());
   </script>
 

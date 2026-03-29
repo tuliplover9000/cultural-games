@@ -640,7 +640,7 @@
   align-items: flex-start;
 }
 
-/* Right column — featured games scroll */
+/* Right column — featured game card slider */
 .hero__visual {
   position: relative;
   height: 520px;
@@ -651,75 +651,117 @@
   z-index: 1;
 }
 
-/* Scrollable game list */
-.hero-games {
+/* Slider track */
+.hfc-slider {
+  position: relative;
   flex: 1;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(200,155,60,0.25) transparent;
-  padding: 4px 0;
-  /* fade out at top and bottom edges */
-  mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 88%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 88%, transparent 100%);
+  overflow: hidden;
 }
-.hero-games::-webkit-scrollbar       { width: 3px; }
-.hero-games::-webkit-scrollbar-track { background: transparent; }
-.hero-games::-webkit-scrollbar-thumb { background: rgba(200,155,60,0.3); border-radius: 2px; }
 
-/* Individual game row */
-.hero-game-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 9px 16px;
-  text-decoration: none;
-  border-bottom: 1px solid rgba(255,255,255,0.055);
-  transition: background 0.15s;
-}
-.hero-game-item:hover {
-  background: rgba(255,255,255,0.06);
-}
-.hero-game-item__icon {
-  width: 34px;
-  height: 34px;
-  flex-shrink: 0;
-  opacity: 0.85;
-}
-.hero-game-item__text {
+/* Individual cards — stacked, one fades in at a time */
+.hfc-card {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  background: var(--color-surface, #1e1a14);
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
 }
-.hero-game-item__name {
-  color: rgba(255,255,255,0.88);
-  font-size: 0.875rem;
-  font-weight: 600;
-  line-height: 1.2;
-}
-.hero-game-item__meta {
-  color: rgba(255,255,255,0.38);
-  font-size: 0.7rem;
-  letter-spacing: 0.03em;
+.hfc-card.hfc-card--active {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-/* Browse all link pinned to bottom */
-.hero-games__all {
-  display: block;
-  padding: 13px 16px;
-  text-align: center;
-  color: var(--color-accent-gold, #c89b3c);
-  font-size: 0.82rem;
-  font-weight: 600;
-  text-decoration: none;
-  border-top: 1px solid rgba(255,255,255,0.08);
-  background: rgba(0,0,0,0.25);
-  letter-spacing: 0.02em;
-  transition: color 0.15s, background 0.15s;
+/* Banner — reuses existing game-card__banner--* color classes */
+.hfc-banner {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
-.hero-games__all:hover {
-  color: #fff;
-  background: rgba(0,0,0,0.35);
+.hfc-banner img {
+  width: 88px;
+  height: 88px;
+  filter: drop-shadow(0 4px 20px rgba(0,0,0,0.4));
+}
+
+/* Body */
+.hfc-body {
+  flex: 1;
+  padding: 16px 20px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: hidden;
+}
+.hfc-origin {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--color-accent-teal, #2c7873);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+.hfc-name {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-text, #f0e6d0);
+  line-height: 1.2;
+}
+.hfc-fact {
+  font-size: 0.8rem;
+  color: var(--color-text-muted, rgba(240,230,208,0.55));
+  line-height: 1.55;
+  font-style: italic;
+  flex: 1;
+}
+
+/* Footer: badge + play button */
+.hfc-footer {
+  padding: 10px 20px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+/* Nav bar: prev arrow · dots · next arrow */
+.hfc-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 0 10px;
+  flex-shrink: 0;
+}
+.hfc-arrow {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.4);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0 6px;
+  line-height: 1;
+  transition: color 0.15s;
+  min-height: 0;
+}
+.hfc-arrow:hover { color: rgba(255,255,255,0.9); }
+.hfc-dots { display: flex; gap: 5px; align-items: center; }
+.hfc-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.22);
+  border: none; cursor: pointer; padding: 0;
+  transition: background 0.2s, transform 0.2s;
+  min-height: 0;
+}
+.hfc-dot--active {
+  background: var(--color-accent-gold, #c89b3c);
+  transform: scale(1.5);
 }
 
 /* Full-hero icon overlay — behind all content */
