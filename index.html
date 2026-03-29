@@ -222,109 +222,19 @@
     </section>
 
     <!-- ════════════════════════════════════════════════════════
-         FEATURED GAMES
+         CULTURAL SPOTLIGHT
     ════════════════════════════════════════════════════════ -->
-    <section class="featured" aria-label="Featured games">
+    <section class="spotlight" aria-label="Cultural spotlight">
       <div class="container">
-
-        <div class="featured__header" data-anim data-anim-delay="0">
-          <h2 class="featured__title">Featured Games</h2>
-          <a href="pages/browse.html" class="featured__link" id="featured-link">Browse all 14 games →</a>
+        <div class="spotlight__header" data-anim data-anim-delay="0">
+          <div>
+            <span class="spotlight__eyebrow">Cultural Spotlight</span>
+            <h2 class="spotlight__title">Games &amp; the Cultures Behind Them</h2>
+          </div>
+          <a href="pages/browse.html" class="featured__link" id="featured-link">Browse all games →</a>
         </div>
-
-        <div class="featured__grid">
-
-          <!-- Bầu Cua - hero card (spans 2 rows) -->
-          <article class="game-card" data-anim data-anim-delay="0">
-            <div class="game-card__banner game-card__banner--red" aria-hidden="true">
-              <img src="assets/icons/bau-cua.svg" class="game-card__banner-icon" alt="" />
-            </div>
-            <div class="game-card__body">
-              <p class="game-card__origin">Vietnam</p>
-              <h3 class="game-card__name">Bầu Cua Tôm Cá</h3>
-              <p class="game-card__description">
-                Bet on six symbols as three dice determine your fate in this Tết classic.
-              </p>
-            </div>
-            <div class="game-card__footer">
-              <span class="badge badge--dice">Dice</span>
-              <a href="pages/games/bau-cua.html" class="btn btn-primary btn-sm">Play</a>
-            </div>
-          </article>
-
-          <!-- Oware -->
-          <article class="game-card" data-anim data-anim-delay="120">
-            <div class="game-card__banner game-card__banner--warm" aria-hidden="true">
-              <img src="assets/icons/oware.svg" class="game-card__banner-icon" alt="" />
-            </div>
-            <div class="game-card__body">
-              <p class="game-card__origin">West Africa</p>
-              <h3 class="game-card__name">Oware</h3>
-              <p class="game-card__description">
-                The ancient Akan strategy game of sowing and capturing, played for 7,000 years.
-              </p>
-            </div>
-            <div class="game-card__footer">
-              <span class="badge badge--board">Board</span>
-              <a href="pages/games/oware.html" class="btn btn-primary btn-sm">Play</a>
-            </div>
-          </article>
-
-          <!-- Patolli -->
-          <article class="game-card" data-anim data-anim-delay="240">
-            <div class="game-card__banner game-card__banner--green" aria-hidden="true">
-              <img src="assets/icons/patolli.svg" class="game-card__banner-icon" alt="" />
-            </div>
-            <div class="game-card__body">
-              <p class="game-card__origin">Aztec Mesoamerica</p>
-              <h3 class="game-card__name">Patolli</h3>
-              <p class="game-card__description">
-                Race your pieces around a sacred cross-shaped board using bean dice in this ancient Aztec game.
-              </p>
-            </div>
-            <div class="game-card__footer">
-              <span class="badge badge--dice">Dice</span>
-              <a href="pages/games/patolli.html" class="btn btn-primary btn-sm">Play</a>
-            </div>
-          </article>
-
-          <!-- Pallanguzhi - wide bottom card -->
-          <article class="game-card" data-anim data-anim-delay="360">
-            <div class="game-card__banner game-card__banner--warm" aria-hidden="true">
-              <img src="assets/icons/pallanguzhi.svg" class="game-card__banner-icon" alt="" />
-            </div>
-            <div class="game-card__body">
-              <p class="game-card__origin">South India</p>
-              <h3 class="game-card__name">Pallanguzhi</h3>
-              <p class="game-card__description">
-                Sow cowrie shells counter-clockwise and capture on 4 in this ancient Tamil mancala.
-              </p>
-            </div>
-            <div class="game-card__footer">
-              <span class="badge badge--board">Board</span>
-              <a href="pages/games/pallanguzhi.html" class="btn btn-primary btn-sm">Play</a>
-            </div>
-          </article>
-
-          <!-- Ludus Latrunculorum -->
-          <article class="game-card" data-anim data-anim-delay="480">
-            <div class="game-card__banner game-card__banner--red" aria-hidden="true">
-              <img src="assets/icons/latrunculi.svg" class="game-card__banner-icon" alt="" onerror="this.style.display='none'" />
-            </div>
-            <div class="game-card__body">
-              <p class="game-card__origin">Roman Empire</p>
-              <h3 class="game-card__name">Ludus Latrunculorum</h3>
-              <p class="game-card__description">
-                Command your legions in this ancient Roman strategy game of encirclement and capture.
-              </p>
-            </div>
-            <div class="game-card__footer">
-              <span class="badge badge--board">Strategy</span>
-              <a href="pages/games/latrunculi.html" class="btn btn-primary btn-sm">Play</a>
-            </div>
-          </article>
-
-        </div>
+        <div class="spotlight__stage" id="spotlight-stage"></div>
+        <div class="spotlight__nav" id="spotlight-nav" aria-label="Spotlight navigation"></div>
       </div>
     </section>
 
@@ -418,7 +328,7 @@
       var featLink = document.getElementById('featured-link');
       if (featLink) featLink.textContent = 'Browse all ' + gameCount + ' games \u2192';
 
-      // ── Hero featured game card slider ────────────────────────
+      // ── Hero featured game card slider (3 games, 12-hour rotation) ──
       (function () {
         var slider  = document.getElementById('hfc-slider');
         var dotsEl  = document.getElementById('hfc-dots');
@@ -433,10 +343,22 @@
           'Strategy': 'game-card__banner--gold',
           'Tile':     'game-card__banner--gold',
         };
+
+        // Pick 3 games deterministically for the current 12-hour window
+        var period = Math.floor(Date.now() / 43200000);
+        function hashGame(key, p) {
+          var n = p & 0x7fffffff;
+          for (var i = 0; i < key.length; i++) n = (n * 31 + key.charCodeAt(i)) & 0x7fffffff;
+          return n;
+        }
+        var featured = games.slice().sort(function (a, b) {
+          return hashGame(a.key, period) - hashGame(b.key, period);
+        }).slice(0, 3);
+
         var current = 0;
         var timer;
 
-        games.forEach(function (game) {
+        featured.forEach(function (game) {
           var href = game.path.indexOf('../') === 0 ? game.path.slice(3) : 'pages/' + game.path;
           var card = document.createElement('div');
           card.className = 'hfc-card';
@@ -456,7 +378,7 @@
           slider.appendChild(card);
         });
 
-        games.forEach(function (_, i) {
+        featured.forEach(function (_, i) {
           var dot = document.createElement('button');
           dot.className = 'hfc-dot' + (i === 0 ? ' hfc-dot--active' : '');
           dot.setAttribute('aria-label', 'Game ' + (i + 1));
@@ -478,11 +400,11 @@
 
         function startTimer() {
           clearInterval(timer);
-          timer = setInterval(function () { goTo((current + 1) % games.length); }, 4000);
+          timer = setInterval(function () { goTo((current + 1) % featured.length); }, 4000);
         }
 
-        prevBtn.addEventListener('click', function () { goTo((current - 1 + games.length) % games.length); startTimer(); });
-        nextBtn.addEventListener('click', function () { goTo((current + 1) % games.length); startTimer(); });
+        prevBtn.addEventListener('click', function () { goTo((current - 1 + featured.length) % featured.length); startTimer(); });
+        nextBtn.addEventListener('click', function () { goTo((current + 1) % featured.length) ; startTimer(); });
         startTimer();
       }());
     }());
@@ -558,6 +480,127 @@
         }, 350);
       }, 2800);
     }());
+
+      // ── Cultural Spotlight ─────────────────────────────────────
+      (function () {
+        var stage = document.getElementById('spotlight-stage');
+        var navEl = document.getElementById('spotlight-nav');
+        if (!stage || !navEl) return;
+
+        var SPOTLIGHTS = [
+          {
+            culture: 'Vietnam',
+            region: 'Southeast Asia',
+            hook: 'From New Year gambling rituals to diaspora living rooms — three games that shaped Vietnamese identity across centuries.',
+            keys: ['bau-cua', 'tien-len', 'o-an-quan'],
+          },
+          {
+            culture: 'South Asia',
+            region: 'Indian Subcontinent',
+            hook: 'Temple courtyards, royal courts, and Mughal palaces — games that crossed empires and changed the world.',
+            keys: ['pallanguzhi', 'pachisi', 'ganjifa'],
+          },
+          {
+            culture: 'Mesoamerica',
+            region: 'Ancient Americas',
+            hook: 'Sacred games that mapped the cosmos, played in the shadow of pyramids for over a thousand years.',
+            keys: ['patolli', 'puluc'],
+          },
+          {
+            culture: 'West Africa',
+            region: 'Akan Culture',
+            hook: 'A 7,000-year-old strategy game that crossed oceans with enslaved people and survived to become a national symbol.',
+            keys: ['oware'],
+          },
+          {
+            culture: 'Latin America',
+            region: 'South America',
+            hook: 'Cantina bluffing and national card tournaments — games that define social life from Quito to Bogotá.',
+            keys: ['cachos', 'cuarenta'],
+          },
+          {
+            culture: 'Ancient Europe',
+            region: 'Norse & Roman',
+            hook: 'Two strategy games — one carved into Roman barracks walls, one buried with Viking warriors in their graves.',
+            keys: ['hnefatafl', 'latrunculi'],
+          },
+        ];
+
+        var BANNER = {
+          'Card': 'game-card__banner--red', 'Dice': 'game-card__banner--warm',
+          'Board': 'game-card__banner--green', 'Strategy': 'game-card__banner--gold', 'Tile': 'game-card__banner--gold',
+        };
+
+        var byKey = {};
+        (window.GAMES_DATA || []).forEach(function (g) { byKey[g.key] = g; });
+
+        var current = 0;
+        var spTimer;
+
+        SPOTLIGHTS.forEach(function (spot, idx) {
+          var slide = document.createElement('div');
+          slide.className = 'spotlight__slide' + (idx === 0 ? ' spotlight__slide--active' : '');
+          slide.setAttribute('aria-hidden', idx !== 0 ? 'true' : 'false');
+
+          var cardsHtml = spot.keys.map(function (key) {
+            var g = byKey[key];
+            if (!g) return '';
+            var href = g.path.indexOf('../') === 0 ? g.path.slice(3) : 'pages/' + g.path;
+            var banner = BANNER[g.type] || 'game-card__banner--warm';
+            return '<div class="spotlight__game-card">' +
+              '<div class="spotlight__game-banner ' + banner + '">' +
+                '<img src="assets/icons/' + g.key + '.svg" alt="">' +
+              '</div>' +
+              '<div class="spotlight__game-body">' +
+                '<p class="spotlight__game-culture">' + g.culture + '</p>' +
+                '<h4 class="spotlight__game-name">' + g.name + '</h4>' +
+              '</div>' +
+              '<div class="spotlight__game-footer">' +
+                '<span class="badge badge--' + g.type.toLowerCase() + '">' + g.type + '</span>' +
+                '<a href="' + href + '" class="btn btn-primary btn-sm">Play</a>' +
+              '</div>' +
+            '</div>';
+          }).join('');
+
+          slide.innerHTML =
+            '<div class="spotlight__info">' +
+              '<span class="spotlight__region-tag">' + spot.region + '</span>' +
+              '<h3 class="spotlight__culture-name">' + spot.culture + '</h3>' +
+              '<p class="spotlight__hook">' + spot.hook + '</p>' +
+            '</div>' +
+            '<div class="spotlight__games">' + cardsHtml + '</div>';
+
+          stage.appendChild(slide);
+
+          var dot = document.createElement('button');
+          dot.className = 'spotlight__dot' + (idx === 0 ? ' spotlight__dot--active' : '');
+          dot.setAttribute('aria-label', spot.culture);
+          (function (i) {
+            dot.addEventListener('click', function () { spGoTo(i); spStartTimer(); });
+          }(idx));
+          navEl.appendChild(dot);
+        });
+
+        var spSlides = stage.querySelectorAll('.spotlight__slide');
+        var spDots   = navEl.querySelectorAll('.spotlight__dot');
+
+        function spGoTo(idx) {
+          spSlides[current].classList.remove('spotlight__slide--active');
+          spSlides[current].setAttribute('aria-hidden', 'true');
+          spDots[current].classList.remove('spotlight__dot--active');
+          current = idx;
+          spSlides[current].classList.add('spotlight__slide--active');
+          spSlides[current].setAttribute('aria-hidden', 'false');
+          spDots[current].classList.add('spotlight__dot--active');
+        }
+
+        function spStartTimer() {
+          clearInterval(spTimer);
+          spTimer = setInterval(function () { spGoTo((current + 1) % SPOTLIGHTS.length); }, 6000);
+        }
+
+        spStartTimer();
+      }());
   </script>
 
   <!-- Cycling quotes -->
