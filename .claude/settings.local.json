@@ -59,7 +59,8 @@
       "Bash(curl:*)",
       "Bash(grep:*)",
       "Bash(ls:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(do)"
     ]
   }
 }

@@ -4,95 +4,142 @@
   <!-- Core pages -->
   <url>
     <loc>https://playculturalgames.com/</loc>
+    <lastmod>2026-03-29</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://playculturalgames.com/pages/browse.html</loc>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://playculturalgames.com/pages/rooms.html</loc>
-    <priority>0.9</priority>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://playculturalgames.com/pages/about.html</loc>
-    <priority>0.7</priority>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://playculturalgames.com/pages/rooms.html</loc>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://playculturalgames.com/pages/account.html</loc>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://playculturalgames.com/profile/</loc>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.5</priority>
   </url>
 
   <!-- Game pages -->
   <url>
-    <loc>https://playculturalgames.com/pages/games/tien-len.html</loc>
-    <priority>0.8</priority>
+    <loc>https://playculturalgames.com/pages/games/bau-cua.html</loc>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://playculturalgames.com/pages/games/bau-cua.html</loc>
-    <priority>0.8</priority>
+    <loc>https://playculturalgames.com/pages/games/tien-len.html</loc>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://playculturalgames.com/pages/games/o-an-quan.html</loc>
-    <priority>0.8</priority>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://playculturalgames.com/pages/games/oware.html</loc>
-    <priority>0.8</priority>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://playculturalgames.com/pages/games/patolli.html</loc>
-    <priority>0.8</priority>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://playculturalgames.com/pages/games/puluc.html</loc>
-    <priority>0.8</priority>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://playculturalgames.com/pages/games/pallanguzhi.html</loc>
-    <priority>0.8</priority>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://playculturalgames.com/pages/games/fanorona.html</loc>
-    <priority>0.8</priority>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://playculturalgames.com/pages/games/hnefatafl.html</loc>
-    <priority>0.8</priority>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://playculturalgames.com/pages/games/mahjong.html</loc>
-    <priority>0.8</priority>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://playculturalgames.com/pages/games/pachisi.html</loc>
-    <priority>0.8</priority>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://playculturalgames.com/pages/games/ganjifa.html</loc>
-    <priority>0.8</priority>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://playculturalgames.com/pages/games/latrunculi.html</loc>
-    <priority>0.8</priority>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://playculturalgames.com/cachos/index.html</loc>
-    <priority>0.8</priority>
+    <loc>https://playculturalgames.com/pages/games/cuarenta.html</loc>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://playculturalgames.com/cachos/</loc>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://playculturalgames.com/xinjiang-fangqi/</loc>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://playculturalgames.com/filipino-dama/</loc>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
   </url>
 
   <!-- How-to-play SEO pages -->
   <url>
     <loc>https://playculturalgames.com/how-to-play/oware/</loc>
-    <priority>0.8</priority>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://playculturalgames.com/how-to-play/bau-cua/</loc>
-    <priority>0.8</priority>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://playculturalgames.com/how-to-play/pallanguzhi/</loc>
-    <priority>0.8</priority>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://playculturalgames.com/how-to-play/fanorona/</loc>
-    <priority>0.8</priority>
+    <lastmod>2026-03-29</lastmod>
+    <priority>0.7</priority>
   </url>
 
 </urlset>
