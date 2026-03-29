@@ -268,11 +268,14 @@
   }
 
   function persistCoins() {
-    // Write the current local coin balance to the DB. Call this after games
-    // that modify coins client-side (e.g. Bầu Cua real-coin mode) so the
-    // balance survives page navigation.
+    // Write the current local coin balance to the DB via SECURITY DEFINER RPC.
+    // Direct PATCH to profiles.coins is blocked by RLS, so we use the RPC.
     if (!_user || !_accessToken) return;
-    _pgFetch('PATCH', 'profiles?id=eq.' + _user.id, { coins: _coins });
+    _rpcFetch('persist_coins', { p_new_balance: _coins });
+  }
+
+  function getUserId() {
+    return _user ? _user.id : null;
   }
 
   async function toggleFavorite(gameKey) {
@@ -847,6 +850,7 @@
     getCoins:       getCoins,
     addCoins:       addCoins,
     persistCoins:   persistCoins,
+    getUserId:      getUserId,
     GAMES:          GAMES,
   };
 

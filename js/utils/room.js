@@ -347,8 +347,11 @@
 
     placeBet: async function (amount) {
       if (!_room) return;
+      // Key by Supabase auth UUID so record_game_result RPC can resolve via
+      // auth.uid(). Direct PID keys would never match the RPC lookup.
+      var betKey = (window.Auth && Auth.getUserId && Auth.getUserId()) || getPlayerId();
       var bets = Object.assign({}, _room.bets || {});
-      bets[getPlayerId()] = Math.max(0, amount || 0);
+      bets[betKey] = Math.max(0, amount || 0);
       await db().from('rooms').update({ bets: bets }).eq('id', _room.id);
     },
 

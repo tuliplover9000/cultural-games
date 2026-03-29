@@ -549,7 +549,8 @@
     elBetBalance.textContent = coins.toLocaleString();
     var r    = room || (window.Room && Room.currentRoom()) || {};
     var bets = r.bets || {};
-    var myBet = bets[Room.getPlayerId()] || 0;
+    var betKey = (window.Auth && Auth.getUserId && Auth.getUserId()) || Room.getPlayerId();
+    var myBet = bets[betKey] || 0;
     if (myBet > 0) {
       elBetStatus.textContent = 'Your bet: ' + myBet.toLocaleString() + ' coins';
       elBetStatus.hidden = false;
