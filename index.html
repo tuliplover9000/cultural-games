@@ -229,7 +229,7 @@
         <div class="spotlight__header" data-anim data-anim-delay="0">
           <div>
             <span class="spotlight__eyebrow">Cultural Spotlight</span>
-            <h2 class="spotlight__title">Games &amp; the Cultures Behind Them</h2>
+            <h2 class="spotlight__title">Featured Games</h2>
           </div>
           <a href="pages/browse.html" class="featured__link" id="featured-link">Browse all games →</a>
         </div>
@@ -554,6 +554,7 @@
               '<div class="spotlight__game-body">' +
                 '<p class="spotlight__game-culture">' + g.culture + '</p>' +
                 '<h4 class="spotlight__game-name">' + g.name + '</h4>' +
+                (g.didYouKnow ? '<p class="spotlight__game-fact">' + g.didYouKnow + '</p>' : '') +
               '</div>' +
               '<div class="spotlight__game-footer">' +
                 '<span class="badge badge--' + g.type.toLowerCase() + '">' + g.type + '</span>' +
