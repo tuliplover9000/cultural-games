@@ -121,8 +121,11 @@
           </div>
         </div>
 
-        <!-- Right: spacer (icons live in full-hero overlay above) -->
-        <div class="hero__visual" aria-hidden="true"></div>
+        <!-- Right: featured games scroll -->
+        <div class="hero__visual">
+          <div class="hero-games" id="hero-games-list"></div>
+          <a href="pages/browse.html" class="hero-games__all">Browse all games →</a>
+        </div>
 
       </div>
     </section>
@@ -410,6 +413,26 @@
 
       var featLink = document.getElementById('featured-link');
       if (featLink) featLink.textContent = 'Browse all ' + gameCount + ' games \u2192';
+
+      // ── Hero featured games list ───────────────────────────────
+      var list = document.getElementById('hero-games-list');
+      if (list && games.length) {
+        games.forEach(function (game) {
+          var href = game.path.indexOf('../') === 0
+            ? game.path.slice(3)
+            : 'pages/' + game.path;
+          var item = document.createElement('a');
+          item.href = href;
+          item.className = 'hero-game-item';
+          item.innerHTML =
+            '<img class="hero-game-item__icon" src="assets/icons/' + game.key + '.svg" alt="">' +
+            '<div class="hero-game-item__text">' +
+              '<span class="hero-game-item__name">' + game.name + '</span>' +
+              '<span class="hero-game-item__meta">' + game.culture + ' &middot; ' + game.type + '</span>' +
+            '</div>';
+          list.appendChild(item);
+        });
+      }
     }());
   </script>
 

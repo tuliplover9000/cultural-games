@@ -640,12 +640,86 @@
   align-items: flex-start;
 }
 
-/* Right column — transparent spacer, keeps two-column grid intact */
+/* Right column — featured games scroll */
 .hero__visual {
   position: relative;
   height: 520px;
   border-radius: var(--radius-xl);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+}
+
+/* Scrollable game list */
+.hero-games {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(200,155,60,0.25) transparent;
+  padding: 4px 0;
+  /* fade out at top and bottom edges */
+  mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 88%, transparent 100%);
+}
+.hero-games::-webkit-scrollbar       { width: 3px; }
+.hero-games::-webkit-scrollbar-track { background: transparent; }
+.hero-games::-webkit-scrollbar-thumb { background: rgba(200,155,60,0.3); border-radius: 2px; }
+
+/* Individual game row */
+.hero-game-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 16px;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.055);
+  transition: background 0.15s;
+}
+.hero-game-item:hover {
+  background: rgba(255,255,255,0.06);
+}
+.hero-game-item__icon {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+.hero-game-item__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.hero-game-item__name {
+  color: rgba(255,255,255,0.88);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.hero-game-item__meta {
+  color: rgba(255,255,255,0.38);
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+}
+
+/* Browse all link pinned to bottom */
+.hero-games__all {
+  display: block;
+  padding: 13px 16px;
+  text-align: center;
+  color: var(--color-accent-gold, #c89b3c);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.25);
+  letter-spacing: 0.02em;
+  transition: color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+.hero-games__all:hover {
+  color: #fff;
+  background: rgba(0,0,0,0.35);
 }
 
 /* Full-hero icon overlay — behind all content */
