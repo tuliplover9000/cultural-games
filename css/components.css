@@ -640,13 +640,21 @@
   align-items: flex-start;
 }
 
-/* Right column — floating icon panel */
+/* Right column — transparent spacer, keeps two-column grid intact */
 .hero__visual {
   position: relative;
   height: 520px;
   border-radius: var(--radius-xl);
   overflow: hidden;
-  background: #2A1F14;
+}
+
+/* Full-hero icon overlay — behind all content */
+.hero__icons {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Individual floating icons */
