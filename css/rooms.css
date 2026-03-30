@@ -1874,3 +1874,106 @@
   }
   .rb-filters { gap: var(--space-3); }
 }
+
+/* =============================================================================
+   MOBILE ROOM IN-GAME LAYOUT — Game board takes full priority
+   Files changed: css/rooms.css, js/rooms/ingame.js
+   Strategy: when game is active (.is-playing), lift the center panel out of the
+   stacking grid via position:fixed so it fills the full viewport below the topbar.
+   Players panel and chat panel are covered (not destroyed); chat FAB (z-index:199)
+   and chat panel (z-index:200) naturally float above the game panel (z-index:25).
+   Desktop/tablet (≥768px): completely untouched.
+============================================================================= */
+
+@media (max-width: 767px) {
+
+  /* ── Compact topbar always, so game panel knows where to start ──────────── */
+  .room-topbar {
+    min-height: 44px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .room-topbar::-webkit-scrollbar { display: none; }
+
+  /* ── During gameplay: suppress non-essential topbar elements ────────────── */
+  body.room-is-playing .room-topbar__code,
+  body.room-is-playing #lobby-status-text,
+  body.room-is-playing #lobby-share-btn {
+    display: none;
+  }
+
+  /* Touch-sized topbar buttons during game */
+  body.room-is-playing .room-topbar .btn {
+    min-height: 36px;
+    padding: 4px 10px;
+    font-size: var(--text-xs);
+  }
+
+  /* ── Game panel: fixed viewport overlay below the topbar ────────────────── */
+  /* --room-topbar-h is set via JS (ingame.js) to the measured topbar height.  */
+  /* Fallback 44px matches the compact min-height above.                       */
+  body.room-is-playing .room-panel--games.is-playing {
+    position: fixed;
+    top: var(--room-topbar-h, 44px);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 25;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    gap: 0;
+    overflow: hidden;
+    background: var(--color-bg, #0e0b07);
+  }
+
+  /* Game name title — compact strip at top of fixed panel */
+  body.room-is-playing .room-panel--games.is-playing #center-panel-title {
+    flex-shrink: 0;
+    padding: 6px var(--space-3);
+    margin: 0;
+    font-size: var(--text-sm);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--color-primary);
+    color: rgba(255, 255, 255, 0.75);
+    letter-spacing: 0.03em;
+  }
+
+  /* Board fills all remaining height */
+  body.room-is-playing .room-panel--games.is-playing #ingame-boards {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* Iframes always fill their container */
+  body.room-is-playing .ingame-frame {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ── Dual-instance: stack iframes vertically on narrow mobile ───────────── */
+  body.room-is-playing .ingame-boards--dual {
+    flex-direction: column;
+  }
+  body.room-is-playing .ingame-boards--dual .ingame-frame--half {
+    flex: 1;
+    min-height: 0;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+  body.room-is-playing .ingame-boards--dual .ingame-frame--half:last-child {
+    border-bottom: none;
+  }
+
+  /* ── Chat FAB and drawer: already above game panel (z-index 199/200) ────── */
+  /* No changes needed — existing z-index values are already higher than 25.  */
+
+  /* ── End screen and modals: also already above (z-index 100+/200) ────────── */
+  /* No changes needed.                                                        */
+
+  /* ── Rules panel: already z-index 300, unaffected ──────────────────────── */
+}

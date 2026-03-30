@@ -237,6 +237,16 @@
     if (elCenterPanel)  elCenterPanel.classList.add('is-playing');
     elBoards.hidden = false;
 
+    // Mobile: lift game panel to full-viewport overlay.
+    // Measure the actual topbar height so the fixed panel starts exactly below it.
+    if (window.innerWidth <= 767) {
+      var topbar = document.querySelector('.room-topbar');
+      if (topbar) {
+        document.body.style.setProperty('--room-topbar-h', topbar.offsetHeight + 'px');
+      }
+      document.body.classList.add('room-is-playing');
+    }
+
     // Show "← Game Selection" button in topbar for host only
     if (elQuitBtn) {
       if (Room.amHost()) {
@@ -338,6 +348,9 @@
     if (elGamesSection) elGamesSection.hidden = false;
     if (elCenterTitle)  elCenterTitle.textContent = 'Pick a Game';
     if (elCenterPanel)  elCenterPanel.classList.remove('is-playing');
+
+    // Restore normal mobile layout
+    document.body.classList.remove('room-is-playing');
   }
 
   // ── Sync board state to existing iframes (called on Supabase game updates) ──
