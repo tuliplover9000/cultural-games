@@ -331,7 +331,11 @@
       requestAnimationFrame(function () {
         sheet.classList.add('bp-sheet-open');
       });
+      // iOS scroll-lock: save position before fixing body, prevents page jump
+      this._scrollY = window.scrollY;
+      document.body.style.top = '-' + this._scrollY + 'px';
       document.body.classList.add('bp-no-scroll');
+      this._bindSwipeDismiss(sheet);
     },
 
     hideSheet: function () {
@@ -339,11 +343,28 @@
       var backdrop = document.getElementById('bp-sheet-backdrop');
       if (!sheet || !sheet.classList.contains('bp-sheet-open')) return;
       sheet.classList.remove('bp-sheet-open');
+      // Restore scroll position before removing fixed positioning
+      document.body.classList.remove('bp-no-scroll');
+      document.body.style.top = '';
+      window.scrollTo(0, this._scrollY || 0);
       setTimeout(function () {
         if (sheet)    sheet.setAttribute('hidden', '');
         if (backdrop) backdrop.setAttribute('hidden', '');
-        document.body.classList.remove('bp-no-scroll');
       }, 300);
+    },
+
+    // Swipe-down to dismiss — attached once per sheet element
+    _bindSwipeDismiss: function (sheet) {
+      if (sheet._swipeBound) return;
+      sheet._swipeBound = true;
+      var self = this;
+      var startY = 0;
+      sheet.addEventListener('touchstart', function (e) {
+        startY = e.touches[0].clientY;
+      }, { passive: true });
+      sheet.addEventListener('touchend', function (e) {
+        if (e.changedTouches[0].clientY - startY > 60) self.hideSheet();
+      }, { passive: true });
     },
 
     populateSheetContent: function (game) {

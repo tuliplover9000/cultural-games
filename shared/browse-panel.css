@@ -354,5 +354,157 @@
 .bp-sheet-ctas .bp-btn-primary,
 .bp-sheet-ctas .bp-btn-secondary { padding: 11px 14px; font-size: 0.85rem; }
 
-/* Prevent body scroll when sheet open */
+/* Prevent body scroll when sheet open — top is set dynamically via JS to preserve position */
 body.bp-no-scroll { overflow: hidden; position: fixed; width: 100%; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BROWSE PAGE RESPONSIVE OVERHAUL — Phases B–F
+   Files changed: shared/browse-panel.css, shared/browse-panel.js
+   Breakpoint tiers (do not change these values):
+     Desktop:   1024px+         — no changes, preserve exactly
+     Tablet:    768px–1023px    — narrower panel (260px), 2-col grid
+     Mobile:    360px–767px     — single col, bottom sheet only
+     Mid-mob:   480px–767px     — 2-col game grid
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── TABLET (768px–1023px) ─────────────────────────────────────────────── */
+@media (max-width: 1023px) and (min-width: 768px) {
+
+  #bp-browse-layout {
+    grid-template-columns: 1fr 260px;
+    gap: 16px;
+  }
+
+  /* Override the min-width: 900px show rule — keep panel visible at 768–899px */
+  #bp-panel {
+    display: block;
+    width: 260px;
+  }
+
+  #bp-world-map { width: 100%; height: auto; }
+  #bp-map-container { max-height: 120px; overflow: hidden; }
+
+  .bp-ctas { flex-direction: column; gap: 8px; }
+  .bp-btn-primary,
+  .bp-btn-secondary {
+    width: 100%;
+    text-align: center;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  /* 2-col game grid — 3 cols is too tight with 260px panel */
+  .games-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .game-card { padding: 0; }
+  .game-card__name { font-size: 16px; }
+  .game-card__description { font-size: 13px; }
+}
+
+/* ── MOBILE (max 767px) ────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+
+  /* Single-column layout, hide side panel */
+  #bp-browse-layout {
+    grid-template-columns: 1fr;
+  }
+
+  #bp-panel {
+    display: none !important;
+  }
+
+  /* Hero title */
+  .browse-hero__title {
+    font-size: 32px;
+    line-height: 1.2;
+  }
+
+  /* Controls — dropdowns stack vertically */
+  .browse-dropdowns {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Inputs/selects — full width, min 44px tap target, 16px prevents iOS zoom */
+  .browse-search__input,
+  .browse-select {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  /* Surprise Me — full width, touch target */
+  .browse-lottery-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* Game grid — single column, no overflow */
+  .games-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Game card — touch-friendly */
+  .game-card {
+    touch-action: manipulation;
+  }
+
+  .game-card__name { font-size: 18px; }
+  .game-card__description { font-size: 14px; }
+
+  /* Play button — full width, 44px tap target */
+  .game-card__footer {
+    flex-wrap: wrap;
+  }
+
+  .game-card__footer .btn-primary {
+    width: 100%;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 6px;
+  }
+
+  /* Images/icons — no overflow */
+  .game-card img,
+  .game-card svg { max-width: 100%; height: auto; }
+
+  /* Overflow elimination */
+  #bp-games-column,
+  .games-grid {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Bottom sheet CTAs — full width on mobile */
+  .bp-sheet-ctas {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .bp-sheet-ctas .bp-btn-primary,
+  .bp-sheet-ctas .bp-btn-secondary {
+    width: 100%;
+    min-height: 44px;
+    text-align: center;
+  }
+}
+
+/* ── MID-MOBILE (480px–767px) — 2-col game grid ───────────────────────── */
+@media (max-width: 767px) and (min-width: 480px) {
+  .games-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ── SMALL MOBILE (max 479px) ──────────────────────────────────────────── */
+@media (max-width: 479px) {
+  .browse-hero__title {
+    font-size: 28px;
+  }
+}
