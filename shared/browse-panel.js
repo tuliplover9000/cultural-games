@@ -194,6 +194,16 @@
       var playFriends = document.getElementById('bp-play-friends');
       if (playFriends) playFriends.setAttribute('href', 'rooms.html?create=' + encodeURIComponent(game.key));
 
+      var htpLink = document.getElementById('bp-how-to-play');
+      if (htpLink) {
+        if (game.howToPlay) {
+          htpLink.setAttribute('href', '../' + game.howToPlay);
+          htpLink.hidden = false;
+        } else {
+          htpLink.hidden = true;
+        }
+      }
+
       this.updateFavouriteBtn(game.key);
 
       var content = document.getElementById('bp-content');

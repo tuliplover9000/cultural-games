@@ -23,7 +23,7 @@ window.GAMES_DATA = [
   },
   {
     key: 'bau-cua', name: 'Bầu Cua Tôm Cá', culture: 'Vietnam', type: 'Dice', maxPlayers: 8,
-    region: 'southeast-asia', path: 'games/bau-cua.html',
+    region: 'southeast-asia', path: 'games/bau-cua.html', howToPlay: 'how-to-play/bau-cua/',
     description: "A festive betting game inseparable from Tết — Vietnam's Lunar New Year — played on patterned cloth mats spread across living room floors. The six symbols (gourd, crab, shrimp, fish, rooster, deer) each carry traditional associations with luck and prosperity. Gambling is culturally permitted during Tết, and Bầu Cua is the game Vietnamese families return to year after year, grandparents teaching grandchildren the same rules they learned as children.",
     didYouKnow: "Bầu Cua is one of the few gambling games officially tolerated in Vietnam — only during the Tết holiday period.",
     complexity: 1, players: '2–8',
@@ -37,7 +37,7 @@ window.GAMES_DATA = [
   },
   {
     key: 'oware', name: 'Oware', culture: 'West Africa', type: 'Board', maxPlayers: 2,
-    region: 'west-africa', path: 'games/oware.html',
+    region: 'west-africa', path: 'games/oware.html', howToPlay: 'how-to-play/oware/',
     description: "One of the world's oldest continuously played games, with roots in Akan culture going back at least 7,000 years. The \"starvation rule\" — requiring a player to always leave the opponent with seeds to play — encodes Akan values of fairness and communal responsibility directly into the game's mechanics. Enslaved Akan people carried Oware to the Caribbean, where it still survives in Jamaica, Trinidad, and Barbados under different names.",
     didYouKnow: "Oware boards have been found in ancient Egypt, suggesting the game may have spread along trade routes across the entire African continent.",
     complexity: 3, players: '2',
@@ -58,14 +58,14 @@ window.GAMES_DATA = [
   },
   {
     key: 'pallanguzhi', name: 'Pallanguzhi', culture: 'South India', type: 'Board', maxPlayers: 2,
-    region: 'south-asia', path: 'games/pallanguzhi.html',
+    region: 'south-asia', path: 'games/pallanguzhi.html', howToPlay: 'how-to-play/pallanguzhi/',
     description: "An ancient Tamil mancala with a 14-cup board, played across South India and Sri Lanka for at least two thousand years. Boards were carved into the stone steps of South Indian temples, where players gathered in the shade between rituals — a form of contemplative play embedded in sacred space. The game was traditionally associated with women, played during festivals and passed down through female family lines as a mark of cultural literacy.",
     didYouKnow: "Temple-carved Pallanguzhi boards still exist in Tamil Nadu — some are over 800 years old and still playable.",
     complexity: 2, players: '2',
   },
   {
     key: 'fanorona', name: 'Fanorona', culture: 'Madagascar', type: 'Board', maxPlayers: 2,
-    region: 'madagascar', path: 'games/fanorona.html',
+    region: 'madagascar', path: 'games/fanorona.html', howToPlay: 'how-to-play/fanorona/',
     description: "Madagascar's national game, played on a grid of intersecting lines whose pattern mirrors the woven mat — a central Malagasy cultural symbol. A famous 18th-century legend holds that King Andriantompokondrindra was so absorbed in a Fanorona match that he ignored warnings of an approaching army, leading to his defeat and the French colonial foothold on the island. The game is still taught in Malagasy schools as part of national cultural heritage education.",
     didYouKnow: "Fanorona's capture-by-approach mechanic is unique in the world — no other traditional game uses the same system.",
     complexity: 4, players: '2',
