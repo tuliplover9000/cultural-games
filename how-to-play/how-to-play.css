@@ -137,8 +137,8 @@
   display: flex;
   align-items: center;
   gap: 1.25rem;
-  background: var(--color-primary);
-  color: #fff;
+  background: #1A0E06;
+  color: #fff !important;
   border-radius: 14px;
   padding: 1.5rem 1.75rem;
   margin: 2.5rem 0;
@@ -155,12 +155,12 @@
   font-size: 1.2rem;
   font-weight: 700;
   margin: 0 0 0.3rem;
-  color: #fff;
+  color: #fff !important;
 }
 
 .htp-cta__sub {
   font-size: var(--text-sm);
-  color: rgba(255,255,255,0.65);
+  color: rgba(255,255,255,0.75) !important;
   margin: 0;
 }
 
@@ -169,8 +169,8 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.7rem 1.4rem;
-  background: var(--color-accent-gold);
-  color: var(--color-primary);
+  background: #D4A84B;
+  color: #1A0E06 !important;
   font-weight: 700;
   font-size: var(--text-sm);
   border-radius: 8px;
@@ -180,7 +180,7 @@
   transition: background 0.2s;
 }
 
-.htp-cta__btn:hover { background: #d4a83e; }
+.htp-cta__btn:hover { background: #c49535; }
 
 /* Related games */
 .htp-related {
