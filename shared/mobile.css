@@ -36,6 +36,33 @@ canvas {
   }
 }
 
+/* ── Header auto-hide on scroll-down ── */
+@media (max-width: 768px) {
+  .site-nav {
+    transition: transform 280ms ease, background-color 250ms ease;
+  }
+  .site-nav.nav--hidden {
+    transform: translateY(-100%);
+  }
+}
+
+/* ── Game canvas: fit viewport on mobile, no vertical overflow ── */
+@media (max-width: 768px) {
+  #game-container {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-height: calc(100svh - var(--nav-height, 64px));
+  }
+  #game-container canvas {
+    display: block;
+    max-width: 100%;
+    max-height: calc(100svh - var(--nav-height, 64px) - 16px);
+  }
+}
+
 /* =============================================================
    PHASE C — Browse Page
    ============================================================= */

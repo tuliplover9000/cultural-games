@@ -544,6 +544,7 @@
           '</form>' +
           '<div class="auth-divider"><span>or</span></div>' +
           '<p class="auth-switch">New here? <button class="auth-switch-btn" id="to-signup">Create an account</button></p>' +
+          '<p class="auth-guest"><button class="auth-switch-btn auth-guest-btn" id="auth-skip" type="button">Continue as guest →</button></p>' +
         '</div>' +
 
         // ── Sign Up panel ──
@@ -569,6 +570,7 @@
           '</form>' +
           '<div class="auth-divider"><span>or</span></div>' +
           '<p class="auth-switch">Already have an account? <button class="auth-switch-btn" id="to-signin">Sign in</button></p>' +
+          '<p class="auth-guest"><button class="auth-switch-btn auth-guest-btn" id="auth-skip-2" type="button">Continue as guest →</button></p>' +
         '</div>' +
       '</div>';
 
@@ -585,6 +587,10 @@
 
   function _wireModal(overlay) {
     document.getElementById('auth-close').addEventListener('click', closeModal);
+    var skipEl  = document.getElementById('auth-skip');
+    var skipEl2 = document.getElementById('auth-skip-2');
+    if (skipEl)  skipEl.addEventListener('click',  closeModal);
+    if (skipEl2) skipEl2.addEventListener('click', closeModal);
 
     overlay.addEventListener('click', function (e) {
       if (e.target === overlay) closeModal();

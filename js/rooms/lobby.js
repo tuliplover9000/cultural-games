@@ -460,7 +460,7 @@
     elAssignPlayerList.innerHTML = players.map(function(pid) {
       var name     = names[pid] || 'Player';
       var role     = roles[pid];
-      var btnDefs  = seatRoles ? seatRoles.concat(['spectator']) : ['player', 'spectator'];
+      var btnDefs  = seatRoles ? seatRoles.slice() : ['player'];
       var btns = btnDefs.map(function(r) {
         var label = r.charAt(0).toUpperCase() + r.slice(1);
         return '<button class="assign-role-btn' + (role === r ? ' active' : '') +

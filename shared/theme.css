@@ -30,6 +30,20 @@
   --color-accent-warm: #E07848;
 }
 
+/* ── Light-mode overrides for hero section (hardcoded dark gradient) ────────
+   The hero background is not a CSS variable so we need explicit overrides.    */
+[data-theme="light"] .hero {
+  background: radial-gradient(ellipse at 68% 50%, #daeaf7 0%, #ede3cf 45%, #fbf5e6 100%);
+}
+[data-theme="light"] .hero__title        { color: var(--color-text); }
+[data-theme="light"] .hero__origin-story { color: rgba(26, 14, 6, 0.65); }
+[data-theme="light"] .hero__tagline      { color: rgba(26, 14, 6, 0.62); }
+[data-theme="light"] .hero__stats        { color: rgba(26, 14, 6, 0.5); }
+[data-theme="light"] .hfc-label          { color: rgba(26, 14, 6, 0.5); }
+[data-theme="light"] .hfc-arrow          { color: rgba(26, 14, 6, 0.35); }
+[data-theme="light"] .hfc-arrow:hover    { color: rgba(26, 14, 6, 0.85); }
+[data-theme="light"] .hfc-dot            { background: rgba(26, 14, 6, 0.18); }
+
 /* ── Light-mode overrides for components that assume a dark host ─────────── */
 /* Lottery button has a dark wood gradient that blends in dark mode.
    In light mode we keep it slightly warmer to contrast against parchment. */

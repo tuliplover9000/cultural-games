@@ -7,7 +7,7 @@
   'use strict';
 
   // ── Feature detection ──────────────────────────────────────────────────────
-  if (document.fullscreenEnabled) {
+  if (document.fullscreenEnabled || document.webkitFullscreenEnabled) {
     document.documentElement.classList.add('fs-supported');
   } else {
     document.documentElement.classList.add('fs-css-only');
@@ -78,7 +78,7 @@
   FSMode.toggle = function () {
     if (FSMode.isActive()) {
       FSMode.exit();
-    } else if (document.fullscreenEnabled) {
+    } else if (document.fullscreenEnabled || document.webkitFullscreenEnabled) {
       FSMode.enter();
     } else {
       FSMode.enterCSS();

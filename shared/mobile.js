@@ -227,6 +227,34 @@
 
   window.MobileUtils = MobileUtils;
 
+  /* ── Header auto-hide on scroll (mobile only) ── */
+  (function () {
+    var nav    = document.querySelector('.site-nav');
+    if (!nav) return;
+    var lastY   = 0;
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        if (window.innerWidth > 768) {
+          nav.classList.remove('nav--hidden');
+          lastY = window.scrollY;
+          ticking = false;
+          return;
+        }
+        var y = window.scrollY || window.pageYOffset;
+        if (y > lastY && y > 80) {
+          nav.classList.add('nav--hidden');
+        } else {
+          nav.classList.remove('nav--hidden');
+        }
+        lastY   = y;
+        ticking = false;
+      });
+    }, { passive: true });
+  })();
+
   /* ── Phase E: close "How to Play" accordion on mobile by default ── */
   document.addEventListener('DOMContentLoaded', function () {
     if (!MobileUtils.isMobile()) return;
