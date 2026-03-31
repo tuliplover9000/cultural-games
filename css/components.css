@@ -1310,18 +1310,20 @@
 .spotlight__nav {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 8px;
   margin-top: var(--space-6);
 }
 .spotlight__dot {
   width: 8px; height: 8px;
+  min-width: 8px; min-height: 8px;
+  flex-shrink: 0;
   border-radius: 50%;
   background: var(--color-border);
   border: none;
   padding: 0;
   cursor: pointer;
   transition: background 0.2s, transform 0.2s;
-  min-height: 0;
 }
 .spotlight__dot--active {
   background: var(--color-accent, #c89b3c);
