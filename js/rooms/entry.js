@@ -87,6 +87,7 @@
     elNameInput.value = stored;
     clearError(elNameError);
     elNameModal.hidden = false;
+    document.body.classList.add('creating-room');
     elNameInput.focus();
     if (stored) elNameInput.select(); // highlight so they can replace easily
 
@@ -95,10 +96,12 @@
       if (!v) { showError(elNameError, 'Please enter a name to continue.'); return; }
       Room.setPlayerName(v);
       elNameModal.hidden = true;
+      document.body.classList.remove('creating-room');
       then(v);
     };
     elNameCancel.onclick = function () {
       elNameModal.hidden = true;
+      document.body.classList.remove('creating-room');
     };
   }
 

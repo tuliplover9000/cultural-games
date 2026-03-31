@@ -301,9 +301,18 @@
           var key  = wrapper.getAttribute('data-game-key');
           var game = (window.GAMES_DATA || []).filter(function (g) { return g.key === key; })[0];
           if (!game) return;
+          var _touchStartY = 0;
+          var _touchStartT = 0;
+          wrapper.addEventListener('touchstart', function (e) {
+            _touchStartY = e.changedTouches[0].clientY;
+            _touchStartT = Date.now();
+          }, { passive: true });
           wrapper.addEventListener('touchend', function (e) {
             if (!self.isMobile) return;
             if (e.target.closest('a, button')) return; // let play-button navigate normally
+            var deltaY  = Math.abs(e.changedTouches[0].clientY - _touchStartY);
+            var elapsed = Date.now() - _touchStartT;
+            if (deltaY >= 10 || elapsed >= 300) return; // scroll gesture — ignore
             e.preventDefault();
             self.showSheet(game);
           });
