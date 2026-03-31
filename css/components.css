@@ -1309,21 +1309,31 @@
 /* Navigation dots */
 .spotlight__nav {
   display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
   gap: 8px;
   margin-top: var(--space-6);
+  line-height: 0;
 }
 .spotlight__dot {
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  flex: 0 0 8px;
   width: 8px; height: 8px;
+  max-width: 8px; max-height: 8px;
   min-width: 8px; min-height: 8px;
-  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   background: var(--color-border);
   border: none;
   padding: 0;
   cursor: pointer;
   transition: background 0.2s, transform 0.2s;
+  overflow: hidden;
+  align-self: center;
 }
 .spotlight__dot--active {
   background: var(--color-accent, #c89b3c);
