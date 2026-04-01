@@ -83,13 +83,18 @@
     { id: 'cu_wins_50',    gameId: 'cuarenta',      title: 'Rey de la Baraja',  description: 'Win 50 games of Cuarenta',                              tier: 'gold',   category: 'combat', condition: { type: 'stat',   game: 'cuarenta', stat: 'wins', threshold: 50 } },
     { id: 'cu_caida',      gameId: 'cuarenta',      title: '¡Caída!',           description: 'Pull off a Caída against the CPU',                      tier: 'bronze', category: 'combat', condition: { type: 'action', action: 'cu_caida'     } },
     { id: 'cu_mesa',       gameId: 'cuarenta',      title: '¡Mesa Limpia!',     description: 'Clear the table 3 times in a single ronda',             tier: 'silver', category: 'combat', condition: { type: 'action', action: 'cu_triple_mesa'} },
+    { id: 'yn_first_win',  gameId: 'yut-nori',      title: '첫 승리',           description: 'Win your first game of Yut Nori',                       tier: 'bronze', category: 'combat', condition: { type: 'stat',   game: 'yut-nori', stat: 'wins', threshold: 1  } },
+    { id: 'yn_wins_10',    gameId: 'yut-nori',      title: '윷 명인',           description: 'Win 10 games of Yut Nori',                              tier: 'silver', category: 'combat', condition: { type: 'stat',   game: 'yut-nori', stat: 'wins', threshold: 10 } },
+    { id: 'yn_wins_50',    gameId: 'yut-nori',      title: '말 대장',           description: 'Win 50 games of Yut Nori',                              tier: 'gold',   category: 'combat', condition: { type: 'stat',   game: 'yut-nori', stat: 'wins', threshold: 50 } },
+    { id: 'yn_mo',         gameId: 'yut-nori',      title: '모! 모! 모!',       description: 'Throw Mo (5) three times in a single game',             tier: 'silver', category: 'combat', condition: { type: 'action', action: 'yn_triple_mo'   } },
+    { id: 'yn_clean_sweep',gameId: 'yut-nori',      title: '완전 정복',         description: 'Capture all 4 opponent pieces in a single game',        tier: 'gold',   category: 'combat', condition: { type: 'action', action: 'yn_clean_sweep'  } },
 
     /* ── Explorer (cross-game) ── */
     { id: 'exp_play_3',   gameId: null, title: 'Curious Traveller', description: 'Play 3 different games',               tier: 'bronze', category: 'explorer', condition: { type: 'games_played', threshold: 3  } },
     { id: 'exp_play_6',   gameId: null, title: 'Cultural Explorer', description: 'Play 6 different games',               tier: 'silver', category: 'explorer', condition: { type: 'games_played', threshold: 6  } },
-    { id: 'exp_play_all', gameId: null, title: 'World Game Master', description: 'Play every game on the site',          tier: 'gold',   category: 'explorer', condition: { type: 'games_played', threshold: 17 } },
+    { id: 'exp_play_all', gameId: null, title: 'World Game Master', description: 'Play every game on the site',          tier: 'gold',   category: 'explorer', condition: { type: 'games_played', threshold: 18 } },
     { id: 'exp_win_3',    gameId: null, title: 'Renaissance Player','description': 'Win in 3 different games',           tier: 'silver', category: 'explorer', condition: { type: 'games_won', threshold: 3  } },
-    { id: 'exp_win_all',  gameId: null, title: 'Grand Tour',        description: 'Win at least one game of every title', tier: 'gold',   category: 'explorer', condition: { type: 'games_won', threshold: 17 } },
+    { id: 'exp_win_all',  gameId: null, title: 'Grand Tour',        description: 'Win at least one game of every title', tier: 'gold',   category: 'explorer', condition: { type: 'games_won', threshold: 18 } },
     { id: 'exp_favorite', gameId: null, title: 'Patron of Culture', description: 'Save a favourite game',                tier: 'bronze', category: 'explorer', condition: { type: 'action', action: 'set_favorite' } },
 
     /* ── Social (multiplayer) ── */

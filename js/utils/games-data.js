@@ -127,6 +127,13 @@ window.GAMES_DATA = [
     complexity: 2, players: '2',
   },
   {
+    key: 'yut-nori', name: 'Yut Nori', culture: 'Korea', type: 'Board', maxPlayers: 4,
+    region: 'east-asia', path: 'games/yut-nori.html', howToPlay: 'how-to-play/yut-nori/',
+    description: "Korea's classic Lunar New Year race game — throw four wooden sticks and race all your horses around the cross-shaped board. The throw results were once used to predict the harvest, and families still gather around the Yut Nori board every Seollal and Chuseok.",
+    didYouKnow: "Yut Nori is traditionally played on Lunar New Year — the throw results were once used to predict the harvest for the coming year.",
+    complexity: 2, players: '2 or 4',
+  },
+  {
     key: 'cuarenta', name: 'Cuarenta', culture: 'Ecuador', type: 'Card', maxPlayers: 2,
     region: 'south-america', path: 'games/cuarenta.html', howToPlay: 'how-to-play/cuarenta/',
     description: "Ecuador's national card game, played with a 40-card Spanish deck — a colonial inheritance that Ecuadorians made entirely their own over four centuries. The game is serious: national tournaments are held annually, skilled players earn community respect, and the Caída — capturing right after your opponent using the same rank they just played — is celebrated like a chess fork, a flash of timing that separates good players from great ones. The name means simply \"forty\" — the target score and the deck size, collapsed into one word that defines an entire game culture.",

@@ -53,6 +53,13 @@
       ]},
     { key: 'cuarenta',    name: 'Cuarenta',            culture: 'Ecuador',               type: 'Card',     icon: '🃏', svg: '../assets/icons/cuarenta.svg',   badge: 'Card · 2P',    maxPlayers: 2,
       rules: ['Play one card per turn. Match a table card\'s rank to capture (pairs), or form a run of 3+ consecutive ranks (sequence).', '¡Caída! bonus: counter your opponent\'s rank immediately after they capture. ¡Mesa! bonus: clear the table entirely.', 'Score Ases, 7 de Oros, Sota de Oros, and Mesa bonuses. First to 40 pts wins.'] },
+    { key: 'yut-nori',   name: 'Yut Nori',            culture: 'Korean',                type: 'board',    icon: '🎴', svg: '../assets/icons/yut-nori.svg',   badge: 'Race Game',    maxPlayers: 4,
+      seatRoles: ['team-a-1', 'team-a-2', 'team-b-1', 'team-b-2'],
+      gameModes: [
+        { value: '2-player',      label: '2 Players',     hint: '1 v 1' },
+        { value: '4-player-teams',label: '4 Players',     hint: 'Teams A & B' },
+      ],
+      rules: ['Throw four wooden sticks — flat sides up count as moves: Do(1), Gae(2), Geol(3), Yut(4+throw), Mo(5+throw).', 'Select a piece to move the result. Land on a corner to take a shortcut through the centre.', 'Capture opponent pieces to send them home and earn an extra throw. Stack friendly pieces to move together. First team to finish all 4 pieces wins.'] },
   ];
 
   // ── DOM refs ───────────────────────────────────────────────────────────────

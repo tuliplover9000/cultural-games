@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Yut Nori icon: four yut sticks thrown, two flat-side up (light) and two round-side up (dark) -->
+
+  <!-- Stick 1: flat side up (light birch), angled -22° -->
+  <rect x="4" y="18" width="10" height="28" rx="5"
+        fill="#f5deb3" stroke="#8B4513" stroke-width="1.8"
+        transform="rotate(-22, 9, 32)"/>
+
+  <!-- Stick 2: round side up (dark walnut), angled -7° -->
+  <rect x="18" y="12" width="10" height="28" rx="5"
+        fill="#5d4037" stroke="#3e2723" stroke-width="1.8"
+        transform="rotate(-7, 23, 26)"/>
+
+  <!-- Stick 3: flat side up (light birch), angled 6° -->
+  <rect x="32" y="20" width="10" height="28" rx="5"
+        fill="#f5deb3" stroke="#8B4513" stroke-width="1.8"
+        transform="rotate(6, 37, 34)"/>
+
+  <!-- Stick 4: round side up (dark walnut), angled 21° -->
+  <rect x="46" y="14" width="10" height="28" rx="5"
+        fill="#5d4037" stroke="#3e2723" stroke-width="1.8"
+        transform="rotate(21, 51, 28)"/>
+</svg>
