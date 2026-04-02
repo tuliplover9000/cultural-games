@@ -562,8 +562,8 @@
     var w = canvas.width, h = canvas.height;
     ctx.clearRect(0, 0, w, h);
 
-    /* Board background */
-    ctx.fillStyle = cssVar('--yn-board-bg', '#fdf6e3');
+    /* Board background — warm golden-brown for margin zones */
+    ctx.fillStyle = '#c8a97a';
     ctx.fillRect(0, 0, w, h);
 
     drawBoardLines();
@@ -580,26 +580,66 @@
   /* ── Board lines ─────────────────────────────────────────────── */
 
   function drawBoardLines() {
-    /* Outer diamond */
-    ctx.beginPath();
-    for (var i = 0; i < 20; i++) {
-      var p = npos(i);
-      i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
-    }
-    ctx.closePath();
-    ctx.strokeStyle = cssVar('--yn-path-line', '#8B4513');
-    ctx.lineWidth = 2;
-    ctx.stroke();
+    var i, p;
 
-    /* Shortcut lines (dashed) */
-    ctx.setLineDash([5, 4]);
-    ctx.strokeStyle = cssVar('--yn-shortcut-line', '#c0392b');
-    ctx.lineWidth = 1.5;
+    /* 1. Fill diamond interior with warm rice-paper */
+    ctx.beginPath();
+    [0, 5, 10, 15].forEach(function (cid, idx) {
+      var cp = npos(cid);
+      idx === 0 ? ctx.moveTo(cp.x, cp.y) : ctx.lineTo(cp.x, cp.y);
+    });
+    ctx.closePath();
+    ctx.fillStyle = '#f5ecd5';
+    ctx.fill();
+
+    /* 2. Thick shortcut track lanes (warm rose) */
+    var scLW = Math.max(7, Math.round(NODE_R * 0.82));
+    ctx.strokeStyle = '#e8c4b8';
+    ctx.lineWidth   = scLW;
+    ctx.lineJoin    = 'round';
+    ctx.lineCap     = 'round';
+    ctx.setLineDash([]);
     strokePath([5,  20, 21, 22]);
     strokePath([10, 24, 25, 22]);
     strokePath([15, 26, 27, 22]);
-    strokePath([22, 23, 28, 0 ]);
+    strokePath([22, 23, 28, 0]);
+
+    /* 3. Thick outer ring track lane (warm tan) */
+    ctx.beginPath();
+    for (i = 0; i < 20; i++) {
+      p = npos(i);
+      i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = '#d4a97a';
+    ctx.lineWidth   = Math.max(9, Math.round(NODE_R * 0.95));
+    ctx.lineJoin    = 'round';
+    ctx.stroke();
+
+    /* 4. Outer ring dark outline */
+    ctx.beginPath();
+    for (i = 0; i < 20; i++) {
+      p = npos(i);
+      i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = '#7a3a10';
+    ctx.lineWidth   = 2;
+    ctx.lineJoin    = 'round';
     ctx.setLineDash([]);
+    ctx.stroke();
+
+    /* 5. Shortcut dashed dark outline */
+    ctx.setLineDash([Math.max(5, NODE_R * 0.55), Math.max(3, NODE_R * 0.35)]);
+    ctx.strokeStyle = '#a02020';
+    ctx.lineWidth   = 1.5;
+    ctx.lineCap     = 'round';
+    strokePath([5,  20, 21, 22]);
+    strokePath([10, 24, 25, 22]);
+    strokePath([15, 26, 27, 22]);
+    strokePath([22, 23, 28, 0]);
+    ctx.setLineDash([]);
+    ctx.lineCap = 'butt';
   }
 
   function strokePath(ids) {
@@ -615,19 +655,22 @@
 
   function drawNodes() {
     for (var id = 0; id < 29; id++) {
-      var pos  = npos(id);
-      var big  = OUTER_CORNERS.indexOf(id) >= 0 || id === 22;
-      var r    = big ? NODE_R * 1.35 : NODE_R;
-      var fill = big ? cssVar('--yn-node-corner', '#c0392b') : cssVar('--yn-node-outer', '#8B4513');
-      var stk  = big ? '#7a0000' : '#5a2008';
+      var pos      = npos(id);
+      var isCorner = OUTER_CORNERS.indexOf(id) >= 0;
+      var isCenter = id === 22;
+      var isSC     = SC_CORNERS.indexOf(id) >= 0; // shortcut-entry corners (5/10/15)
+      var r, fill, stroke;
+
+      if (id === 0)       { r = NODE_R * 2.0; fill = '#8B1a1a'; stroke = '#5a0000'; }
+      else if (isSC)      { r = NODE_R * 1.9; fill = '#c0392b'; stroke = '#7a0000'; }
+      else if (isCenter)  { r = NODE_R * 1.7; fill = '#6b3a1f'; stroke = '#3d1a00'; }
+      else                { r = NODE_R;       fill = '#8B4513'; stroke = '#4a200a'; }
 
       /* Shortcut choice highlight */
       if (state.shortcutPending) {
         var sp = state.shortcutPending;
         if (id === sp.outerNext || id === sp.shortcutFirst) {
-          fill = cssVar('--yn-highlight', '#f39c12');
-          stk  = '#8B5000';
-          r   *= 1.3;
+          fill = '#f39c12'; stroke = '#8B5000'; r *= 1.35;
         }
       }
 
@@ -635,28 +678,56 @@
       if (state.selectedPieceId && state.phase === 'move') {
         var destId = getDestNodeId(state.selectedPieceId);
         if (destId !== null && destId === id) {
-          fill = cssVar('--yn-highlight', '#f39c12');
-          stk  = '#8B5000';
-          r   *= 1.2;
+          fill = '#f39c12'; stroke = '#8B5000'; r *= 1.25;
         }
       }
 
+      /* Drop shadow */
+      ctx.beginPath();
+      ctx.arc(pos.x + r * 0.14, pos.y + r * 0.14, r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.25)';
+      ctx.fill();
+
+      /* Main circle */
       ctx.beginPath();
       ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2);
       ctx.fillStyle = fill;
       ctx.fill();
-      ctx.strokeStyle = stk;
-      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = isCorner || isCenter ? 2 : 1.5;
       ctx.stroke();
 
-      /* Node labels */
-      if (id === 0 || id === 22) {
-        var lbl = id === 0 ? '출발' : '中';
-        ctx.font = 'bold ' + Math.max(7, Math.floor(r * 0.85)) + 'px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+      /* Inner ring (depth ring) */
+      if (r > NODE_R * 0.9) {
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, r * 0.65, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+
+      /* Specular highlight spot */
+      ctx.beginPath();
+      ctx.arc(pos.x - r * 0.27, pos.y - r * 0.30, r * 0.30, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.25)';
+      ctx.fill();
+
+      /* Labels */
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      if (id === 0) {
+        ctx.font = 'bold ' + Math.max(8, Math.floor(r * 0.70)) + 'px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
         ctx.fillStyle = '#fff';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(lbl, pos.x, pos.y);
+        ctx.fillText('출발', pos.x, pos.y);
+      } else if (isCenter) {
+        ctx.font = 'bold ' + Math.max(9, Math.floor(r * 0.80)) + 'px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+        ctx.fillStyle = '#f5deb3';
+        ctx.fillText('中', pos.x, pos.y);
+      } else if (isSC) {
+        /* Small star to signal shortcut entry */
+        ctx.font = Math.max(7, Math.floor(r * 0.55)) + 'px sans-serif';
+        ctx.fillStyle = 'rgba(255,255,220,0.80)';
+        ctx.fillText('★', pos.x, pos.y);
       }
     }
   }
@@ -703,27 +774,50 @@
     if (!pieces.length) return;
     var team     = pieces[0].team;
     var count    = pieces.length;
-    var r        = NODE_R * 1.15;
+    var r        = NODE_R * 1.45;
+    var col      = TEAM_COLOR[team];
+    var dark     = TEAM_DARK[team];
     var selected = state.selectedPieceId && pieces.some(function (p) { return p.id === state.selectedPieceId; });
 
+    /* Selection glow */
     if (selected) {
       ctx.beginPath();
-      ctx.arc(pos.x, pos.y, r * 1.65, 0, Math.PI * 2);
-      ctx.strokeStyle = cssVar('--yn-highlight', '#f39c12');
-      ctx.lineWidth = 2.5;
+      ctx.arc(pos.x, pos.y, r * 1.85, 0, Math.PI * 2);
+      ctx.strokeStyle = '#f5c518';
+      ctx.lineWidth = 3.5;
       ctx.stroke();
     }
 
+    /* Drop shadow */
+    ctx.beginPath();
+    ctx.arc(pos.x + r * 0.14, pos.y + r * 0.14, r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,0,0,0.38)';
+    ctx.fill();
+
+    /* Main piece */
     ctx.beginPath();
     ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2);
-    ctx.fillStyle = TEAM_COLOR[team];
+    ctx.fillStyle = col;
     ctx.fill();
-    ctx.strokeStyle = TEAM_DARK[team];
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = dark;
+    ctx.lineWidth = 2.5;
     ctx.stroke();
 
+    /* Inner detail ring */
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, r * 0.68, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.30)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    /* Specular highlight */
+    ctx.beginPath();
+    ctx.arc(pos.x - r * 0.30, pos.y - r * 0.33, r * 0.32, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.28)';
+    ctx.fill();
+
     var lbl = count > 1 ? '\xd7' + count : (team === 'a' ? '\ud64d' : '\uccad'); // 홍 or 청
-    ctx.font = 'bold ' + Math.max(8, Math.floor(r * 0.88)) + 'px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+    ctx.font = 'bold ' + Math.max(9, Math.floor(r * 0.85)) + 'px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
     ctx.fillStyle = '#fff';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -734,28 +828,46 @@
 
   function drawOffBoard() {
     ['a', 'b'].forEach(function (team) {
-      var off = teamPieces(team).filter(function (p) { return p.nodeId === null; });
-      if (!off.length) return;
-
+      var all = teamPieces(team);
+      var off = all.filter(function (p) { return p.nodeId === null; });
       var base = stagingPos(team);
-      var r    = NODE_R * 0.75;
+      var r    = Math.max(7, NODE_R * 0.78);
       var sel  = state.selectedPieceId && off.some(function (p) { return p.id === state.selectedPieceId; });
+      var col  = TEAM_COLOR[team];
+      var dark = TEAM_DARK[team];
+
+      /* Zone label (always visible) */
+      ctx.font = 'bold ' + Math.max(8, Math.floor(r * 0.80)) + 'px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+      ctx.fillStyle = col + 'cc';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(team === 'a' ? '홍' : '청', base.x, base.y - r * 2.4);
+
+      if (!off.length) return;
 
       if (sel) {
         ctx.beginPath();
-        ctx.arc(base.x, base.y, r * off.length * 1.4 + 6, 0, Math.PI * 2);
-        ctx.strokeStyle = cssVar('--yn-highlight', '#f39c12');
-        ctx.lineWidth = 2;
+        ctx.arc(base.x, base.y, r * off.length * 1.5 + 6, 0, Math.PI * 2);
+        ctx.strokeStyle = '#f5c518';
+        ctx.lineWidth = 2.5;
         ctx.stroke();
       }
 
       off.forEach(function (p, i) {
-        var ox = base.x + (i - (off.length - 1) / 2) * r * 2.4;
+        var ox = base.x + (i - (off.length - 1) / 2) * r * 2.5;
+
+        /* Shadow */
+        ctx.beginPath();
+        ctx.arc(ox + r * 0.12, base.y + r * 0.12, r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0,0,0,0.28)';
+        ctx.fill();
+
+        /* Body */
         ctx.beginPath();
         ctx.arc(ox, base.y, r, 0, Math.PI * 2);
-        ctx.fillStyle = sel ? cssVar('--yn-highlight', '#f39c12') : TEAM_COLOR[team] + 'aa';
+        ctx.fillStyle = sel ? '#f39c12' : col + 'bb';
         ctx.fill();
-        ctx.strokeStyle = TEAM_COLOR[team];
+        ctx.strokeStyle = sel ? '#8B5000' : dark;
         ctx.lineWidth = 1.5;
         ctx.stroke();
       });
@@ -796,21 +908,22 @@
     var sticks = throwAnim.active ? throwAnim.sticks : (state.lastThrow ? state.lastThrow.sticks : null);
     if (!sticks) return;
 
-    var boardInner = state.boardSize - 2 * state.padX;
-    var startY     = npos(0).y; // bottom of diamond
-    var sw         = Math.max(8, Math.floor(boardInner * 0.05));
-    var sh         = Math.max(22, Math.floor(boardInner * 0.16));
-    var spacing    = sw * 2.0;
-    var cx0        = canvas.width / 2 - spacing * 1.5;
-    var cy         = startY + sh * 0.75;
+    var pad = state.padX;
+    /* Sticks live in the bottom margin, centered horizontally */
+    var nodeZeroY = npos(0).y;
+    var cy  = nodeZeroY + (canvas.height - nodeZeroY) * 0.52;
+    var sw  = Math.max(6, Math.floor(pad * 0.30));
+    var sh  = Math.max(16, Math.floor(pad * 0.80));
+    var spacing = sw * 2.6;
+    var cx0 = canvas.width / 2 - spacing * 1.5;
 
     sticks.forEach(function (flat, i) {
       var cx    = cx0 + i * spacing;
       var angle = 0;
       if (throwAnim.active) {
-        var t    = throwAnim.progress;
-        var dir  = i % 2 === 0 ? 1 : -1;
-        angle    = dir * Math.PI * 5 * (1 - ease(t));
+        var t   = throwAnim.progress;
+        var dir = i % 2 === 0 ? 1 : -1;
+        angle   = dir * Math.PI * 5 * (1 - ease(t));
       }
 
       ctx.save();
@@ -818,14 +931,35 @@
       ctx.rotate(angle);
 
       var hw = sw / 2, hh = sh / 2;
+
+      /* Stick shadow */
+      ctx.beginPath();
+      if (ctx.roundRect) { ctx.roundRect(-hw + 1.5, -hh + 1.5, sw, sh, hw); }
+      else { ctx.rect(-hw + 1.5, -hh + 1.5, sw, sh); }
+      ctx.fillStyle = 'rgba(0,0,0,0.35)';
+      ctx.fill();
+
+      /* Stick body */
       ctx.beginPath();
       if (ctx.roundRect) { ctx.roundRect(-hw, -hh, sw, sh, hw); }
       else { ctx.rect(-hw, -hh, sw, sh); }
-      ctx.fillStyle   = flat ? cssVar('--yn-stick-flat', '#f5deb3') : cssVar('--yn-stick-round', '#5d4037');
+      ctx.fillStyle   = flat ? '#f5deb3' : '#5d4037';
       ctx.fill();
       ctx.strokeStyle = flat ? '#8B4513' : '#2e1a10';
       ctx.lineWidth   = 1.5;
       ctx.stroke();
+
+      /* Grain lines on flat (light) side */
+      if (flat) {
+        ctx.strokeStyle = 'rgba(139,69,19,0.28)';
+        ctx.lineWidth   = 0.7;
+        for (var g = -1; g <= 1; g++) {
+          ctx.beginPath();
+          ctx.moveTo(-hw + 1, g * hh * 0.45);
+          ctx.lineTo( hw - 1, g * hh * 0.45);
+          ctx.stroke();
+        }
+      }
 
       ctx.restore();
     });
@@ -1055,14 +1189,13 @@
   ══════════════════════════════════════════════════════════════════ */
 
   window.GameResize = function (availW, availH) {
-    var size = Math.min(availW || 480, availH ? availH - 80 : 520, 520);
-    size     = Math.max(size, 200);
-    /* Extra height for stick display below diamond */
+    /* Use the actual container width — no artificial cap */
+    var size = Math.max(availW || 360, 200);
     canvas.width  = size;
-    canvas.height = Math.round(size * 1.15);
+    canvas.height = size; /* square canvas — sticks live in corner margins */
     state.boardSize = size;
     state.padX = state.padY = Math.round(size * 0.1);
-    NODE_R = Math.max(8, Math.round(size * 0.033));
+    NODE_R = Math.max(9, Math.round(size * 0.038));
     render();
   };
 
@@ -1080,10 +1213,10 @@
     state.aiEnabled = !window.RoomBridge && (elAiToggle ? elAiToggle.checked : true);
     state.phase     = 'throw';
 
-    /* Re-size to current wrapper */
+    /* Re-size to current wrapper — no cap */
     var wrap = document.getElementById('yn-board-wrap');
-    var sz   = wrap ? Math.min(wrap.clientWidth || 480, 520) : 480;
-    window.GameResize(sz, sz + 80);
+    var sz   = wrap ? (wrap.clientWidth || 480) : 480;
+    window.GameResize(sz, sz);
 
     updateHUD();
     setStatus('\ud300 A\uc758 \ucc28\ub808 (Team A\u2019s turn) \u2014 \uc724 \ub358\uc9c0\uae30!');
@@ -1145,8 +1278,8 @@
 
   (function init() {
     var wrap = document.getElementById('yn-board-wrap');
-    var sz   = wrap ? Math.min(wrap.clientWidth || 480, 520) : 480;
-    window.GameResize(sz, sz + 80);
+    var sz   = wrap ? (wrap.clientWidth || 480) : 480;
+    window.GameResize(sz, sz);
 
     /* Show mode select on first load (skipped in room mode) */
     if (window.RoomBridge) {
