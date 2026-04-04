@@ -18,9 +18,9 @@
 .yn-game-container {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
   gap: var(--space-2);
-  padding: var(--space-3) var(--space-3) var(--space-3);
+  padding: var(--space-3);
   background: var(--color-surface);
   border-radius: var(--radius-lg);
 }
@@ -32,6 +32,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  max-width: 420px;
   gap: var(--space-3);
 }
 
@@ -65,12 +66,11 @@
 .yn-board-wrap {
   position: relative;
   line-height: 0;
-  width: 100%;
 }
 
 #yn-canvas {
   display: block;
-  width: 100%;
+  max-width: 100%;
   height: auto;
   cursor: pointer;
   border-radius: 8px;
@@ -125,6 +125,7 @@
   flex-wrap: wrap;
   justify-content: center;
   width: 100%;
+  max-width: 420px;
 }
 
 #yn-throw-btn {
