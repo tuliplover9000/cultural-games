@@ -1272,11 +1272,9 @@
   ══════════════════════════════════════════════════════════════════ */
 
   window.GameResize = function (availW, availH) {
-    /* Subtract header + HUD + controls + throw row + padding overhead (~290px)
-       so the canvas never pushes the page into scroll territory */
-    var uiOverhead = 290;
-    var maxByHeight = Math.max(window.innerHeight - uiOverhead, 240);
-    var size = Math.min(Math.max(availW || 320, 240), maxByHeight, 460);
+    /* Header ~64 + HUD ~44 + throw row ~32 + pending ~40 + controls ~56 + gaps ~40 = ~276px overhead */
+    var maxByHeight = Math.max(window.innerHeight - 276, 220);
+    var size = Math.min(Math.max(availW || 300, 220), maxByHeight, 420);
     canvas.width  = size;
     canvas.height = size;
     state.boardSize = size;
@@ -1318,12 +1316,7 @@
   }
 
   function newGame() {
-    /* Show mode selection unless in room (room pre-sets mode) */
-    if (window.RoomBridge) {
-      startGame(state.mode);
-    } else {
-      showModeSelect();
-    }
+    startGame(state.mode || '2p');
   }
 
   /* ══════════════════════════════════════════════════════════════════
@@ -1364,15 +1357,9 @@
 
   (function init() {
     var wrap = document.getElementById('yn-board-wrap');
-    var sz   = wrap ? (wrap.clientWidth || 480) : 480;
+    var sz   = wrap ? (wrap.clientWidth || 380) : 380;
     window.GameResize(sz, sz);
-
-    /* Show mode select on first load (skipped in room mode) */
-    if (window.RoomBridge) {
-      startGame('2p');
-    } else {
-      showModeSelect();
-    }
+    startGame('2p');
   }());
 
 }());
