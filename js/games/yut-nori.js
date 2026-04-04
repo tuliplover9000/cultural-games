@@ -1272,14 +1272,9 @@
   ══════════════════════════════════════════════════════════════════ */
 
   window.GameResize = function (availW, availH) {
-    /* 2-col layout: controls sit beside the board, not below it.
-       Overhead is just header + page-nav + game-header + padding (~180px).
-       Mobile reverts to single col so needs more overhead. */
-    var mobile  = window.innerWidth < 620;
-    var overhead = mobile ? 300 : 180;
-    var maxSize  = mobile ? 360 : 500;
-    var maxH = Math.max(window.innerHeight - overhead, 220);
-    var size = Math.min(Math.max(availW || 300, 220), maxH, maxSize);
+    /* Match the board-wrap's CSS max-width (480px). availW is the wrap's
+       clientWidth which is already capped by CSS, so just use it directly. */
+    var size = Math.min(Math.max(availW || 300, 200), 480);
     canvas.width  = size;
     canvas.height = size;
     state.boardSize = size;
