@@ -562,11 +562,12 @@
     var w = canvas.width, h = canvas.height;
     ctx.clearRect(0, 0, w, h);
 
-    /* Board background — warm golden-brown for margin zones */
-    ctx.fillStyle = '#c8a97a';
+    /* Dark lacquer margin background */
+    ctx.fillStyle = '#1c0c04';
     ctx.fillRect(0, 0, w, h);
 
     drawBoardLines();
+    drawDecorations();
     drawNodes();
     drawOffBoard();
     drawOnBoard();
@@ -577,24 +578,98 @@
     if (state.phase === 'shortcut-choice') drawShortcutHints();
   }
 
+  /* ── Decorations (rosettes + direction labels) ───────────────── */
+
+  function drawDecorations() {
+    var w = canvas.width, h = canvas.height;
+    var r = Math.max(10, Math.round(state.padX * 0.55));
+
+    /* Lotus rosette in each canvas corner */
+    var corners = [[r * 1.6, r * 1.6], [w - r * 1.6, r * 1.6],
+                   [r * 1.6, h - r * 1.6], [w - r * 1.6, h - r * 1.6]];
+    var rColors = ['#C89B3C', '#c0392b', '#1a6b52', '#7a5a10'];
+    corners.forEach(function (c, ci) {
+      drawRosette(c[0], c[1], r, rColors[ci]);
+    });
+
+    /* Cardinal direction labels just outside the 4 corner nodes */
+    var dirs = [
+      { id: 0,  label: '남',  ox: 0,       oy: 1       },
+      { id: 5,  label: '동',  ox: 1,       oy: 0       },
+      { id: 10, label: '북',  ox: 0,       oy: -1      },
+      { id: 15, label: '서',  ox: -1,      oy: 0       },
+    ];
+    var cornerR = NODE_R * 2.0;
+    dirs.forEach(function (d) {
+      var pos  = npos(d.id);
+      var off  = cornerR * 1.55;
+      var tx   = pos.x + d.ox * off;
+      var ty   = pos.y + d.oy * off;
+      ctx.font = 'bold ' + Math.max(9, Math.round(NODE_R * 0.82)) + 'px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+      ctx.fillStyle   = '#C89B3C';
+      ctx.textAlign   = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(d.label, tx, ty);
+    });
+  }
+
+  function drawRosette(cx, cy, r, col) {
+    var n = 8;
+    ctx.globalAlpha = 0.50;
+    for (var i = 0; i < n; i++) {
+      var a  = (i / n) * Math.PI * 2;
+      var px = cx + Math.cos(a) * r * 0.55;
+      var py = cy + Math.sin(a) * r * 0.55;
+      ctx.beginPath();
+      ctx.arc(px, py, r * 0.36, 0, Math.PI * 2);
+      ctx.fillStyle = col;
+      ctx.fill();
+    }
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * 0.38, 0, Math.PI * 2);
+    ctx.fillStyle = col;
+    ctx.fill();
+    /* outer ring */
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * 0.92, 0, Math.PI * 2);
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
   /* ── Board lines ─────────────────────────────────────────────── */
 
   function drawBoardLines() {
     var i, p;
 
-    /* 1. Fill diamond interior with warm rice-paper */
+    /* 1. Fill diamond interior — aged hanji paper */
     ctx.beginPath();
     [0, 5, 10, 15].forEach(function (cid, idx) {
       var cp = npos(cid);
       idx === 0 ? ctx.moveTo(cp.x, cp.y) : ctx.lineTo(cp.x, cp.y);
     });
     ctx.closePath();
-    ctx.fillStyle = '#f5ecd5';
+    ctx.fillStyle = '#e8d8b0';
     ctx.fill();
 
-    /* 2. Thick shortcut track lanes (warm rose) */
-    var scLW = Math.max(7, Math.round(NODE_R * 0.82));
-    ctx.strokeStyle = '#e8c4b8';
+    /* 2. Subtle hanji texture — very faint diagonal lines */
+    ctx.save();
+    ctx.clip(); /* clip to diamond shape */
+    ctx.strokeStyle = 'rgba(160,120,60,0.07)';
+    ctx.lineWidth = 1;
+    var inn = state.boardSize - 2 * state.padX;
+    for (var d = -inn; d < inn * 2; d += Math.max(6, NODE_R * 0.55)) {
+      ctx.beginPath();
+      ctx.moveTo(state.padX + d, state.padY);
+      ctx.lineTo(state.padX + d + inn, state.padY + inn);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    /* 3. Thick shortcut track lanes — dancheong blue-green (청) */
+    var scLW = Math.max(8, Math.round(NODE_R * 0.90));
+    ctx.strokeStyle = '#5a9e80';
     ctx.lineWidth   = scLW;
     ctx.lineJoin    = 'round';
     ctx.lineCap     = 'round';
@@ -604,34 +679,34 @@
     strokePath([15, 26, 27, 22]);
     strokePath([22, 23, 28, 0]);
 
-    /* 3. Thick outer ring track lane (warm tan) */
+    /* 4. Thick outer ring track lane — royal gold (황) */
     ctx.beginPath();
     for (i = 0; i < 20; i++) {
       p = npos(i);
       i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
     }
     ctx.closePath();
-    ctx.strokeStyle = '#d4a97a';
-    ctx.lineWidth   = Math.max(9, Math.round(NODE_R * 0.95));
+    ctx.strokeStyle = '#C89B3C';
+    ctx.lineWidth   = Math.max(10, Math.round(NODE_R * 1.05));
     ctx.lineJoin    = 'round';
     ctx.stroke();
 
-    /* 4. Outer ring dark outline */
+    /* 5. Dark outline on outer ring */
     ctx.beginPath();
     for (i = 0; i < 20; i++) {
       p = npos(i);
       i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
     }
     ctx.closePath();
-    ctx.strokeStyle = '#7a3a10';
+    ctx.strokeStyle = '#5a2800';
     ctx.lineWidth   = 2;
     ctx.lineJoin    = 'round';
     ctx.setLineDash([]);
     ctx.stroke();
 
-    /* 5. Shortcut dashed dark outline */
-    ctx.setLineDash([Math.max(5, NODE_R * 0.55), Math.max(3, NODE_R * 0.35)]);
-    ctx.strokeStyle = '#a02020';
+    /* 6. Shortcut dark dashed outline — deep crimson */
+    ctx.setLineDash([Math.max(5, NODE_R * 0.55), Math.max(3, NODE_R * 0.38)]);
+    ctx.strokeStyle = '#1a4a36';
     ctx.lineWidth   = 1.5;
     ctx.lineCap     = 'round';
     strokePath([5,  20, 21, 22]);
@@ -661,10 +736,12 @@
       var isSC     = SC_CORNERS.indexOf(id) >= 0; // shortcut-entry corners (5/10/15)
       var r, fill, stroke;
 
-      if (id === 0)       { r = NODE_R * 2.0; fill = '#8B1a1a'; stroke = '#5a0000'; }
-      else if (isSC)      { r = NODE_R * 1.9; fill = '#c0392b'; stroke = '#7a0000'; }
-      else if (isCenter)  { r = NODE_R * 1.7; fill = '#6b3a1f'; stroke = '#3d1a00'; }
-      else                { r = NODE_R;       fill = '#8B4513'; stroke = '#4a200a'; }
+      if (id === 0)       { r = NODE_R * 2.0; fill = '#8B0018'; stroke = '#4a0010'; } /* 출발 — deep crimson */
+      else if (isSC)      { r = NODE_R * 1.9; fill = '#1a6b52'; stroke = '#0d3d2e'; } /* SC corners — dancheong teal */
+      else if (isCenter)  { r = NODE_R * 1.7; fill = '#7a5a10'; stroke = '#3d2a00'; } /* center — deep gold */
+      else if ([20,21,24,25,26,27].indexOf(id) >= 0) { r = NODE_R * 0.92; fill = '#1e7a5e'; stroke = '#0d3d2e'; } /* shortcut arms */
+      else if ([23,28].indexOf(id) >= 0)             { r = NODE_R * 0.92; fill = '#6b3010'; stroke = '#3a1800'; } /* exit path */
+      else                { r = NODE_R;       fill = '#7a3a10'; stroke = '#3d1a00'; } /* outer ring */
 
       /* Shortcut choice highlight */
       if (state.shortcutPending) {
@@ -721,12 +798,12 @@
         ctx.fillText('출발', pos.x, pos.y);
       } else if (isCenter) {
         ctx.font = 'bold ' + Math.max(9, Math.floor(r * 0.80)) + 'px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
-        ctx.fillStyle = '#f5deb3';
+        ctx.fillStyle = '#f5d060';
         ctx.fillText('中', pos.x, pos.y);
       } else if (isSC) {
-        /* Small star to signal shortcut entry */
-        ctx.font = Math.max(7, Math.floor(r * 0.55)) + 'px sans-serif';
-        ctx.fillStyle = 'rgba(255,255,220,0.80)';
+        /* Gold star — shortcut entry signal */
+        ctx.font = 'bold ' + Math.max(7, Math.floor(r * 0.52)) + 'px sans-serif';
+        ctx.fillStyle = '#f5d060';
         ctx.fillText('★', pos.x, pos.y);
       }
     }
@@ -836,9 +913,9 @@
       var col  = TEAM_COLOR[team];
       var dark = TEAM_DARK[team];
 
-      /* Zone label (always visible) */
-      ctx.font = 'bold ' + Math.max(8, Math.floor(r * 0.80)) + 'px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
-      ctx.fillStyle = col + 'cc';
+      /* Zone label (always visible) — gold on dark lacquer */
+      ctx.font = 'bold ' + Math.max(8, Math.floor(r * 0.85)) + 'px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+      ctx.fillStyle = '#C89B3C';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(team === 'a' ? '홍' : '청', base.x, base.y - r * 2.4);
@@ -885,16 +962,22 @@
       var r    = NODE_R * 0.65;
 
       fin.forEach(function (p, i) {
-        var ox = base.x + (i - 1.5) * r * 2.3;
+        var ox = base.x + (i - 1.5) * r * 2.5;
+        /* Shadow */
+        ctx.beginPath();
+        ctx.arc(ox + r * 0.12, base.y + r * 0.12, r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0,0,0,0.35)';
+        ctx.fill();
+        /* Body */
         ctx.beginPath();
         ctx.arc(ox, base.y, r, 0, Math.PI * 2);
         ctx.fillStyle = TEAM_COLOR[team];
         ctx.fill();
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#C89B3C';
+        ctx.lineWidth = 1.5;
         ctx.stroke();
-        ctx.font = Math.max(6, Math.floor(r * 0.9)) + 'px sans-serif';
-        ctx.fillStyle = '#fff';
+        ctx.font = 'bold ' + Math.max(6, Math.floor(r * 0.9)) + 'px sans-serif';
+        ctx.fillStyle = '#f5d060';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('\u2714', ox, base.y);
@@ -1189,10 +1272,11 @@
   ══════════════════════════════════════════════════════════════════ */
 
   window.GameResize = function (availW, availH) {
-    /* Use the actual container width — no artificial cap */
-    var size = Math.max(availW || 360, 200);
+    /* Cap so board never causes vertical scrolling */
+    var maxH = Math.round(window.innerHeight * 0.62);
+    var size = Math.min(Math.max(availW || 360, 200), maxH, 560);
     canvas.width  = size;
-    canvas.height = size; /* square canvas — sticks live in corner margins */
+    canvas.height = size;
     state.boardSize = size;
     state.padX = state.padY = Math.round(size * 0.1);
     NODE_R = Math.max(9, Math.round(size * 0.038));
