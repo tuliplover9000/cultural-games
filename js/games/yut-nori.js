@@ -1272,14 +1272,16 @@
   ══════════════════════════════════════════════════════════════════ */
 
   window.GameResize = function (availW, availH) {
-    /* Cap so board never causes vertical scrolling */
-    var maxH = Math.round(window.innerHeight * 0.62);
-    var size = Math.min(Math.max(availW || 360, 200), maxH, 560);
+    /* Subtract header + HUD + controls + throw row + padding overhead (~290px)
+       so the canvas never pushes the page into scroll territory */
+    var uiOverhead = 290;
+    var maxByHeight = Math.max(window.innerHeight - uiOverhead, 240);
+    var size = Math.min(Math.max(availW || 320, 240), maxByHeight, 460);
     canvas.width  = size;
     canvas.height = size;
     state.boardSize = size;
     state.padX = state.padY = Math.round(size * 0.1);
-    NODE_R = Math.max(9, Math.round(size * 0.038));
+    NODE_R = Math.max(8, Math.round(size * 0.038));
     render();
   };
 
