@@ -1,71 +1,36 @@
 /* yut-nori.css — Yut Nori game styles */
 
 :root {
-  --yn-board-bg:      #fdf6e3;
-  --yn-node-outer:    #8B4513;
-  --yn-node-corner:   #c0392b;
-  --yn-team-a:        #c0392b;
-  --yn-team-b:        #1a3a6b;
-  --yn-stick-flat:    #f5deb3;
-  --yn-stick-round:   #5d4037;
-  --yn-path-line:     #8B4513;
-  --yn-shortcut-line: #c0392b;
-  --yn-highlight:     #f39c12;
+  --yn-team-a: #c0392b;
+  --yn-team-b: #1a3a6b;
 }
 
-/* ── Game container ─────────────────────────────────────────────────────── */
+/* ── Game container — 2-column: board left, panel right ─────────────────── */
 
 .yn-game-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-2);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto auto 1fr;
+  grid-template-areas:
+    "board hud"
+    "board throw"
+    "board pending"
+    "board controls";
+  column-gap: var(--space-3);
+  row-gap: var(--space-2);
+  align-items: start;
   padding: var(--space-3);
   background: var(--color-surface);
   border-radius: var(--radius-lg);
 }
 
-/* ── HUD ────────────────────────────────────────────────────────────────── */
-
-.yn-hud {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  max-width: 420px;
-  gap: var(--space-3);
-}
-
-.yn-team-label {
-  font-family: var(--font-body);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
-  color: #fff;
-}
-
-.yn-team-label--a {
-  background: var(--yn-team-a);
-}
-
-.yn-team-label--b {
-  background: var(--yn-team-b);
-}
-
-.yn-status {
-  font-family: var(--font-body);
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-  text-align: center;
-  flex: 1;
-}
-
 /* ── Board wrap ─────────────────────────────────────────────────────────── */
 
 .yn-board-wrap {
+  grid-area: board;
   position: relative;
   line-height: 0;
+  align-self: center;
 }
 
 #yn-canvas {
@@ -77,15 +42,47 @@
   box-shadow: 0 6px 24px rgba(0,0,0,0.55), 0 0 0 2px #C89B3C44;
 }
 
+/* ── HUD ────────────────────────────────────────────────────────────────── */
+
+.yn-hud {
+  grid-area: hud;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.yn-team-label {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  display: block;
+}
+
+.yn-team-label--a { background: var(--yn-team-a); }
+.yn-team-label--b { background: var(--yn-team-b); }
+
+.yn-status {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  text-align: left;
+  line-height: 1.4;
+}
+
 /* ── Throw result display ────────────────────────────────────────────────── */
 
 .yn-throw-result {
+  grid-area: throw;
   font-family: var(--font-display);
-  font-size: var(--text-lg);
+  font-size: var(--text-base);
   font-weight: 700;
   color: var(--color-text);
-  text-align: center;
-  min-height: 1.6em;
+  text-align: left;
+  min-height: 1.4em;
 }
 
 .yn-throw-result .yn-throw-ko {
@@ -95,11 +92,13 @@
 /* ── Pending moves queue ────────────────────────────────────────────────── */
 
 .yn-pending-moves {
+  grid-area: pending;
   display: flex;
   gap: var(--space-2);
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   flex-wrap: wrap;
+  min-height: 36px;
 }
 
 .yn-move-chip {
@@ -119,52 +118,25 @@
 /* ── Controls ─────────────────────────────────────────────────────────────── */
 
 .yn-controls {
+  grid-area: controls;
   display: flex;
-  gap: var(--space-3);
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: stretch;
   width: 100%;
-  max-width: 420px;
+  align-self: start;
 }
 
 #yn-throw-btn {
-  flex: 1;
-  min-width: 160px;
+  width: 100%;
   min-height: 44px;
   font-size: var(--text-base);
   font-weight: 600;
 }
 
 #yn-new-btn {
-  min-height: 44px;
-}
-
-/* ── Mode selection overlay ─────────────────────────────────────────────── */
-
-.yn-mode-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(253, 246, 227, 0.96);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-4);
-  border-radius: var(--radius-md);
-  z-index: 10;
-}
-
-.yn-mode-overlay h2 {
-  font-family: var(--font-display);
-  font-size: var(--text-xl);
-  color: var(--color-text);
-  margin: 0;
-}
-
-.yn-mode-buttons {
-  display: flex;
-  gap: var(--space-3);
+  width: 100%;
+  min-height: 38px;
 }
 
 /* ── Win overlay ─────────────────────────────────────────────────────────── */
@@ -182,38 +154,27 @@
   z-index: 20;
 }
 
-.yn-win-overlay h2 {
-  font-family: var(--font-display);
-  font-size: var(--text-2xl);
-  color: var(--color-accent-gold);
-  margin: 0;
-  text-align: center;
-}
+/* ── Mobile — revert to single column ───────────────────────────────────── */
 
-.yn-win-overlay p {
-  color: var(--color-text-inverse);
-  font-size: var(--text-base);
-  margin: 0;
-}
-
-.yn-win-buttons {
-  display: flex;
-  gap: var(--space-3);
-}
-
-/* ── Mobile ──────────────────────────────────────────────────────────────── */
-
-@media (max-width: 600px) {
+@media (max-width: 620px) {
   .yn-game-container {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "hud"
+      "board"
+      "throw"
+      "pending"
+      "controls";
+    align-items: center;
     padding: var(--space-2);
-    gap: var(--space-2);
   }
 
-  #yn-throw-btn {
-    width: 100%;
-  }
-
-  .yn-controls {
-    flex-direction: column;
-  }
+  .yn-board-wrap { justify-self: center; }
+  .yn-hud        { flex-direction: row; justify-content: space-between; align-items: center; }
+  .yn-status     { text-align: center; }
+  .yn-throw-result  { text-align: center; }
+  .yn-pending-moves { justify-content: center; }
+  .yn-controls   { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: center; }
+  #yn-throw-btn  { flex: 1; min-width: 140px; }
+  #yn-new-btn    { width: auto; }
 }

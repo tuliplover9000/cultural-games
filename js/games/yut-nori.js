@@ -1272,9 +1272,14 @@
   ══════════════════════════════════════════════════════════════════ */
 
   window.GameResize = function (availW, availH) {
-    /* Header ~64 + HUD ~44 + throw row ~32 + pending ~40 + controls ~56 + gaps ~40 = ~276px overhead */
-    var maxByHeight = Math.max(window.innerHeight - 276, 220);
-    var size = Math.min(Math.max(availW || 300, 220), maxByHeight, 420);
+    /* 2-col layout: controls sit beside the board, not below it.
+       Overhead is just header + page-nav + game-header + padding (~180px).
+       Mobile reverts to single col so needs more overhead. */
+    var mobile  = window.innerWidth < 620;
+    var overhead = mobile ? 300 : 180;
+    var maxSize  = mobile ? 360 : 500;
+    var maxH = Math.max(window.innerHeight - overhead, 220);
+    var size = Math.min(Math.max(availW || 300, 220), maxH, maxSize);
     canvas.width  = size;
     canvas.height = size;
     state.boardSize = size;
