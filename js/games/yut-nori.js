@@ -1321,9 +1321,9 @@
   ══════════════════════════════════════════════════════════════════ */
 
   window.GameResize = function (availW, availH) {
-    var size = Math.min(Math.max(availW || 300, 200), 480);
+    var size = Math.min(Math.max(availW || 300, 200), 580);
     canvas.width  = size;
-    canvas.height = Math.round(size * 1.30); /* extra strip at bottom for pieces + sticks */
+    canvas.height = Math.round(size * 1.22); /* extra strip at bottom for pieces + sticks */
     state.boardSize = size;
     state.padX = state.padY = Math.round(size * 0.10);
     NODE_R = Math.max(8, Math.round(size * 0.038));

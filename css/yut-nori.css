@@ -55,7 +55,7 @@
 
 .yn-board-wrap {
   width: 100%;
-  max-width: 480px;
+  max-width: 580px;
   margin-inline: auto;
   border-radius: var(--radius-lg);
   box-shadow: 0 6px 24px rgba(0,0,0,0.6), 0 0 0 2px rgba(200,155,60,0.3);
