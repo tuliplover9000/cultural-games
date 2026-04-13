@@ -370,19 +370,46 @@ body.bp-no-scroll { overflow: hidden; position: fixed; width: 100%; }
 /* ── TABLET (768px–1023px) ─────────────────────────────────────────────── */
 @media (max-width: 1023px) and (min-width: 768px) {
 
+  /* ── Blanket overflow guard: nothing may push past the viewport edge ──── */
+  html, body {
+    overflow-x: hidden;
+  }
+  .browse-page-wrapper,
+  #bp-browse-layout,
+  #bp-panel,
+  #bp-games-column {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
   #bp-browse-layout {
     grid-template-columns: 1fr 260px;
     gap: 16px;
+  }
+
+  /* Grid items default to min-width:auto which lets them blow past their track.
+     Force both to shrink properly. */
+  #bp-games-column {
+    min-width: 0;
+    overflow-x: hidden;
   }
 
   /* Override the min-width: 900px show rule — keep panel visible at 768–899px */
   #bp-panel {
     display: block;
     width: 260px;
+    max-width: 260px;  /* cap so it never exceeds its grid track */
+    min-width: 0;
+    overflow-x: hidden;
   }
 
   #bp-world-map { width: 100%; height: auto; }
   #bp-map-container { max-height: 120px; overflow: hidden; }
+
+  /* Dropdowns: reduce min-width so they wrap cleanly in the narrower games column */
+  .browse-select-wrap {
+    min-width: 120px;
+  }
 
   .bp-ctas { flex-direction: column; gap: 8px; }
   .bp-btn-primary,

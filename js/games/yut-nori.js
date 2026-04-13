@@ -652,9 +652,9 @@
 
   function drawBoardLines() {
     var i, p;
-    var lw = Math.max(12, Math.round(NODE_R * 1.35)); /* main track width */
+    var lw = Math.max(8, Math.round(NODE_R * 0.85));
 
-    /* 1. Fill diamond with warm board-surface gradient */
+    /* 1. Diamond fill — warm parchment gradient */
     ctx.beginPath();
     [0, 5, 10, 15].forEach(function (cid, idx) {
       var cp = npos(cid);
@@ -662,105 +662,41 @@
     });
     ctx.closePath();
     var ctr = npos(22);
-    var dg  = ctx.createRadialGradient(ctr.x, ctr.y, 0, ctr.x, ctr.y, state.boardSize * 0.55);
-    dg.addColorStop(0, '#f0e4c0');
-    dg.addColorStop(1, '#d8c090');
+    var dg  = ctx.createRadialGradient(ctr.x, ctr.y, 0, ctr.x, ctr.y, state.boardSize * 0.52);
+    dg.addColorStop(0, '#ede0bc');
+    dg.addColorStop(1, '#cdb87a');
     ctx.fillStyle = dg;
     ctx.fill();
+    /* thin border around diamond */
+    ctx.strokeStyle = 'rgba(90,40,0,0.4)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
 
-    /* 2. Hanji texture — faint diagonal lines clipped to diamond */
-    ctx.save();
-    ctx.beginPath();
-    [0, 5, 10, 15].forEach(function (cid, idx) {
-      var cp = npos(cid);
-      idx === 0 ? ctx.moveTo(cp.x, cp.y) : ctx.lineTo(cp.x, cp.y);
-    });
-    ctx.closePath();
-    ctx.clip();
-    ctx.strokeStyle = 'rgba(140,100,40,0.06)';
-    ctx.lineWidth   = 1;
-    var inn = state.boardSize - 2 * state.padX;
-    for (var d = -inn; d < inn * 2; d += Math.max(7, NODE_R * 0.6)) {
-      ctx.beginPath();
-      ctx.moveTo(state.padX + d, state.padY);
-      ctx.lineTo(state.padX + d + inn, state.padY + inn);
-      ctx.stroke();
-    }
-    ctx.restore();
-
-    /* 3. Shortcut lanes — shadow pass */
-    ctx.strokeStyle = 'rgba(0,0,0,0.35)';
-    ctx.lineWidth   = Math.round(lw * 0.75);
+    /* 2. Shortcut lanes — teal */
+    ctx.strokeStyle = '#2e7a5c';
+    ctx.lineWidth   = lw;
     ctx.lineJoin    = 'round';
     ctx.lineCap     = 'round';
     ctx.setLineDash([]);
-    [[ 5,20,21,22],[10,24,25,22],[15,26,27,22],[22,23,28,0]].forEach(function(ids) {
-      ctx.beginPath();
-      ids.forEach(function(id, j) { var q=npos(id); j?ctx.lineTo(q.x,q.y+2):ctx.moveTo(q.x,q.y+2); });
-      ctx.stroke();
-    });
+    [[ 5,20,21,22],[10,24,25,22],[15,26,27,22],[22,23,28,0]].forEach(function(ids) { strokePath(ids); });
 
-    /* 4. Shortcut lanes — teal fill */
-    ctx.strokeStyle = '#3d8c6a';
-    ctx.lineWidth   = Math.round(lw * 0.72);
-    [[ 5,20,21,22],[10,24,25,22],[15,26,27,22],[22,23,28,0]].forEach(function(ids) {
-      strokePath(ids);
-    });
-
-    /* 5. Shortcut lanes — top highlight */
-    ctx.strokeStyle = 'rgba(120,220,170,0.22)';
-    ctx.lineWidth   = Math.round(lw * 0.3);
-    [[ 5,20,21,22],[10,24,25,22],[15,26,27,22],[22,23,28,0]].forEach(function(ids) {
-      ctx.beginPath();
-      ids.forEach(function(id, j) { var q=npos(id); j?ctx.lineTo(q.x,q.y-1):ctx.moveTo(q.x,q.y-1); });
-      ctx.stroke();
-    });
-
-    /* 6. Outer ring — shadow pass */
-    ctx.strokeStyle = 'rgba(0,0,0,0.40)';
-    ctx.lineWidth   = lw;
-    ctx.lineJoin    = 'round';
-    ctx.lineCap     = 'butt';
-    ctx.setLineDash([]);
-    ctx.beginPath();
-    for (i = 0; i < 20; i++) { p = npos(i); i ? ctx.lineTo(p.x, p.y+2) : ctx.moveTo(p.x, p.y+2); }
-    ctx.closePath();
-    ctx.stroke();
-
-    /* 7. Outer ring — gold fill */
-    ctx.strokeStyle = '#B8882A';
-    ctx.lineWidth   = Math.round(lw * 0.88);
-    ctx.lineJoin    = 'round';
-    ctx.beginPath();
-    for (i = 0; i < 20; i++) { p = npos(i); i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); }
-    ctx.closePath();
-    ctx.stroke();
-
-    /* 8. Outer ring — top highlight (raised look) */
-    ctx.strokeStyle = 'rgba(255,220,100,0.28)';
-    ctx.lineWidth   = Math.round(lw * 0.32);
-    ctx.beginPath();
-    for (i = 0; i < 20; i++) { p = npos(i); i ? ctx.lineTo(p.x, p.y-1) : ctx.moveTo(p.x, p.y-1); }
-    ctx.closePath();
-    ctx.stroke();
-
-    /* 9. Outer ring dark edge */
-    ctx.strokeStyle = '#5a2800';
-    ctx.lineWidth   = 1.5;
-    ctx.setLineDash([]);
-    ctx.beginPath();
-    for (i = 0; i < 20; i++) { p = npos(i); i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); }
-    ctx.closePath();
-    ctx.stroke();
-
-    /* 10. Shortcut dashed dark edge */
-    ctx.setLineDash([Math.max(5, NODE_R * 0.5), Math.max(3, NODE_R * 0.35)]);
-    ctx.strokeStyle = '#1a4a36';
-    ctx.lineWidth   = 1.5;
+    /* Shortcut dashed overlay */
+    ctx.strokeStyle = 'rgba(0,0,0,0.18)';
+    ctx.lineWidth   = 1;
+    ctx.setLineDash([Math.max(4, NODE_R * 0.45), Math.max(3, NODE_R * 0.3)]);
     ctx.lineCap     = 'round';
     [[ 5,20,21,22],[10,24,25,22],[15,26,27,22],[22,23,28,0]].forEach(function(ids) { strokePath(ids); });
     ctx.setLineDash([]);
-    ctx.lineCap = 'butt';
+
+    /* 3. Outer ring — gold */
+    ctx.strokeStyle = '#a07020';
+    ctx.lineWidth   = lw;
+    ctx.lineJoin    = 'round';
+    ctx.lineCap     = 'butt';
+    ctx.beginPath();
+    for (i = 0; i < 20; i++) { p = npos(i); i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); }
+    ctx.closePath();
+    ctx.stroke();
   }
 
   function strokePath(ids) {
@@ -782,12 +718,12 @@
       var isSC     = SC_CORNERS.indexOf(id) >= 0; // shortcut-entry corners (5/10/15)
       var r, fill, stroke;
 
-      if (id === 0)       { r = NODE_R * 2.2; fill = '#8B0018'; stroke = '#4a0010'; } /* 출발 — deep crimson */
-      else if (isSC)      { r = NODE_R * 2.1; fill = '#1a6b52'; stroke = '#0d3d2e'; } /* SC corners — dancheong teal */
-      else if (isCenter)  { r = NODE_R * 1.9; fill = '#7a5a10'; stroke = '#3d2a00'; } /* center — deep gold */
-      else if ([20,21,24,25,26,27].indexOf(id) >= 0) { r = NODE_R * 1.1; fill = '#1e7a5e'; stroke = '#0d3d2e'; } /* shortcut arms */
-      else if ([23,28].indexOf(id) >= 0)             { r = NODE_R * 1.1; fill = '#6b3010'; stroke = '#3a1800'; } /* exit path */
-      else                { r = NODE_R * 1.2; fill = '#7a3a10'; stroke = '#3d1a00'; } /* outer ring */
+      if (id === 0)       { r = NODE_R * 1.45; fill = '#8B0018'; stroke = '#4a0010'; }
+      else if (isSC)      { r = NODE_R * 1.35; fill = '#1a6b52'; stroke = '#0d3d2e'; }
+      else if (isCenter)  { r = NODE_R * 1.35; fill = '#7a5a10'; stroke = '#3d2a00'; }
+      else if ([20,21,24,25,26,27].indexOf(id) >= 0) { r = NODE_R * 0.85; fill = '#1e7a5e'; stroke = '#0d3d2e'; }
+      else if ([23,28].indexOf(id) >= 0)             { r = NODE_R * 0.85; fill = '#6b3010'; stroke = '#3a1800'; }
+      else                { r = NODE_R;              fill = '#7a3a10'; stroke = '#3d1a00'; }
 
       /* Shortcut choice highlight */
       if (state.shortcutPending) {
@@ -897,7 +833,7 @@
     if (!pieces.length) return;
     var team     = pieces[0].team;
     var count    = pieces.length;
-    var r        = NODE_R * 1.45;
+    var r        = NODE_R * 1.20;
     var col      = TEAM_COLOR[team];
     var dark     = TEAM_DARK[team];
     var selected = state.selectedPieceId && pieces.some(function (p) { return p.id === state.selectedPieceId; });
@@ -1321,9 +1257,9 @@
   ══════════════════════════════════════════════════════════════════ */
 
   window.GameResize = function (availW, availH) {
-    var size = Math.min(Math.max(availW || 300, 200), 580);
+    var size = Math.min(Math.max(availW || 280, 200), 440);
     canvas.width  = size;
-    canvas.height = Math.round(size * 1.22); /* extra strip at bottom for pieces + sticks */
+    canvas.height = size + Math.round(size * 0.18); /* small strip for pieces + sticks */
     state.boardSize = size;
     state.padX = state.padY = Math.round(size * 0.10);
     NODE_R = Math.max(8, Math.round(size * 0.038));
