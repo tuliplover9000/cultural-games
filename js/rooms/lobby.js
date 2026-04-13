@@ -121,9 +121,10 @@
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   function esc(s) {
-    return String(s)
+    if (window.Sanitize) return Sanitize.text(s);
+    return String(s == null ? '' : s)
       .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
   }
 
   function fmtTime(ts) {

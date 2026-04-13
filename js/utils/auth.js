@@ -170,9 +170,10 @@
 
   /* ── HTML escape ── */
   function _esc(s) {
-    return String(s)
+    if (window.Sanitize) return Sanitize.text(s);
+    return String(s == null ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
   /* ── Path helpers ── */
@@ -349,7 +350,7 @@
   }
 
   async function signUp(username, email, password) {
-    username = (username || '').trim();
+    username = window.Sanitize ? Sanitize.username(username) : (username || '').trim();
     email    = (email    || '').trim().toLowerCase();
 
     if (username.length < 3)

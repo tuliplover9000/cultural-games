@@ -52,7 +52,8 @@
   }
 
   function setPlayerName(name) {
-    localStorage.setItem('cg_name', name.trim());
+    var safe = window.Sanitize ? Sanitize.username(name) : String(name || '').replace(/[^A-Za-z0-9_\- ]/g, '').trim().slice(0, 30);
+    localStorage.setItem('cg_name', safe);
   }
 
   // ── Join code generation ───────────────────────────────────────────────────
@@ -140,6 +141,10 @@
       var name    = getPlayerName();
       var max     = (opts && opts.maxPlayers) || 4;
       var preGame = (opts && opts.game) || null;
+      var rawRoomName = (opts && opts.roomName) || null;
+      var safeRoomName = rawRoomName
+        ? (window.Sanitize ? Sanitize.roomName(rawRoomName) : String(rawRoomName).replace(/[^A-Za-z0-9 \-_!?.,()]/g, '').trim().slice(0, 50)) || null
+        : null;
 
       var room = null;
       for (var i = 0; i < 8 && !room; i++) {
@@ -166,7 +171,7 @@
           expires_at:     new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
           is_public:    (opts && opts.is_public !== undefined) ? !!opts.is_public : true,
           game_name:    (opts && opts.gameName) || null,
-          room_name:    (opts && opts.roomName) || null,
+          room_name:    safeRoomName,
         }).select().single();
         if (!res.error) room = res.data;
       }
@@ -281,8 +286,10 @@
 
     sendChatMessage: async function (text) {
       if (!_room || !text || !text.trim()) return;
+      var safeText = window.Sanitize ? Sanitize.text(text.trim()) : String(text).trim().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+      if (!safeText) return;
       var msgs = (_room.chat_messages || []).slice(-199);
-      msgs.push({ pid: getPlayerId(), name: getPlayerName(), text: text.trim(), ts: Date.now() });
+      msgs.push({ pid: getPlayerId(), name: getPlayerName(), text: safeText, ts: Date.now() });
       await db().from('rooms').update({ chat_messages: msgs }).eq('id', _room.id);
     },
 
