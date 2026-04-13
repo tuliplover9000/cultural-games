@@ -15,6 +15,18 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://playculturalgames.com/pages/terms.html</loc>
+    <lastmod>2026-04-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://playculturalgames.com/pages/privacy.html</loc>
+    <lastmod>2026-04-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
     <loc>https://playculturalgames.com/pages/about.html</loc>
     <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
