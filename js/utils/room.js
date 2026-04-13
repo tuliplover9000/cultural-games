@@ -286,10 +286,8 @@
 
     sendChatMessage: async function (text) {
       if (!_room || !text || !text.trim()) return;
-      var safeText = window.Sanitize ? Sanitize.text(text.trim()) : String(text).trim().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-      if (!safeText) return;
       var msgs = (_room.chat_messages || []).slice(-199);
-      msgs.push({ pid: getPlayerId(), name: getPlayerName(), text: safeText, ts: Date.now() });
+      msgs.push({ pid: getPlayerId(), name: getPlayerName(), text: text.trim(), ts: Date.now() });
       await db().from('rooms').update({ chat_messages: msgs }).eq('id', _room.id);
     },
 
