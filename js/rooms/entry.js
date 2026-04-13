@@ -57,6 +57,17 @@
     elLoadingMsg.textContent = msg || 'Loading…';
   }
 
+  function showRateToast(msg) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:76px;left:50%;transform:translateX(-50%);'
+      + 'background:#1A0E06;color:#f5deb3;padding:8px 20px;border-radius:20px;'
+      + 'font-size:14px;font-weight:600;z-index:9999;pointer-events:none;'
+      + 'box-shadow:0 2px 12px rgba(0,0,0,0.4)';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 3500);
+  }
+
   function showLanding() {
     elLoading.hidden = true;
     elLanding.hidden = false;
@@ -114,6 +125,10 @@
 
   elCreateBtn.addEventListener('click', function () {
     clearError(elCreateError);
+    if (window.RateLimit && !RateLimit.check('room-create', 5, 600000)) {
+      showRateToast('Slow down! You can create up to 5 rooms every 10 minutes.');
+      return;
+    }
     requireName(function () {
       showLoading('Creating room…');
       var isPrivateCb = document.getElementById('rb-is-private');
@@ -139,6 +154,10 @@
     var code = elJoinCode.value.trim().toUpperCase();
     if (!code) { showError(elJoinError, 'Please enter a room code.'); return; }
     if (code.length !== 6) { showError(elJoinError, 'Room codes are 6 characters (e.g. BIRD42).'); return; }
+    if (window.RateLimit && !RateLimit.check('room-join', 10, 60000)) {
+      showError(elJoinError, 'Too many join attempts. Slow down and try again in a moment.');
+      return;
+    }
 
     requireName(function () {
       showLoading('Joining room…');

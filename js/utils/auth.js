@@ -609,6 +609,11 @@
       e.preventDefault();
       var errEl = document.getElementById('si-error');
       errEl.hidden = true;
+      if (window.RateLimit && !RateLimit.check('auth', 5, 60000)) {
+        errEl.textContent = 'Too many attempts. Please wait a moment and try again.';
+        errEl.hidden = false;
+        return;
+      }
       _setLoading('si-submit', true, 'Sign In');
       try {
         var result = await signIn(
@@ -634,6 +639,11 @@
       e.preventDefault();
       var errEl = document.getElementById('su-error');
       errEl.hidden = true;
+      if (window.RateLimit && !RateLimit.check('auth', 5, 60000)) {
+        errEl.textContent = 'Too many attempts. Please wait a moment and try again.';
+        errEl.hidden = false;
+        return;
+      }
       _setLoading('su-submit', true, 'Create Account');
       try {
         var result = await signUp(

@@ -132,6 +132,17 @@
     return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
   }
 
+  function showRateToast(msg) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:76px;left:50%;transform:translateX(-50%);'
+      + 'background:#1A0E06;color:#f5deb3;padding:8px 20px;border-radius:20px;'
+      + 'font-size:14px;font-weight:600;z-index:9999;pointer-events:none;'
+      + 'box-shadow:0 2px 12px rgba(0,0,0,0.4)';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 3500);
+  }
+
   function showError(msg) {
     elLoading.hidden = true;
     elErrorMsg.textContent = msg;
@@ -722,6 +733,10 @@
     e.preventDefault();
     var text = elChatInput.value.trim();
     if (!text) return;
+    if (window.RateLimit && !RateLimit.check('chat', 20, 60000)) {
+      showRateToast('Slow down! Max 20 messages per minute.');
+      return;
+    }
     elChatInput.value = '';
     Room.sendChatMessage(text);
   });
@@ -765,6 +780,10 @@
     elBetBtn.addEventListener('click', function() {
       var amount = parseInt(elBetInput.value, 10) || 0;
       if (amount < 0) return;
+      if (window.RateLimit && !RateLimit.check('bet', 10, 60000)) {
+        showRateToast('Slow down! Try again in a moment.');
+        return;
+      }
       var coins = window.Auth && Auth.getCoins ? Auth.getCoins() : 0;
       if (amount > coins) {
         elBetStatus.textContent = 'Not enough coins! (Balance: ' + coins.toLocaleString() + ')';
