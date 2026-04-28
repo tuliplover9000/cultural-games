@@ -598,7 +598,7 @@
    HERO — Homepage hero section
 ============================================================================= */
 .hero {
-  background: radial-gradient(ellipse at 68% 50%, #0d1f3c 0%, #111009 45%, #1a0e06 100%);
+  background: radial-gradient(ellipse at 68% 50%, #1a0e06 0%, #111009 45%, #1a0e06 100%);
   position: relative;
   overflow: hidden;
   display: flex;

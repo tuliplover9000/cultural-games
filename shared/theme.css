@@ -33,7 +33,7 @@
 /* ── Light-mode overrides for hero section (hardcoded dark gradient) ────────
    The hero background is not a CSS variable so we need explicit overrides.    */
 [data-theme="light"] .hero {
-  background: radial-gradient(ellipse at 68% 50%, #daeaf7 0%, #ede3cf 45%, #fbf5e6 100%);
+  background: radial-gradient(ellipse at 68% 50%, #f5dfc0 0%, #ede3cf 45%, #fbf5e6 100%);
 }
 [data-theme="light"] .hero__title        { color: var(--color-text); }
 [data-theme="light"] .hero__origin-story { color: rgba(26, 14, 6, 0.65); }
