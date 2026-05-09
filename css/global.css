@@ -11,27 +11,27 @@
   /* ── Color Palette ── */
 
   /* Backgrounds */
-  --color-bg:          #FFFF00;   /* warm parchment — page background */
+  --color-bg:          #FBF5E6;   /* warm parchment — page background */
   --color-surface:     #FFFFFF;   /* card / panel surfaces */
-  --color-surface-alt: #CCFF00;   /* slightly deeper warm — hover states, dividers */
+  --color-surface-alt: #F3EAD3;   /* slightly deeper warm — hover states, dividers */
 
   /* Primary (dark game-board tone) */
-  --color-primary:     #003300;   /* near-black walnut — headers, nav, footer */
+  --color-primary:     #1A0E06;   /* near-black walnut — headers, nav, footer */
 
   /* Accent palette — culturally inspired, no single culture */
-  --color-accent-red:  #39FF14;   /* deep festival red — primary CTA */
-  --color-accent-gold: #ADFF2F;   /* rich antique gold — logo, highlights */
-  --color-accent-teal: #00FF41;   /* jade/earthy teal — tags, secondary accent */
-  --color-accent-warm: #FFEA00;   /* terracotta orange — hover glows, badges */
+  --color-accent-red:  #B83232;   /* deep festival red — primary CTA */
+  --color-accent-gold: #C89B3C;   /* rich antique gold — logo, highlights */
+  --color-accent-teal: #2C7873;   /* jade/earthy teal — tags, secondary accent */
+  --color-accent-warm: #D4663A;   /* terracotta orange — hover glows, badges */
 
   /* Text */
-  --color-text:        #003300;   /* body text */
-  --color-text-muted:  #336600;   /* secondary / caption text */
+  --color-text:        #1A0E06;   /* body text */
+  --color-text-muted:  #6B5744;   /* secondary / caption text */
   --color-text-inverse: #FFFFFF;  /* text on dark backgrounds */
 
   /* Borders & Shadows */
-  --color-border:      #AAFF00;
-  --color-shadow:      rgba(0, 80, 0, 0.18);
+  --color-border:      #DDD0B5;
+  --color-shadow:      rgba(26, 14, 6, 0.14);
 
   /* ── Typography ── */
   --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
