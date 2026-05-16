@@ -503,12 +503,19 @@ body.bp-no-scroll { overflow: hidden; position: fixed; width: 100%; }
   .game-card img:not(.game-card__banner-icon),
   .game-card svg { max-width: 100%; height: auto; }
 
-  /* Banner icon — 80px, natural SVG colours + subtle shadow for legibility */
+  /* Banner icon — tilted and popping out of the card */
   .game-card .game-card__banner-icon {
-    width: 80px;
-    height: 80px;
-    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+    width: 120px;
+    height: 120px;
+    transform: rotate(-18deg) translateY(-10px);
+    filter: drop-shadow(4px 8px 12px rgba(0,0,0,0.45));
+    transition: transform 200ms ease;
     opacity: 1;
+  }
+
+  /* Tap feedback — icon pops further on press */
+  .game-card:active .game-card__banner-icon {
+    transform: rotate(-12deg) translateY(-14px) scale(1.08);
   }
 
   /* Overflow elimination */
