@@ -107,12 +107,11 @@
 
   // ── Mobile landscape canvas cap ──────────────────────────────────────────
   function getCanvasMaxDimensions() {
-    var navH = 56;
     var isMobLand = window.innerWidth <= 900 && window.innerHeight < window.innerWidth;
-    return {
-      maxW: window.innerWidth,
-      maxH: isMobLand ? window.innerHeight - navH : window.innerHeight
-    };
+    if (isMobLand) {
+      return { maxW: window.innerWidth - 16, maxH: window.innerHeight - 56 - 16 };
+    }
+    return { maxW: null, maxH: null };
   }
 
   // ── Canvas Layout Constants ────────────────────────────────────────────────
@@ -1570,14 +1569,18 @@
   function applyDPR() {
     var deviceDPR = Math.min(window.devicePixelRatio || 1, 3);
     var cap = getCanvasMaxDimensions();
-    // Scale BASE_W×BASE_H to fit within available space, then multiply by DPR
-    var displayScale = Math.min(1, cap.maxW / BASE_W, cap.maxH / BASE_H);
+    var displayScale = 1;
+    if (cap.maxW || cap.maxH) {
+      var scaleW = cap.maxW ? cap.maxW / BASE_W : 1;
+      var scaleH = cap.maxH ? cap.maxH / BASE_H : 1;
+      displayScale = Math.min(1, scaleW, scaleH);
+    }
     DPR = deviceDPR * displayScale;
     canvas.width  = Math.round(BASE_W * DPR);
     canvas.height = Math.round(BASE_H * DPR);
-    // Explicitly set CSS display size so layout height matches displayScale
-    canvas.style.width  = Math.round(BASE_W * displayScale) + 'px';
-    canvas.style.height = Math.round(BASE_H * displayScale) + 'px';
+    // Explicitly set CSS display size so layout height is capped (landscape)
+    canvas.style.width  = displayScale < 1 ? Math.round(BASE_W * displayScale) + 'px' : '';
+    canvas.style.height = displayScale < 1 ? Math.round(BASE_H * displayScale) + 'px' : '';
     diamondPattern = null;  // recreate at new scale
   }
 

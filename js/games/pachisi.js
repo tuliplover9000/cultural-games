@@ -136,18 +136,19 @@
   var CANVAS_SIZE = 630;
 
   function getCanvasMaxDimensions() {
-    var navH = 56;
     var isMobLand = window.innerWidth <= 900 && window.innerHeight < window.innerWidth;
-    return {
-      maxW: window.innerWidth,
-      maxH: isMobLand ? window.innerHeight - navH : window.innerHeight
-    };
+    if (isMobLand) {
+      return { maxW: window.innerWidth - 16, maxH: window.innerHeight - 56 - 16 };
+    }
+    return { maxW: null, maxH: null };
   }
 
   function recalcSize() {
     var cap = getCanvasMaxDimensions();
-    // Board is square — fit within whichever dimension is tighter
-    var avail = Math.min(window.innerWidth - 32, 630, cap.maxH, cap.maxW);
+    var avail = Math.min(window.innerWidth - 32, 630);
+    // Board is square — in landscape cap by whichever dimension is tighter
+    if (cap.maxH) avail = Math.min(avail, cap.maxH);
+    if (cap.maxW) avail = Math.min(avail, cap.maxW);
     CELL = Math.floor(avail / GRID);
     CANVAS_SIZE = CELL * GRID;
     if (canvas) {

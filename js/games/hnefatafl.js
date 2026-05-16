@@ -51,12 +51,11 @@
 
   // ── Mobile landscape canvas cap ──────────────────────────────────────────
   function getCanvasMaxDimensions() {
-    var navH = 56;
     var isMobLand = window.innerWidth <= 900 && window.innerHeight < window.innerWidth;
-    return {
-      maxW: window.innerWidth,
-      maxH: isMobLand ? window.innerHeight - navH : window.innerHeight
-    };
+    if (isMobLand) {
+      return { maxW: window.innerWidth - 16, maxH: window.innerHeight - 56 - 16 };
+    }
+    return { maxW: null, maxH: null };
   }
 
   // ── Canvas / sizing ───────────────────────────────────────────────────────
@@ -744,9 +743,9 @@
   // ── Canvas resize ─────────────────────────────────────────────────────────
   function resizeCanvas() {
     var cap = getCanvasMaxDimensions();
-    var maxW = Math.min(window.innerWidth - 32, 600, cap.maxW - 16);
-    // Board is square — constrain by whichever dimension is tighter
-    var maxFit = Math.min(maxW, cap.maxH);
+    var maxW = Math.min(window.innerWidth - 32, 600);
+    // Board is square — in landscape cap by height too
+    var maxFit = (cap.maxH) ? Math.min(maxW, cap.maxH) : maxW;
     CELL = Math.floor((Math.max(maxFit, 220) - PAD * 2) / SIZE);
   }
 

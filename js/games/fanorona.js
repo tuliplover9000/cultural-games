@@ -12,12 +12,11 @@
 
   // ── Mobile landscape canvas cap ──────────────────────────────────────────
   function getCanvasMaxDimensions() {
-    var navH = 56;
     var isMobLand = window.innerWidth <= 900 && window.innerHeight < window.innerWidth;
-    return {
-      maxW: window.innerWidth,
-      maxH: isMobLand ? window.innerHeight - navH : window.innerHeight
-    };
+    if (isMobLand) {
+      return { maxW: window.innerWidth - 16, maxH: window.innerHeight - 56 - 16 };
+    }
+    return { maxW: null, maxH: null };
   }
 
   // ── Board helpers ────────────────────────────────────────────────────────
@@ -698,12 +697,13 @@
     var wrap = document.getElementById('fn-board-wrap');
     if (!wrap) return;
     var cap = getCanvasMaxDimensions();
-    var w = Math.min(wrap.clientWidth, cap.maxW);
+    var w = wrap.clientWidth;
     var h = Math.round(w * (ROWS - 1) / (COLS - 1)) + PAD * 2;
-    if (h > cap.maxH) {
+    if (cap.maxH && h > cap.maxH) {
       h = cap.maxH;
       w = Math.round((h - PAD * 2) * (COLS - 1) / (ROWS - 1));
     }
+    if (cap.maxW) w = Math.min(w, cap.maxW);
     cnv.width  = Math.max(w, 100);
     cnv.height = Math.max(h, 100);
     render();

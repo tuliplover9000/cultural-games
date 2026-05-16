@@ -7,12 +7,11 @@
 
   // ── Mobile landscape canvas cap ──────────────────────────────────────────
   function getCanvasMaxDimensions() {
-    var navH = 56;
     var isMobLand = window.innerWidth <= 900 && window.innerHeight < window.innerWidth;
-    return {
-      maxW: window.innerWidth,
-      maxH: isMobLand ? window.innerHeight - navH : window.innerHeight
-    };
+    if (isMobLand) {
+      return { maxW: window.innerWidth - 16, maxH: window.innerHeight - 56 - 16 };
+    }
+    return { maxW: null, maxH: null };
   }
 
   // ── Constants ─────────────────────────────────────────────────────────────
@@ -828,9 +827,13 @@
     var rawW = cfg.cols * cfg.cellSize + BORDER_W * 2;
     var rawH = cfg.rows * cfg.cellSize + BORDER_W * 2;
     var cap  = getCanvasMaxDimensions();
-    var scale = Math.min(1, cap.maxW / rawW, cap.maxH / rawH);
-    if (scale < 1) {
-      cfg.cellSize = Math.max(8, Math.floor(cfg.cellSize * scale));
+    if (cap.maxW || cap.maxH) {
+      var scaleW = cap.maxW ? cap.maxW / rawW : 1;
+      var scaleH = cap.maxH ? cap.maxH / rawH : 1;
+      var scale  = Math.min(1, scaleW, scaleH);
+      if (scale < 1) {
+        cfg.cellSize = Math.max(8, Math.floor(cfg.cellSize * scale));
+      }
     }
     canvas.width  = cfg.cols * cfg.cellSize + BORDER_W * 2;
     canvas.height = cfg.rows * cfg.cellSize + BORDER_W * 2;
