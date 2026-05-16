@@ -68,15 +68,17 @@
   color: var(--color-accent-gold, #C89B3C);
 }
 
-/* ── Mobile landscape: constrain canvas to viewport height ──────────────
-   JS resize functions handle actual canvas buffer dimensions.
-   CSS here is belt-and-suspenders only — no layout restructuring.
+/* ── Mobile landscape: CSS transform scale ──────────────────────────────
+   shared/mobile-scale.js measures #game-container's natural height and
+   sets --game-landscape-scale on <html> so the whole container zooms out
+   to fit within the viewport height without scrolling.
+   width: calc(100% / scale) compensates so the element still fills the
+   layout width after the scale shrinks it.
    ─────────────────────────────────────────────────────────────────────── */
 @media (max-width: 900px) and (orientation: landscape) {
-  canvas {
-    max-width: 100vw;
-    max-height: calc(100dvh - 56px);
-    display: block;
-    margin: 0 auto;
+  #game-container {
+    transform-origin: top center;
+    transform: scale(var(--game-landscape-scale, 1));
+    width: calc(100% / var(--game-landscape-scale, 1));
   }
 }
