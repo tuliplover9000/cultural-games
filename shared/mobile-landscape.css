@@ -124,3 +124,32 @@
   60%  { transform: rotate(90deg); }
   100% { transform: rotate(0deg); }
 }
+
+/* ── Mobile zoom button ──────────────────────────────────────────────────
+   Injected by shared/mobile-zoom.js. Floats bottom-right, mobile only.
+   ─────────────────────────────────────────────────────────────────────── */
+#mobile-zoom-btn {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  #mobile-zoom-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    position: fixed;
+    bottom: 80px;
+    right: 16px;
+    z-index: 1000;
+    background: #2A1F14;
+    color: #c9a84c;
+    border: 1px solid #c9a84c;
+    border-radius: 20px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    min-height: 0;
+  }
+}
