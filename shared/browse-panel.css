@@ -467,17 +467,19 @@ body.bp-no-scroll { overflow: hidden; position: fixed; width: 100%; }
     min-height: 44px;
   }
 
-  /* Game grid — single column, no overflow */
+  /* Game grid — 2-column app-store layout */
   .games-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
     touch-action: pan-y;
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Game card — touch-friendly */
+  /* Game card — touch-friendly, fixed height for app-store look */
   .game-card {
     touch-action: manipulation;
+    height: 220px;
+    aspect-ratio: unset;
   }
 
   .game-card__name { font-size: 18px; }
@@ -497,9 +499,17 @@ body.bp-no-scroll { overflow: hidden; position: fixed; width: 100%; }
     margin-top: 6px;
   }
 
-  /* Images/icons — no overflow */
-  .game-card img,
+  /* Images/icons — no overflow (excludes the banner icon which has its own size) */
+  .game-card img:not(.game-card__banner-icon),
   .game-card svg { max-width: 100%; height: auto; }
+
+  /* Banner icon — 80px white, defined here (last file) to win the cascade */
+  .game-card .game-card__banner-icon {
+    width: 80px;
+    height: 80px;
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
+  }
 
   /* Overflow elimination */
   #bp-games-column,

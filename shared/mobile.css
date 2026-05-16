@@ -581,31 +581,30 @@ canvas {
 @media (max-width: 767px) {
 
   /* ── 2-column app-store grid ─────────────────────────────── */
-  /* !important needed: browse-panel.css loads after mobile.css and sets 1fr
-     at the same specificity inside the same max-width: 767px query.        */
+  /* Source fix is in browse-panel.css (last loaded) — this rule reinforces it */
   .games-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
     padding: 12px;
   }
 
-  /* ── Card base: tall coloured tile ──────────────────────── */
+  /* ── Card base: coloured tile with fixed height ───────────── */
+  /* height and aspect-ratio are also set in browse-panel.css (last loaded)
+     to guarantee they win. Rules here cover the card's visual styling.     */
   .game-card {
     position: relative;
     overflow: hidden;
     border-radius: 16px;
-    aspect-ratio: 1 / 1.2;
+    aspect-ratio: unset;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    height: 220px;
-    aspect-ratio: unset;
     box-shadow: 0 4px 16px rgba(0,0,0,0.18);
     background: none;
     border: none;
-    /* Suppress desktop hover lift */
+    /* Suppress desktop 3D hover lift on mobile */
     transform: none !important;
   }
   .game-card:hover {
@@ -620,16 +619,6 @@ canvas {
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  /* ── Large white icon centred in card ────────────────────── */
-  /* Use .game-card .game-card__banner-icon (specificity 0,2,0) to beat
-     browse-panel.css's .game-card img (0,1,1) which sets height: auto.   */
-  .game-card .game-card__banner-icon {
-    width: 80px;
-    height: 80px;
-    filter: brightness(0) invert(1);
-    opacity: 0.9;
   }
 
   /* ── Dark gradient behind game name ──────────────────────── */
