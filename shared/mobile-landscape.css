@@ -76,9 +76,14 @@
    layout width after the scale shrinks it.
    ─────────────────────────────────────────────────────────────────────── */
 @media (max-width: 900px) and (orientation: landscape) {
+  body {
+    overflow-x: hidden;
+  }
+
   #game-container {
-    transform-origin: top center;
+    transform-origin: top left;
     transform: scale(var(--game-landscape-scale, 1));
-    width: calc(100% / var(--game-landscape-scale, 1));
+    width: 100vw;
+    overflow: hidden;
   }
 }

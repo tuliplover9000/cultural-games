@@ -22,16 +22,20 @@
     var container = document.getElementById('game-container');
     if (!container) return;
 
-    var nav = document.querySelector('.site-nav, nav, header');
+    var nav = document.querySelector('nav, header, .site-nav, .main-nav');
     var navHeight = nav ? nav.offsetHeight : 56;
     var availableH = window.innerHeight - navHeight;
+    var availableW = window.innerWidth;
 
     var naturalH = container.scrollHeight;
-    if (naturalH <= availableH) return; // already fits
+    var naturalW = container.scrollWidth;
 
-    var scale = availableH / naturalH;
-    var clamped = Math.max(0.4, Math.min(1, scale));
-    document.documentElement.style.setProperty('--game-landscape-scale', clamped);
+    if (naturalH <= availableH && naturalW <= availableW) return; // already fits
+
+    var scaleH = availableH / naturalH;
+    var scaleW = availableW / naturalW;
+    var scale = Math.max(0.4, Math.min(1, Math.min(scaleH, scaleW)));
+    document.documentElement.style.setProperty('--game-landscape-scale', scale);
   }
 
   window.addEventListener('orientationchange', function () {
