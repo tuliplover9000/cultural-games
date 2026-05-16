@@ -604,14 +604,32 @@ canvas {
     box-shadow: 0 4px 16px rgba(0,0,0,0.18);
     background: none;
     border: none;
+    isolation: isolate;
     /* Suppress desktop 3D hover lift on mobile */
     transform: none !important;
+  }
+
+  /* ── Diagonal light plane — faceted depth effect ─────────── */
+  /* z-index: 0 — lowest layer, sits beneath everything         */
+  .game-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: -10%;
+    right: -10%;
+    height: 45%;
+    background: rgba(255, 255, 255, 0.07);
+    transform: skewY(-8deg) translateY(20%);
+    z-index: 0;
+    pointer-events: none;
+    border-radius: 0 0 16px 16px;
   }
   .game-card:hover {
     box-shadow: 0 4px 16px rgba(0,0,0,0.18);
   }
 
   /* ── Banner fills the entire card (override desktop 140px height) ── */
+  /* z-index: 2 — icon sits above the dark gradient overlay (::after z-index:1) */
   .game-card__banner {
     position: absolute;
     inset: 0;
@@ -619,9 +637,11 @@ canvas {
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 2;
   }
 
   /* ── Dark gradient behind game name ──────────────────────── */
+  /* z-index: 1 — above diagonal slash (::before z-index:0), below icon */
   .game-card::after {
     content: '';
     position: absolute;
@@ -632,10 +652,11 @@ canvas {
     background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.65));
     border-radius: 0 0 16px 16px;
     pointer-events: none;
-    z-index: 0;
+    z-index: 1;
   }
 
   /* ── Game name pinned to bottom-left of card ─────────────── */
+  /* z-index: 3 — above gradient overlay */
   .game-card__name {
     position: absolute;
     bottom: 10px;
@@ -644,7 +665,7 @@ canvas {
     color: #fff;
     font-size: 15px;
     font-weight: 800;
-    z-index: 1;
+    z-index: 3;
     margin: 0;
     line-height: 1.2;
   }
@@ -663,10 +684,13 @@ canvas {
   }
 
   /* ── Badge stickers (Most Popular / New) ─────────────────── */
+  /* z-index: 4 — topmost layer, above title text              */
+  /* top: 12px — moved to top-left so it doesn't cover the title */
   .yn-badge-popular,
   .yn-badge-new {
     position: absolute;
-    bottom: 40px;
+    top: 12px;
+    bottom: unset;
     left: -4px;
     padding: 4px 10px;
     border-radius: 6px;
@@ -675,7 +699,7 @@ canvas {
     color: #fff;
     text-transform: uppercase;
     transform: rotate(-6deg);
-    z-index: 2;
+    z-index: 4;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   }
   .yn-badge-popular { background: #f39c12; }
