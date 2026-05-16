@@ -292,7 +292,13 @@
       }
     },
 
-    /* ── Mobile bottom sheet ─────────────────────────────────────────── */
+    /* ── Mobile bottom sheet + hold-to-navigate ─────────────────────── */
+    /*
+     * ≤ 767px  — hold-to-navigate: press 600ms to go to game page.
+     *            Short tap does nothing. No sheet.
+     * 768–899px — original sheet behaviour on short tap.
+     * ≥ 900px  — desktop panel (handled by bindCardHovers).
+     */
     bindMobileSheetTriggers: function () {
       var self = this;
       var wrappers = document.querySelectorAll('.game-card-wrapper[data-game-key]');
@@ -301,18 +307,47 @@
           var key  = wrapper.getAttribute('data-game-key');
           var game = (window.GAMES_DATA || []).filter(function (g) { return g.key === key; })[0];
           if (!game) return;
+
+          var card        = wrapper.querySelector('.game-card');
+          var holdTimer   = null;
           var _touchStartY = 0;
           var _touchStartT = 0;
+
+          function cancelHold() {
+            if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+            if (card) card.classList.remove('bp-holding');
+          }
+
           wrapper.addEventListener('touchstart', function (e) {
             _touchStartY = e.changedTouches[0].clientY;
             _touchStartT = Date.now();
+
+            /* Hold-to-navigate for small mobile only */
+            if (window.innerWidth <= 767) {
+              if (card) card.classList.add('bp-holding');
+              holdTimer = setTimeout(function () {
+                card.classList.remove('bp-holding');
+                if (game.path) window.location.href = game.path;
+              }, 600);
+            }
           }, { passive: true });
+
+          /* Cancel hold if finger moves (scroll gesture) */
+          wrapper.addEventListener('touchmove', function () {
+            cancelHold();
+          }, { passive: true });
+
           wrapper.addEventListener('touchend', function (e) {
-            if (!self.isMobile) return;
-            if (e.target.closest('a, button')) return; // let play-button navigate normally
+            /* Always cancel hold on release */
+            cancelHold();
+
+            /* Sheet trigger: tablet widths 768–899px only */
+            if (!self.isMobile) return;            /* ≥ 900px desktop — skip */
+            if (window.innerWidth <= 767) return;  /* ≤ 767px — hold-to-nav, skip */
+            if (e.target.closest('a, button')) return;
             var deltaY  = Math.abs(e.changedTouches[0].clientY - _touchStartY);
             var elapsed = Date.now() - _touchStartT;
-            if (deltaY >= 10 || elapsed >= 300) return; // scroll gesture — ignore
+            if (deltaY >= 10 || elapsed >= 300) return; /* scroll — ignore */
             e.preventDefault();
             self.showSheet(game);
           });
