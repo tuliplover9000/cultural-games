@@ -5,15 +5,6 @@
 (function () {
   'use strict';
 
-  // ── Mobile landscape canvas cap ──────────────────────────────────────────
-  function getCanvasMaxDimensions() {
-    var isMobLand = window.innerWidth <= 900 && window.innerHeight < window.innerWidth;
-    if (isMobLand) {
-      return { maxW: window.innerWidth - 16, maxH: window.innerHeight - 56 - 16 };
-    }
-    return { maxW: null, maxH: null };
-  }
-
   // ── Constants ─────────────────────────────────────────────────────────────
 
   var BOARD_CONFIGS = {
@@ -824,17 +815,6 @@
     ctx = canvas.getContext('2d');
 
     var cfg = state.boardConfig;
-    var rawW = cfg.cols * cfg.cellSize + BORDER_W * 2;
-    var rawH = cfg.rows * cfg.cellSize + BORDER_W * 2;
-    var cap  = getCanvasMaxDimensions();
-    if (cap.maxW || cap.maxH) {
-      var scaleW = cap.maxW ? cap.maxW / rawW : 1;
-      var scaleH = cap.maxH ? cap.maxH / rawH : 1;
-      var scale  = Math.min(1, scaleW, scaleH);
-      if (scale < 1) {
-        cfg.cellSize = Math.max(8, Math.floor(cfg.cellSize * scale));
-      }
-    }
     canvas.width  = cfg.cols * cfg.cellSize + BORDER_W * 2;
     canvas.height = cfg.rows * cfg.cellSize + BORDER_W * 2;
     canvas.style.maxWidth = '100%';
@@ -975,7 +955,6 @@
     window.addEventListener('resize', function () {
       updateLandscapeHint();
     });
-    window.addEventListener('orientationchange', function () { setTimeout(updateLandscapeHint, 200); });
   }
 
   // ── Boot ───────────────────────────────────────────────────────────────────

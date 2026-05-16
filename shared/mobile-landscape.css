@@ -68,15 +68,59 @@
   color: var(--color-accent-gold, #C89B3C);
 }
 
-/* ── Mobile landscape: CSS transform scale ──────────────────────────────
-   shared/mobile-scale.js measures #game-container's natural height and
-   sets --game-landscape-scale on <html> so the whole container zooms out
-   to fit within the viewport height without scrolling.
-   width: calc(100% / scale) compensates so the element still fills the
-   layout width after the scale shrinks it.
+/* ── Portrait mobile rotate prompt ──────────────────────────────────────
+   #rotate-prompt is injected into every game page HTML.
+   It covers the screen in portrait on small devices, prompting the user
+   to rotate. Disappears the moment landscape is detected.
    ─────────────────────────────────────────────────────────────────────── */
-@media (max-width: 900px) and (orientation: landscape) {
-  body {
-    overflow-x: hidden;
+#rotate-prompt {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #2A1F14;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  text-align: center;
+  padding: 40px;
+}
+
+@media (max-width: 900px) and (orientation: portrait) {
+  #rotate-prompt {
+    display: flex;
   }
+}
+
+@media (min-width: 901px), (orientation: landscape) {
+  #rotate-prompt {
+    display: none;
+  }
+}
+
+#rotate-prompt .rotate-icon {
+  width: 64px;
+  height: 64px;
+  animation: rotate-hint 1.5s ease-in-out infinite;
+}
+
+#rotate-prompt p {
+  color: #c9a84c;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+}
+
+#rotate-prompt span {
+  color: #888;
+  font-size: 14px;
+}
+
+@keyframes rotate-hint {
+  0%   { transform: rotate(0deg); }
+  40%  { transform: rotate(90deg); }
+  60%  { transform: rotate(90deg); }
+  100% { transform: rotate(0deg); }
 }

@@ -1345,23 +1345,4 @@
     startGame('2p');
   }());
 
-  /* Resize / orientation handler (fullscreen uses fs-enter/fs-exit events above) */
-  function getCanvasMaxDimensions() {
-    var isMobLand = window.innerWidth <= 900 && window.innerHeight < window.innerWidth;
-    if (isMobLand) {
-      return { maxW: window.innerWidth - 16, maxH: window.innerHeight - 56 - 16 };
-    }
-    return { maxW: null, maxH: null };
-  }
-  window.addEventListener('resize', function () {
-    var wrap = document.getElementById('yn-board-wrap');
-    var cap  = getCanvasMaxDimensions();
-    var sz   = wrap ? (wrap.clientWidth || window.innerWidth - 32) : (window.innerWidth - 32);
-    if (cap.maxH) sz = Math.min(sz, cap.maxH);
-    window.GameResize(sz, sz);
-  });
-  window.addEventListener('orientationchange', function () {
-    setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 200);
-  });
-
 }());

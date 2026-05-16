@@ -10,15 +10,6 @@
   var EMPTY = 0, BLACK = 1, WHITE = 2;
   var PAD = 44; // canvas padding to first intersection
 
-  // ── Mobile landscape canvas cap ──────────────────────────────────────────
-  function getCanvasMaxDimensions() {
-    var isMobLand = window.innerWidth <= 900 && window.innerHeight < window.innerWidth;
-    if (isMobLand) {
-      return { maxW: window.innerWidth - 16, maxH: window.innerHeight - 56 - 16 };
-    }
-    return { maxW: null, maxH: null };
-  }
-
   // ── Board helpers ────────────────────────────────────────────────────────
   function idx(c, r)  { return r * COLS + c; }
   function col(i)     { return i % COLS; }
@@ -696,16 +687,9 @@
   function resizeCanvas() {
     var wrap = document.getElementById('fn-board-wrap');
     if (!wrap) return;
-    var cap = getCanvasMaxDimensions();
     var w = wrap.clientWidth;
-    var h = Math.round(w * (ROWS - 1) / (COLS - 1)) + PAD * 2;
-    if (cap.maxH && h > cap.maxH) {
-      h = cap.maxH;
-      w = Math.round((h - PAD * 2) * (COLS - 1) / (ROWS - 1));
-    }
-    if (cap.maxW) w = Math.min(w, cap.maxW);
-    cnv.width  = Math.max(w, 100);
-    cnv.height = Math.max(h, 100);
+    cnv.width  = w;
+    cnv.height = Math.round(w * (ROWS - 1) / (COLS - 1)) + PAD * 2;
     render();
   }
 
@@ -809,7 +793,6 @@
     }
 
     window.addEventListener('resize', resizeCanvas);
-    window.addEventListener('orientationchange', function () { setTimeout(resizeCanvas, 200); });
     state = freshState();
     resizeCanvas();
     updateScore();

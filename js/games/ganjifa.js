@@ -105,15 +105,6 @@
     return bestSeat;
   }
 
-  // ── Mobile landscape canvas cap ──────────────────────────────────────────
-  function getCanvasMaxDimensions() {
-    var isMobLand = window.innerWidth <= 900 && window.innerHeight < window.innerWidth;
-    if (isMobLand) {
-      return { maxW: window.innerWidth - 16, maxH: window.innerHeight - 56 - 16 };
-    }
-    return { maxW: null, maxH: null };
-  }
-
   // ── Canvas Layout Constants ────────────────────────────────────────────────
 
   var BASE_W  = 900;
@@ -1567,20 +1558,9 @@
   // ── Resize ─────────────────────────────────────────────────────────────────
 
   function applyDPR() {
-    var deviceDPR = Math.min(window.devicePixelRatio || 1, 3);
-    var cap = getCanvasMaxDimensions();
-    var displayScale = 1;
-    if (cap.maxW || cap.maxH) {
-      var scaleW = cap.maxW ? cap.maxW / BASE_W : 1;
-      var scaleH = cap.maxH ? cap.maxH / BASE_H : 1;
-      displayScale = Math.min(1, scaleW, scaleH);
-    }
-    DPR = deviceDPR * displayScale;
+    DPR = Math.min(window.devicePixelRatio || 1, 3);
     canvas.width  = Math.round(BASE_W * DPR);
     canvas.height = Math.round(BASE_H * DPR);
-    // Explicitly set CSS display size so layout height is capped (landscape)
-    canvas.style.width  = displayScale < 1 ? Math.round(BASE_W * displayScale) + 'px' : '';
-    canvas.style.height = displayScale < 1 ? Math.round(BASE_H * displayScale) + 'px' : '';
     diamondPattern = null;  // recreate at new scale
   }
 
@@ -1642,7 +1622,6 @@
 
     // Resize
     window.addEventListener('resize', onResize);
-    window.addEventListener('orientationchange', function () { setTimeout(onResize, 200); });
 
     // Room mode bridge (sets vsRoom, mySeat etc. before first game starts)
     initRoomMode();

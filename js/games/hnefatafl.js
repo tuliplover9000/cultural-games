@@ -49,15 +49,6 @@
     return b;
   }());
 
-  // ── Mobile landscape canvas cap ──────────────────────────────────────────
-  function getCanvasMaxDimensions() {
-    var isMobLand = window.innerWidth <= 900 && window.innerHeight < window.innerWidth;
-    if (isMobLand) {
-      return { maxW: window.innerWidth - 16, maxH: window.innerHeight - 56 - 16 };
-    }
-    return { maxW: null, maxH: null };
-  }
-
   // ── Canvas / sizing ───────────────────────────────────────────────────────
   var canvas, ctx;
   var CELL = 50;   // px per cell - recalculated on resize
@@ -742,11 +733,8 @@
 
   // ── Canvas resize ─────────────────────────────────────────────────────────
   function resizeCanvas() {
-    var cap = getCanvasMaxDimensions();
     var maxW = Math.min(window.innerWidth - 32, 600);
-    // Board is square — in landscape cap by height too
-    var maxFit = (cap.maxH) ? Math.min(maxW, cap.maxH) : maxW;
-    CELL = Math.floor((Math.max(maxFit, 220) - PAD * 2) / SIZE);
+    CELL = Math.floor((Math.max(maxW, 280) - PAD * 2) / SIZE);
   }
 
   // ── Init ──────────────────────────────────────────────────────────────────
@@ -782,7 +770,6 @@
       if (resizeTimer) clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function() { resizeCanvas(); render(); }, 80);
     });
-    window.addEventListener('orientationchange', function () { setTimeout(function () { resizeCanvas(); render(); }, 200); });
 
     resizeCanvas();
     state = freshState();
