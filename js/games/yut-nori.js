@@ -1345,4 +1345,14 @@
     startGame('2p');
   }());
 
+  /* Resize / orientation handler (fullscreen uses fs-enter/fs-exit events above) */
+  window.addEventListener('resize', function () {
+    var wrap = document.getElementById('yn-board-wrap');
+    var sz   = wrap ? (wrap.clientWidth || window.innerWidth - 32) : (window.innerWidth - 32);
+    window.GameResize(sz, sz);
+  });
+  window.addEventListener('orientationchange', function () {
+    setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 200);
+  });
+
 }());

@@ -955,6 +955,7 @@
     window.addEventListener('resize', function () {
       updateLandscapeHint();
     });
+    window.addEventListener('orientationchange', function () { setTimeout(updateLandscapeHint, 200); });
   }
 
   // ── Boot ───────────────────────────────────────────────────────────────────

@@ -1438,6 +1438,7 @@
         redraw();
       }, 150);
     });
+    window.addEventListener('orientationchange', function () { setTimeout(function () { recalcSize(); redraw(); }, 200); });
 
     // Room mode
     if (typeof RoomBridge !== 'undefined' && RoomBridge.isActive()) {

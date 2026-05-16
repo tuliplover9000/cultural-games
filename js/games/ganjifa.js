@@ -1622,6 +1622,7 @@
 
     // Resize
     window.addEventListener('resize', onResize);
+    window.addEventListener('orientationchange', function () { setTimeout(onResize, 200); });
 
     // Room mode bridge (sets vsRoom, mySeat etc. before first game starts)
     initRoomMode();

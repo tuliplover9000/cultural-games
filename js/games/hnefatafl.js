@@ -770,6 +770,7 @@
       if (resizeTimer) clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function() { resizeCanvas(); render(); }, 80);
     });
+    window.addEventListener('orientationchange', function () { setTimeout(function () { resizeCanvas(); render(); }, 200); });
 
     resizeCanvas();
     state = freshState();

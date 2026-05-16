@@ -793,6 +793,7 @@
     }
 
     window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('orientationchange', function () { setTimeout(resizeCanvas, 200); });
     state = freshState();
     resizeCanvas();
     updateScore();
