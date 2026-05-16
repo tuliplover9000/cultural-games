@@ -1,4 +1,4 @@
-﻿/* =============================================================================
+/* =============================================================================
    AUTH SYSTEM — modal, forms, nav widget, account page
    cultural-games / css/auth.css
 ============================================================================= */
@@ -49,7 +49,7 @@
   display: none;
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 40, 0, 0.74);
+  background-color: rgba(15, 8, 3, 0.74);
   z-index: 200;
   align-items: center;
   justify-content: center;
@@ -132,7 +132,7 @@
 }
 .form-input:focus {
   border-color: var(--color-accent-gold);
-  box-shadow: 0 0 0 3px rgba(173, 255, 47, 0.15);
+  box-shadow: 0 0 0 3px rgba(200, 155, 60, 0.15);
 }
 .form-input::placeholder { color: var(--color-text-muted); opacity: 0.7; }
 
@@ -151,15 +151,15 @@
   transition: width 0.3s ease, background-color 0.3s ease;
 }
 .pw-strength--weak   { background-color: var(--color-accent-red); }
-.pw-strength--ok     { background-color: #FFEA00; }
+.pw-strength--ok     { background-color: #d4663a; }
 .pw-strength--strong { background-color: var(--color-accent-teal); }
 
 /* ── Error + submit ── */
 .auth-error {
   font-size: var(--text-sm);
   color: var(--color-accent-red);
-  background-color: rgba(255, 255, 0, 0.08);
-  border: 1px solid rgba(255, 255, 0, 0.2);
+  background-color: rgba(184, 50, 50, 0.08);
+  border: 1px solid rgba(184, 50, 50, 0.2);
   border-radius: var(--radius-md);
   padding: 8px var(--space-2);
   margin-bottom: var(--space-2);
@@ -291,8 +291,8 @@
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-accent-gold);
-  background: rgba(173, 255, 47, 0.12);
-  border: 1px solid rgba(173, 255, 47, 0.3);
+  background: rgba(200, 155, 60, 0.12);
+  border: 1px solid rgba(200, 155, 60, 0.3);
   border-radius: var(--radius-full);
   padding: 3px 10px;
   white-space: nowrap;
@@ -456,7 +456,7 @@
 .stat-pill strong              { color: var(--color-text); font-weight: var(--weight-semibold); }
 .stat-pill--win                { border-color: rgba(44, 120, 115, 0.3); }
 .stat-pill--win  strong        { color: var(--color-accent-teal); }
-.stat-pill--loss               { border-color: rgba(255, 255, 0, 0.2); }
+.stat-pill--loss               { border-color: rgba(184, 50, 50, 0.2); }
 .stat-pill--loss strong        { color: var(--color-accent-red); }
 
 .win-bar-wrap { height: 6px; border-radius: var(--radius-full); background-color: var(--color-surface-alt); overflow: hidden; }

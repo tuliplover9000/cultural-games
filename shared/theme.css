@@ -1,4 +1,4 @@
-﻿/* =============================================================================
+/* =============================================================================
    CULTURAL GAMES — shared/theme.css
    Dark-mode CSS variable overrides.
    Loaded AFTER global.css so these values take precedence.
@@ -7,20 +7,20 @@
 /* ── Dark theme overrides ─────────────────────────────────────────────────── */
 [data-theme="dark"] {
   /* Backgrounds */
-  --color-bg:          #001200;   /* very dark walnut page bg */
-  --color-surface:     #001800;   /* dark warm card/panel surface */
-  --color-surface-alt: #002200;   /* slightly lifted dark surface */
+  --color-bg:          #120C05;   /* very dark walnut page bg */
+  --color-surface:     #1E1309;   /* dark warm card/panel surface */
+  --color-surface-alt: #2A1A0E;   /* slightly lifted dark surface */
 
   /* NOTE: --color-primary is intentionally NOT overridden here.
-     It stays #003300 so the nav and footer remain dark in both themes. */
+     It stays #1A0E06 so the nav and footer remain dark in both themes. */
 
   /* Text */
   --color-text:         #F0E6D0;  /* warm parchment — body text on dark bg */
   --color-text-muted:   #B09070;  /* warm medium — secondary / caption text */
-  --color-text-inverse: #003300;  /* dark text used on gold / accent backgrounds */
+  --color-text-inverse: #1A0E06;  /* dark text used on gold / accent backgrounds */
 
   /* Borders & Shadows */
-  --color-border: #004400;
+  --color-border: #3D2A18;
   --color-shadow: rgba(0, 0, 0, 0.50);
 
   /* Accents — slightly brightened for readability on dark backgrounds */
@@ -33,25 +33,25 @@
 /* ── Light-mode overrides for hero section (hardcoded dark gradient) ────────
    The hero background is not a CSS variable so we need explicit overrides.    */
 [data-theme="light"] .hero {
-  background: radial-gradient(ellipse at 68% 50%, #CCFF00 0%, #FFFF00 45%, #fbf5e6 100%);
+  background: radial-gradient(ellipse at 68% 50%, #daeaf7 0%, #ede3cf 45%, #fbf5e6 100%);
 }
 [data-theme="light"] .hero__title        { color: var(--color-text); }
-[data-theme="light"] .hero__origin-story { color: rgba(0, 51, 0, 0.65); }
-[data-theme="light"] .hero__tagline      { color: rgba(0, 51, 0, 0.62); }
-[data-theme="light"] .hero__stats        { color: rgba(0, 51, 0, 0.5); }
-[data-theme="light"] .hfc-label          { color: rgba(0, 51, 0, 0.5); }
-[data-theme="light"] .hfc-arrow          { color: rgba(0, 51, 0, 0.35); }
-[data-theme="light"] .hfc-arrow:hover    { color: rgba(0, 51, 0, 0.85); }
-[data-theme="light"] .hfc-dot            { background: rgba(0, 51, 0, 0.18); }
+[data-theme="light"] .hero__origin-story { color: rgba(26, 14, 6, 0.65); }
+[data-theme="light"] .hero__tagline      { color: rgba(26, 14, 6, 0.62); }
+[data-theme="light"] .hero__stats        { color: rgba(26, 14, 6, 0.5); }
+[data-theme="light"] .hfc-label          { color: rgba(26, 14, 6, 0.5); }
+[data-theme="light"] .hfc-arrow          { color: rgba(26, 14, 6, 0.35); }
+[data-theme="light"] .hfc-arrow:hover    { color: rgba(26, 14, 6, 0.85); }
+[data-theme="light"] .hfc-dot            { background: rgba(26, 14, 6, 0.18); }
 
 /* ── Light-mode overrides for components that assume a dark host ─────────── */
 /* Lottery button has a dark wood gradient that blends in dark mode.
    In light mode we keep it slightly warmer to contrast against parchment. */
 [data-theme="light"] .browse-lottery-btn {
-  background: linear-gradient(135deg, #004400 0%, #336600 100%);
+  background: linear-gradient(135deg, #3d2e10 0%, #5a4318 100%);
 }
 [data-theme="light"] .browse-lottery-btn:hover {
-  background: linear-gradient(135deg, #336600 0%, #448800 100%);
+  background: linear-gradient(135deg, #5a4318 0%, #7a5c20 100%);
 }
 
 /* ── Smooth color transitions on theme switch ─────────────────────────────── */

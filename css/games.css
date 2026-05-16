@@ -1,4 +1,4 @@
-﻿/* =============================================================================
+/* =============================================================================
    CULTURAL GAMES Ã¢â‚¬â€ games.css
    Styles specific to individual game pages and the shared game layout shell.
    Requires global.css and components.css to be loaded first.
@@ -23,7 +23,7 @@
 .game-header {
   text-align: center;
   padding: var(--space-6) var(--space-4);
-  background: linear-gradient(135deg, var(--color-primary) 0%, #003300 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, #2d1810 100%);
   border-radius: var(--radius-xl);
   margin-bottom: var(--space-6);
   color: var(--color-text-inverse);
@@ -35,7 +35,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at top right, rgba(173, 255, 47, 0.15) 0%, transparent 60%);
+  background: radial-gradient(ellipse at top right, rgba(200, 155, 60, 0.15) 0%, transparent 60%);
   pointer-events: none;
 }
 
@@ -231,7 +231,7 @@
   padding: 5px 12px;
   border-radius: var(--radius-full);
   background: rgba(200,155,60,0.12);
-  border: 1px solid rgba(57, 255, 20, 0.35);
+  border: 1px solid rgba(200,155,60,0.35);
   color: rgba(255,255,255,0.75);
   cursor: pointer;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
@@ -351,7 +351,7 @@
 }
 
 .bc-symbol-zone:hover:not(:disabled) {
-  background: #39FF14;
+  background: #b83232;
   border-color: var(--color-accent-gold);
   transform: scale(1.03);
 }
@@ -595,7 +595,7 @@
 
 .bc-result-item.loss {
   background: rgba(184,50,50,0.08);
-  color: #2db810;
+  color: #9e2b2b;
 }
 
 .bc-net {
@@ -3485,7 +3485,7 @@
 .fn-ai-label input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: #ADFF2F;
+  accent-color: #C89B3C;
   cursor: pointer;
 }
 
@@ -3713,11 +3713,11 @@
 .mj-wrap {
   --mj-red:         #c0392b;
   --mj-red-light:   #e74c3c;
-  --mj-gold:        #AAFF00;
+  --mj-gold:        #c8960c;
   --mj-gold-light:  #f2c94c;
   --mj-gold-dim:    #a07820;
   --mj-green:       #1a6b3a;
-  --mj-green-mid:   #39FF14;
+  --mj-green-mid:   #27ae60;
   --mj-ivory:       #fdf8ed;
   --mj-ivory-dark:  #e8dfc0;
   --mj-felt:        #14602e;
@@ -4437,7 +4437,7 @@
     0 0 0 2px rgba(200,150,12,0.5),
     0 0 0 5px rgba(44,22,8,0.8),
     0 16px 50px rgba(0,0,0,0.8);
-  border: 1px solid #AAFF00;
+  border: 1px solid #c8960c;
 }
 
 .mj-overlay-card h2 {
@@ -4501,7 +4501,7 @@
 .pc-lobby__title {
   font-family: var(--font-display);
   font-size: var(--text-3xl);
-  color: #AAFF00;
+  color: #C8960C;
   margin: 0;
 }
 
@@ -4585,7 +4585,7 @@
   font-family: var(--font-display);
   font-size: var(--text-xl);
   font-weight: var(--weight-bold);
-  color: #AAFF00;
+  color: #C8960C;
   line-height: 1;
 }
 
@@ -4681,7 +4681,7 @@
   font-family: var(--font-display);
   font-size: var(--text-3xl);
   font-weight: var(--weight-bold);
-  color: #AAFF00;
+  color: #C8960C;
   line-height: 1;
 }
 
@@ -4753,7 +4753,7 @@
 .pc-score-val {
   font-size: var(--text-sm);
   font-weight: var(--weight-bold);
-  color: #AAFF00;
+  color: #C8960C;
 }
 
 /* Teams panel */
@@ -4788,7 +4788,7 @@
   margin-left: auto;
   font-size: 10px;
   font-weight: var(--weight-bold);
-  color: #AAFF00;
+  color: #C8960C;
   background: rgba(200,150,12,0.15);
   border-radius: var(--radius-full);
   padding: 1px 6px;
