@@ -14,13 +14,16 @@
     var isMobileLandscape = window.innerWidth <= 900
       && window.innerHeight < window.innerWidth;
 
+    var container = document.getElementById('game-container');
+    if (!container) return;
+
     if (!isMobileLandscape) {
-      document.documentElement.style.removeProperty('--game-landscape-scale');
+      container.style.zoom = '';
       return;
     }
 
-    var container = document.getElementById('game-container');
-    if (!container) return;
+    // Reset zoom first so we measure the natural unscaled size
+    container.style.zoom = '';
 
     var nav = document.querySelector('nav, header, .site-nav, .main-nav');
     var navHeight = nav ? nav.offsetHeight : 56;
@@ -35,7 +38,7 @@
     var scaleH = availableH / naturalH;
     var scaleW = availableW / naturalW;
     var scale = Math.max(0.4, Math.min(1, Math.min(scaleH, scaleW)));
-    document.documentElement.style.setProperty('--game-landscape-scale', scale);
+    container.style.zoom = scale;
   }
 
   window.addEventListener('orientationchange', function () {

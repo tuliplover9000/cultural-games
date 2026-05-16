@@ -79,11 +79,4 @@
   body {
     overflow-x: hidden;
   }
-
-  #game-container {
-    transform-origin: top left;
-    transform: scale(var(--game-landscape-scale, 1));
-    width: 100vw;
-    overflow: hidden;
-  }
 }
