@@ -503,12 +503,12 @@ body.bp-no-scroll { overflow: hidden; position: fixed; width: 100%; }
   .game-card img:not(.game-card__banner-icon),
   .game-card svg { max-width: 100%; height: auto; }
 
-  /* Banner icon — 80px white, defined here (last file) to win the cascade */
+  /* Banner icon — 80px, natural SVG colours + subtle shadow for legibility */
   .game-card .game-card__banner-icon {
     width: 80px;
     height: 80px;
-    filter: brightness(0) invert(1);
-    opacity: 0.9;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+    opacity: 1;
   }
 
   /* Overflow elimination */
