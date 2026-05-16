@@ -1346,9 +1346,19 @@
   }());
 
   /* Resize / orientation handler (fullscreen uses fs-enter/fs-exit events above) */
+  function getCanvasMaxDimensions() {
+    var navH = 56;
+    var isMobLand = window.innerWidth <= 900 && window.innerHeight < window.innerWidth;
+    return {
+      maxW: window.innerWidth,
+      maxH: isMobLand ? window.innerHeight - navH : window.innerHeight
+    };
+  }
   window.addEventListener('resize', function () {
     var wrap = document.getElementById('yn-board-wrap');
+    var cap  = getCanvasMaxDimensions();
     var sz   = wrap ? (wrap.clientWidth || window.innerWidth - 32) : (window.innerWidth - 32);
+    sz = Math.min(sz, cap.maxH); // cap by available height in landscape
     window.GameResize(sz, sz);
   });
   window.addEventListener('orientationchange', function () {

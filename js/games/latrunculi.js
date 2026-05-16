@@ -5,6 +5,16 @@
 (function () {
   'use strict';
 
+  // ── Mobile landscape canvas cap ──────────────────────────────────────────
+  function getCanvasMaxDimensions() {
+    var navH = 56;
+    var isMobLand = window.innerWidth <= 900 && window.innerHeight < window.innerWidth;
+    return {
+      maxW: window.innerWidth,
+      maxH: isMobLand ? window.innerHeight - navH : window.innerHeight
+    };
+  }
+
   // ── Constants ─────────────────────────────────────────────────────────────
 
   var BOARD_CONFIGS = {
@@ -815,6 +825,13 @@
     ctx = canvas.getContext('2d');
 
     var cfg = state.boardConfig;
+    var rawW = cfg.cols * cfg.cellSize + BORDER_W * 2;
+    var rawH = cfg.rows * cfg.cellSize + BORDER_W * 2;
+    var cap  = getCanvasMaxDimensions();
+    var scale = Math.min(1, cap.maxW / rawW, cap.maxH / rawH);
+    if (scale < 1) {
+      cfg.cellSize = Math.max(8, Math.floor(cfg.cellSize * scale));
+    }
     canvas.width  = cfg.cols * cfg.cellSize + BORDER_W * 2;
     canvas.height = cfg.rows * cfg.cellSize + BORDER_W * 2;
     canvas.style.maxWidth = '100%';

@@ -135,8 +135,19 @@
   var CELL = 70;
   var CANVAS_SIZE = 630;
 
+  function getCanvasMaxDimensions() {
+    var navH = 56;
+    var isMobLand = window.innerWidth <= 900 && window.innerHeight < window.innerWidth;
+    return {
+      maxW: window.innerWidth,
+      maxH: isMobLand ? window.innerHeight - navH : window.innerHeight
+    };
+  }
+
   function recalcSize() {
-    var avail = Math.min(window.innerWidth - 32, 630);
+    var cap = getCanvasMaxDimensions();
+    // Board is square — fit within whichever dimension is tighter
+    var avail = Math.min(window.innerWidth - 32, 630, cap.maxH, cap.maxW);
     CELL = Math.floor(avail / GRID);
     CANVAS_SIZE = CELL * GRID;
     if (canvas) {

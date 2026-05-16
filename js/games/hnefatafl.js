@@ -49,6 +49,16 @@
     return b;
   }());
 
+  // ── Mobile landscape canvas cap ──────────────────────────────────────────
+  function getCanvasMaxDimensions() {
+    var navH = 56;
+    var isMobLand = window.innerWidth <= 900 && window.innerHeight < window.innerWidth;
+    return {
+      maxW: window.innerWidth,
+      maxH: isMobLand ? window.innerHeight - navH : window.innerHeight
+    };
+  }
+
   // ── Canvas / sizing ───────────────────────────────────────────────────────
   var canvas, ctx;
   var CELL = 50;   // px per cell - recalculated on resize
@@ -733,8 +743,11 @@
 
   // ── Canvas resize ─────────────────────────────────────────────────────────
   function resizeCanvas() {
-    var maxW = Math.min(window.innerWidth - 32, 600);
-    CELL = Math.floor((Math.max(maxW, 280) - PAD * 2) / SIZE);
+    var cap = getCanvasMaxDimensions();
+    var maxW = Math.min(window.innerWidth - 32, 600, cap.maxW - 16);
+    // Board is square — constrain by whichever dimension is tighter
+    var maxFit = Math.min(maxW, cap.maxH);
+    CELL = Math.floor((Math.max(maxFit, 220) - PAD * 2) / SIZE);
   }
 
   // ── Init ──────────────────────────────────────────────────────────────────
