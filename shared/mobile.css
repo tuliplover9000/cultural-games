@@ -581,9 +581,11 @@ canvas {
 @media (max-width: 767px) {
 
   /* ── 2-column app-store grid ─────────────────────────────── */
+  /* !important needed: browse-panel.css loads after mobile.css and sets 1fr
+     at the same specificity inside the same max-width: 767px query.        */
   .games-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 12px;
     padding: 12px;
   }
@@ -598,6 +600,8 @@ canvas {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    height: 220px;
+    aspect-ratio: unset;
     box-shadow: 0 4px 16px rgba(0,0,0,0.18);
     background: none;
     border: none;
@@ -619,7 +623,9 @@ canvas {
   }
 
   /* ── Large white icon centred in card ────────────────────── */
-  .game-card__banner-icon {
+  /* Use .game-card .game-card__banner-icon (specificity 0,2,0) to beat
+     browse-panel.css's .game-card img (0,1,1) which sets height: auto.   */
+  .game-card .game-card__banner-icon {
     width: 80px;
     height: 80px;
     filter: brightness(0) invert(1);
