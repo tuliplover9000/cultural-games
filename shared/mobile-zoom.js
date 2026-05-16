@@ -1,7 +1,8 @@
 /**
  * shared/mobile-zoom.js — Mobile zoom-out button for game pages
- * Injects a floating button that cycles the game container through
- * zoom levels so players can shrink the board to fit their screen.
+ * Injects a floating button that cycles the game through zoom levels.
+ * Canvas games: sets window.CGMobileScale and calls window.cgMobileResize().
+ * DOM games: falls back to container.style.zoom.
  * Only active on mobile (≤900px). Desktop: button hidden via CSS.
  */
 (function () {
@@ -17,10 +18,15 @@
   }
 
   function applyZoom(level) {
-    var container = getContainer();
-    if (container) container.style.zoom = level;
+    window.CGMobileScale = level;
     var label = document.getElementById('mobile-zoom-label');
     if (label) label.textContent = LABELS[currentIndex];
+    if (typeof window.cgMobileResize === 'function') {
+      window.cgMobileResize();
+    } else {
+      var container = getContainer();
+      if (container) container.style.zoom = level;
+    }
   }
 
   function injectButton() {

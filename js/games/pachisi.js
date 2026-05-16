@@ -136,7 +136,8 @@
   var CANVAS_SIZE = 630;
 
   function recalcSize() {
-    var avail = Math.min(window.innerWidth - 32, 630);
+    var scale = window.CGMobileScale || 1;
+    var avail = Math.min(window.innerWidth - 32, 630) * scale;
     CELL = Math.floor(avail / GRID);
     CANVAS_SIZE = CELL * GRID;
     if (canvas) {
@@ -1438,7 +1439,7 @@
         redraw();
       }, 150);
     });
-;
+    window.cgMobileResize = function () { recalcSize(); redraw(); };
 
     // Room mode
     if (typeof RoomBridge !== 'undefined' && RoomBridge.isActive()) {

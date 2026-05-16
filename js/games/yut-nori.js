@@ -1345,4 +1345,11 @@
     startGame('2p');
   }());
 
+  window.cgMobileResize = function () {
+    var wrap = document.getElementById('yn-board-wrap');
+    var scale = window.CGMobileScale || 1;
+    var sz = wrap ? (wrap.clientWidth || window.innerWidth - 32) : (window.innerWidth - 32);
+    window.GameResize(Math.round(sz * scale), Math.round(sz * scale));
+  };
+
 }());

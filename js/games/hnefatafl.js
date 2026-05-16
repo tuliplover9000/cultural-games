@@ -733,8 +733,9 @@
 
   // ── Canvas resize ─────────────────────────────────────────────────────────
   function resizeCanvas() {
-    var maxW = Math.min(window.innerWidth - 32, 600);
-    CELL = Math.floor((Math.max(maxW, 280) - PAD * 2) / SIZE);
+    var scale = window.CGMobileScale || 1;
+    var maxW = Math.min(window.innerWidth - 32, 600) * scale;
+    CELL = Math.floor((Math.max(maxW, 100) - PAD * 2) / SIZE);
   }
 
   // ── Init ──────────────────────────────────────────────────────────────────
@@ -772,6 +773,7 @@
     });
 
     resizeCanvas();
+    window.cgMobileResize = function () { resizeCanvas(); render(); };
     state = freshState();
     updateHUD();
     render();

@@ -1558,9 +1558,14 @@
   // ── Resize ─────────────────────────────────────────────────────────────────
 
   function applyDPR() {
-    DPR = Math.min(window.devicePixelRatio || 1, 3);
+    var deviceDPR = Math.min(window.devicePixelRatio || 1, 3);
+    var scale = window.CGMobileScale || 1;
+    DPR = deviceDPR * scale;
     canvas.width  = Math.round(BASE_W * DPR);
     canvas.height = Math.round(BASE_H * DPR);
+    // Set explicit CSS display size so layout shrinks with zoom level
+    canvas.style.width  = scale < 1 ? Math.round(BASE_W * scale) + 'px' : '';
+    canvas.style.height = scale < 1 ? Math.round(BASE_H * scale) + 'px' : '';
     diamondPattern = null;  // recreate at new scale
   }
 
@@ -1622,6 +1627,7 @@
 
     // Resize
     window.addEventListener('resize', onResize);
+    window.cgMobileResize = onResize;
 
     // Room mode bridge (sets vsRoom, mySeat etc. before first game starts)
     initRoomMode();

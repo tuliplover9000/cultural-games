@@ -687,7 +687,8 @@
   function resizeCanvas() {
     var wrap = document.getElementById('fn-board-wrap');
     if (!wrap) return;
-    var w = wrap.clientWidth;
+    var scale = window.CGMobileScale || 1;
+    var w = Math.round(wrap.clientWidth * scale);
     cnv.width  = w;
     cnv.height = Math.round(w * (ROWS - 1) / (COLS - 1)) + PAD * 2;
     render();
@@ -793,6 +794,7 @@
     }
 
     window.addEventListener('resize', resizeCanvas);
+    window.cgMobileResize = resizeCanvas;
     state = freshState();
     resizeCanvas();
     updateScore();
