@@ -518,14 +518,6 @@ body.bp-no-scroll { overflow: hidden; position: fixed; width: 100%; }
     transform: rotate(-12deg) translateY(-14px) scale(1.08);
   }
 
-  /* Hold-to-navigate charging state */
-  .game-card.bp-holding {
-    transform: scale(1.04) !important;
-    filter: brightness(1.15);
-    box-shadow: 0 0 0 3px var(--color-accent-gold, #c89b3c), 0 8px 24px rgba(0,0,0,0.3);
-    transition: transform 600ms ease, filter 600ms ease, box-shadow 600ms ease;
-  }
-
   /* Overflow elimination */
   #bp-games-column,
   .games-grid {
