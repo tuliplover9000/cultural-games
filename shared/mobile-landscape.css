@@ -84,9 +84,9 @@
     display: none;
   }
 
-  /* Game page: no extra padding */
+  /* Game page: small top breathing room */
   .game-page {
-    padding-block: 0;
+    padding-block: 8px 0;
   }
 
   /* Game container: no height cap — let zoom (applied by autoFit JS) control
@@ -99,12 +99,6 @@
     width: calc(100% - 16px);
     box-sizing: border-box;
     overflow: visible;
-  }
-
-  /* Tighten internal padding so the canvas gets more room */
-  [class*="-game-container"] {
-    padding: 6px !important;
-    gap: 6px !important;
   }
 }
 

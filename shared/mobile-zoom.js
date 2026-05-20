@@ -36,7 +36,9 @@
 
   /* ── Auto-fit ── */
   function autoFit() {
+    // Only run on landscape phones (portrait is designed to scroll)
     if (window.innerWidth > 900) return;
+    if (window.innerHeight > 500) return;
     var container = getContainer();
     if (!container) return;
 
