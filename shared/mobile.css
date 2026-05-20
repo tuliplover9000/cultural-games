@@ -61,6 +61,16 @@ canvas {
     max-width: 100%;
     max-height: calc(100svh - var(--nav-height, 64px) - 16px);
   }
+
+  /* Keep game container off the screen edges on all mobile/tablet */
+  .game-container,
+  [id="game-container"],
+  [class*="game-container"] {
+    width: calc(100% - 24px);
+    max-width: calc(100% - 24px);
+    margin-inline: 12px;
+    box-sizing: border-box;
+  }
 }
 
 /* =============================================================
@@ -253,11 +263,14 @@ canvas {
     font-size: var(--text-xs);
   }
 
-  /* Game container: no horizontal scroll */
+  /* Game container: margins from screen edges, no overflow */
   .game-container,
-  [id="game-container"] {
-    width: 100%;
-    max-width: 100%;
+  [id="game-container"],
+  [class*="game-container"] {
+    width: calc(100% - 24px);
+    max-width: calc(100% - 24px);
+    margin-inline: 12px;
+    box-sizing: border-box;
     overflow: hidden;
   }
 
