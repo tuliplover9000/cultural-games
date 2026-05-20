@@ -125,6 +125,25 @@
   100% { transform: rotate(0deg); }
 }
 
+/* ── Game container: landscape phone layout ──────────────────────────────
+   On landscape phones (short screens ≤500px tall) the game container is
+   where the actual gameplay happens. Fix it to:
+   - Drop min-height so it doesn't overflow the screen bottom
+   - Cap height to the available viewport (minus nav)
+   - Add side margins so the gold border doesn't touch screen edges
+   ─────────────────────────────────────────────────────────────────────── */
+@media (orientation: landscape) and (max-height: 500px) {
+  .game-container,
+  [class*="game-container"] {
+    min-height: 0 !important;
+    max-height: calc(100dvh - 56px);
+    margin-inline: 16px;
+    width: calc(100% - 32px);
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+}
+
 /* ── Mobile zoom button ──────────────────────────────────────────────────
    Injected by shared/mobile-zoom.js. Floats bottom-right, mobile only.
    ─────────────────────────────────────────────────────────────────────── */

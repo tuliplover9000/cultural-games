@@ -62,14 +62,12 @@ canvas {
     max-height: calc(100svh - var(--nav-height, 64px) - 16px);
   }
 
-  /* Keep game container off the screen edges on all mobile/tablet */
+  /* Keep game container off the screen edges on all mobile/tablet.
+     Adding margin-inline shrinks the block element's content box so
+     the gold border has breathing room from the screen edges. */
   .game-container,
-  [id="game-container"],
   [class*="game-container"] {
-    width: calc(100% - 24px);
-    max-width: calc(100% - 24px);
     margin-inline: 12px;
-    box-sizing: border-box;
   }
 }
 
@@ -263,15 +261,10 @@ canvas {
     font-size: var(--text-xs);
   }
 
-  /* Game container: margins from screen edges, no overflow */
+  /* Game container: keep gold border away from screen edges */
   .game-container,
-  [id="game-container"],
   [class*="game-container"] {
-    width: calc(100% - 24px);
-    max-width: calc(100% - 24px);
     margin-inline: 12px;
-    box-sizing: border-box;
-    overflow: hidden;
   }
 
   /* Accordion: How to Play closed on mobile by default (JS adds [open] on desktop) */
