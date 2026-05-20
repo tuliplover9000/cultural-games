@@ -1,19 +1,24 @@
 /**
  * shared/mobile-zoom.js — Mobile zoom-out button + auto-fit for game pages
  *
- * AUTO-FIT: on load and resize, measures whether the game container content
- * overflows the available viewport height. If it does, applies CSS zoom to
- * the container so everything (canvas, HUD, controls) scales proportionally.
+ * AUTO-FIT: after the game renders, measures whether the game container's
+ * natural content height exceeds the viewport space below it. If so, applies
+ * CSS zoom to the container so ALL content (canvas, HUD, controls, text)
+ * scales down proportionally to fit without scrolling.
  *
- * Canvas re-render math:
- *   zoom factor f = availH / scrollH
- *   After container.style.zoom = f, wrap.clientWidth = f × naturalW
- *   To avoid blurry canvas: CGMobileScale = 1/f so cgMobileResize renders
- *   canvas at (1/f) × (f × naturalW) = naturalW px, then zoom f displays it
- *   at f × naturalW — correct size, no blur.
+ * Why removing max-height from container matters:
+ *   With max-height, CSS zoom scales content AND the constraint equally, so
+ *   overflow persists (content × f > max-height × f when content > max-height).
+ *   Without max-height, container height = content height, zoom scales both
+ *   equally → no overflow, no scroll. autoFit computes the exact factor needed.
  *
- * MANUAL BUTTON: floating pill that lets user cycle through additional
- * zoom-out levels on top of the auto-fit baseline.
+ * Canvas re-render (no blur):
+ *   After zoom f, wrap.clientWidth = f × naturalW.
+ *   Set CGMobileScale = 1/f so cgMobileResize renders canvas at
+ *   (1/f) × (f × naturalW) = naturalW px. Container zoom f then displays it
+ *   at f × naturalW — correct size, full resolution.
+ *
+ * MANUAL BUTTON: cycles additional zoom-out levels on top of auto-fit.
  */
 (function () {
   'use strict';
@@ -21,7 +26,7 @@
   var ZOOM_LEVELS = [1, 0.85, 0.7, 0.55];
   var LABELS      = ['1×', '0.85×', '0.7×', '0.55×'];
   var currentIndex = 0;
-  var autoFitFactor = 1;   // set by autoFit, used as baseline
+  var autoFitFactor = 1;
   var autoFitTimer  = null;
 
   function getContainer() {
@@ -29,13 +34,13 @@
            document.querySelector('.game-container');
   }
 
-  /* ── Auto-fit: scale content to fill (not overflow) the viewport ── */
+  /* ── Auto-fit ── */
   function autoFit() {
     if (window.innerWidth > 900) return;
     var container = getContainer();
     if (!container) return;
 
-    // Reset to natural size so scrollHeight is accurate
+    // Reset to natural size so we can measure accurately
     container.style.zoom = '';
     window.CGMobileScale = 1;
     if (typeof window.cgMobileResize === 'function') window.cgMobileResize();
@@ -43,18 +48,17 @@
     requestAnimationFrame(function () {
       var naturalH = container.scrollHeight;
       var top      = container.getBoundingClientRect().top;
-      var availH   = window.innerHeight - top - 8; // 8px bottom margin
+      var availH   = window.innerHeight - Math.max(top, 0) - 8;
 
       if (naturalH <= availH || availH < 60) {
         autoFitFactor = 1;
-        return; // already fits
+        return; // content already fits
       }
 
       var f = Math.max(0.35, availH / naturalH);
       autoFitFactor = f;
 
       container.style.zoom = f;
-      // Canvas games: render at 1/f scale so zoom f brings it back to natural size
       window.CGMobileScale = 1 / f;
       if (typeof window.cgMobileResize === 'function') window.cgMobileResize();
     });
@@ -69,10 +73,11 @@
   function applyZoom(level) {
     var container = getContainer();
     if (!container) return;
-    // Apply on top of autoFit baseline
     var effective = autoFitFactor * level;
     container.style.zoom = effective;
-    window.CGMobileScale = (1 / autoFitFactor) * level;
+    // CGMobileScale = 1/effective so canvas renders at natural resolution,
+    // then zoom brings it to the correct display size
+    window.CGMobileScale = 1 / effective;
     var label = document.getElementById('mobile-zoom-label');
     if (label) label.textContent = LABELS[currentIndex];
     if (typeof window.cgMobileResize === 'function') {
@@ -115,7 +120,7 @@
   });
 
   window.addEventListener('resize', function () {
-    currentIndex = 0; // reset manual zoom on resize
+    currentIndex = 0;
     scheduleAutoFit();
   });
 
