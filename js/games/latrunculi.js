@@ -996,7 +996,9 @@
 
   window.cgMobileResize = function () {
     var scale = window.CGMobileScale || 1;
-    var availW = Math.min(window.innerWidth - 32, 800) * scale;
+    var wrap = document.getElementById('ll-canvas-wrap');
+    var containerW = wrap ? wrap.clientWidth : (window.innerWidth - 32);
+    var availW = Math.min(containerW, 800) * scale;
     var availH = (window.innerHeight - 56) * scale;
     window.GameResize(availW, availH);
   };

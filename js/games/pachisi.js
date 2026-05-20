@@ -137,7 +137,9 @@
 
   function recalcSize() {
     var scale = window.CGMobileScale || 1;
-    var avail = Math.min(window.innerWidth - 32, 630) * scale;
+    var wrap = document.querySelector('.pc-board-wrap');
+    var containerW = wrap ? wrap.clientWidth : (window.innerWidth - 32);
+    var avail = Math.min(containerW, 630) * scale;
     CELL = Math.floor(avail / GRID);
     CANVAS_SIZE = CELL * GRID;
     if (canvas) {

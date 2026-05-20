@@ -133,10 +133,16 @@
    - Add side margins so the gold border doesn't touch screen edges
    ─────────────────────────────────────────────────────────────────────── */
 @media (orientation: landscape) and (max-height: 500px) {
+  /* Hide site nav — recovers ~56px of vertical space for the game */
+  .site-nav {
+    display: none;
+  }
+
+  /* Game container: fill the now-nav-free viewport with side margins */
   .game-container,
   [class*="game-container"] {
     min-height: 0 !important;
-    max-height: calc(100dvh - 56px);
+    max-height: calc(100dvh - 16px);
     margin-inline: 16px;
     width: calc(100% - 32px);
     box-sizing: border-box;

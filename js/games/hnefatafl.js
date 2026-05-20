@@ -734,7 +734,9 @@
   // ── Canvas resize ─────────────────────────────────────────────────────────
   function resizeCanvas() {
     var scale = window.CGMobileScale || 1;
-    var maxW = Math.min(window.innerWidth - 32, 600) * scale;
+    var wrap = document.querySelector('.ht-board-wrap');
+    var containerW = wrap ? wrap.clientWidth : (window.innerWidth - 32);
+    var maxW = Math.min(containerW, 600) * scale;
     CELL = Math.floor((Math.max(maxW, 100) - PAD * 2) / SIZE);
   }
 
