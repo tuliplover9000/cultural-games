@@ -81,6 +81,17 @@
     localStorage.setItem('cg_name', safe);
   }
 
+  // ── Valid game key whitelist ───────────────────────────────────────────────
+  // Used to reject arbitrary strings from suggestGame/selectGame before they
+  // reach the DB and potentially get rendered unescaped in the lobby.
+  var VALID_GAME_KEYS = {
+    'tien-len': true, 'bau-cua': true, 'o-an-quan': true, 'oware': true,
+    'patolli': true, 'puluc': true, 'pallanguzhi': true, 'fanorona': true,
+    'hnefatafl': true, 'mahjong': true, 'pachisi': true, 'ganjifa': true,
+    'latrunculi': true, 'cachos': true, 'xinjiang-fangqi': true,
+    'filipino-dama': true, 'cuarenta': true, 'yut-nori': true,
+  };
+
   // ── Join code generation ───────────────────────────────────────────────────
   function randomCode() {
     var words  = ['BIRD','MOON','LAKE','FISH','DRUM','GOLD','JADE','SILK','WAVE','FIRE',
@@ -283,7 +294,7 @@
     },
 
     suggestGame: async function (gameKey) {
-      if (!_room) return;
+      if (!_room || !VALID_GAME_KEYS[gameKey]) return;
       var list = (_room.suggestions || []).slice();
       list.push({ game: gameKey, suggested_by: getPlayerId(), name: getPlayerName(), ts: Date.now() });
       await authDb().from('rooms').update({ suggestions: list }).eq('id', _room.id);
@@ -302,7 +313,7 @@
     },
 
     selectGame: async function (gameKey) {
-      if (!_room) return;
+      if (!_room || !VALID_GAME_KEYS[gameKey]) return;
       await authDb().from('rooms').update({
         selected_game: gameKey,
         status:        'assigning',
@@ -426,6 +437,8 @@
       var pid   = getPlayerId();
       var ids   = Array.isArray(_room.player_ids) ? _room.player_ids.slice() : [];
       if (!ids.includes(pid)) {
+        // Enforce max_players — rejoinRoom previously skipped this check
+        if (ids.length >= (_room.max_players || 4)) return err('Room is full.');
         var name   = getPlayerName() || 'Player';
         var names  = Object.assign({}, _room.player_names  || {}, { [pid]: name });
         var wins   = Object.assign({}, _room.player_wins   || {}, { [pid]: 0 });

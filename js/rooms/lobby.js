@@ -324,7 +324,7 @@
           '<span class="lobby-suggestion__name">' + esc(meta.name) + '</span>' +
           '<span class="lobby-suggestion__by">suggested by ' + esc(s.name || 'someone') + '</span>' +
         '</div>' +
-        (canPlay ? '<button class="btn btn-primary btn-sm lobby-play-btn" data-game="' + s.game + '" data-idx="' + idx + '">Play this</button>' : '') +
+        (canPlay ? '<button class="btn btn-primary btn-sm lobby-play-btn" data-game="' + esc(s.game) + '" data-idx="' + idx + '">Play this</button>' : '') +
         ((isOwn || isHost) ? '<button class="btn btn-ghost btn-sm lobby-remove-btn" data-idx="' + idx + '" aria-label="Remove suggestion">✕</button>' : '') +
       '</li>';
     }).join('');

@@ -120,19 +120,23 @@
         // Tournament bracket advancement: if I won, advance myself to the next round.
         // Only the winner calls advance_winner (avoids race conditions).
         var matchId = room.tournament_match_id;
-        if (matchId && isWinner && window._user && window._user.id) {
-          (function(mId, uid) {
-            var sbUrl = 'https://pnyvlqgllrpslhgimgve.supabase.co';
-            var sbKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBueXZscWdsbHJwc2xoZ2ltZ3ZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwMjQ3OTMsImV4cCI6MjA4ODYwMDc5M30.7MwZTEJuYGSLaOjfs0EP4wFAia3CanDzSRMbTvPiIasw';
-            var sb = window.supabase && window.supabase.createClient
-              ? window.supabase.createClient(sbUrl, sbKey, { auth: { persistSession: false } })
-              : null;
-            if (!sb) return;
-            sb.rpc('advance_winner', { p_match_id: mId, p_winner_id: uid }).then(function(res) {
-              if (res.error) console.warn('advance_winner error:', res.error.message);
-              if (window.Achievements) Achievements.checkAction('tn_match_won');
-            });
-          }(matchId, window._user.id));
+        var myUid   = window.Auth && Auth.getUserId ? Auth.getUserId() : null;
+        if (matchId && isWinner && myUid) {
+          var token = window.Auth && Auth.getToken ? Auth.getToken() : null;
+          var sbUrl = 'https://pnyvlqgllrpslhgimgve.supabase.co';
+          var sbKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBueXZscWdsbHJwc2xoZ2ltZ3ZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwMjQ3OTMsImV4cCI6MjA4ODYwMDc5M30.7MwZTEJuYGSLaOjfs0EP4wFAi3CanDzSRMbTvPiIasw';
+          fetch(sbUrl + '/rest/v1/rpc/advance_winner', {
+            method: 'POST',
+            headers: {
+              'apikey': sbKey,
+              'Authorization': token ? 'Bearer ' + token : 'Bearer ' + sbKey,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ p_match_id: matchId, p_winner_id: myUid }),
+          }).then(function(r) { return r.json(); }).then(function(res) {
+            if (res && res.error) console.warn('advance_winner error:', res.error);
+            if (window.Achievements) Achievements.checkAction('tn_match_won');
+          });
         }
       } else {
         // Dual instance: check if current player won either of the two sub-games

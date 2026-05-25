@@ -151,6 +151,9 @@
 
   // ── postMessage bridge ─────────────────────────────────────────────────────
   window.addEventListener('message', function(e) {
+    // Reject messages from any origin other than our own — prevents cross-origin
+    // frames from injecting fake game-win or game-sync messages.
+    if (e.origin !== window.location.origin) return;
     if (!e.data) return;
 
     // Game iframe reports a move - forward to the other iframe and persist
@@ -163,7 +166,7 @@
       var frames = elBoards ? elBoards.querySelectorAll('iframe') : [];
       frames.forEach(function(fr) {
         if (fr.contentWindow !== e.source) {
-          fr.contentWindow.postMessage({ type: 'room-state', data: e.data.data }, '*');
+          fr.contentWindow.postMessage({ type: 'room-state', data: e.data.data }, window.location.origin);
         }
       });
       // Persist to Supabase (non-blocking)
@@ -190,7 +193,7 @@
         var insts = readyRoom.game_instances || [];
         var inst  = insts[readyIdx];
         if (inst && inst.board_state && inst.status !== 'finished' && e.source) {
-          e.source.postMessage({ type: 'room-state', data: inst.board_state }, '*');
+          e.source.postMessage({ type: 'room-state', data: inst.board_state }, window.location.origin);
         }
       }
     }

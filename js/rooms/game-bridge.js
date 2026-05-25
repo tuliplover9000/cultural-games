@@ -78,7 +78,7 @@
     sendState: function (blob) {
       if (isSpectatorMode) return;  // spectators cannot modify board state
       try {
-        parent.postMessage({ type: 'game-sync', instance: instance, gen: gen, data: blob }, '*');
+        parent.postMessage({ type: 'game-sync', instance: instance, gen: gen, data: blob }, window.location.origin);
       } catch (err) { /* cross-origin safety, should never fire */ }
     },
 
@@ -99,7 +99,7 @@
           gen: gen,
           winnerSeat: winnerSeat,
           score: score || null,
-        }, '*');
+        }, window.location.origin);
       } catch (err) { /* cross-origin safety */ }
     },
 
@@ -113,7 +113,7 @@
       _onStateFn = fn;
       // Tell the parent we're ready; it will push current board_state if any.
       try {
-        parent.postMessage({ type: 'game-ready', instance: instance, gen: gen }, '*');
+        parent.postMessage({ type: 'game-ready', instance: instance, gen: gen }, window.location.origin);
       } catch (err) { /* cross-origin safety */ }
     },
 

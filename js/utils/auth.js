@@ -281,7 +281,7 @@
     if (!_user || !_accessToken) return false;
     if (_favorites.has(gameKey)) {
       _favorites.delete(gameKey);
-      _pgFetch('DELETE', 'favorites?user_id=eq.' + _user.id + '&game_key=eq.' + gameKey);
+      _pgFetch('DELETE', 'favorites?user_id=eq.' + encodeURIComponent(_user.id) + '&game_key=eq.' + encodeURIComponent(gameKey));
     } else {
       _favorites.add(gameKey);
       _pgFetch('POST', 'favorites', { user_id: _user.id, game_key: gameKey });
