@@ -33,13 +33,38 @@
     return _db;
   }
 
+  // Authenticated client — injects the user's JWT so RLS can enforce per-user
+  // write policies. Falls back to anon client for guests. Re-creates when token
+  // changes (after a token refresh cycle).
+  var _adb = null;
+  var _adbToken = null;
+  function authDb() {
+    var token = window.Auth && typeof Auth.getToken === 'function' ? Auth.getToken() : null;
+    if (!token) return db();
+    if (_adb && token === _adbToken) return _adb;
+    _adbToken = token;
+    _adb = window.supabase.createClient(SB_URL, SB_KEY, {
+      global: { headers: { Authorization: 'Bearer ' + token } },
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    });
+    return _adb;
+  }
+
   // ── Player identity ────────────────────────────────────────────────────────
   function getPlayerId() {
-    if (_pid) return _pid;
-    _pid = localStorage.getItem('cg_pid');
+    // Authenticated users always get their Supabase auth UUID as their room
+    // identity. This is server-verified and cannot be spoofed via localStorage.
+    if (window.Auth && Auth.isLoggedIn && Auth.isLoggedIn()) {
+      var uid = Auth.getUserId && Auth.getUserId();
+      if (uid) return uid;
+    }
+    // Guest fallback: use or generate a persistent random ID.
     if (!_pid) {
-      _pid = 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-      localStorage.setItem('cg_pid', _pid);
+      _pid = localStorage.getItem('cg_pid');
+      if (!_pid) {
+        _pid = 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+        localStorage.setItem('cg_pid', _pid);
+      }
     }
     return _pid;
   }
@@ -148,7 +173,7 @@
 
       var room = null;
       for (var i = 0; i < 8 && !room; i++) {
-        var res = await db().from('rooms').insert({
+        var res = await authDb().from('rooms').insert({
           code:         randomCode(),
           game:         '',                            // legacy field, kept for compat
           host_id:      pid,
@@ -214,7 +239,7 @@
       if (!roles[pid])  roles[pid]  = 'player';
       if (rdyMap[pid] === undefined) rdyMap[pid] = false;
 
-      var res2 = await db().from('rooms').update({
+      var res2 = await authDb().from('rooms').update({
         player_ids:   ids,
         player_names: names,
         player_wins:  wins,
@@ -238,9 +263,9 @@
 
       // If host leaves, close the room; otherwise just remove from list
       if (_room.host_id === pid) {
-        await db().from('rooms').update({ status: 'finished' }).eq('id', _room.id);
+        await authDb().from('rooms').update({ status: 'finished' }).eq('id', _room.id);
       } else {
-        await db().from('rooms').update({ player_ids: ids }).eq('id', _room.id);
+        await authDb().from('rooms').update({ player_ids: ids }).eq('id', _room.id);
       }
 
       if (_channel) { db().removeChannel(_channel); _channel = null; }
@@ -254,31 +279,31 @@
       if (!_room) return;
       var rdyMap = Object.assign({}, _room.player_ready || {});
       rdyMap[getPlayerId()] = !!ready;
-      await db().from('rooms').update({ player_ready: rdyMap }).eq('id', _room.id);
+      await authDb().from('rooms').update({ player_ready: rdyMap }).eq('id', _room.id);
     },
 
     suggestGame: async function (gameKey) {
       if (!_room) return;
       var list = (_room.suggestions || []).slice();
       list.push({ game: gameKey, suggested_by: getPlayerId(), name: getPlayerName(), ts: Date.now() });
-      await db().from('rooms').update({ suggestions: list }).eq('id', _room.id);
+      await authDb().from('rooms').update({ suggestions: list }).eq('id', _room.id);
     },
 
     removeSuggestion: async function (idx) {
       if (!_room) return;
       var list = (_room.suggestions || []).slice();
       list.splice(idx, 1);
-      await db().from('rooms').update({ suggestions: list }).eq('id', _room.id);
+      await authDb().from('rooms').update({ suggestions: list }).eq('id', _room.id);
     },
 
     setLobbyMode: async function (mode) {
       if (!_room) return;
-      await db().from('rooms').update({ lobby_mode: mode }).eq('id', _room.id);
+      await authDb().from('rooms').update({ lobby_mode: mode }).eq('id', _room.id);
     },
 
     selectGame: async function (gameKey) {
       if (!_room) return;
-      await db().from('rooms').update({
+      await authDb().from('rooms').update({
         selected_game: gameKey,
         status:        'assigning',
       }).eq('id', _room.id);
@@ -286,26 +311,27 @@
 
     sendChatMessage: async function (text) {
       if (!_room || !text || !text.trim()) return;
+      var safe = text.trim().slice(0, 500); // hard cap — prevents JSONB bloat
       var msgs = (_room.chat_messages || []).slice(-199);
-      msgs.push({ pid: getPlayerId(), name: getPlayerName(), text: text.trim(), ts: Date.now() });
-      await db().from('rooms').update({ chat_messages: msgs }).eq('id', _room.id);
+      msgs.push({ pid: getPlayerId(), name: getPlayerName(), text: safe, ts: Date.now() });
+      await authDb().from('rooms').update({ chat_messages: msgs }).eq('id', _room.id);
     },
 
     // ── In-game actions ──────────────────────────────────────────────────────
 
     setPlayerRoles: async function (rolesMap) {
       if (!_room) return;
-      await db().from('rooms').update({ player_roles: rolesMap }).eq('id', _room.id);
+      await authDb().from('rooms').update({ player_roles: rolesMap }).eq('id', _room.id);
     },
 
     setDualInstance: async function (dual) {
       if (!_room) return;
-      await db().from('rooms').update({ dual_instance: !!dual }).eq('id', _room.id);
+      await authDb().from('rooms').update({ dual_instance: !!dual }).eq('id', _room.id);
     },
 
     startGame: async function (gameMode) {
       if (!_room) return;
-      await db().from('rooms').update({
+      await authDb().from('rooms').update({
         status:         'playing',
         game_instances: [],
         game_mode:      gameMode || 'normal',
@@ -321,7 +347,7 @@
       } else {
         instances[idx] = Object.assign({}, instances[idx], { board_state: blob });
       }
-      await db().from('rooms').update({ game_instances: instances }).eq('id', _room.id);
+      await authDb().from('rooms').update({ game_instances: instances }).eq('id', _room.id);
     },
 
     // endGameWithWin - single atomic update that increments player_wins AND marks
@@ -347,7 +373,7 @@
       var allDone = instances.length > 0 && instances.every(function(i){ return i.status === 'finished'; });
       var update = { game_instances: instances, player_wins: wins };
       if (allDone) update.status = 'endscreen';
-      await db().from('rooms').update(update).eq('id', _room.id);
+      await authDb().from('rooms').update(update).eq('id', _room.id);
     },
 
     placeBet: async function (amount) {
@@ -357,14 +383,14 @@
       var betKey = (window.Auth && Auth.getUserId && Auth.getUserId()) || getPlayerId();
       var bets = Object.assign({}, _room.bets || {});
       bets[betKey] = Math.max(0, amount || 0);
-      await db().from('rooms').update({ bets: bets }).eq('id', _room.id);
+      await authDb().from('rooms').update({ bets: bets }).eq('id', _room.id);
     },
 
     rematch: async function () {
       if (!_room) return;
       // Update local cache immediately so callers can launch the game optimistically
       _room = Object.assign({}, _room, { status: 'playing', game_instances: [], bets: {} });
-      await db().from('rooms').update({
+      await authDb().from('rooms').update({
         status:         'playing',
         game_instances: [],
         bets:           {},
@@ -373,7 +399,7 @@
 
     backToLobby: async function () {
       if (!_room) return;
-      await db().from('rooms').update({
+      await authDb().from('rooms').update({
         status:         'lobby',
         selected_game:  null,
         game_instances: [],
@@ -406,7 +432,7 @@
         var roles  = Object.assign({}, _room.player_roles  || {}, { [pid]: 'player' });
         var rdyMap = Object.assign({}, _room.player_ready  || {}, { [pid]: false });
         ids.push(pid);
-        var res2 = await db().from('rooms').update({
+        var res2 = await authDb().from('rooms').update({
           player_ids:   ids,
           player_names: names,
           player_wins:  wins,
@@ -469,7 +495,7 @@
     },
 
     setPublic: async function(roomId, isPublic) {
-      var res = await db().from('rooms').update({ is_public: !!isPublic }).eq('id', roomId);
+      var res = await authDb().from('rooms').update({ is_public: !!isPublic }).eq('id', roomId);
       if (res.error) throw res.error;
     },
 
@@ -478,7 +504,7 @@
     // Returns { success, error? }.
     joinAsSpectator: async function(roomId) {
       var pid = getPlayerId();
-      var res = await db().rpc('join_as_spectator', { p_room_id: roomId, p_pid: pid });
+      var res = await authDb().rpc('join_as_spectator', { p_room_id: roomId, p_pid: pid });
       if (res.error) return { success: false, error: res.error.message };
       return res.data || { success: true };
     },

@@ -547,15 +547,8 @@
     elAssignCancel.onclick = function() {
       elAssignModal.hidden = true;
       renderGameGrid(); // immediately re-enable play buttons
-      // Revert status to lobby
-      if (Room.amHost()) {
-        var db = window.supabase && window.supabase.createClient(
-          'https://pnyvlqgllrpslhgimgve.supabase.co',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBueXZscWdsbHJwc2xoZ2ltZ3ZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwMjQ3OTMsImV4cCI6MjA4ODYwMDc5M30.7MwZTEJuYGSLaOjfs0EP4wFAi3CanDzSRMbTvPiIasw',
-          { auth: { persistSession: false } }
-        );
-        if (db) db.from('rooms').update({ status: 'lobby', selected_game: null }).eq('id', Room.currentRoom().id);
-      }
+      // Revert status to lobby via Room API (uses authDb internally)
+      if (Room.amHost()) Room.backToLobby();
     };
   }
 
@@ -646,9 +639,7 @@
         if (window.Endscreen) window.Endscreen.show(room);
       },
       onFinished: function() {
-        // Host left - persist any local coin changes before redirecting
-        if (window.Auth && Auth.persistCoins) Auth.persistCoins();
-        showError('The host left the room. Your coins have been saved.');
+        showError('The host left the room.');
         setTimeout(function() { window.location.href = 'rooms.html'; }, 3000);
       },
       onChatUpdate: function(messages) {

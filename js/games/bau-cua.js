@@ -466,11 +466,7 @@
 
     // Update wallet
     state.wallet = Math.max(0, state.wallet + net);
-    // Sync real-coin mode: push the delta to the global Auth balance and persist
-    if (useRealCoins && window.Auth && Auth.addCoins) {
-      Auth.addCoins(net);
-      if (Auth.persistCoins) Auth.persistCoins();
-    }
+    // Local display update only — server balance is authoritative via record_game_result at game end.
     if (vsRoom) syncMyState(); // broadcast updated wallet + empty bets to leaderboard
 
     // Track stats
@@ -790,10 +786,6 @@
     }
   }
 
-  // Persist real-coin balance if player navigates away mid-game
-  window.addEventListener('beforeunload', function () {
-    if (useRealCoins && window.Auth && Auth.persistCoins) Auth.persistCoins();
-  });
 
   // ── Boot ───────────────────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', init);

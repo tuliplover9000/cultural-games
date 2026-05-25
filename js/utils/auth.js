@@ -269,10 +269,8 @@
   }
 
   function persistCoins() {
-    // Write the current local coin balance to the DB via SECURITY DEFINER RPC.
-    // Direct PATCH to profiles.coins is blocked by RLS, so we use the RPC.
-    if (!_user || !_accessToken) return;
-    _rpcFetch('persist_coins', { p_new_balance: _coins });
+    // No-op: coins are updated server-side exclusively via record_game_result.
+    // Removed to prevent console-based balance manipulation via Auth.persistCoins().
   }
 
   function getUserId() {
@@ -418,7 +416,15 @@
     'ganjifa':  { win: 500, loss: 150 },
   };
 
+  // Per-session timestamps — limits recordResult to once per 30 s per game.
+  // Resets on page load, so it only slows down console abuse, not real gameplay.
+  var _lastResultTs = {};
+
   function recordResult(gameId, outcome, roomId) {
+    var now = Date.now();
+    if (_lastResultTs[gameId] && now - _lastResultTs[gameId] < 30000) return;
+    _lastResultTs[gameId] = now;
+
     // ── Optimistic local update (immediate UI feedback) ────────────────────
     if (!_stats[gameId]) _stats[gameId] = { wins: 0, losses: 0, played: 0 };
     _stats[gameId].played++;
@@ -865,8 +871,9 @@
     getFavorites:   getFavorites,
     toggleFavorite: toggleFavorite,
     getCoins:       getCoins,
-    addCoins:       addCoins,
-    persistCoins:   persistCoins,
+    // addCoins / persistCoins intentionally not exposed — coins are server-authoritative
+    // via record_game_result. Exposing them allowed console-based balance manipulation.
+    getToken:       function () { return _accessToken; },
     getUserId:      getUserId,
     GAMES:          GAMES,
   };

@@ -283,9 +283,7 @@
         showCreateError(errMap[result.error] || ('Error: ' + result.error));
         return;
       }
-      // Reflect coin deduction locally
-      if (Auth.addCoins && seed > 0) Auth.addCoins(-seed);
-      if (Auth.persistCoins) Auth.persistCoins();
+      // Local display update — server deducts coins via the tournament RPC.
       await openLobbyById(result.tournament_id);
     } catch (e) {
       showCreateError('Could not create tournament. Please try again.');
@@ -322,10 +320,7 @@
         showJoinError(errMap[result.error] || ('Error: ' + result.error));
         return;
       }
-      if (result.entry_fee_paid > 0 && Auth.addCoins) {
-        Auth.addCoins(-result.entry_fee_paid);
-        if (Auth.persistCoins) Auth.persistCoins();
-      }
+      // Server already deducted entry fee via the join RPC — no local persist needed.
       // Check achievements
       if (window.Achievements) Achievements.checkAction('tn_registered');
       await openLobbyById(result.tournament_id);
@@ -595,9 +590,7 @@
         elCancelBtn.disabled = true;
         callRpc('cancel_tournament', { p_tournament_id: _current.id }).then(function (res) {
           if (res && res.success) {
-            // Refund host seed locally
-            if (Auth.addCoins && _current.host_seed > 0) Auth.addCoins(_current.host_seed);
-            if (Auth.persistCoins) Auth.persistCoins();
+            // Server handles refund via cancel_tournament RPC — balance refreshes on next auth reload.
             showToast('Tournament cancelled. All fees refunded.', 5000);
             closePanel();
           } else {
