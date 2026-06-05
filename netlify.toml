@@ -10,14 +10,7 @@
 #   to     = "/index.html"
 #   status = 404
 
-# Security headers + cache policy.
-# Cache: this is a no-build static site (CSS/JS are referenced without version
-# hashes), so Netlify's default Cache-Control: max-age=600 meant every deploy
-# took up to 10 minutes to appear — users kept seeing stale CSS/JS after changes
-# shipped. max-age=0, must-revalidate makes the browser keep the cached copy but
-# check the ETag each load: a tiny 304 when unchanged, the fresh file the instant
-# it changes. Set on /* so it applies to files at ANY depth (a Netlify "/*.css"
-# glob would only match root-level files, not /shared/mobile.css).
+# Security headers
 [[headers]]
   for = "/*"
   [headers.values]
@@ -25,4 +18,3 @@
     X-XSS-Protection       = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy        = "strict-origin-when-cross-origin"
-    Cache-Control          = "public, max-age=0, must-revalidate"
