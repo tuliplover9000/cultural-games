@@ -430,6 +430,18 @@ body.bp-no-scroll { overflow: hidden; position: fixed; width: 100%; }
   .game-card__description { font-size: 13px; }
 }
 
+/* ── LANDSCAPE PHONES (short, but can be 768–1023px wide) ──────────────────
+   A big phone held sideways (e.g. iPhone Pro Max ≈ 932px wide × ~430 tall)
+   falls in the "tablet" width range above, which gave it the cramped 2-column
+   cards-plus-panel layout (panel overlapping the cards in the short height).
+   Treat it like mobile: drop the side panel and let the cards use the full
+   width in a 3-up grid. Placed AFTER the tablet block so it wins. */
+@media (orientation: landscape) and (max-height: 500px) {
+  #bp-browse-layout { grid-template-columns: 1fr !important; }
+  #bp-panel { display: none !important; }
+  .games-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 12px; }
+}
+
 /* ── MOBILE (max 767px) ────────────────────────────────────────────────── */
 @media (max-width: 767px) {
 
