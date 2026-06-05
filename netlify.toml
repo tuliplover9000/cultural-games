@@ -18,3 +18,24 @@
     X-XSS-Protection       = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy        = "strict-origin-when-cross-origin"
+
+# Cache policy: this is a no-build static site (CSS/JS are referenced without
+# version hashes), so the default max-age=600 meant every deploy took up to
+# 10 minutes to appear — users kept seeing stale CSS/JS after changes shipped.
+# Force the browser to REVALIDATE these on each load: it keeps the cached copy
+# but checks the ETag with the server, getting a tiny 304 when unchanged and
+# the fresh file the instant it changes. Applies to HTML/CSS/JS at any depth.
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
