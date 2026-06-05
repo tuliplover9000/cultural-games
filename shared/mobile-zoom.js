@@ -113,8 +113,15 @@
     }
     var aspect = canvas._cgAspect || 1;
 
-    // Height taken by everything that is NOT the board (HUD, buttons, log…).
-    var nonBoard = c.scrollHeight - canvas.offsetHeight;
+    // Height taken by everything that is NOT the board. In a normal VERTICAL
+    // stack (board above HUD/controls) that's scrollHeight − the board. But in a
+    // SIDE-BY-SIDE layout (landscape: board left, HUD column right — display
+    // grid, or flex-direction:row) the HUD sits BESIDE the board and shares the
+    // height, so it must not be subtracted — the board gets the full height.
+    var disp = getComputedStyle(c);
+    var sideBySide = disp.display === 'grid' ||
+                     (disp.display === 'flex' && disp.flexDirection.indexOf('row') === 0);
+    var nonBoard = sideBySide ? 0 : Math.max(0, c.scrollHeight - canvas.offsetHeight);
     var availBoardH = Math.max(120, (rect.h - nonBoard - EDGE_PAD) * userScale);
     var availBoardW = rect.w * userScale;
 

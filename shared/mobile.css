@@ -94,6 +94,93 @@ canvas {
 }
 
 /* =============================================================
+   LANDSCAPE SIDE-BY-SIDE LAYOUT FOR HUD-HEAVY CANVAS BOARD GAMES
+   These games stack board + HUD + controls + log vertically, so on a short
+   landscape phone the HUD ate ~230px and the board was squeezed to ~120-210px.
+   Put the board on the LEFT (filling the height) and the HUD/controls/log in a
+   column on the RIGHT, using the wide landscape aspect. The fit engine then
+   measures nonBoard ≈ 0 (board is the tallest element) and grows the board to
+   fill the full viewport height automatically.
+   Specificity #game-container.X-game-container (1,1,0) beats the column-layout
+   #game-container (1,0,0) rule above.
+   ============================================================= */
+@media (orientation: landscape) and (max-height: 500px) {
+
+  /* ── Xinjiang Fangqi & Filipino Dama: container is already board + sidebar ── */
+  #game-container.xf-game-container,
+  #game-container.fd-game-container {
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    gap: 10px;
+  }
+  .xf-board-wrap,
+  .fd-board-wrap {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+  }
+  .xf-sidebar,
+  .fd-sidebar {
+    flex: 1 1 0;
+    align-self: stretch;
+    /* widen: the desktop max-width:240px forced content to stack ~576px tall,
+       far taller than the board, which shrank everything via the safety net.
+       Using the space the board freed keeps the sidebar short. */
+    max-width: none;
+    gap: 8px;
+    padding-top: 0;
+    /* concrete viewport cap (NOT 100% — that's circular vs the container) so
+       the sidebar scrolls instead of inflating the container past the board. */
+    max-height: calc(100svh - 24px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    margin: 0;
+  }
+  /* Two counter panels side by side → roughly halves the sidebar height so it
+     fits beside a full-height board with no scroll. */
+  .xf-counters,
+  .fd-counters {
+    flex-direction: row;
+    gap: 8px;
+  }
+  .xf-counter,
+  .fd-counter {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 6px 8px;
+  }
+  .xf-turn-wrap,
+  .fd-turn-wrap {
+    padding: 6px 10px;
+  }
+
+  /* ── Hnefatafl: 4 flat children → grid (board left spanning, rest stacked right) ── */
+  #game-container.ht-game-container {
+    display: grid;
+    grid-template-columns: auto minmax(140px, 1fr);
+    grid-template-rows: auto auto 1fr;
+    align-items: start;
+    justify-content: center;
+    gap: 6px 10px;
+  }
+  .ht-board-wrap {
+    grid-column: 1;
+    grid-row: 1 / 4;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+  }
+  .ht-hud      { grid-column: 2; grid-row: 1; margin: 0; align-self: start; }
+  .ht-controls { grid-column: 2; grid-row: 2; margin: 0; }
+  .ht-log-wrap { grid-column: 2; grid-row: 3; margin: 0; min-height: 0; max-height: 100%; overflow-y: auto; overscroll-behavior: contain; }
+}
+
+/* =============================================================
    COMPACT GAME HEADER ON MOBILE
    The desktop game-header (large icon block + title + origin) ate ~300px
    above the game, pushing the board far below the fold and leaving the fitter
