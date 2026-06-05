@@ -439,7 +439,19 @@ body.bp-no-scroll { overflow: hidden; position: fixed; width: 100%; }
 @media (orientation: landscape) and (max-height: 500px) {
   #bp-browse-layout { grid-template-columns: 1fr !important; }
   #bp-panel { display: none !important; }
-  .games-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 12px; }
+  /* minmax(0,1fr), NOT 1fr: plain 1fr lets a card's content widen its track so
+     the columns came out unequal (293/314/314) and overflowed the row (the last
+     card's Play button was cut off). minmax(0,…) forces 3 equal columns that
+     fit. align-items:stretch makes every card the same height. */
+  .games-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    align-items: stretch !important;
+    gap: 12px;
+  }
+  /* height:100% + stretch makes every card match the tallest in its row, so
+     the "Most Popular!" badge (which sits in-flow above one card's banner)
+     no longer leaves that card a different size — the others just stretch. */
+  .game-card { min-width: 0; height: 100% !important; align-self: stretch !important; }
 }
 
 /* ── MOBILE (max 767px) ────────────────────────────────────────────────── */
