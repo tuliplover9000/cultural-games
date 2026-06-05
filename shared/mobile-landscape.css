@@ -84,19 +84,21 @@
     display: none;
   }
 
-  /* Game page: small top breathing room */
+  /* Game page: top breathing room above the gold border, and inset the whole
+     content past the notch (env safe-area) on the left/right in landscape. */
   .game-page {
-    padding-block: 8px 0;
+    padding-block: 14px 0;
+    padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
   }
 
-  /* Game container: no height cap — let zoom (applied by autoFit JS) control
-     the visual size. No max-height means CSS zoom scales the whole element
-     correctly without triggering overflow against a hard constraint. */
+  /* Gold border: clear margin from the screen edges on all sides. The bottom
+     gap is reserved by the fit engine (bottomReserve), so only the side margins
+     are set here. width:auto (not calc) so the margins aren't double-counted. */
   .game-container,
   [class*="game-container"] {
     min-height: 0 !important;
-    margin-inline: 8px;
-    width: calc(100% - 16px);
+    margin-inline: 14px;
+    width: auto;
     box-sizing: border-box;
     overflow: visible;
   }

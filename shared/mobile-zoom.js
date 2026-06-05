@@ -32,7 +32,7 @@
   var MAX_VIEWPORT = 900;     // engine only runs on phones / small tablets
   var MIN_SCALE    = 0.4;     // never shrink below this
   var MAX_SCALE    = 2.2;     // how far a small DOM layout may grow
-  var EDGE_PAD     = 8;       // breathing room (px) at the bottom edge
+  var EDGE_PAD     = 14;      // breathing room (px) at the bottom edge
 
   // Game roots for DOM (non-canvas) games — mirror of fullscreen.js list.
   var DOM_SELECTOR =
@@ -67,14 +67,19 @@
             typeof window.cgMobileResize === 'function');
   }
 
-  /* Height reserved at the bottom for the mobile tab bar + safe area. */
+  /* Height reserved at the bottom for the mobile tab bar + safe-area inset
+     (home indicator) + breathing room, so the gold border clears the bottom
+     edge. The leftover gap below the fitted container IS the bottom margin. */
   function bottomReserve() {
     var nav = document.querySelector('.mb-nav-bar, .mb-nav');
     var h = 0;
     if (nav && getComputedStyle(nav).display !== 'none') {
       h = nav.getBoundingClientRect().height || 0;
     }
-    return h + EDGE_PAD;
+    var safe = parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue('--safe-bottom')
+    ) || 0;
+    return h + safe + EDGE_PAD;
   }
 
   /* The CONTENT rectangle the game may occupy, in CSS px. We subtract the
@@ -334,10 +339,22 @@
 
   // window.load fires after images decode — re-measure so late images count.
   window.addEventListener('load', function () { remeasure(); fit(); });
-  window.addEventListener('resize', function () { userIndex = 0; remeasure(); schedule(); });
+
+  // IMPORTANT: only re-fit when the viewport WIDTH changes (a real resize or
+  // rotation). On phones, scrolling hides/shows the browser address bar, which
+  // changes innerHeight and fires 'resize' — re-fitting then makes the whole
+  // game visibly resize/jump while the user scrolls. Height-only changes are
+  // ignored: the game was already fitted to the smaller (address-bar-shown)
+  // height, so it still fits when the bar hides and more height appears.
+  var lastViewportW = window.innerWidth;
+  window.addEventListener('resize', function () {
+    if (window.innerWidth === lastViewportW) return;   // height-only → ignore
+    lastViewportW = window.innerWidth;
+    userIndex = 0; remeasure(); schedule();
+  });
   window.addEventListener('orientationchange', function () {
     userIndex = 0;
-    setTimeout(function () { remeasure(); fit(); }, 250);
+    setTimeout(function () { lastViewportW = window.innerWidth; remeasure(); fit(); }, 250);
   });
 
 }());
