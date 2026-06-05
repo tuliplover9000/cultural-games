@@ -210,6 +210,28 @@ canvas {
   .ht-hud      { grid-column: 2; grid-row: 1; margin: 0; align-self: start; }
   .ht-controls { grid-column: 2; grid-row: 2; margin: 0; }
   .ht-log-wrap { grid-column: 2; grid-row: 3; margin: 0; min-height: 0; max-height: 100%; overflow-y: auto; overscroll-behavior: contain; }
+
+  /* ── Fanorona: HUD + board + controls were stacked → board was tiny. Board
+     left (fills height), HUD/controls in the right column. ── */
+  #game-container.fn-game-container {
+    display: grid;
+    grid-template-columns: auto minmax(140px, 1fr);
+    grid-template-rows: auto 1fr;
+    align-items: start;
+    justify-content: center;
+    gap: 6px 10px;
+  }
+  .fn-board-wrap {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+  }
+  .fn-hud      { grid-column: 2; grid-row: 1; margin: 0; align-self: start; }
+  .fn-controls { grid-column: 2; grid-row: 2; margin: 0; align-self: start; }
 }
 
 /* =============================================================
