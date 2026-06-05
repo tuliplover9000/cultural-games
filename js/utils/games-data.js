@@ -107,7 +107,7 @@ window.GAMES_DATA = [
   },
   {
     key: 'cachos', name: 'Cachos', culture: 'Latin America', type: 'Dice', maxPlayers: 6,
-    region: 'south-america', path: 'games/cachos.html', howToPlay: 'how-to-play/cachos/',
+    region: 'south-america', path: '../cachos/', howToPlay: 'how-to-play/cachos/',
     description: "A dice bluffing game played across Latin America — particularly in Ecuador, Peru, and Colombia — where five dice are shaken in a leather cup and bids are made on the total dice showing across all cups at the table. In Ecuador the game is woven into social life at every level, from cantina tables to corporate retreats, and skilled players who can read their opponents' bluffs command genuine respect. The Spanish name comes from the word for animal horns, a reference to the original leather cups made from horn or hide.",
     didYouKnow: "In Ecuador, refusing a Cachos challenge at a social gathering is considered mildly rude — the game is that embedded in the culture.",
     complexity: 2, players: '2–6',

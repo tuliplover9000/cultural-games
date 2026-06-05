@@ -55,7 +55,7 @@
     { id: 'pachisi',     name: 'Pachisi',              iconPath: 'assets/icons/pachisi.svg',      href: 'games/pachisi.html' },
     { id: 'ganjifa',     name: 'Ganjifa',              iconPath: 'assets/icons/ganjifa.svg',      href: 'games/ganjifa.html' },
     { id: 'latrunculi',  name: 'Ludus Latrunculorum',  iconPath: 'assets/icons/latrunculi.svg',   href: 'games/latrunculi.html' },
-    { id: 'cachos',          name: 'Cachos',               iconPath: 'assets/icons/cachos.svg',           href: 'games/cachos.html' },
+    { id: 'cachos',          name: 'Cachos',               iconPath: 'assets/icons/cachos.svg',           href: 'cachos/' },
     { id: 'xinjiang-fangqi', name: 'Xinjiang Fangqi',      iconPath: 'assets/icons/xinjiang-fangqi.svg',  href: 'xinjiang-fangqi/' },
     { id: 'filipino-dama',   name: 'Filipino Dama',        iconPath: 'assets/icons/filipino-dama.svg',    href: 'filipino-dama/' },
   ];
