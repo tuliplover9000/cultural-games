@@ -29,10 +29,20 @@
 (function () {
   'use strict';
 
-  var MAX_VIEWPORT = 900;     // engine only runs on phones / small tablets
+  var MAX_VIEWPORT = 900;     // phones / small tablets by WIDTH
+  var MAX_LANDSCAPE_H = 500;  // landscape phones are short — treat as mobile too
   var MIN_SCALE    = 0.4;     // never shrink below this
   var MAX_SCALE    = 2.2;     // how far a small DOM layout may grow
   var EDGE_PAD     = 14;      // breathing room (px) at the bottom edge
+
+  /* Run on phones in EITHER orientation. A big phone in LANDSCAPE can be wider
+     than 900px (e.g. iPhone Pro Max ≈ 932px), but it's always SHORT (≤ ~500px
+     tall) — so a short viewport counts as mobile regardless of width. Without
+     this, large phones in landscape fell back to the desktop layout (game too
+     tall → had to scroll). */
+  function isMobileViewport() {
+    return window.innerWidth <= MAX_VIEWPORT || window.innerHeight <= MAX_LANDSCAPE_H;
+  }
 
   // Game roots for DOM (non-canvas) games — mirror of fullscreen.js list.
   var DOM_SELECTOR =
@@ -245,7 +255,7 @@
 
   function fit() {
     if (fitting) return;
-    if (window.innerWidth > MAX_VIEWPORT) {
+    if (!isMobileViewport()) {
       // Desktop: clear any overrides we may have set on a previous small size.
       var dc = getContainer();
       if (dc) {
@@ -309,7 +319,7 @@
   }
 
   function init() {
-    if (window.innerWidth > MAX_VIEWPORT) return;
+    if (!isMobileViewport()) return;
     var c = getContainer();
     if (!c) return;
 

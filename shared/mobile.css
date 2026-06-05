@@ -251,9 +251,10 @@ canvas {
    fitter (shared/mobile-zoom.js) had to shrink everything to ~40% — tiny and
    unreadable. Removing those artificial min-heights lets each game collapse
    to its natural content height, so the fitter only needs a gentle scale and
-   the pieces stay readable. Scoped to phones/small tablets.
-   ============================================================= */
-@media (max-width: 900px) {
+   the pieces stay readable. Scoped to phones/small tablets — AND to short
+   landscape viewports (big phones in landscape can be wider than 900px, e.g.
+   iPhone Pro Max ≈ 932px, but are always short). The comma = logical OR. */
+@media (max-width: 900px), (orientation: landscape) and (max-height: 500px) {
 
   /* Let DOM game roots collapse to their natural content height. Desktop sets
      min-heights of 400–620px on these, which forced the page far taller than a
