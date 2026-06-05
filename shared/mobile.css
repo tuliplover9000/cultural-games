@@ -46,29 +46,127 @@ canvas {
   }
 }
 
-/* ── Game canvas: fit viewport on mobile, no vertical overflow ── */
+/* ── Game shell on mobile ──────────────────────────────────────────────
+   shared/mobile-zoom.js owns the actual fit (it measures the available
+   rectangle and scales the board / DOM root to fill it). The container must
+   therefore NOT impose a hard max-height or clip with overflow:hidden — those
+   fought the fitter and caused either cut-off controls or a tiny board in a
+   big empty box. We only center the content and keep the gold border off the
+   screen edges. */
 @media (max-width: 768px) {
   #game-container {
-    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    max-height: calc(100svh - var(--nav-height, 64px));
+    justify-content: flex-start;
+    overflow: visible;
   }
   #game-container canvas {
     display: block;
     max-width: 100%;
-    max-height: calc(100svh - var(--nav-height, 64px) - 16px);
   }
 
-  /* Keep game container off the screen edges on all mobile/tablet.
-     Adding margin-inline shrinks the block element's content box so
-     the gold border has breathing room from the screen edges. */
+  /* Keep game container off the screen edges on all mobile/tablet. */
   .game-container,
   [class*="game-container"] {
     margin-inline: 12px;
   }
+
+  /* Reclaim wasted whitespace: on phones the desktop padding (~32px) and gap
+     (~24px) burn ~130px of vertical space, squeezing the board. Tighten them
+     so the fitter can give the board far more room. Kept generous enough that
+     HUD-dense games (Fanorona, Hnefatafl) don't squash. Covers Pachisi too,
+     whose container uses id="pc-game-container" (class .game-container). */
+  #game-container,
+  .game-container[id$="game-container"] {
+    padding: 14px;
+    gap: 12px;
+  }
+}
+
+/* Landscape phones are vertically tight — tighten further so the board fills
+   the height. Still leaves breathing room around the HUD/controls. */
+@media (orientation: landscape) and (max-height: 500px) {
+  #game-container {
+    padding: 8px;
+    gap: 8px;
+  }
+}
+
+/* =============================================================
+   COMPACT GAME HEADER ON MOBILE
+   The desktop game-header (large icon block + title + origin) ate ~300px
+   above the game, pushing the board far below the fold and leaving the fitter
+   almost no room. Collapse it to a slim single-row strip on phones/tablets so
+   the game starts near the top. The <h1> stays in the DOM for SEO.
+   ============================================================= */
+@media (max-width: 768px) {
+  /* Reclaim the tall "Back to Browse" strip — Browse lives in the bottom tab
+     bar on mobile, so this top strip is redundant. */
+  .game-nav-bar { display: none; }
+
+  .game-page { padding-top: 8px; }
+
+  /* Slim single-row title. !important to beat the more specific desktop
+     `.game-page .game-header` padding/margin. */
+  .game-header {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px !important;
+    padding: 6px 10px !important;
+    margin-bottom: 8px !important;
+  }
+  .game-header__icon { margin: 0 !important; }
+  .game-header__icon img { width: 30px !important; height: 30px !important; }
+  .game-header__title { font-size: var(--text-lg) !important; margin: 0 !important; line-height: 1.1 !important; }
+  .game-header__origin { font-size: var(--text-xs) !important; margin: 0 !important; width: 100%; text-align: center; }
+}
+
+/* =============================================================
+   DOM GAME MOBILE COMPACTION
+   Card/tile/pit games (no canvas) are laid out with desktop-sized
+   min-heights that force the page far taller than a phone screen, so the
+   fitter (shared/mobile-zoom.js) had to shrink everything to ~40% — tiny and
+   unreadable. Removing those artificial min-heights lets each game collapse
+   to its natural content height, so the fitter only needs a gentle scale and
+   the pieces stay readable. Scoped to phones/small tablets.
+   ============================================================= */
+@media (max-width: 900px) {
+
+  /* Let DOM game roots collapse to their natural content height. Desktop sets
+     min-heights of 400–620px on these, which forced the page far taller than a
+     phone and made the fitter shrink everything to ~40%.
+     IMPORTANT: only null the generic .game-container for DOM games (no canvas).
+     Canvas-game containers (e.g. Latrunculi's flex-row board+sidebar) rely on
+     that min-height to give their children height — nulling it collapses them.
+     For canvas games the JS safety net shrinks the container to fit instead. */
+  .game-container:not(:has(canvas)),
+  .tl-game, .bc-game, .oaq-game, .ow-game, .pg-game,
+  .pt-game-wrap, .pu-game-wrap, .mj-wrap, .cu-game {
+    min-height: 0 !important;
+  }
+
+  /* ── Tiến Lên (cards) ── */
+  .tl-game       { padding: var(--space-2); gap: var(--space-2); }
+  .tl-hand       { min-height: 64px !important; }
+  .tl-status-bar { min-height: 34px; }
+
+  /* ── Bầu Cua (betting mat) — tighten tiles so it fits without extreme shrink ── */
+  .bc-game        { padding: var(--space-2); gap: var(--space-2); }
+  .bc-symbol-zone { min-height: 62px !important; gap: 2px; padding: 6px 4px; }
+  .bc-symbol-img  { width: 40px !important; height: 40px !important; }
+  .bc-symbol-emoji{ font-size: 1.7rem !important; }
+}
+
+/* Landscape phones: cards/mats are vertically squeezed — compact the dense
+   betting/card games further so they stay readable instead of shrinking. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .bc-symbol-zone { min-height: 50px !important; }
+  .bc-symbol-img  { width: 34px !important; height: 34px !important; }
+  .bc-wallet-bar  { padding-block: 4px !important; }
 }
 
 /* =============================================================
@@ -306,9 +404,10 @@ canvas {
 
 /* =============================================================
    PHASE F — Canvas Responsive Scaling
-   All canvas elements fit their container on mobile.
-   Games use getBoundingClientRect + scaleX/scaleY for hit-test,
-   so CSS scaling is safe for all existing games.
+   shared/mobile-zoom.js sets each canvas's explicit display width/height to
+   the fitted size (keeping the buffer crisp). We must NOT force width:100% /
+   height:auto here — that overrode the fitter and stretched boards. Hit-test
+   stays correct because games derive scaleX/scaleY from getBoundingClientRect.
    ============================================================= */
 @media (max-width: 430px) {
   canvas {
@@ -316,28 +415,16 @@ canvas {
     max-width: 100%;
   }
 
-  /* Specific game canvases */
-  #fn-canvas,
-  #ht-canvas,
-  #ll-canvas,
-  #gj-canvas,
-  #mj-canvas,
-  #pc-board,
-  #xf-board,
-  #fd-board {
-    max-width: 100%;
-    width: 100% !important;
-    height: auto !important;
-  }
-
-  /* Canvas wrap containers */
+  /* Canvas wrap containers: center the board, never clip it. */
   .fn-board-wrap,
   .ht-board-wrap,
   .ll-board-wrap,
   .gj-board-wrap,
   .pc-board-wrap {
     width: 100%;
-    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    overflow: visible;
   }
 }
 
