@@ -97,24 +97,32 @@ canvas {
    TIẾN LÊN / CUARENTA — LANDSCAPE CARD COMPACTION
    The card table (status + opponents + play area + hand + actions + log) is
    ~727px tall, so on a short landscape phone the fitter shrank everything to
-   ~0.48 and the cards became 23px wide — unreadable. Strip the non-essential
-   rows (move log, hand-type hint), put the action buttons on one row, and
-   tighten the table/gaps so the natural height drops to ~330px and the cards
-   render near full size.
+   ~0.48 and the HAND cards became ~23px wide — unreadable. The hand is the
+   thing the player must read, so keep the hand cards full size and aggressively
+   shrink EVERYTHING ELSE: hide the log + hand-type label, shrink the played
+   card in the centre, tiny opponent labels, one-row actions, minimal gaps. This
+   drops the natural height to ~345px so the hand cards render ~42-48px (nearly
+   double) and still fit with no scroll. Keeps opponent card-counts (strategy).
    ============================================================= */
 @media (orientation: landscape) and (max-height: 500px) {
-  .tl-game        { gap: 5px !important; padding: 6px !important; }
+  .tl-game           { gap: 3px !important; padding: 5px !important; }
   .tl-log,
   .tl-log-wrap,
-  .tl-hint        { display: none !important; }
-  .tl-status-bar  { min-height: 0 !important; padding: 5px 12px !important; }
-  .tl-table       { gap: 4px !important; }
-  .tl-zone        { gap: 2px !important; }
-  .tl-play-area   { min-height: 40px !important; }
-  .tl-player-area { gap: 4px !important; }
-  .tl-hand        { min-height: 0 !important; padding: 4px 8px !important; }
-  .tl-actions     { flex-direction: row !important; flex-wrap: wrap; justify-content: center; gap: 6px 14px !important; }
-  .tl-actions__main { gap: 14px !important; }
+  .tl-hint,
+  .tl-play-info      { display: none !important; }
+  .tl-status-bar     { min-height: 0 !important; padding: 3px 12px !important; }
+  .tl-table          { gap: 2px !important; }
+  .tl-zone           { gap: 1px !important; }
+  .tl-zone__name     { font-size: 9px !important; line-height: 1.1 !important; margin: 0 !important; }
+  .tl-zone__count    { font-size: 9px !important; line-height: 1.1 !important; }
+  .tl-opp-cards--top { gap: 1px !important; }
+  /* Shrink only the PLAYED card in the centre, not the hand. */
+  .tl-play-area      { min-height: 0 !important; padding: 3px 8px !important; }
+  .tl-play-area .tl-card { width: 42px !important; height: 58px !important; min-width: 42px !important; }
+  .tl-player-area    { gap: 2px !important; }
+  .tl-hand           { min-height: 0 !important; padding: 3px 6px !important; }
+  .tl-actions        { flex-direction: row !important; flex-wrap: wrap; justify-content: center; gap: 4px 12px !important; }
+  .tl-actions__main  { gap: 12px !important; }
 }
 
 /* =============================================================
