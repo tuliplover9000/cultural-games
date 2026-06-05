@@ -67,19 +67,35 @@
             typeof window.cgMobileResize === 'function');
   }
 
-  /* Height reserved at the bottom for the mobile tab bar + safe-area inset
-     (home indicator) + breathing room, so the gold border clears the bottom
-     edge. The leftover gap below the fitted container IS the bottom margin. */
+  /* STABLE viewport height = the SMALL viewport (100svh), i.e. the height with
+     the browser address bar SHOWN. window.innerHeight changes as the address
+     bar hides/shows on scroll; fitting to it made the game overflow (bottom row
+     clipped) once the bar reappeared, and jump while scrolling. Fitting to svh
+     means the game always fits no matter the bar state, and never needs to
+     re-fit on scroll. Falls back to innerHeight if svh is unsupported. */
+  var _svhProbe = null;
+  function viewportH() {
+    if (!_svhProbe && document.body) {
+      _svhProbe = document.createElement('div');
+      _svhProbe.setAttribute('aria-hidden', 'true');
+      _svhProbe.style.cssText =
+        'position:fixed;top:0;left:0;width:0;height:100svh;visibility:hidden;pointer-events:none;z-index:-1;';
+      document.body.appendChild(_svhProbe);
+    }
+    var h = _svhProbe ? _svhProbe.offsetHeight : 0;
+    return h > 40 ? h : window.innerHeight;
+  }
+
+  /* Height reserved at the bottom for the mobile tab bar + breathing room, so
+     the gold border clears the bottom edge. The leftover gap below the fitted
+     container IS the bottom margin. */
   function bottomReserve() {
     var nav = document.querySelector('.mb-nav-bar, .mb-nav');
     var h = 0;
     if (nav && getComputedStyle(nav).display !== 'none') {
       h = nav.getBoundingClientRect().height || 0;
     }
-    var safe = parseFloat(
-      getComputedStyle(document.documentElement).getPropertyValue('--safe-bottom')
-    ) || 0;
-    return h + safe + EDGE_PAD;
+    return h + EDGE_PAD;
   }
 
   /* The CONTENT rectangle the game may occupy, in CSS px. We subtract the
@@ -97,7 +113,7 @@
     var usableW = Math.min(c.clientWidth, vw) - padX;
     return {
       w: Math.max(usableW, 80),
-      h: Math.max(window.innerHeight - top - bottomReserve() - padY, 140)
+      h: Math.max(viewportH() - top - bottomReserve() - padY, 140)
     };
   }
 
@@ -161,10 +177,11 @@
     // Safety net: if the container still overflows the viewport (tall HUD, a
     // min-height we kept on canvas containers, late layout), shrink the whole
     // container so nothing is clipped or hidden under the tab bar.
-    var limit = window.innerHeight - bottomReserve() - 4;
+    var limit = viewportH() - bottomReserve();
     var cb = c.getBoundingClientRect();
-    if (cb.bottom > limit + 2 && cb.height > 0) {
-      c.style.zoom = String(Math.max(MIN_SCALE, (cb.height - (cb.bottom - limit)) / cb.height));
+    var spill = cb.bottom - limit;
+    if (spill > 3 && cb.height > 0) {
+      c.style.zoom = String(Math.max(MIN_SCALE, (cb.height - spill - 4) / cb.height));
     }
   }
 
@@ -213,17 +230,16 @@
 
     // Guaranteed-fit safety net: after scaling the root, if the CONTAINER still
     // spills past the viewport (unscaled siblings, content that grew after our
-    // measurement), shrink the whole container by the exact overflow ratio.
-    // We reset container zoom at the top of this function, so this recomputes
-    // from a clean state every fit and cannot drift or oscillate.
-    // SAFETY_FUDGE absorbs sub-pixel rounding + nonlinearity in nested-zoom
-    // getBoundingClientRect, so the bottom row clears the edge for certain.
-    var SAFETY_FUDGE = 16;
-    var limit = window.innerHeight - bottomReserve() - SAFETY_FUDGE;
+    // measurement), shrink the whole container to fit. The root fit already
+    // targets the same `limit`, so in the normal case spill ≈ 0 and this does
+    // NOT fire — avoiding the double-zoom that made every DOM game too small.
+    // It only fires on genuine overflow (stale measurement); the extra −4px
+    // then absorbs nested-zoom getBoundingClientRect rounding.
+    var limit = viewportH() - bottomReserve();
     var cb = c.getBoundingClientRect();
     var spill = cb.bottom - limit;
-    if (spill > 2 && cb.height > 0) {
-      c.style.zoom = String(Math.max(MIN_SCALE, (cb.height - spill) / cb.height));
+    if (spill > 3 && cb.height > 0) {
+      c.style.zoom = String(Math.max(MIN_SCALE, (cb.height - spill - 4) / cb.height));
     }
   }
 

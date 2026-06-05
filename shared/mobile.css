@@ -246,6 +246,13 @@ canvas {
   .bc-symbol-zone { min-height: 62px !important; gap: 2px; padding: 6px 4px; }
   .bc-symbol-img  { width: 40px !important; height: 40px !important; }
   .bc-symbol-emoji{ font-size: 1.7rem !important; }
+
+  /* ── Xinjiang Fangqi / Filipino Dama: compact the sidebar on ALL mobile
+     (portrait too, not just landscape) so a tall stacked sidebar doesn't
+     squeeze the board. Two counter panels side by side ≈ halves its height. ── */
+  .xf-sidebar, .fd-sidebar { max-width: none; }
+  .xf-counters, .fd-counters { flex-direction: row; gap: 8px; }
+  .xf-counter, .fd-counter { flex: 1 1 0; min-width: 0; padding: 8px 10px; }
 }
 
 /* Landscape phones: cards/mats are vertically squeezed — compact the dense
