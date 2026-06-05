@@ -94,6 +94,30 @@ canvas {
 }
 
 /* =============================================================
+   TIẾN LÊN / CUARENTA — LANDSCAPE CARD COMPACTION
+   The card table (status + opponents + play area + hand + actions + log) is
+   ~727px tall, so on a short landscape phone the fitter shrank everything to
+   ~0.48 and the cards became 23px wide — unreadable. Strip the non-essential
+   rows (move log, hand-type hint), put the action buttons on one row, and
+   tighten the table/gaps so the natural height drops to ~330px and the cards
+   render near full size.
+   ============================================================= */
+@media (orientation: landscape) and (max-height: 500px) {
+  .tl-game        { gap: 5px !important; padding: 6px !important; }
+  .tl-log,
+  .tl-log-wrap,
+  .tl-hint        { display: none !important; }
+  .tl-status-bar  { min-height: 0 !important; padding: 5px 12px !important; }
+  .tl-table       { gap: 4px !important; }
+  .tl-zone        { gap: 2px !important; }
+  .tl-play-area   { min-height: 40px !important; }
+  .tl-player-area { gap: 4px !important; }
+  .tl-hand        { min-height: 0 !important; padding: 4px 8px !important; }
+  .tl-actions     { flex-direction: row !important; flex-wrap: wrap; justify-content: center; gap: 6px 14px !important; }
+  .tl-actions__main { gap: 14px !important; }
+}
+
+/* =============================================================
    LANDSCAPE SIDE-BY-SIDE LAYOUT FOR HUD-HEAVY CANVAS BOARD GAMES
    These games stack board + HUD + controls + log vertically, so on a short
    landscape phone the HUD ate ~230px and the board was squeezed to ~120-210px.
