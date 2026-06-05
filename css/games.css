@@ -1375,7 +1375,9 @@
 }
 
 .tl-card__corner--tl { top: 3px;    left: 4px;  }
-.tl-card__corner--br { bottom: 3px; right: 4px; transform: rotate(180deg); }
+/* Hidden: the duplicate upside-down index in the bottom-right corner was clutter
+   on the small cards. Keep just the top-left index + the big centre symbol. */
+.tl-card__corner--br { display: none; }
 
 .tl-card__rank   { font-size: 13px; font-weight: 700; line-height: 1.05; }
 .tl-card__suit-s { font-size: 9px;  line-height: 1; }
