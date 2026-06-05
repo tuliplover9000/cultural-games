@@ -232,6 +232,18 @@ canvas {
   }
   .fn-hud      { grid-column: 2; grid-row: 1; margin: 0; align-self: start; }
   .fn-controls { grid-column: 2; grid-row: 2; margin: 0; align-self: start; }
+
+  /* ── Patolli: its square board left huge empty bands inside a full-width gold
+     border. Its root (.pt-game-wrap) is CONTENT-width (not stretched full
+     width), so hug it — the gold border wraps the game tightly and centers it,
+     instead of a big box with empty space inside. Scoped via :has() so it only
+     touches Patolli, never the full-width-root games (mat/pits would collapse
+     under fit-content). ── */
+  #game-container:has(.pt-game-wrap) {
+    width: fit-content;
+    max-width: 100%;
+    margin-inline: auto;
+  }
 }
 
 /* =============================================================
