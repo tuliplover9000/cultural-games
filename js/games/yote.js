@@ -921,6 +921,49 @@
     init();
   }
 
+  // ── Tutorial (Phase J1) ──────────────────────────────────────────────────────
+  if (window.CGTutorial) {
+    CGTutorial.register('yote', [
+      {
+        target: '#yo-canvas',
+        title: 'The Board',
+        body: 'This is the Yoté board — 6 columns by 5 rows. Both players start with an empty board and 12 pieces held in reserve, shown in the trays above and below.',
+        position: 'bottom', highlight: true, beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#yo-canvas',
+        title: 'Your Pieces',
+        body: 'You play the lighter pieces; your opponent plays the darker ones. You move first.',
+        position: 'bottom', highlight: true, beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#yo-canvas',
+        title: 'Drop or Move',
+        body: 'On your turn, tap any empty square to drop a piece from your hand — or tap one of your pieces and then a highlighted square to move it one step up, down, left, or right.',
+        position: 'bottom', highlight: true, beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#yo-canvas',
+        title: 'Capturing',
+        body: 'Jump straight over an adjacent enemy piece into the empty square just beyond it. The jumped piece is removed — capture squares are ringed in red.',
+        position: 'top', highlight: true, beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#yo-canvas',
+        title: 'The Capture-Two',
+        body: 'The twist that defines Yoté: every capture also lets you remove a SECOND enemy piece from anywhere on the board. One jump can take two pieces — so a single strike can swing the whole game.',
+        position: 'top', highlight: true, beforeStep: null, afterStep: null,
+      },
+      {
+        target: '#yo-new-btn',
+        title: 'New Game',
+        body: 'Reduce your opponent below three pieces — or leave them with no legal move — to win. Tap New Game any time to start fresh.',
+        position: 'left', highlight: true, beforeStep: null, afterStep: null,
+      },
+    ]);
+    CGTutorial.initTrigger('yote');
+  }
+
   // ── Fullscreen / mobile-fit resize hooks ─────────────────────────────────────
   if (window.FSMode) {
     FSMode.onEnter = function () { setTimeout(render, 50); };
