@@ -43,6 +43,13 @@ window.GAMES_DATA = [
     complexity: 3, players: '2',
   },
   {
+    key: 'yote', name: 'Yoté', culture: 'West Africa', type: 'Board', maxPlayers: 2,
+    region: 'west-africa', path: 'games/yote.html', howToPlay: 'how-to-play/yote/',
+    description: "A fast, aggressive capture game played across West Africa — especially Senegal, Mali, and Gambia — traditionally in the sand, with pebbles and pieces of broken pottery as pieces. Each player holds a reserve of twelve pieces and chooses each turn whether to drop a new piece onto the board or move one already in play. The tension between building up your forces and striking at the enemy gives Yoté a sharp, bluff-heavy character that rewards patience and sudden aggression in equal measure.",
+    didYouKnow: "In Yoté, capturing one enemy piece lets you remove a second piece from anywhere on the board — so a single jump can swing the entire game.",
+    complexity: 2, players: '2',
+  },
+  {
     key: 'patolli', name: 'Patolli', culture: 'Mesoamerica', type: 'Dice', maxPlayers: 4,
     region: 'mesoamerica', path: 'games/patolli.html', howToPlay: 'how-to-play/patolli/',
     description: "A sacred Aztec race game whose cross-shaped board mapped the cosmos, with 52 spaces mirroring the 52-year cycle of the sacred Aztec calendar. Spanish chronicler Fray Bernardino de Sahagún documented nobles gambling away gold, precious stones, and sometimes their own freedom at Patolli matches. The Spanish banned it as idolatry in the 16th century, nearly erasing a game that had been played across Mesoamerica for over a thousand years.",

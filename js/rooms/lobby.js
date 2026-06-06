@@ -16,6 +16,8 @@
       rules: ['Draw and discard tiles each turn to build a winning hand.', 'A hand = 4 sets (sequences or triplets) + 1 pair. Declare Mahjong to win.', 'Special hands (e.g. all pairs) also win. Flower tiles score bonus points.'] },
     { key: 'oware',       name: 'Oware',              culture: 'West Africa',          type: 'Board',    icon: '🟤', svg: '../assets/icons/oware.svg',       badge: 'Board · 2P',   maxPlayers: 2,
       rules: ['Pick up seeds from any pit on your side and sow them counter-clockwise.', 'Capture when your last seed lands in an opponent\'s pit holding 2 or 3 seeds.', 'Most seeds captured (out of 48) wins.'] },
+    { key: 'yote',        name: 'Yoté',               culture: 'West Africa',          type: 'Board',    icon: '🟠', svg: '../assets/icons/yote.svg',       badge: 'Board · 2P',   maxPlayers: 2,
+      rules: ['Each turn, drop a new piece from your reserve of 12 or move a piece already on the board.', 'Capture by jumping over an adjacent enemy piece into an empty square - then remove a second enemy piece from anywhere.', 'Reduce your opponent to fewer than 3 pieces to win.'] },
     { key: 'o-an-quan',   name: 'Ô Ăn Quan',          culture: 'Vietnam',              type: 'Board',    icon: '⚫', svg: '../assets/icons/o-an-quan.svg',  badge: 'Board · 2P',   maxPlayers: 2,
       rules: ['Sow stones from any pit on your side in either direction.', 'Capture all stones in the next pit if it is empty, then keep going if the following pit is also empty.', 'Game ends when both Quan (mandarin) pits are empty. Most stones wins.'] },
     { key: 'fanorona',    name: 'Fanorona',            culture: 'Madagascar',           type: 'Board',    icon: '⬡',  svg: '../assets/icons/fanorona.svg',   badge: 'Board · 2P',   maxPlayers: 2,

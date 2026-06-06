@@ -46,6 +46,7 @@
     { id: 'o-an-quan',   name: 'Ô Ăn Quan',           iconPath: 'assets/icons/o-an-quan.svg',    href: 'games/o-an-quan.html' },
     { id: 'tien-len',    name: 'Tiến Lên',             iconPath: 'assets/icons/tien-len.svg',     href: 'games/tien-len.html' },
     { id: 'oware',       name: 'Oware',                iconPath: 'assets/icons/oware.svg',        href: 'games/oware.html' },
+    { id: 'yote',        name: 'Yoté',                 iconPath: 'assets/icons/yote.svg',         href: 'games/yote.html' },
     { id: 'patolli',     name: 'Patolli',              iconPath: 'assets/icons/patolli.svg',      href: 'games/patolli.html' },
     { id: 'puluc',       name: 'Puluc',                iconPath: 'assets/icons/puluc.svg',        href: 'games/puluc.html' },
     { id: 'pallanguzhi', name: 'Pallanguzhi',          iconPath: 'assets/icons/pallanguzhi.svg',  href: 'games/pallanguzhi.html' },

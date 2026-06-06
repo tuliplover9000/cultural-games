@@ -12,9 +12,10 @@
     'ganjifa': 'Ganjifa', 'tien-len': 'Tiến Lên', 'mahjong': 'Hong Kong Mahjong',
     'oware': 'Oware', 'o-an-quan': 'Ô Ăn Quan', 'pallanguzhi': 'Pallanguzhi',
     'patolli': 'Patolli', 'puluc': 'Puluc', 'bau-cua': 'Bầu Cua Tôm Cá',
+    'yote': 'Yoté',
   };
   var MAX_PLAYERS = {
-    'fanorona': 2, 'hnefatafl': 2, 'o-an-quan': 2, 'oware': 2,
+    'fanorona': 2, 'hnefatafl': 2, 'o-an-quan': 2, 'oware': 2, 'yote': 2,
     'pallanguzhi': 2, 'patolli': 2, 'puluc': 2,
     'tien-len': 4, 'mahjong': 4, 'ganjifa': 4, 'pachisi': 4, 'bau-cua': 8,
   };

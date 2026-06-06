@@ -3514,6 +3514,107 @@
 }
 
 /* =============================================================================
+   YOTÉ — yo- namespace (West Africa)
+============================================================================= */
+.yo-game-container {
+  background: #2a1606;
+  border-radius: var(--radius-xl);
+  padding: var(--space-6) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-block: var(--space-2);
+}
+
+/* HUD — score + status */
+.yo-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  min-height: 40px;
+  padding: var(--space-2) var(--space-3);
+  background: rgba(0,0,0,0.3);
+  border-radius: var(--radius-md);
+}
+
+.yo-score {
+  display: flex;
+  gap: var(--space-4);
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+}
+.yo-score__you { color: #c8a060; }
+.yo-score__ai  { color: #d0c8b8; }
+
+.yo-status {
+  font-size: var(--text-sm);
+  color: #d0c8b8;
+  margin: 0;
+  flex: 1;
+  text-align: right;
+}
+
+/* Board canvas */
+.yo-board-wrap {
+  width: 100%;
+  max-width: 680px;
+  margin-inline: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.6), 0 0 0 2px rgba(200,155,60,0.25);
+  cursor: pointer;
+}
+#yo-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: none;
+}
+
+/* Controls */
+.yo-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.yo-ai-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: #c8a060;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+.yo-ai-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #C89B3C;
+  cursor: pointer;
+}
+
+/* Ghost buttons on the dark Yoté container background */
+.yo-controls .btn-ghost {
+  color: #c8a060;
+  border-color: rgba(200,160,96,0.5);
+}
+.yo-controls .btn-ghost:hover,
+.yo-controls .btn-ghost:focus-visible {
+  background-color: rgba(200,160,96,0.12);
+  border-color: #c8a060;
+  color: #e8c87a;
+}
+
+@media (max-width: 480px) {
+  .yo-hud    { flex-direction: column; align-items: flex-start; }
+  .yo-status { text-align: left; }
+}
+
+/* =============================================================================
    HNEFATAFL — ht- namespace
 ============================================================================= */
 .ht-game-container {
