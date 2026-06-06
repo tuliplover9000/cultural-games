@@ -233,6 +233,29 @@ canvas {
   .fn-hud      { grid-column: 2; grid-row: 1; margin: 0; align-self: start; }
   .fn-controls { grid-column: 2; grid-row: 2; margin: 0; align-self: start; }
 
+  /* ── Yoté: HUD + board (with trays) + controls were stacked → the board was
+     squeezed into a narrow strip with dead space beside it. Board left (fills
+     the height), HUD/controls in the right column. ── */
+  #game-container.yo-game-container {
+    display: grid;
+    grid-template-columns: auto minmax(140px, 1fr);
+    grid-template-rows: auto 1fr;
+    align-items: start;
+    justify-content: center;
+    gap: 6px 10px;
+  }
+  .yo-board-wrap {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+  }
+  .yo-hud      { grid-column: 2; grid-row: 1; margin: 0; align-self: start; }
+  .yo-controls { grid-column: 2; grid-row: 2; margin: 0; align-self: start; }
+
   /* ── Patolli: its square board left huge empty bands inside a full-width gold
      border. Its root (.pt-game-wrap) is CONTENT-width (not stretched full
      width), so hug it — the gold border wraps the game tightly and centers it,

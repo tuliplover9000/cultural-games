@@ -76,18 +76,22 @@
   // ── Sizing (devicePixelRatio-aware) ─────────────────────────────────────────
   function dpr() { return Math.max(1, Math.min(window.devicePixelRatio || 1, 3)); }
 
+  var MAX_BOARD_W = 680;   // cap the board width (the frame hugs this)
+
   // Lay the canvas out to a given CSS width; height follows the locked aspect.
+  // An explicit px size (not 100%) lets the fit-content frame hug the board so
+  // it stays centred instead of clinging to the left of a full-width wrap.
   function sizeToWidth(cssW) {
     if (!cnv) return;
     var scale = window.CGMobileScale || 1;
     var ratio = dpr();
-    var wCss = Math.max(160, Math.round(cssW * scale));
+    var wCss = Math.max(160, Math.min(Math.round(cssW * scale), MAX_BOARD_W));
     var cellCss = (wCss - PAD * 2) / COLS;
     var hCss = Math.round(PAD * 2 + cellCss * V_CELLS);
     cnv.width  = Math.round(wCss * ratio);
     cnv.height = Math.round(hCss * ratio);
-    cnv.style.width  = '100%';
-    cnv.style.height = 'auto';
+    cnv.style.width  = wCss + 'px';
+    cnv.style.height = hCss + 'px';
     render();
   }
 
@@ -538,6 +542,19 @@
     }
 
     drawHighlights(cs);
+    syncOverlay();
+  }
+
+  // Keep the game-over overlay's box matched to the canvas, which may be
+  // fit-shrunk and centred (margin:auto) inside a wider wrap.
+  function syncOverlay() {
+    if (!overlayEl || !cnv) return;
+    overlayEl.style.left   = cnv.offsetLeft + 'px';
+    overlayEl.style.top    = cnv.offsetTop + 'px';
+    overlayEl.style.width  = cnv.offsetWidth + 'px';
+    overlayEl.style.height = cnv.offsetHeight + 'px';
+    overlayEl.style.right  = 'auto';
+    overlayEl.style.bottom = 'auto';
   }
 
   // Selection / move / capture / bonus-removal overlays (Phase E).
@@ -901,6 +918,12 @@
 
     cnv.addEventListener('click', onTap);
     cnv.addEventListener('touchend', function (e) { e.preventDefault(); onTap(e); }, { passive: false });
+
+    // The mobile-fit engine sets the canvas display size asynchronously; keep the
+    // overlay box matched to it.
+    if (window.ResizeObserver) {
+      try { new ResizeObserver(syncOverlay).observe(cnv); } catch (e) {}
+    }
 
     window.addEventListener('resize', resizeCanvas);
     window.cgMobileResize = resizeCanvas;

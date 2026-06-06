@@ -3557,24 +3557,27 @@
   text-align: right;
 }
 
-/* Board canvas */
+/* Board canvas. The gold ring lives on the canvas itself (not the wrap) and the
+   canvas centres with margin:auto, so the board stays centred and the ring hugs
+   it even on wide-but-short viewports where the fitter makes the board narrow. */
 .yo-board-wrap {
   position: relative;
   width: 100%;
-  max-width: 680px;
-  margin-inline: auto;
-  border-radius: var(--radius-lg);
-  box-shadow: 0 6px 24px rgba(0,0,0,0.6), 0 0 0 2px rgba(200,155,60,0.25);
-  cursor: pointer;
 }
 #yo-canvas {
   display: block;
   width: 100%;
+  max-width: 680px;
   height: auto;
+  margin-inline: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.6), 0 0 0 2px rgba(200,155,60,0.25);
+  cursor: pointer;
   touch-action: none;
 }
 
-/* Game-over overlay */
+/* Game-over overlay — JS keeps its box matched to the (possibly fit-shrunk,
+   centred) canvas; inset:0 is just the pre-sync default. */
 .yo-overlay {
   position: absolute;
   inset: 0;
