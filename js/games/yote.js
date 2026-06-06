@@ -285,7 +285,22 @@
     state.winner = winner;             // 'P1' | 'P2' | 'draw'
     clearAI();
     selected = null;
-    // Phase H will wire Auth.recordResult + Achievements here.
+
+    // Phase H — auth & achievements (from the human's / P1's perspective).
+    // recordResult updates local stats + evaluates stat achievements and is
+    // guest-safe (it skips the server write when not signed in).
+    var outcome = winner === P1 ? 'win' : (winner === P2 ? 'loss' : 'draw');
+    if (window.Achievements) {
+      if (outcome === 'win' && (HAND_START - totalPieces(P1)) <= 3) {
+        Achievements.checkAction('yo_flawless_win');
+      }
+    }
+    if (outcome === 'draw') {
+      if (window.Achievements) Achievements.evaluate({ gameId: 'yote', result: 'draw' });
+    } else if (window.Auth && Auth.recordResult) {
+      Auth.recordResult('yote', outcome);
+    }
+
     showOverlay(winner, reason);
   }
 
@@ -678,6 +693,8 @@
     }
     pushHistory();
     state.board[idx] = null;
+    // The human just removed a 2nd piece → a completed capture-two (Phase H).
+    if (p === P1 && window.Achievements) Achievements.checkAction('yo_capture_two');
     finishTurn(p);
   }
 
@@ -773,6 +790,7 @@
         render();
       };
     }
+    if (window.Achievements && Achievements.init) Achievements.init();
 
     overlayEl      = document.getElementById('yo-overlay');
     overlayTitleEl = document.getElementById('yo-overlay-title');

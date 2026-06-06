@@ -88,6 +88,11 @@
     { id: 'yn_wins_50',    gameId: 'yut-nori',      title: '말 대장',           description: 'Win 50 games of Yut Nori',                              tier: 'gold',   category: 'combat', condition: { type: 'stat',   game: 'yut-nori', stat: 'wins', threshold: 50 } },
     { id: 'yn_mo',         gameId: 'yut-nori',      title: '모! 모! 모!',       description: 'Throw Mo (5) three times in a single game',             tier: 'silver', category: 'combat', condition: { type: 'action', action: 'yn_triple_mo'   } },
     { id: 'yn_clean_sweep',gameId: 'yut-nori',      title: '완전 정복',         description: 'Capture all 4 opponent pieces in a single game',        tier: 'gold',   category: 'combat', condition: { type: 'action', action: 'yn_clean_sweep'  } },
+    { id: 'yo_first_win',  gameId: 'yote',          title: 'First Pebble',      description: 'Win your first game of Yoté',                           tier: 'bronze', category: 'combat', condition: { type: 'stat',   game: 'yote', stat: 'wins', threshold: 1  } },
+    { id: 'yo_wins_10',    gameId: 'yote',          title: 'Sand Strategist',   description: 'Win 10 games of Yoté',                                  tier: 'silver', category: 'combat', condition: { type: 'stat',   game: 'yote', stat: 'wins', threshold: 10 } },
+    { id: 'yo_wins_50',    gameId: 'yote',          title: 'Master of Yoté',    description: 'Win 50 games of Yoté',                                  tier: 'gold',   category: 'combat', condition: { type: 'stat',   game: 'yote', stat: 'wins', threshold: 50 } },
+    { id: 'yo_capture_two',gameId: 'yote',          title: 'Two in One Blow',   description: 'Pull off the capture-two: remove two enemy pieces in a single turn', tier: 'silver', category: 'combat', condition: { type: 'action', action: 'yo_capture_two' } },
+    { id: 'yo_flawless',   gameId: 'yote',          title: 'Barely a Scratch',  description: 'Win a game of Yoté losing 3 or fewer pieces',           tier: 'gold',   category: 'combat', condition: { type: 'action', action: 'yo_flawless_win' } },
 
     /* ── Explorer (cross-game) ── */
     { id: 'exp_play_3',   gameId: null, title: 'Curious Traveller', description: 'Play 3 different games',               tier: 'bronze', category: 'explorer', condition: { type: 'games_played', threshold: 3  } },
