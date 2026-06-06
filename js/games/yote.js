@@ -61,6 +61,11 @@
       p2:        '#b03a28',          // opponent (terracotta)
       p2Ring:    '#6e2014',
       p2Shine:   'rgba(255,255,255,0.18)',
+      // Move / capture highlights
+      selectRing:p.accentGold || '#E8C84A',
+      moveDot:   'rgba(232,200,74,0.50)',
+      jumpRing:  '#e05040',
+      bonusRing: '#e05040',
       // Accents / text
       accent:    p.accentGold || '#C89B3C',
       text:      p.text       || '#F0E6D0',
@@ -151,11 +156,14 @@
       board: board,                          // null | 'P1' | 'P2'
       hand: { P1: HAND_START, P2: HAND_START },
       turn: P1,                              // P1 (light, you) moves first
-      awaitingBonusRemoval: false,           // reserved for Phase E
+      awaitingBonusRemoval: false,           // capture-two sub-state (Phase E)
       winner: null,
       last_actor: null,
     };
   }
+
+  // Currently selected own piece (UI-only; not part of serialized state).
+  var selected = null;
 
   // Undo history (snapshots of the serializable state).
   var history = [];
@@ -178,6 +186,47 @@
   }
 
   function other(p) { return p === P1 ? P2 : P1; }
+
+  // ── Movement & capture logic (Phase E) ──────────────────────────────────────
+  var DIRS = [[0, -1], [0, 1], [-1, 0], [1, 0]];   // orthogonal only — no diagonals
+
+  function colOf(i) { return i % COLS; }
+  function rowOf(i) { return Math.floor(i / COLS); }
+  // Index `steps` cells from `i` in direction (dc,dr), or -1 if off the grid.
+  function step(i, dc, dr, steps) {
+    var c = colOf(i) + dc * steps, r = rowOf(i) + dr * steps;
+    if (c < 0 || c >= COLS || r < 0 || r >= ROWS) return -1;
+    return r * COLS + c;
+  }
+
+  // Legal moves + jumps for the piece at `i`. Owner is read from the board.
+  // Returns { moves: [idx...], jumps: [{ to, captured }...] }.
+  function movesFor(i) {
+    var owner = state.board[i];
+    var result = { moves: [], jumps: [] };
+    if (!owner) return result;
+    var enemy = other(owner);
+    for (var d = 0; d < DIRS.length; d++) {
+      var dc = DIRS[d][0], dr = DIRS[d][1];
+      var n1 = step(i, dc, dr, 1);
+      if (n1 < 0) continue;
+      if (state.board[n1] === null) {
+        result.moves.push(n1);                       // E1 simple step
+      } else if (state.board[n1] === enemy) {
+        var n2 = step(i, dc, dr, 2);                 // square directly beyond
+        if (n2 >= 0 && state.board[n2] === null) {
+          result.jumps.push({ to: n2, captured: n1 }); // E2 jump capture
+        }
+      }
+    }
+    return result;
+  }
+
+  function countPieces(who) {
+    var n = 0;
+    for (var i = 0; i < TOTAL; i++) if (state.board[i] === who) n++;
+    return n;
+  }
 
   // ── Render (Phase C1/C2) ────────────────────────────────────────────────────
   function drawPiece(x, y, r, who) {
@@ -275,6 +324,66 @@
         ctx.fill();
       }
     }
+
+    drawHighlights(cs);
+  }
+
+  // Selection / move / capture / bonus-removal overlays (Phase E).
+  function drawHighlights(cs) {
+    if (!state) return;
+    var pt, i;
+
+    if (state.awaitingBonusRemoval) {
+      // Ring every removable enemy piece — the bonus piece can be anywhere.
+      var enemy = other(state.turn);
+      for (i = 0; i < TOTAL; i++) {
+        if (state.board[i] !== enemy) continue;
+        pt = idxToXY(i);
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, cs * 0.42, 0, Math.PI * 2);
+        ctx.lineWidth = Math.max(2, cs * 0.06);
+        ctx.strokeStyle = C.bonusRing;
+        ctx.stroke();
+      }
+      return;
+    }
+
+    if (selected === null || !state.board[selected]) return;
+    var info = movesFor(selected);
+
+    // Selected piece ring
+    pt = idxToXY(selected);
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, cs * 0.40, 0, Math.PI * 2);
+    ctx.lineWidth = Math.max(2, cs * 0.06);
+    ctx.strokeStyle = C.selectRing;
+    ctx.stroke();
+
+    // Simple-move targets — soft dots
+    for (i = 0; i < info.moves.length; i++) {
+      pt = idxToXY(info.moves[i]);
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, cs * 0.16, 0, Math.PI * 2);
+      ctx.fillStyle = C.moveDot;
+      ctx.fill();
+    }
+
+    // Jump targets — red ring on the landing square + red ring on the victim
+    for (i = 0; i < info.jumps.length; i++) {
+      var j = info.jumps[i];
+      pt = idxToXY(j.to);
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, cs * 0.30, 0, Math.PI * 2);
+      ctx.lineWidth = Math.max(2, cs * 0.06);
+      ctx.strokeStyle = C.jumpRing;
+      ctx.stroke();
+      var cp = idxToXY(j.captured);
+      ctx.beginPath();
+      ctx.arc(cp.x, cp.y, cs * 0.42, 0, Math.PI * 2);
+      ctx.lineWidth = Math.max(1.5, cs * 0.045);
+      ctx.strokeStyle = C.jumpRing;
+      ctx.stroke();
+    }
   }
 
   // ── HUD (Phase D3) ──────────────────────────────────────────────────────────
@@ -295,21 +404,29 @@
     if (!state) return;
     if (state.winner) return;
     var p = state.turn;
-    if (state.hand[p] > 0) {
-      setStatus(playerLabel(p) + ' — drop a piece on an empty square.');
-    } else if (state.hand[other(p)] > 0) {
-      // This player is out of hand pieces but the drop phase isn't done.
-      setStatus(playerLabel(p) + ' has no pieces in hand — moving comes in a later update.');
+    if (state.awaitingBonusRemoval) {
+      setStatus('Capture! Tap any enemy piece to remove it (capture-two).');
+    } else if (state.hand[p] > 0) {
+      setStatus(playerLabel(p) + ' — drop a piece, or tap one of your pieces to move it.');
     } else {
-      setStatus('All pieces placed. Movement & captures arrive in the next update.');
+      setStatus(playerLabel(p) + ' — tap one of your pieces to move or capture.');
     }
   }
   function updateHud() { updateScore(); refreshStatus(); }
 
+  // ── Turn resolution ─────────────────────────────────────────────────────────
+  // Pass the turn after a fully-resolved action (drop, move, or capture+bonus).
+  function finishTurn(p) {
+    state.turn = other(p);
+    state.awaitingBonusRemoval = false;
+    state.last_actor = 'local:' + p;
+    selected = null;
+    render();
+    updateHud();
+  }
+
   // ── Drop action (Phase D2) ──────────────────────────────────────────────────
   function attemptDrop(idx) {
-    if (!state || state.winner) return;
-    if (idx == null) return;
     var p = state.turn;
     if (state.board[idx] !== null) {
       setStatus('That square is taken — pick an empty one.');
@@ -322,13 +439,50 @@
     pushHistory();
     state.board[idx] = p;
     state.hand[p] -= 1;
-    state.turn = other(p);
-    state.last_actor = 'local:' + p;
-    render();
-    updateHud();
+    finishTurn(p);
   }
 
-  // ── Input ────────────────────────────────────────────────────────────────────
+  // ── Move & capture (Phase E1/E2/E3/E4) ───────────────────────────────────────
+  function doMove(from, to) {            // E1: simple orthogonal step
+    pushHistory();
+    var p = state.turn;
+    state.board[to] = state.board[from];
+    state.board[from] = null;
+    finishTurn(p);
+  }
+
+  function doCapture(from, jump) {       // E2: jump, remove victim
+    pushHistory();
+    var p = state.turn, enemy = other(p);
+    state.board[jump.to] = state.board[from];
+    state.board[from] = null;
+    state.board[jump.captured] = null;
+    selected = null;
+    // E3: bonus removal — unless no other enemy piece remains (skip cleanly).
+    // E4: single jump only, so we never chain after this.
+    if (countPieces(enemy) > 0) {
+      state.awaitingBonusRemoval = true;
+      state.last_actor = 'local:' + p;
+      render();
+      updateScore();
+      setStatus('Capture! Tap any enemy piece to remove it (capture-two).');
+    } else {
+      finishTurn(p);
+    }
+  }
+
+  function doBonusRemoval(idx) {          // E3: remove the chosen second piece
+    var p = state.turn, enemy = other(p);
+    if (state.board[idx] !== enemy) {
+      setStatus('Capture bonus: tap one of your opponent\'s pieces to remove it.');
+      return;
+    }
+    pushHistory();
+    state.board[idx] = null;
+    finishTurn(p);
+  }
+
+  // ── Input dispatcher ─────────────────────────────────────────────────────────
   function getCanvasXY(e) {
     var rect = cnv.getBoundingClientRect();
     var sx = cnv.width / rect.width;
@@ -336,24 +490,59 @@
     var src = e.touches ? (e.changedTouches[0] || e.touches[0]) : e;
     return { x: (src.clientX - rect.left) * sx, y: (src.clientY - rect.top) * sy };
   }
+
+  function handleCell(idx) {
+    if (state.winner) return;
+    var p = state.turn, enemy = other(p);
+
+    // Bonus-removal sub-state: only an enemy-piece tap does anything.
+    if (state.awaitingBonusRemoval) { doBonusRemoval(idx); return; }
+
+    if (selected !== null) {
+      if (idx === selected) { selected = null; render(); return; }   // tap again to deselect
+      var info = movesFor(selected);
+      var k;
+      for (k = 0; k < info.jumps.length; k++) {
+        if (info.jumps[k].to === idx) { doCapture(selected, info.jumps[k]); return; }
+      }
+      for (k = 0; k < info.moves.length; k++) {
+        if (info.moves[k] === idx) { doMove(selected, idx); return; }
+      }
+      if (state.board[idx] === p) { selected = idx; render(); return; } // reselect own piece
+      selected = null; render();                                       // tap elsewhere: deselect only
+      return;
+    }
+
+    // Nothing selected.
+    if (state.board[idx] === p) { selected = idx; render(); return; }
+    if (state.board[idx] === enemy) { setStatus('That\'s your opponent\'s piece.'); return; }
+    if (state.hand[p] > 0) { attemptDrop(idx); return; }              // empty square → drop
+    setStatus(playerLabel(p) + ' — tap one of your pieces to move or capture.');
+  }
+
   function onTap(e) {
     if (!state) return;
     var xy = getCanvasXY(e);
     var idx = xyToCell(xy.x, xy.y);
-    if (idx == null) return;          // clicks outside the board (e.g. trays) ignored
-    attemptDrop(idx);
+    if (idx == null) {                 // tap outside the board → deselect
+      if (selected !== null) { selected = null; render(); }
+      return;
+    }
+    handleCell(idx);
   }
 
   // ── Controls ──────────────────────────────────────────────────────────────────
   function newGame() {
     state = freshState();
     history = [];
+    selected = null;
     render();
     updateHud();
   }
   function undo() {
     if (!history.length) { setStatus('Nothing to undo yet.'); return; }
     restore(history.pop());
+    selected = null;
     render();
     updateHud();
   }
