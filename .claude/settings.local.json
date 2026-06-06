@@ -60,7 +60,18 @@
       "Bash(grep:*)",
       "Bash(ls:*)",
       "Bash(sed:*)",
-      "Bash(do)"
+      "Bash(do)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\zhrui\\\\OneDrive\\\\Desktop\\\\Multipaths\\\\src\" -Directory)",
+      "Bash(Select-Object Name)",
+      "mcp__Claude_Preview__preview_start",
+      "Read(//c/Users/zhrui/OneDrive/Pictures/Screenshots/**)",
+      "Bash(rm -rf _attach_extract)",
+      "Bash(venv/Scripts/python.exe -c \"import ast; ast.parse\\(open\\('app.py',encoding='utf-8'\\).read\\(\\)\\); print\\('app.py syntax OK'\\)\")",
+      "Bash(netstat -ano)",
+      "Bash(venv/Scripts/python.exe -c ' *)",
+      "Bash(venv/Scripts/python.exe -m pip install demucs)",
+      "Bash(/c/Users/zhrui/lyrics-video-app/venv/Scripts/python.exe -c ' *)",
+      "Bash(./lune-bin/lune.exe run *)"
     ]
   }
 }
