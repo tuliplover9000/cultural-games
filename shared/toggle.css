@@ -59,3 +59,44 @@
     height: 32px;
   }
 }
+
+/* ── Sound mute toggle (shared/sfx.js) — matches the theme toggle, sits beside it ── */
+.sfx-mute-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.10);
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  color: var(--color-accent-gold);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: 6px;
+  line-height: 1;
+  transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+.sfx-mute-btn:hover  { background: rgba(255, 255, 255, 0.16); }
+.sfx-mute-btn:active { transform: scale(0.94); }
+.sfx-mute-btn:focus-visible { outline: 2px solid var(--color-accent-gold); outline-offset: 3px; }
+.sfx-mute-btn svg { pointer-events: none; display: block; }
+.sfx-mute-btn[aria-pressed="true"] { color: var(--color-text-muted); border-color: rgba(255, 255, 255, 0.14); }
+
+/* Floating fallback for pages without a nav theme toggle. */
+.sfx-mute-btn--float {
+  position: fixed;
+  left: 16px;
+  bottom: 84px;
+  z-index: 1000;
+  margin: 0;
+  background: #2A1F14;
+  border-color: #c9a84c;
+  color: #c9a84c;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+@media (max-width: 479px) {
+  .sfx-mute-btn { width: 32px; height: 32px; }
+}
