@@ -173,6 +173,13 @@
   // scheduled for an old game never fires into a fresh one (rematch bug guard).
   var gen = 0;
 
+  // Multiplayer (Phase I). vsRoom=true when loaded inside a room iframe.
+  // mySeat is 0-based (seat 0 -> P1, seat 1 -> P2); myPlayer is the colour the
+  // local player controls (always P1 in solo).
+  var vsRoom = false;
+  var mySeat = 0;
+  var myPlayer = P1;
+
   // End-screen overlay elements (Phase F).
   var overlayEl, overlayTitleEl, overlaySubEl;
 
@@ -286,19 +293,28 @@
     clearAI();
     selected = null;
 
-    // Phase H — auth & achievements (from the human's / P1's perspective).
-    // recordResult updates local stats + evaluates stat achievements and is
-    // guest-safe (it skips the server write when not signed in).
-    var outcome = winner === P1 ? 'win' : (winner === P2 ? 'loss' : 'draw');
+    // Phase H — auth & achievements, from the LOCAL player's perspective.
+    var outcome = winner === myPlayer ? 'win'
+                : (winner === other(myPlayer) ? 'loss' : 'draw');
     if (window.Achievements) {
-      if (outcome === 'win' && (HAND_START - totalPieces(P1)) <= 3) {
+      if (outcome === 'win' && (HAND_START - totalPieces(myPlayer)) <= 3) {
         Achievements.checkAction('yo_flawless_win');
       }
     }
-    if (outcome === 'draw') {
+    if (vsRoom) {
+      // The room system records stats/coins/bets via RoomBridge.reportWin
+      // (fired from syncRoom). Avoid a second direct recordResult here; still
+      // evaluate online achievements locally.
+      if (window.Achievements) {
+        Achievements.evaluate({
+          gameId: 'yote', result: outcome, isOnline: true,
+          isHost: !!(window.RoomBridge && RoomBridge.isRoomHost && RoomBridge.isRoomHost()),
+        });
+      }
+    } else if (outcome === 'draw') {
       if (window.Achievements) Achievements.evaluate({ gameId: 'yote', result: 'draw' });
     } else if (window.Auth && Auth.recordResult) {
-      Auth.recordResult('yote', outcome);
+      Auth.recordResult('yote', outcome);   // guest-safe; updates local stats too
     }
 
     showOverlay(winner, reason);
@@ -583,17 +599,19 @@
   }
 
   // ── HUD (Phase D3) ──────────────────────────────────────────────────────────
+  function opponentWord() { return vsAI ? 'Player 2 (AI)' : (vsRoom ? 'Opponent' : 'Player 2'); }
   function playerLabel(p) {
-    if (p === P1) return 'You (light)';
-    return vsAI ? 'Player 2 (AI)' : 'Player 2 (dark)';
+    if (p === myPlayer) return 'You';
+    return opponentWord();
   }
 
   function updateScore() {
     var el = document.getElementById('yo-score');
     if (!el || !state) return;
+    var me = myPlayer, opp = other(myPlayer);
     el.innerHTML =
-      '<span class="yo-score__you">You: ' + state.hand.P1 + ' in hand</span>' +
-      '<span class="yo-score__ai">P2: ' + state.hand.P2 + ' in hand</span>';
+      '<span class="yo-score__you">You: ' + state.hand[me] + ' in hand</span>' +
+      '<span class="yo-score__ai">' + opponentWord() + ': ' + state.hand[opp] + ' in hand</span>';
   }
   function setStatus(msg) {
     var el = document.getElementById('yo-status');
@@ -617,6 +635,7 @@
   function showOverlay(winner, reason) {
     var title;
     if (winner === 'draw') title = 'Draw';
+    else if (vsRoom) title = (winner === myPlayer) ? 'You Win!' : 'You Lost';
     else if (winner === P1) title = vsAI ? 'You Win!' : 'Player 1 Wins!';
     else title = vsAI ? 'You Lost' : 'Player 2 Wins!';
     if (overlayTitleEl) overlayTitleEl.textContent = title;
@@ -636,6 +655,7 @@
     checkEndConditions();
     render();
     updateHud();
+    if (vsRoom) syncRoom();
     maybeScheduleAI();
   }
 
@@ -680,6 +700,9 @@
       render();
       updateScore();
       setStatus('Capture! Tap any enemy piece to remove it (capture-two).');
+      // Phase I: publish the mid-turn pending-removal state so the remote
+      // client renders it and stays locked out until the bonus resolves.
+      if (vsRoom) syncRoom();
     } else {
       finishTurn(p);
     }
@@ -693,8 +716,8 @@
     }
     pushHistory();
     state.board[idx] = null;
-    // The human just removed a 2nd piece → a completed capture-two (Phase H).
-    if (p === P1 && window.Achievements) Achievements.checkAction('yo_capture_two');
+    // The local player just removed a 2nd piece → a completed capture-two.
+    if (p === myPlayer && window.Achievements) Achievements.checkAction('yo_capture_two');
     finishTurn(p);
   }
 
@@ -710,6 +733,10 @@
   function handleCell(idx) {
     if (state.winner) return;
     if (vsAI && state.turn === AI_PLAYER) return;   // input locked during AI's turn
+    if (vsRoom) {
+      if (window.RoomBridge && RoomBridge.isSpectator && RoomBridge.isSpectator()) return;
+      if (state.turn !== myPlayer) return;          // not your turn online → locked
+    }
     var p = state.turn, enemy = other(p);
 
     // Bonus-removal sub-state: only an enemy-piece tap does anything.
@@ -758,7 +785,13 @@
     selected = null;
     render();
     updateHud();
-    maybeScheduleAI();          // (no-op: P1 always starts, but safe)
+    if (vsRoom) {
+      // Online rematch: reset the win guard and broadcast the fresh board so
+      // the other client clears its overlay and starts a new game too.
+      if (window.RoomBridge && RoomBridge.resetWin) RoomBridge.resetWin();
+      syncRoom();
+    }
+    maybeScheduleAI();          // (no-op online / P1 always starts, but safe)
   }
   function undo() {
     if (!history.length) { setStatus('Nothing to undo yet.'); return; }
@@ -772,6 +805,64 @@
     }
     selected = null;
     render();
+    updateHud();
+  }
+
+  // ── Multiplayer room integration (Phase I) ───────────────────────────────────
+  // Publish the full serializable state blob; the parent persists it to
+  // Supabase and broadcasts it to both clients. last_actor carries our seat so
+  // we can suppress our own echoed update (I2). Reports the winner once (I1).
+  function syncRoom() {
+    if (!vsRoom || !window.RoomBridge) return;
+    RoomBridge.sendState({
+      board:                state.board.slice(),
+      hand:                 { P1: state.hand.P1, P2: state.hand.P2 },
+      turn:                 state.turn,
+      awaitingBonusRemoval: state.awaitingBonusRemoval,
+      winner:               state.winner,
+      last_actor:           'room:' + mySeat,
+    });
+    if (state.winner === P1 || state.winner === P2) {
+      RoomBridge.reportWin(state.winner === P1 ? 0 : 1);
+    }
+  }
+
+  // Receive a remote state blob (I2/I4). The full blob is the source of truth —
+  // we overwrite local state from it and reconcile the overlay.
+  function receiveRoomState(data) {
+    if (!data) return;
+    if (data.last_actor === 'room:' + mySeat) return;       // ignore our own echo
+    if (data.board) state.board = data.board.slice();
+    if (data.hand)  state.hand  = { P1: data.hand.P1, P2: data.hand.P2 };
+    if (data.turn !== undefined) state.turn = data.turn;
+    state.awaitingBonusRemoval = !!data.awaitingBonusRemoval;
+    state.winner = (data.winner === undefined) ? null : data.winner;
+    selected = null;
+    history = [];                                            // remote state isn't locally undoable
+    render();
+    updateHud();
+    if (state.winner === P1 || state.winner === P2 || state.winner === 'draw') {
+      showOverlay(state.winner, '');
+    } else {
+      hideOverlay();
+    }
+  }
+
+  function initRoomMode() {
+    if (!window.RoomBridge || !RoomBridge.isActive || !RoomBridge.isActive()) return;
+    vsRoom   = true;
+    vsAI     = false;
+    mySeat   = RoomBridge.getSeat();
+    myPlayer = (mySeat === 0) ? P1 : P2;
+    clearAI();
+
+    // Hide solo-only controls; online rematch happens via the Play Again button.
+    var aiLabel = document.querySelector('.yo-ai-label'); if (aiLabel) aiLabel.style.display = 'none';
+    var newBtn  = document.getElementById('yo-new-btn');  if (newBtn)  newBtn.style.display  = 'none';
+    var undoBtn = document.getElementById('yo-undo-btn'); if (undoBtn) undoBtn.style.display = 'none';
+
+    RoomBridge.onState(receiveRoomState);   // also signals 'ready' → parent pushes latest state
+    if (mySeat === 0) syncRoom();            // host seeds the initial board
     updateHud();
   }
 
@@ -820,6 +911,7 @@
     history = [];
     resizeCanvas();
     updateHud();
+    initRoomMode();             // switches to multiplayer if inside a room iframe
     maybeScheduleAI();
   }
 
