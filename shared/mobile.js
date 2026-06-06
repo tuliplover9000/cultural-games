@@ -269,13 +269,12 @@
       }
     });
 
-    // Auto-inject landscape prompt on game pages
-    var gc = document.getElementById('game-container');
-    if (gc) {
-      // Defer until after game scripts have run
-      setTimeout(function () {
-        MobileUtils.showLandscapePrompt(gc);
-      }, 800);
-    }
+    // NOTE: the "Rotate for best experience" overlay is intentionally NOT
+    // auto-injected anymore. It blocked the game on load and claimed every game
+    // "plays best in landscape" — which is wrong for the card/dice games (those
+    // are great in portrait). The fit engine (shared/mobile-zoom.js) now scales
+    // every game to fit BOTH orientations, so the blocking prompt was pure
+    // friction. showLandscapePrompt() is kept available for any future opt-in
+    // use, but nothing calls it automatically.
   });
 })();
