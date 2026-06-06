@@ -165,6 +165,17 @@
   // Currently selected own piece (UI-only; not part of serialized state).
   var selected = null;
 
+  // AI (Phase G). P1 is always the human; P2 is the AI when vsAI is on.
+  var AI_PLAYER = P2;
+  var vsAI = true;
+  var aiTimer = null;
+  // Generation counter — bumped on new game / undo so a pending AI move
+  // scheduled for an old game never fires into a fresh one (rematch bug guard).
+  var gen = 0;
+
+  // End-screen overlay elements (Phase F).
+  var overlayEl, overlayTitleEl, overlaySubEl;
+
   // Undo history (snapshots of the serializable state).
   var history = [];
   function snapshot() {
@@ -226,6 +237,176 @@
     var n = 0;
     for (var i = 0; i < TOTAL; i++) if (state.board[i] === who) n++;
     return n;
+  }
+  function totalPieces(who) { return countPieces(who) + state.hand[who]; }
+
+  function existsEmptyCell() {
+    for (var i = 0; i < TOTAL; i++) if (state.board[i] === null) return true;
+    return false;
+  }
+  // Does player P have any legal action? A piece in hand is always a legal drop
+  // (the 30-cell board can never fill with only 24 pieces in play).
+  function hasAnyLegalMove(who) {
+    if (state.hand[who] > 0 && existsEmptyCell()) return true;
+    for (var i = 0; i < TOTAL; i++) {
+      if (state.board[i] !== who) continue;
+      var m = movesFor(i);
+      if (m.moves.length || m.jumps.length) return true;
+    }
+    return false;
+  }
+  function hasAnyCapture(who) {
+    for (var i = 0; i < TOTAL; i++) {
+      if (state.board[i] !== who) continue;
+      if (movesFor(i).jumps.length) return true;
+    }
+    return false;
+  }
+
+  // ── Win / draw detection (Phase F) ──────────────────────────────────────────
+  // Called from finishTurn — i.e. AFTER any bonus removal has resolved.
+  function checkEndConditions() {
+    var next = state.turn;              // player about to move
+    var prev = other(next);             // player who just acted
+    // F1: opponent wiped out (no pieces on board AND none in hand).
+    if (totalPieces(next) === 0) { endGame(prev, 'All enemy pieces captured.'); return; }
+    // F2: the player to move has no legal move → they lose.
+    if (!hasAnyLegalMove(next)) { endGame(prev, playerLabel(next) + ' has no legal move.'); return; }
+    // F3: // RECONSTRUCTED draw — both sides reduced to <=3 pieces with no
+    // capture possible for either side.
+    if (totalPieces(P1) <= 3 && totalPieces(P2) <= 3 &&
+        !hasAnyCapture(P1) && !hasAnyCapture(P2)) {
+      endGame('draw', 'Both sides are down to a few pieces with no captures left.');
+      return;
+    }
+  }
+
+  function endGame(winner, reason) {
+    state.winner = winner;             // 'P1' | 'P2' | 'draw'
+    clearAI();
+    selected = null;
+    // Phase H will wire Auth.recordResult + Achievements here.
+    showOverlay(winner, reason);
+  }
+
+  // ── Legal-action generator + AI (Phase G) ────────────────────────────────────
+  function genActions(who) {
+    var caps = [], moves = [], drops = [], i, k, m;
+    for (i = 0; i < TOTAL; i++) {
+      if (state.board[i] !== who) continue;
+      m = movesFor(i);
+      for (k = 0; k < m.jumps.length; k++) caps.push({ from: i, jump: m.jumps[k] });
+      for (k = 0; k < m.moves.length; k++) moves.push({ from: i, to: m.moves[k] });
+    }
+    if (state.hand[who] > 0) {
+      for (i = 0; i < TOTAL; i++) if (state.board[i] === null) drops.push(i);
+    }
+    return { captures: caps, moves: moves, drops: drops };
+  }
+
+  // Would a `who` piece sitting at `idx` be immediately capturable by the enemy?
+  function exposedAt(boardArr, idx, who) {
+    var enemy = other(who), c = idx % COLS, r = Math.floor(idx / COLS), d;
+    for (d = 0; d < DIRS.length; d++) {
+      var dc = DIRS[d][0], dr = DIRS[d][1];
+      var ac = c + dc, ar = r + dr;          // attacker side
+      var bc = c - dc, br = r - dr;          // empty landing side (opposite)
+      if (ac < 0 || ac >= COLS || ar < 0 || ar >= ROWS) continue;
+      if (bc < 0 || bc >= COLS || br < 0 || br >= ROWS) continue;
+      if (boardArr[ar * COLS + ac] === enemy && boardArr[br * COLS + bc] === null) return true;
+    }
+    return false;
+  }
+
+  // Pick the bonus-removal target: prefer an enemy piece that threatens us most
+  // (can capture our pieces), then one adjacent to many of our pieces.
+  function chooseBonusTarget(who) {
+    var enemy = other(who), best = -1, bestScore = -1, i, d;
+    for (i = 0; i < TOTAL; i++) {
+      if (state.board[i] !== enemy) continue;
+      var score = movesFor(i).jumps.length * 10;   // jumps from an enemy capture our pieces
+      var c = i % COLS, r = Math.floor(i / COLS);
+      for (d = 0; d < DIRS.length; d++) {
+        var nc = c + DIRS[d][0], nr = r + DIRS[d][1];
+        if (nc < 0 || nc >= COLS || nr < 0 || nr >= ROWS) continue;
+        if (state.board[nr * COLS + nc] === who) score += 1;
+      }
+      if (score > bestScore) { bestScore = score; best = i; }
+    }
+    return best;
+  }
+
+  // Choose a quiet (non-capturing) action: avoid exposing the moved piece;
+  // prefer creating our own capture threat; mild centrality bias.
+  function quietScore(action, who) {
+    var sim = state.board.slice();
+    var dest;
+    if (action.type === 'move') { sim[action.from] = null; sim[action.to] = who; dest = action.to; }
+    else { sim[action.idx] = who; dest = action.idx; }
+    var score = 0;
+    if (exposedAt(sim, dest, who)) score -= 8;
+    // Does our piece now threaten an enemy (capture available next)?
+    var c = dest % COLS, r = Math.floor(dest / COLS), enemy = other(who), d;
+    for (d = 0; d < DIRS.length; d++) {
+      var dc = DIRS[d][0], dr = DIRS[d][1];
+      var n1c = c + dc, n1r = r + dr, n2c = c + dc * 2, n2r = r + dr * 2;
+      if (n2c < 0 || n2c >= COLS || n2r < 0 || n2r >= ROWS) continue;
+      if (sim[n1r * COLS + n1c] === enemy && sim[n2r * COLS + n2c] === null) score += 4;
+    }
+    // centrality
+    score += 2 - (Math.abs(c - 2.5) + Math.abs(r - 2));
+    return score;
+  }
+
+  function aiTurn() {
+    if (!state || state.winner || state.turn !== AI_PLAYER) return;
+    var p = AI_PLAYER;
+    var actions = genActions(p);
+
+    // 1) Always take a capture if available (capture-two is strong in Yoté).
+    if (actions.captures.length) {
+      var cap = actions.captures[0], bestExp = 2, i;
+      for (i = 0; i < actions.captures.length; i++) {           // prefer a safe landing
+        var sim = state.board.slice(), j = actions.captures[i];
+        sim[j.from] = null; sim[j.jump.captured] = null; sim[j.jump.to] = p;
+        var exp = exposedAt(sim, j.jump.to, p) ? 1 : 0;
+        if (exp < bestExp) { bestExp = exp; cap = j; }
+      }
+      doCapture(cap.from, cap.jump);
+      if (state.awaitingBonusRemoval) doBonusRemoval(chooseBonusTarget(p));
+      return;
+    }
+
+    // 2) Otherwise pick the best quiet move or drop.
+    var cands = [], k;
+    for (k = 0; k < actions.moves.length; k++) {
+      cands.push({ type: 'move', from: actions.moves[k].from, to: actions.moves[k].to });
+    }
+    for (k = 0; k < actions.drops.length; k++) {
+      cands.push({ type: 'drop', idx: actions.drops[k] });
+    }
+    if (!cands.length) return;          // no action (checkEndConditions handles loss)
+    var best = cands[0], bestS = -Infinity;
+    for (k = 0; k < cands.length; k++) {
+      var s = quietScore(cands[k], p);
+      if (s > bestS) { bestS = s; best = cands[k]; }
+    }
+    if (best.type === 'move') doMove(best.from, best.to);
+    else attemptDrop(best.idx);
+  }
+
+  function clearAI() { if (aiTimer) { clearTimeout(aiTimer); aiTimer = null; } }
+  function maybeScheduleAI() {
+    if (!vsAI || !state || state.winner) return;
+    if (state.turn !== AI_PLAYER || state.awaitingBonusRemoval) return;
+    var myGen = gen;
+    clearAI();
+    setStatus('Player 2 (AI) is thinking…');
+    aiTimer = setTimeout(function () {
+      aiTimer = null;
+      if (myGen !== gen || !state || state.winner || state.turn !== AI_PLAYER) return;
+      aiTurn();
+    }, 550);
   }
 
   // ── Render (Phase C1/C2) ────────────────────────────────────────────────────
@@ -387,7 +568,10 @@
   }
 
   // ── HUD (Phase D3) ──────────────────────────────────────────────────────────
-  function playerLabel(p) { return p === P1 ? 'You (light)' : 'Player 2 (dark)'; }
+  function playerLabel(p) {
+    if (p === P1) return 'You (light)';
+    return vsAI ? 'Player 2 (AI)' : 'Player 2 (dark)';
+  }
 
   function updateScore() {
     var el = document.getElementById('yo-score');
@@ -414,6 +598,19 @@
   }
   function updateHud() { updateScore(); refreshStatus(); }
 
+  // ── End-screen overlay (Phase F4) ─────────────────────────────────────────────
+  function showOverlay(winner, reason) {
+    var title;
+    if (winner === 'draw') title = 'Draw';
+    else if (winner === P1) title = vsAI ? 'You Win!' : 'Player 1 Wins!';
+    else title = vsAI ? 'You Lost' : 'Player 2 Wins!';
+    if (overlayTitleEl) overlayTitleEl.textContent = title;
+    if (overlaySubEl)   overlaySubEl.textContent = reason || '';
+    if (overlayEl)      overlayEl.classList.add('active');
+    setStatus(title + (reason ? ' ' + reason : ''));
+  }
+  function hideOverlay() { if (overlayEl) overlayEl.classList.remove('active'); }
+
   // ── Turn resolution ─────────────────────────────────────────────────────────
   // Pass the turn after a fully-resolved action (drop, move, or capture+bonus).
   function finishTurn(p) {
@@ -421,8 +618,10 @@
     state.awaitingBonusRemoval = false;
     state.last_actor = 'local:' + p;
     selected = null;
+    checkEndConditions();
     render();
     updateHud();
+    maybeScheduleAI();
   }
 
   // ── Drop action (Phase D2) ──────────────────────────────────────────────────
@@ -493,6 +692,7 @@
 
   function handleCell(idx) {
     if (state.winner) return;
+    if (vsAI && state.turn === AI_PLAYER) return;   // input locked during AI's turn
     var p = state.turn, enemy = other(p);
 
     // Bonus-removal sub-state: only an enemy-piece tap does anything.
@@ -533,15 +733,26 @@
 
   // ── Controls ──────────────────────────────────────────────────────────────────
   function newGame() {
+    gen++;                      // invalidate any pending AI move from a prior game
+    clearAI();
+    hideOverlay();
     state = freshState();
     history = [];
     selected = null;
     render();
     updateHud();
+    maybeScheduleAI();          // (no-op: P1 always starts, but safe)
   }
   function undo() {
     if (!history.length) { setStatus('Nothing to undo yet.'); return; }
+    gen++;                      // cancel any scheduled AI move
+    clearAI();
+    hideOverlay();
     restore(history.pop());
+    // In vs-AI mode, keep stepping back until it's the human's decision again.
+    while (vsAI && history.length && state.turn === AI_PLAYER) {
+      restore(history.pop());
+    }
     selected = null;
     render();
     updateHud();
@@ -563,10 +774,21 @@
       };
     }
 
-    var elNew  = document.getElementById('yo-new-btn');
-    var elUndo = document.getElementById('yo-undo-btn');
-    if (elNew)  elNew.addEventListener('click', newGame);
-    if (elUndo) elUndo.addEventListener('click', undo);
+    overlayEl      = document.getElementById('yo-overlay');
+    overlayTitleEl = document.getElementById('yo-overlay-title');
+    overlaySubEl   = document.getElementById('yo-overlay-sub');
+
+    var elNew     = document.getElementById('yo-new-btn');
+    var elUndo    = document.getElementById('yo-undo-btn');
+    var elRematch = document.getElementById('yo-rematch-btn');
+    var elAi      = document.getElementById('yo-ai-toggle');
+    if (elNew)     elNew.addEventListener('click', newGame);
+    if (elUndo)    elUndo.addEventListener('click', undo);
+    if (elRematch) elRematch.addEventListener('click', newGame);
+    if (elAi) {
+      vsAI = !!elAi.checked;
+      elAi.addEventListener('change', function () { vsAI = elAi.checked; newGame(); });
+    }
 
     cnv.addEventListener('click', onTap);
     cnv.addEventListener('touchend', function (e) { e.preventDefault(); onTap(e); }, { passive: false });
@@ -574,10 +796,13 @@
     window.addEventListener('resize', resizeCanvas);
     window.cgMobileResize = resizeCanvas;
 
+    gen++;
+    clearAI();
     state = freshState();
     history = [];
     resizeCanvas();
     updateHud();
+    maybeScheduleAI();
   }
 
   if (document.readyState === 'loading') {

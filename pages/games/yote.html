@@ -104,14 +104,18 @@
         <!-- Board -->
         <div class="yo-board-wrap" id="yo-board-wrap">
           <canvas id="yo-canvas" aria-label="Yoté board" role="img"></canvas>
+          <div class="yo-overlay yo-gameover" id="yo-overlay" aria-live="polite">
+            <p class="yo-overlay__title" id="yo-overlay-title"></p>
+            <p class="yo-overlay__sub" id="yo-overlay-sub"></p>
+            <button class="btn btn-primary btn-sm" id="yo-rematch-btn" type="button">Play Again</button>
+          </div>
         </div>
 
         <!-- Controls -->
         <div class="yo-controls">
           <button id="yo-new-btn"   class="btn btn-secondary btn-sm">New Game</button>
           <button id="yo-undo-btn"  class="btn btn-ghost btn-sm">Undo</button>
-          <!-- vs AI toggle hidden until Phase G (AI opponent). Pass-and-play for now. -->
-          <label class="yo-ai-label" hidden>
+          <label class="yo-ai-label">
             <input type="checkbox" id="yo-ai-toggle" checked />
             <span>vs AI</span>
           </label>
