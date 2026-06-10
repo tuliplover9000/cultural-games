@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Truc — fanned Spanish cards (coin, sword, the mighty 3) + gold "TRUC!" burst -->
+  <!-- base drop shadow under the fan -->
+  <ellipse cx="30" cy="52.5" rx="21" ry="4.5" fill="#5a3010" opacity="0.35"/>
+  <!-- back card (far left, plain cream) -->
+  <g transform="rotate(-26 30 52)">
+    <rect x="23" y="16.5" width="20" height="30" rx="2.5" fill="#5a3010" opacity="0.3"/>
+    <rect x="22" y="15" width="20" height="30" rx="2.5" fill="#F5E6C8" stroke="#7a4a18" stroke-width="1.5"/>
+  </g>
+  <!-- middle card — sword (espasa) -->
+  <g transform="rotate(-12 30 52)">
+    <rect x="23" y="16.5" width="20" height="30" rx="2.5" fill="#5a3010" opacity="0.3"/>
+    <rect x="22" y="15" width="20" height="30" rx="2.5" fill="#F5E6C8" stroke="#7a4a18" stroke-width="1.5"/>
+    <!-- blade -->
+    <path d="M25 17.5 L26 16 L27 17.5 V25.5 H25 Z" fill="#3A9990" stroke="#2a6f68" stroke-width="0.8" stroke-linejoin="round"/>
+    <!-- crossguard -->
+    <rect x="23.2" y="25.5" width="5.6" height="1.8" rx="0.9" fill="#C89B3C" stroke="#7a4a18" stroke-width="0.7"/>
+    <!-- hilt + pommel -->
+    <rect x="25.2" y="27.3" width="1.6" height="2.6" fill="#7a4a18"/>
+    <circle cx="26" cy="31" r="1.4" fill="#C89B3C" stroke="#7a4a18" stroke-width="0.7"/>
+  </g>
+  <!-- front card — the 3 of coins (strongest card in Truc) -->
+  <g transform="rotate(2 30 52)">
+    <rect x="23" y="16.5" width="20" height="30" rx="2.5" fill="#5a3010" opacity="0.35"/>
+    <rect x="22" y="15" width="20" height="30" rx="2.5" fill="#FBF5E6" stroke="#7a4a18" stroke-width="1.5"/>
+    <!-- top sheen -->
+    <rect x="23.5" y="16.5" width="17" height="3.5" rx="1.7" fill="#ffffff" opacity="0.45"/>
+    <!-- rank numeral 3 -->
+    <path d="M25.5 20.5 q4 -2.2 4 1.4 q0 2.2 -2.6 2.7 q3.2 0.4 3.2 3 q0 3.8 -4.8 2.2"
+          fill="none" stroke="#B83232" stroke-width="2" stroke-linecap="round"/>
+    <!-- gold coin (oro) -->
+    <circle cx="32.5" cy="36.5" r="5.2" fill="#C89B3C" stroke="#7a4a18" stroke-width="1.4"/>
+    <circle cx="32.5" cy="36.5" r="2.8" fill="none" stroke="#7a4a18" stroke-width="1" opacity="0.7"/>
+    <circle cx="30.8" cy="34.8" r="1.1" fill="#FBF5E6" opacity="0.65"/>
+  </g>
+  <!-- gold "TRUC!" shout burst -->
+  <polygon points="59,12 53.9,13.6 56.4,18.4 51.6,15.9 50,21 48.4,15.9 43.6,18.4 46.1,13.6 41,12 46.1,10.4 43.6,5.6 48.4,8.1 50,3 51.6,8.1 56.4,5.6 53.9,10.4"
+           fill="#C89B3C" stroke="#7a4a18" stroke-width="1.2" stroke-linejoin="round"/>
+  <!-- exclamation mark -->
+  <rect x="49.1" y="7.6" width="1.8" height="5.2" rx="0.9" fill="#B83232"/>
+  <circle cx="50" cy="15.4" r="1.2" fill="#B83232"/>
+</svg>

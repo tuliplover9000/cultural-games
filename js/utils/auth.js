@@ -48,6 +48,7 @@
     { id: 'oware',       name: 'Oware',                iconPath: 'assets/icons/oware.svg',        href: 'games/oware.html' },
     { id: 'yote',        name: 'Yoté',                 iconPath: 'assets/icons/yote.svg',         href: 'games/yote.html' },
     { id: 'senet',       name: 'Senet',                iconPath: 'assets/icons/senet.svg',        href: 'games/senet.html' },
+    { id: 'truc',        name: 'Truc',                 iconPath: 'assets/icons/truc.svg',         href: 'games/truc.html' },
     { id: 'patolli',     name: 'Patolli',              iconPath: 'assets/icons/patolli.svg',      href: 'games/patolli.html' },
     { id: 'puluc',       name: 'Puluc',                iconPath: 'assets/icons/puluc.svg',        href: 'games/puluc.html' },
     { id: 'pallanguzhi', name: 'Pallanguzhi',          iconPath: 'assets/icons/pallanguzhi.svg',  href: 'games/pallanguzhi.html' },

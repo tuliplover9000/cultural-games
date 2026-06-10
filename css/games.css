@@ -5128,3 +5128,440 @@
   .se-hud    { flex-direction: column; align-items: flex-start; }
   .se-status { text-align: left; }
 }
+
+/* =============================================================================
+   TRUC — tu- namespace (Catalonia)
+   Catalan bar-table look: deep felt green, wooden edge, Spanish-deck cards.
+   The table is self-colored (works in both themes); UI chrome text uses vars.
+============================================================================= */
+.tu-game-container {
+  background: radial-gradient(ellipse at 50% 38%, #266148 0%, #1d4a38 62%, #163a2c 100%);
+  border: 6px solid #3a2a16;
+  border-radius: var(--radius-xl);
+  box-shadow:
+    inset 0 0 60px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 8px 28px rgba(0, 0, 0, 0.35);
+  padding: var(--space-5) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-block: var(--space-2);
+  min-height: 560px;
+}
+
+/* HUD — score + status (same pattern as .se-hud) */
+.tu-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  min-height: 40px;
+  padding: var(--space-2) var(--space-3);
+  background: rgba(0, 0, 0, 0.32);
+  border-radius: var(--radius-md);
+}
+.tu-score {
+  display: flex;
+  gap: var(--space-4);
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+}
+.tu-score__you { color: #ffd75e; }
+.tu-score__ai  { color: #d0e8d8; }
+.tu-status {
+  font-size: var(--text-sm);
+  color: #d0e8d8;
+  margin: 0;
+  flex: 1;
+  text-align: right;
+}
+
+/* Table — anchor for overlay, raise modal and shouted callout */
+.tu-table {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  flex: 1;
+}
+
+/* Opponent row */
+.tu-opp-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+.tu-opp-label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: #cfe3d4;
+  letter-spacing: 0.02em;
+}
+.tu-opp-hand,
+.tu-hand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.tu-you-row {
+  display: flex;
+  justify-content: center;
+}
+
+/* Cards. The game JS injects an inline SVG filling each card face. */
+.tu-card {
+  width: 92px;
+  height: 138px;
+  border-radius: 10px;
+  background: #FBF8EE;
+  border: 1.5px solid #3a2a16;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+  position: relative;
+  overflow: hidden;
+  display: block;
+  padding: 0;
+  flex-shrink: 0;
+}
+.tu-card svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.tu-hand .tu-card {
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.tu-card--playable:hover,
+.tu-card--playable:focus-visible {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.45);
+}
+.tu-card--selected {
+  transform: translateY(-8px);
+  outline: 3px solid #ffd75e;
+  outline-offset: 1px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.45);
+}
+
+/* Card back — deep red diagonal stripes inside a thin cream frame (pure CSS) */
+.tu-card--back {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      #7e1f1f 0px,
+      #7e1f1f 7px,
+      #5a1414 7px,
+      #5a1414 14px
+    );
+  box-shadow:
+    inset 0 0 0 4px #FBF8EE,
+    inset 0 0 0 5px #5a1414,
+    0 3px 10px rgba(0, 0, 0, 0.35);
+}
+
+/* Deal / throw animations (toggled by the game JS) */
+.tu-card--dealt { animation: tu-deal 0.35s ease-out backwards; }
+@keyframes tu-deal {
+  from {
+    transform: translateY(-90px) scale(0.6) rotate(-8deg);
+    opacity: 0;
+  }
+}
+.tu-card--thrown { animation: tu-throw 0.3s ease-out; }
+@keyframes tu-throw {
+  from {
+    transform: translateY(60px) scale(0.7);
+    opacity: 0;
+  }
+}
+
+/* Centre of the table — played cards + stake pill + trick history */
+.tu-center {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  justify-content: center;
+}
+.tu-play-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 26px;
+  min-height: 150px;
+}
+.tu-played--opp .tu-card { transform: rotate(-4deg); }
+.tu-played--you .tu-card { transform: rotate(3deg); }
+
+/* Trick history — small markers pinned to the table's top-left */
+.tu-trick-history {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: var(--text-xs);
+  color: #cfe3d4;
+}
+.tu-trick-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.tu-trick-dot::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0, 0, 0, 0.4);
+  background: #9aa79e;
+  flex-shrink: 0;
+}
+.tu-trick-dot--you::before { background: #ffd75e; }
+.tu-trick-dot--opp::before { background: #7e1f1f; }
+.tu-trick-dot--tie::before {
+  background: linear-gradient(90deg, #ffd75e 50%, #7e1f1f 50%);
+  filter: grayscale(0.55);
+}
+
+/* Stake pill — "Val 2" */
+.tu-stake {
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-sm);
+  color: #ffd75e;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1.5px solid #ffd75e;
+  border-radius: 999px;
+  padding: 4px 16px;
+  letter-spacing: 0.04em;
+}
+.tu-stake:empty { display: none; }
+
+/* Shouted callout — "TRUC!" splashed across the table */
+.tu-callout {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 6vw, 4rem);
+  font-weight: 800;
+  color: #ffd75e;
+  text-shadow: 0 2px 0 #7e1f1f, 0 6px 24px rgba(0, 0, 0, 0.55);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  opacity: 0;
+  z-index: 6;
+}
+.tu-callout--show { animation: tu-shout 0.9s ease-out; }
+@keyframes tu-shout {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.4) rotate(-6deg); }
+  18%  { opacity: 1; transform: translate(-50%, -50%) scale(1.15) rotate(2deg); }
+  30%  { transform: translate(-50%, -50%) scale(1); }
+  80%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.05); }
+}
+
+/* Raise modal — Accept / Retruc! / Fold */
+.tu-raise-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  background: #221409f2;
+  border: 1.5px solid #ffd75e;
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  text-align: center;
+  max-width: min(90%, 360px);
+}
+.tu-raise-modal[hidden] { display: none !important; }
+.tu-raise-modal__text {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: var(--weight-bold);
+  color: #f3e9d2;
+  margin: 0;
+}
+.tu-raise-modal__btns {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Game-over overlay (same pattern as .se-overlay) */
+.tu-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  text-align: center;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: rgba(26, 12, 4, 0.82);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+  z-index: 7;
+}
+.tu-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.tu-overlay__title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-accent-gold);
+  margin: 0;
+}
+.tu-overlay__sub {
+  font-size: var(--text-sm);
+  color: #f3e9d2;
+  margin: 0;
+  max-width: 32ch;
+}
+
+/* Controls */
+.tu-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.tu-ai-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: #cfe3d4;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+.tu-ai-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #ffd75e;
+  cursor: pointer;
+}
+
+/* Ghost buttons recolored for the green felt */
+.tu-controls .btn-ghost {
+  color: #cfe3d4;
+  border-color: rgba(207, 227, 212, 0.45);
+}
+.tu-controls .btn-ghost:hover,
+.tu-controls .btn-ghost:focus-visible {
+  background-color: rgba(207, 227, 212, 0.12);
+  border-color: #cfe3d4;
+  color: #ffffff;
+}
+
+/* The Truc! button stands out — bar-red, bold, pulses when a raise is on */
+#tu-truc-btn {
+  background: #B83232;
+  border-color: #B83232;
+  color: #ffffff;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.03em;
+}
+#tu-truc-btn:hover,
+#tu-truc-btn:focus-visible {
+  background: #cf3d3d;
+  border-color: #cf3d3d;
+  color: #ffffff;
+}
+#tu-truc-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.tu-truc-btn--hot { animation: tu-pulse 1.2s ease-in-out infinite; }
+@keyframes tu-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(184, 50, 50, 0.55); }
+  50%      { box-shadow: 0 0 0 8px rgba(184, 50, 50, 0); }
+}
+
+/* ---- Mobile ---- */
+@media (max-width: 700px) {
+  .tu-game-container {
+    min-height: 0;
+    padding: var(--space-2);
+    border-width: 4px;
+    gap: var(--space-1);
+  }
+  .tu-card {
+    width: 58px;
+    height: 87px;
+    border-radius: 7px;
+  }
+  .tu-opp-hand,
+  .tu-hand { gap: 6px; }
+  /* Keep the vertical stack tight: every saved pixel keeps the DOM fitter's
+     zoom near 1 so the cards stay tappable (>=44px). */
+  .tu-table { gap: var(--space-1); }
+  .tu-opp-label { font-size: var(--text-xs); margin: 0; }
+  .tu-play-area {
+    min-height: 96px;
+    gap: 14px;
+  }
+  .tu-center { gap: 4px; }
+  .tu-stake { padding: 1px 10px; font-size: var(--text-sm); }
+  .tu-controls { gap: var(--space-2); }
+  .tu-callout { font-size: clamp(1.6rem, 9vw, 2.4rem); }
+  .tu-raise-modal { padding: var(--space-4); }
+  .tu-trick-history { font-size: 0.65rem; }
+  .tu-trick-dot::before { width: 11px; height: 11px; }
+}
+@media (max-width: 480px) {
+  .tu-hud    { flex-direction: column; align-items: flex-start; }
+  .tu-status { text-align: left; }
+}
+
+/* Short landscape phones */
+@media (orientation: landscape) and (max-height: 500px) {
+  .tu-game-container {
+    min-height: 0;
+    padding: var(--space-2);
+    gap: var(--space-1);
+  }
+  .tu-hud {
+    min-height: 0;
+    padding: 2px var(--space-2);
+  }
+  .tu-score { font-size: var(--text-sm); }
+  .tu-status { font-size: var(--text-xs); }
+  .tu-card {
+    width: 56px;
+    height: 84px;
+    border-radius: 6px;
+  }
+  .tu-opp-hand,
+  .tu-hand { gap: 6px; }
+  .tu-play-area {
+    min-height: 90px;
+    gap: 14px;
+  }
+  .tu-opp-label { font-size: var(--text-xs); }
+  .tu-callout { font-size: 1.8rem; }
+}

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="canonical" href="https://playculturalgames.com/pages/games/truc.html" />
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VWXNSYLPZE"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VWXNSYLPZE');</script>
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="description" content="Play Truc online — the loud Catalan bluffing card game and ancestor of South America's Truco. Shout 'Truc!' to raise the stakes, bluff with a 40-card Spanish deck, and race to 12 points against the AI or a friend, free in your browser." />
+  <meta name="keywords" content="truc online, catalan card game, play truc free, truco ancestor, spanish deck card game, bluffing card game, menorca truc, balearic card games" />
+  <title>Play Truc Online Free — Catalan Bluffing Card Game | Cultural Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="../../shared/theme.js"></script>
+  <script src="../../js/rooms/room-mode.js"></script>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../shared/theme.css" />
+  <link rel="stylesheet" href="../../css/components.css" />
+  <link rel="stylesheet" href="../../shared/toggle.css" />
+  <link rel="stylesheet" href="../../shared/tutorial.css" />
+  <link rel="stylesheet" href="../../css/auth.css" />
+  <link rel="stylesheet" href="../../css/games.css" />
+  <link rel="stylesheet" href="../../shared/achievements.css" />
+  <link rel="stylesheet" href="../../shared/fullscreen.css" />
+  <link rel="stylesheet" href="../../shared/play-with-friend.css" />
+  <link rel="stylesheet" href="../../shared/mobile.css">
+  <link rel="stylesheet" href="../../shared/mobile-nav.css">
+  <link rel="stylesheet" href="../../shared/cookie-consent.css">
+  <link rel="stylesheet" href="../../shared/mobile-landscape.css">
+  <script src="../../shared/mobile.js"></script>
+  <script src="../../shared/mobile-nav.js"></script>
+  <script src="../../shared/mobile-zoom.js"></script>
+  <script src="../../shared/sfx.js"></script>
+  <script src="../../shared/orientation-lock.js"></script>
+</head>
+<body>
+<button id="tt-trigger" class="tt-trigger" type="button" aria-label="How to play">
+    <span class="tt-trigger__icon" aria-hidden="true">?</span>
+    <span class="tt-trigger__badge" id="tt-badge" hidden>New</span>
+  </button>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../../index.html" class="nav-logo" aria-label="Cultural Games - Home">
+        <img src="../../favicon.svg" width="32" height="32" alt="" class="nav-logo-icon" aria-hidden="true">
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="../browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="../rooms.html"  class="nav-link nav-link--rooms">Rooms</a></li>
+        <li><a href="../about.html"  class="nav-link">About</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+
+      <div class="game-nav-bar">
+        <a href="../browse.html" class="back-link">Back to Browse</a>
+      </div>
+
+      <header class="game-header">
+        <div class="game-header__icon" aria-hidden="true"><img src="../../assets/icons/truc.svg" alt="" /></div>
+        <h1 class="game-header__title">Truc</h1>
+        <p class="game-header__origin">
+          Catalonia &nbsp;&middot;&nbsp;
+          <span class="badge badge--card" style="display:inline-flex; vertical-align:middle; margin-left:4px;">Card</span>
+        </p>
+      </header>
+
+      <!-- Game Container -->
+      <div id="fs-game-wrap" class="fs-game-wrap">
+      <button id="fs-toggle" class="fs-toggle" aria-label="Enter fullscreen" title="Enter fullscreen">
+        <svg class="fs-toggle__icon fs-toggle__icon--enter" viewBox="0 0 18 18" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round">
+          <path d="M1 6V1h5M12 1h5v5M17 12v5h-5M6 17H1v-5"/>
+        </svg>
+        <svg class="fs-toggle__icon fs-toggle__icon--exit" viewBox="0 0 18 18" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" style="display:none">
+          <path d="M6 1v5H1M17 6h-5V1M12 17v-5h5M1 12h5v5"/>
+        </svg>
+      </button>
+      <div class="fs-sr-only" id="fs-announce" aria-live="polite"></div>
+      <div class="game-container tu-game-container" id="game-container" aria-label="Game area">
+        <div class="tu-hud">
+          <div class="tu-score" id="tu-score"></div>
+          <p class="tu-status" id="tu-status" aria-live="polite" aria-atomic="true">Loading…</p>
+        </div>
+        <div class="tu-table" id="tu-table">
+          <div class="tu-opp-row">
+            <div class="tu-opp-label" id="tu-opp-label">Player 2 (AI)</div>
+            <div class="tu-opp-hand" id="tu-opp-hand"></div>
+          </div>
+          <div class="tu-center" id="tu-center">
+            <div class="tu-trick-history" id="tu-trick-history"></div>
+            <div class="tu-play-area" id="tu-play-area">
+              <div class="tu-played tu-played--opp" id="tu-played-opp"></div>
+              <div class="tu-played tu-played--you" id="tu-played-you"></div>
+            </div>
+            <div class="tu-stake" id="tu-stake"></div>
+          </div>
+          <div class="tu-you-row">
+            <div class="tu-hand" id="tu-hand"></div>
+          </div>
+          <div class="tu-callout" id="tu-callout" aria-live="assertive"></div>
+          <div class="tu-raise-modal" id="tu-raise-modal" hidden>
+            <p class="tu-raise-modal__text" id="tu-raise-text"></p>
+            <div class="tu-raise-modal__btns">
+              <button id="tu-accept-btn"  class="btn btn-primary btn-sm"   type="button">Accept</button>
+              <button id="tu-reraise-btn" class="btn btn-secondary btn-sm" type="button">Retruc!</button>
+              <button id="tu-decline-btn" class="btn btn-ghost btn-sm"     type="button">Fold</button>
+            </div>
+          </div>
+          <div class="tu-overlay tu-gameover" id="tu-overlay" aria-live="polite">
+            <p class="tu-overlay__title" id="tu-overlay-title"></p>
+            <p class="tu-overlay__sub" id="tu-overlay-sub"></p>
+            <button class="btn btn-primary btn-sm" id="tu-rematch-btn" type="button">Play Again</button>
+          </div>
+        </div>
+        <div class="tu-controls">
+          <button id="tu-truc-btn" class="btn btn-secondary btn-sm" type="button">Truc!</button>
+          <button id="tu-fold-btn" class="btn btn-ghost btn-sm" type="button">Fold Hand</button>
+          <button id="tu-new-btn"  class="btn btn-ghost btn-sm" type="button">New Game</button>
+          <label class="tu-ai-label"><input type="checkbox" id="tu-ai-toggle" checked /><span>vs AI</span></label>
+        </div>
+      </div>
+      </div><!-- /#fs-game-wrap -->
+
+      <!-- Play with a Friend -->
+      <div id="pwf-mount"></div>
+
+      <!-- How to Play -->
+      <details class="accordion" open>
+        <summary class="accordion__trigger">
+          <span class="accordion__title">How to Play</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <ol>
+            <li><strong>The deal:</strong> Truc is played with a <strong>40-card Spanish deck</strong> — each player gets 3 cards. There are no trumps and you never have to follow suit. Card ranking, high to low: <strong>3 &gt; 2 &gt; ace &gt; rei (king) &gt; cavall (knight) &gt; sota (jack) &gt; 7 &gt; 6 &gt; 5 &gt; 4</strong>. Suits are irrelevant.</li>
+            <li><strong>Tricks:</strong> the non-dealer leads. The highest card wins the trick, and the winner leads the next one. Equal cards <em>tie</em> the trick and the same leader leads again.</li>
+            <li><strong>Winning the hand:</strong> win 2 of the 3 tricks. With ties in the mix, whoever wins the <strong>first decided trick</strong> wins the hand; if all three tricks tie, the non-dealer wins.</li>
+            <li><strong>Truc! and Retruc!:</strong> the hand is worth 1 point — at your turn, call <strong>"Truc!"</strong> to raise it to 2. The accepter (and only the accepter) may later call <strong>"Retruc!"</strong> to raise it to 3. Decline a raise and your opponent scores the stake as it stood <em>before</em> the raise.</li>
+            <li><strong>Folding:</strong> you may fold at any time, conceding the current stake to your opponent.</li>
+            <li><strong>Winning the game:</strong> first player to <strong>12 points</strong> wins.</li>
+          </ol>
+          <p style="margin-top:1rem;"><a href="../../how-to-play/truc/" style="color:var(--color-accent-gold);font-weight:600;">Full rules guide &amp; cultural history →</a></p>
+        </div>
+      </details>
+
+      <!-- Cultural Context -->
+      <details class="accordion">
+        <summary class="accordion__trigger">
+          <span class="accordion__title">Cultural Context</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Truc is the great bluffing game of the Catalan lands — Catalonia, Valencia, and the Balearic Islands — and of Roussillon across the border in southern France, where it is a fixture of village cafés. A cousin of the 17th-century English game Put, it is famously a game to be played <em>loudly</em>: over coffee in a bar, with gestures, taunts, and table-slapping. The drama of the shouted "Truc!" — daring your opponent to pay double for a hand you may not even be able to win — is not a side effect of the game; it <em>is</em> the game.
+          </p>
+          <p>
+            Carried across the Atlantic by Catalan, Valencian, and Spanish emigrants, Truc took root in South America as <strong>Truco</strong> — today the most beloved card game of Argentina and Brazil, played everywhere from family kitchens to national championships. Jorge Luis Borges immortalized it in his 1923 poem "El truco," finding in the game's ritual bluffs a small theatre of fate and deception.
+          </p>
+          <p>
+            Nowhere does the original tradition burn brighter than on Menorca, where Truc remains a living part of island life. The island's annual Open drew a record 54 pairs in 2024, a bar club in Ferreries proudly styles its tournament the World Championship, and youth campaigns hand out free decks in schools to make sure the next generation learns to shout "Truc!" with conviction.
+          </p>
+        </div>
+      </details>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <span class="footer-brand">Cultural Games</span>
+      <p class="footer-mission">Preserving cultural heritage through play - one game at a time.</p>
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links" role="list">
+          <li><a href="../browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="../about.html"  class="footer-link">About</a></li>
+          <li><a href="../terms.html"   class="footer-link">Terms</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy</a></li>
+        </ul>
+      </nav>
+      <div class="footer-divider"></div>
+      <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
+    </div>
+  </footer>
+
+  <script src="../../js/utils/helpers.js"></script>
+  <script src="../../js/utils/navigation.js"></script>
+  <script src="../../js/utils/auth.js"></script>
+  <script src="../../shared/achievement-queue.js"></script>
+  <script src="../../shared/achievements.js"></script>
+  <script src="../../js/rooms/game-bridge.js"></script>
+  <script src="../../shared/tutorial.js"></script>
+  <script src="../../shared/fullscreen.js"></script>
+  <script src="../../js/games/truc.js"></script>
+  <script src="../../shared/play-with-friend.js"></script>
+  <script>if (window.PWF) PWF.init("truc");</script>
+  <script src="../../shared/cookie-consent.js"></script>
+</body>
+</html>

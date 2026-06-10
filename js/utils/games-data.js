@@ -57,6 +57,13 @@ window.GAMES_DATA = [
     complexity: 2, players: '2',
   },
   {
+    key: 'truc', name: 'Truc', culture: 'Catalonia', type: 'Card', maxPlayers: 2,
+    region: 'southern-europe', path: 'games/truc.html', howToPlay: 'how-to-play/truc/',
+    description: "The Mediterranean's great bluffing game, played for centuries across Catalonia, Valencia, and the Balearic Islands — and the direct ancestor of South America's beloved Truco. Three cards, three tricks, and one explosive word — \"Truc!\" — that raises the stakes and dares your opponent to call your bluff. The cards are learned in minutes; everything that matters happens in your opponent's eyes.",
+    didYouKnow: "Menorca still crowns truc champions today — its 2024 island Open drew a record 54 pairs, and a bar club in Ferreries styles itself the game's World Championship.",
+    complexity: 2, players: '2',
+  },
+  {
     key: 'patolli', name: 'Patolli', culture: 'Mesoamerica', type: 'Dice', maxPlayers: 4,
     region: 'mesoamerica', path: 'games/patolli.html', howToPlay: 'how-to-play/patolli/',
     description: "A sacred Aztec race game whose cross-shaped board mapped the cosmos, with 52 spaces mirroring the 52-year cycle of the sacred Aztec calendar. Spanish chronicler Fray Bernardino de Sahagún documented nobles gambling away gold, precious stones, and sometimes their own freedom at Patolli matches. The Spanish banned it as idolatry in the 16th century, nearly erasing a game that had been played across Mesoamerica for over a thousand years.",
