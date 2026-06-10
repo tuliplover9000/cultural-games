@@ -93,6 +93,11 @@
     { id: 'yo_wins_50',    gameId: 'yote',          title: 'Master of Yoté',    description: 'Win 50 games of Yoté',                                  tier: 'gold',   category: 'combat', condition: { type: 'stat',   game: 'yote', stat: 'wins', threshold: 50 } },
     { id: 'yo_capture_two',gameId: 'yote',          title: 'Two in One Blow',   description: 'Pull off the capture-two: remove two enemy pieces in a single turn', tier: 'silver', category: 'combat', condition: { type: 'action', action: 'yo_capture_two' } },
     { id: 'yo_flawless',   gameId: 'yote',          title: 'Barely a Scratch',  description: 'Win a game of Yoté losing 3 or fewer pieces',           tier: 'gold',   category: 'combat', condition: { type: 'action', action: 'yo_flawless_win' } },
+    { id: 'se_first_win',  gameId: 'senet',         title: 'Safe Passage',      description: 'Win your first game of Senet',                          tier: 'bronze', category: 'combat', condition: { type: 'stat',   game: 'senet', stat: 'wins', threshold: 1  } },
+    { id: 'se_wins_10',    gameId: 'senet',         title: 'Scribe of the Duat',description: 'Win 10 games of Senet',                                 tier: 'silver', category: 'combat', condition: { type: 'stat',   game: 'senet', stat: 'wins', threshold: 10 } },
+    { id: 'se_wins_50',    gameId: 'senet',         title: 'Justified Soul',    description: 'Win 50 games of Senet',                                 tier: 'gold',   category: 'combat', condition: { type: 'stat',   game: 'senet', stat: 'wins', threshold: 50 } },
+    { id: 'se_dry_run',    gameId: 'senet',         title: 'Dry Sandals',       description: 'Win a game of Senet without ever falling into the House of Water', tier: 'silver', category: 'combat', condition: { type: 'action', action: 'se_no_water_win' } },
+    { id: 'se_hot_sticks', gameId: 'senet',         title: 'Blessed by Thoth',  description: 'Earn three extra throws in a single Senet turn',        tier: 'silver', category: 'combat', condition: { type: 'action', action: 'se_throw_chain'  } },
 
     /* ── Explorer (cross-game) ── */
     { id: 'exp_play_3',   gameId: null, title: 'Curious Traveller', description: 'Play 3 different games',               tier: 'bronze', category: 'explorer', condition: { type: 'games_played', threshold: 3  } },

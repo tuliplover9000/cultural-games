@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- drop shadow -->
+  <rect x="5" y="28" width="56" height="26" rx="4" fill="#5a3010" opacity="0.4"/>
+  <!-- board box -->
+  <rect x="4" y="26" width="56" height="26" rx="4" fill="#c07a30"/>
+  <!-- top sheen -->
+  <rect x="6" y="27.5" width="52" height="4" rx="2" fill="#e09850" opacity="0.3"/>
+  <!-- faience + gold "house" squares -->
+  <rect x="43" y="29" width="7" height="7" fill="#3A9990" opacity="0.9"/>
+  <rect x="28.5" y="36" width="7.5" height="7" fill="#C89B3C" opacity="0.9"/>
+  <rect x="14" y="43" width="7" height="7" fill="#3A9990" opacity="0.9"/>
+  <!-- 3x7 inscribed grid -->
+  <path d="M7 36 H57 M7 43 H57" stroke="#7a4a18" stroke-width="1.2" fill="none"/>
+  <path d="M14 29 V50 M21 29 V50 M28.5 29 V50 M36 29 V50 M43 29 V50 M50 29 V50" stroke="#7a4a18" stroke-width="1.2" fill="none"/>
+  <!-- board border -->
+  <rect x="4" y="26" width="56" height="26" rx="4" fill="none" stroke="#5a3010" stroke-width="2"/>
+  <!-- cream cone piece -->
+  <path d="M22 11.5 L28 26 L16 26 Z" fill="#F5E6C8" stroke="#9a7030" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- dark spool piece -->
+  <path d="M33 13 H43 L39.5 18.5 V21 L43 26 H33 L36.5 21 V18.5 Z" fill="#1a0a00" stroke="#5a3010" stroke-width="1"/>
+  <rect x="34.2" y="13.8" width="7.6" height="1.6" rx="0.8" fill="#8a5530" opacity="0.85"/>
+  <!-- throwing sticks leaning by the board -->
+  <rect x="49.5" y="10.5" width="2.8" height="16" rx="1.4" fill="#F5E6C8" stroke="#9a7030" stroke-width="1" transform="rotate(14 50.9 18.5)"/>
+  <rect x="54.5" y="11" width="2.8" height="16" rx="1.4" fill="#7a4a18" stroke="#5a3010" stroke-width="1" transform="rotate(22 55.9 19)"/>
+</svg>

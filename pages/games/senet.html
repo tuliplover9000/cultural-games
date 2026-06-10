@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="canonical" href="https://playculturalgames.com/pages/games/senet.html" />
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VWXNSYLPZE"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VWXNSYLPZE');</script>
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="description" content="Play Senet online — ancient Egypt's 5,000-year-old game of passage through the afterlife. Throw the sticks, dodge the House of Water, and race the AI or a friend free in your browser." />
+  <meta name="keywords" content="senet online, ancient egyptian board game, senet rules, play senet free, egyptian game of the afterlife, oldest board game, tutankhamun senet" />
+  <title>Play Senet Online Free — Ancient Egyptian Board Game | Cultural Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="../../shared/theme.js"></script>
+  <script src="../../js/rooms/room-mode.js"></script>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../shared/theme.css" />
+  <link rel="stylesheet" href="../../css/components.css" />
+  <link rel="stylesheet" href="../../shared/toggle.css" />
+  <link rel="stylesheet" href="../../shared/tutorial.css" />
+  <link rel="stylesheet" href="../../css/auth.css" />
+  <link rel="stylesheet" href="../../css/games.css" />
+  <link rel="stylesheet" href="../../shared/achievements.css" />
+  <link rel="stylesheet" href="../../shared/fullscreen.css" />
+  <link rel="stylesheet" href="../../shared/play-with-friend.css" />
+  <link rel="stylesheet" href="../../shared/mobile.css">
+  <link rel="stylesheet" href="../../shared/mobile-nav.css">
+  <link rel="stylesheet" href="../../shared/cookie-consent.css">
+  <link rel="stylesheet" href="../../shared/mobile-landscape.css">
+  <script src="../../shared/mobile.js"></script>
+  <script src="../../shared/mobile-nav.js"></script>
+  <script src="../../shared/mobile-zoom.js"></script>
+  <script src="../../shared/sfx.js"></script>
+  <script src="../../shared/orientation-lock.js"></script>
+</head>
+<body>
+<button id="tt-trigger" class="tt-trigger" type="button" aria-label="How to play">
+    <span class="tt-trigger__icon" aria-hidden="true">?</span>
+    <span class="tt-trigger__badge" id="tt-badge" hidden>New</span>
+  </button>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../../index.html" class="nav-logo" aria-label="Cultural Games - Home">
+        <img src="../../favicon.svg" width="32" height="32" alt="" class="nav-logo-icon" aria-hidden="true">
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="../browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="../rooms.html"  class="nav-link nav-link--rooms">Rooms</a></li>
+        <li><a href="../about.html"  class="nav-link">About</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+
+      <div class="game-nav-bar">
+        <a href="../browse.html" class="back-link">Back to Browse</a>
+      </div>
+
+      <header class="game-header">
+        <div class="game-header__icon" aria-hidden="true"><img src="../../assets/icons/senet.svg" alt="" /></div>
+        <h1 class="game-header__title">Senet</h1>
+        <p class="game-header__origin">
+          Ancient Egypt &nbsp;&middot;&nbsp;
+          <span class="badge badge--board" style="display:inline-flex; vertical-align:middle; margin-left:4px;">Board</span>
+        </p>
+      </header>
+
+      <!-- Game Container -->
+      <div id="fs-game-wrap" class="fs-game-wrap">
+      <button id="fs-toggle" class="fs-toggle" aria-label="Enter fullscreen" title="Enter fullscreen">
+        <svg class="fs-toggle__icon fs-toggle__icon--enter" viewBox="0 0 18 18" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round">
+          <path d="M1 6V1h5M12 1h5v5M17 12v5h-5M6 17H1v-5"/>
+        </svg>
+        <svg class="fs-toggle__icon fs-toggle__icon--exit" viewBox="0 0 18 18" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" style="display:none">
+          <path d="M6 1v5H1M17 6h-5V1M12 17v-5h5M1 12h5v5"/>
+        </svg>
+      </button>
+      <div class="fs-sr-only" id="fs-announce" aria-live="polite"></div>
+      <div class="game-container se-game-container" id="game-container" aria-label="Game area">
+
+        <!-- Score + Status -->
+        <div class="se-hud">
+          <div class="se-score" id="se-score"></div>
+          <p class="se-status" id="se-status" aria-live="polite" aria-atomic="true">Loading…</p>
+        </div>
+
+        <!-- Board -->
+        <div class="se-board-wrap" id="se-board-wrap">
+          <canvas id="se-canvas" aria-label="Senet board" role="img"></canvas>
+          <div class="se-overlay se-gameover" id="se-overlay" aria-live="polite">
+            <p class="se-overlay__title" id="se-overlay-title"></p>
+            <p class="se-overlay__sub" id="se-overlay-sub"></p>
+            <button class="btn btn-primary btn-sm" id="se-rematch-btn" type="button">Play Again</button>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="se-controls">
+          <button id="se-throw-btn" class="btn btn-primary btn-sm">Throw Sticks</button>
+          <button id="se-new-btn" class="btn btn-secondary btn-sm">New Game</button>
+          <label class="se-ai-label">
+            <input type="checkbox" id="se-ai-toggle" checked />
+            <span>vs AI</span>
+          </label>
+        </div>
+
+      </div>
+      </div><!-- /#fs-game-wrap -->
+
+      <!-- Play with a Friend -->
+      <div id="pwf-mount"></div>
+
+      <!-- How to Play -->
+      <details class="accordion" open>
+        <summary class="accordion__trigger">
+          <span class="accordion__title">How to Play</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <ol>
+            <li><strong>The race:</strong> Senet is a race for two on a <strong>30-square board</strong>. The path snakes: left-to-right across the top row, right-to-left across the middle, left-to-right across the bottom. You play the light cones; the AI plays the dark spools. Each side has 5 pieces.</li>
+            <li><strong>Throw the sticks:</strong> throw the four casting sticks — the number of light faces showing is your move (1–4); all dark faces = 5. Throws of 1, 4, and 5 earn another throw.</li>
+            <li><strong>Move:</strong> move one piece forward by the thrown value. You can't land on your own piece. Land on a <em>lone</em> enemy piece and you swap places with it.</li>
+            <li><strong>Protection &amp; walls:</strong> two enemy pieces side by side are protected — you can't swap with them. Three in a row form a wall your pieces cannot pass.</li>
+            <li><strong>Forced moves:</strong> if you can't move forward, you must move a piece backward; if no move exists at all, your turn is forfeit.</li>
+            <li><strong>Special houses:</strong> every piece must land exactly on square 26 (House of Beauty) before the final stretch — from there a 5 bears straight off. Square 27 (House of Water) sends a piece back to square 15 (House of Rebirth). Square 28 needs an exact 3 to bear off, square 29 an exact 2, and square 30 escapes on any throw.</li>
+            <li><strong>Winning:</strong> first player to bear all five pieces off the board wins.</li>
+          </ol>
+          <p style="margin-top:1rem;"><a href="../../how-to-play/senet/" style="color:var(--color-accent-gold);font-weight:600;">Full rules guide &amp; cultural history →</a></p>
+        </div>
+      </details>
+
+      <!-- Cultural Context -->
+      <details class="accordion">
+        <summary class="accordion__trigger">
+          <span class="accordion__title">Cultural Context</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Senet is among the oldest known board games on Earth, attested in Egypt from around 3100 BCE — in Predynastic burials — all the way through the Roman period. It was played by everyone: laborers scratched boards into paving stones and rooftops, while pharaohs were buried with exquisite inlaid sets. Tutankhamun's tomb alone contained four Senet boards.
+          </p>
+          <p>
+            Over the centuries the game took on profound religious meaning, becoming an allegory of the soul's journey through the Duat — the Egyptian afterlife. The final five squares of the board map the soul's trials before judgment, and Chapter 17 of the Book of the Dead shows the deceased playing Senet for their eternal fate. Queen Nefertari's tomb famously depicts her playing against an unseen opponent — perhaps fate itself.
+          </p>
+          <p>
+            The original rules were never written down. Modern play follows scholarly reconstructions pieced together from tomb paintings, game texts, and surviving boards — this game uses Timothy Kendall's widely adopted reconstruction.
+          </p>
+        </div>
+      </details>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <span class="footer-brand">Cultural Games</span>
+      <p class="footer-mission">Preserving cultural heritage through play - one game at a time.</p>
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links" role="list">
+          <li><a href="../browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="../about.html"  class="footer-link">About</a></li>
+          <li><a href="../terms.html"   class="footer-link">Terms</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy</a></li>
+        </ul>
+      </nav>
+      <div class="footer-divider"></div>
+      <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
+    </div>
+  </footer>
+
+  <script src="../../js/utils/helpers.js"></script>
+  <script src="../../js/utils/navigation.js"></script>
+  <script src="../../js/utils/auth.js"></script>
+  <script src="../../shared/achievement-queue.js"></script>
+  <script src="../../shared/achievements.js"></script>
+  <script src="../../js/rooms/game-bridge.js"></script>
+  <script src="../../shared/tutorial.js"></script>
+  <script src="../../shared/fullscreen.js"></script>
+  <script src="../../js/games/senet.js"></script>
+  <script src="../../shared/play-with-friend.js"></script>
+  <script>if (window.PWF) PWF.init("senet");</script>
+  <script src="../../shared/cookie-consent.js"></script>
+</body>
+</html>
