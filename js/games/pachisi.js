@@ -106,27 +106,50 @@
     black:  [6, 6]
   };
 
-  // ── Colours ───────────────────────────────────────────────────────────────
+  // ── Colours — embroidered madder-cloth artifact palette ──────────────────
+  // Research refs: V&A 4537(IS) Sindh cloth board; Kutch pakko bharat embroidery.
+  var CLOTH = {
+    ground:   '#8E2C21',              // madder-red ground cloth
+    frame:    '#5E1F17',              // darker hemmed edge
+    weave:    'rgba(0,0,0,0.06)',     // faint weave shading
+    ivory:    '#F2E8D5',              // path patch ivory
+    ochre:    '#E3CFA0',              // alternating pale ochre patch
+    gilt:     '#C9B26B',              // couched silver-gilt thread
+    indigo:   '#2C3E66',              // castle patch indigo
+    yardRed:  '#7A251C',              // darker red corner devices
+    charkoni: '#1F2A44',              // centre medallion field
+    glow:     '#E8C766'               // gilt selection glow
+  };
+
+  // Lacquered turned-wood pawn colours (turmeric / lac red / leaf green / black)
   var PIECE_COLORS = {
-    yellow: '#F5C518',
-    red:    '#E03030',
-    green:  '#27AE60',
-    black:  '#2C2C2C'
+    yellow: '#D9A441',
+    red:    '#B0392B',
+    green:  '#4A6B3A',
+    black:  '#23262E'
   };
 
   var PIECE_STROKE = {
-    yellow: '#8B6914',
-    red:    '#7a0a0a',
-    green:  '#1a5c1a',
-    black:  '#667788'
+    yellow: '#8A6420',
+    red:    '#5E1F15',
+    green:  '#2C4424',
+    black:  '#0D0F14'
   };
 
-  // Board arm/yard palette (used in drawBoard)
+  // Brighter variants for HUD text / score dots on the dark UI chrome
+  var UI_COLORS = {
+    yellow: '#D9A441',
+    red:    '#CD5240',
+    green:  '#7FA065',
+    black:  '#8C95A6'
+  };
+
+  // Board home-lane palette (used in drawBoard)
   var BOARD_COLORS = {
-    yellow: '#F5C518',
-    red:    '#E03030',
-    green:  '#27AE60',
-    black:  '#3A3A8C'
+    yellow: '#D9A441',
+    red:    '#B0392B',
+    green:  '#4A6B3A',
+    black:  '#23262E'
   };
 
   // ── Canvas ────────────────────────────────────────────────────────────────
@@ -484,52 +507,150 @@
 
   // ── Rendering ─────────────────────────────────────────────────────────────
 
-  // Draw a piece shape (dome/cone with halo for contrast)
+  // Draw a piece: beehive turned-wood pawn — squat dome wider than tall,
+  // lathe grooves, knob finial, lacquer highlight. Every pawn gets an ivory
+  // rim so red-on-red never melts into the cloth.
   function drawPiece(x, y, color, stroke, size) {
     size = size || 1;
-    var r = CELL * 0.26 * size;
+    var r = CELL * 0.30 * size; // half-width of the dome
     ctx.save();
-    // White halo ring - ensures piece is visible on any background colour
+    ctx.lineJoin = 'round';
+
+    // Drop shadow on the cloth
     ctx.beginPath();
-    ctx.arc(x, y, r * 1.38, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.ellipse(x, y + r * 0.62, r * 0.95, r * 0.30, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
     ctx.fill();
-    // Drop shadow ellipse
+
+    // Knob finial (drawn first so the dome shoulders overlap its base)
     ctx.beginPath();
-    ctx.ellipse(x, y + r * 0.6, r * 0.9, r * 0.35, 0, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(0,0,0,0.4)';
-    ctx.fill();
-    // Body dome
-    ctx.beginPath();
-    ctx.arc(x, y, r, Math.PI, 0);
-    ctx.lineTo(x + r, y + r * 0.6);
-    ctx.quadraticCurveTo(x, y + r * 1.22, x - r, y + r * 0.6);
-    ctx.closePath();
+    ctx.arc(x, y - r * 0.78, r * 0.24, 0, Math.PI * 2);
+    ctx.strokeStyle = CLOTH.ivory;
+    ctx.lineWidth = 3 * size;
+    ctx.stroke();
     ctx.fillStyle = color;
     ctx.fill();
     ctx.strokeStyle = stroke;
-    ctx.lineWidth = 2 * size;
+    ctx.lineWidth = Math.max(1, 1.2 * size);
     ctx.stroke();
-    // Bright gloss highlight
+
+    // Body silhouette: rounded base, bulged flanks, low dome
     ctx.beginPath();
-    ctx.arc(x - r * 0.27, y - r * 0.28, r * 0.33, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.moveTo(x - r, y + r * 0.50);
+    ctx.quadraticCurveTo(x, y + r * 0.80, x + r, y + r * 0.50);            // base
+    ctx.quadraticCurveTo(x + r * 1.06, y - r * 0.14, x + r * 0.34, y - r * 0.58); // right flank
+    ctx.quadraticCurveTo(x, y - r * 0.76, x - r * 0.34, y - r * 0.58);     // dome top
+    ctx.quadraticCurveTo(x - r * 1.06, y - r * 0.14, x - r, y + r * 0.50); // left flank
+    ctx.closePath();
+    // Ivory rim → lacquer fill → dark turned edge
+    ctx.strokeStyle = CLOTH.ivory;
+    ctx.lineWidth = 4 * size;
+    ctx.stroke();
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = Math.max(1, 1.3 * size);
+    ctx.stroke();
+
+    // Lathe grooves (3 shallow front arcs)
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = Math.max(1, 1.1 * size);
+    ctx.globalAlpha = 0.55;
+    ctx.beginPath();
+    ctx.ellipse(x, y + r * 0.28, r * 0.93, r * 0.16, 0, 0.12 * Math.PI, 0.88 * Math.PI);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(x, y - r * 0.02, r * 0.80, r * 0.13, 0, 0.14 * Math.PI, 0.86 * Math.PI);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(x, y - r * 0.36, r * 0.52, r * 0.10, 0, 0.16 * Math.PI, 0.84 * Math.PI);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // Lacquer highlight
+    ctx.beginPath();
+    ctx.ellipse(x - r * 0.40, y - r * 0.22, r * 0.15, r * 0.32, -0.45, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,245,220,0.5)';
     ctx.fill();
     ctx.restore();
   }
 
-  // Draw a star polygon at (cx, cy)
-  function drawStar(scx, scy, points, outerR, innerR, color) {
+  // Deterministic hand-stitch wobble in -0.5..0.5 (stable across redraws)
+  function wob(seed) {
+    var x = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
+    return (x - Math.floor(x)) - 0.5;
+  }
+
+  // Stitched-patch outline: rounded rect with a slight hand wobble per corner
+  function patchPath(x, y, w, h, rad, seed) {
+    var a = wob(seed) * 1.5,      b = wob(seed + 7) * 1.5,
+        c = wob(seed + 13) * 1.5, d = wob(seed + 29) * 1.5;
     ctx.beginPath();
-    for (var i = 0; i < points * 2; i++) {
-      var sr = i % 2 === 0 ? outerR : innerR;
-      var sa = (i * Math.PI / points) - Math.PI / 2;
-      if (i === 0) ctx.moveTo(scx + sr * Math.cos(sa), scy + sr * Math.sin(sa));
-      else         ctx.lineTo(scx + sr * Math.cos(sa), scy + sr * Math.sin(sa));
-    }
+    ctx.moveTo(x + rad + a, y + b);
+    ctx.lineTo(x + w - rad + b, y + a);
+    ctx.quadraticCurveTo(x + w + a, y + b, x + w + b, y + rad + c);
+    ctx.lineTo(x + w + c, y + h - rad + d);
+    ctx.quadraticCurveTo(x + w + d, y + h + c, x + w - rad + c, y + h + d);
+    ctx.lineTo(x + rad + d, y + h + c);
+    ctx.quadraticCurveTo(x + a, y + h + d, x + b, y + h - rad + a);
+    ctx.lineTo(x + a, y + rad + b);
+    ctx.quadraticCurveTo(x + b, y + a, x + rad + a, y + b);
     ctx.closePath();
-    ctx.fillStyle = color;
+  }
+
+  // Ivory cross-stitch X — the castle mark on indigo patches
+  function drawXStitch(sx, sy, s, color) {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = Math.max(1.5, s * 0.16);
+    ctx.lineCap = 'round';
+    ctx.setLineDash([s * 0.34, s * 0.20]);
+    ctx.beginPath();
+    ctx.moveTo(sx - s, sy - s); ctx.lineTo(sx + s, sy + s);
+    ctx.moveTo(sx + s, sy - s); ctx.lineTo(sx - s, sy + s);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  // Stitched floral rosette (ochre petals, green leaves, ivory heart, gilt dot)
+  function drawFloralRosette(fx, fy, rad) {
+    var k, la, pa;
+    ctx.save();
+    for (k = 0; k < 4; k++) {           // green leaf pairs at the diagonals
+      la = k * Math.PI / 2 + Math.PI / 4;
+      ctx.save();
+      ctx.translate(fx, fy);
+      ctx.rotate(la);
+      ctx.beginPath();
+      ctx.ellipse(rad * 1.05, 0, rad * 0.38, rad * 0.16, 0, 0, Math.PI * 2);
+      ctx.fillStyle = '#4A6B3A';
+      ctx.fill();
+      ctx.restore();
+    }
+    for (k = 0; k < 8; k++) {           // ochre petals
+      pa = k * Math.PI / 4;
+      ctx.save();
+      ctx.translate(fx, fy);
+      ctx.rotate(pa);
+      ctx.beginPath();
+      ctx.ellipse(rad * 0.62, 0, rad * 0.42, rad * 0.22, 0, 0, Math.PI * 2);
+      ctx.fillStyle = CLOTH.ochre;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(94,31,23,0.4)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.restore();
+    }
+    ctx.beginPath();                    // ivory heart
+    ctx.arc(fx, fy, rad * 0.40, 0, Math.PI * 2);
+    ctx.fillStyle = CLOTH.ivory;
     ctx.fill();
+    ctx.beginPath();                    // gilt dot
+    ctx.arc(fx, fy, rad * 0.18, 0, Math.PI * 2);
+    ctx.fillStyle = CLOTH.gilt;
+    ctx.fill();
+    ctx.restore();
   }
 
   // Yard spot pixel positions for a given player (fractional cell coords within 3×3 yard)
@@ -546,55 +667,80 @@
     ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
     var BC = BOARD_COLORS;
+    var wv;
 
-    // ── Board background: cream ───────────────────────────────────────────────
-    ctx.fillStyle = '#F0EAD6';
+    // ── Madder-red ground cloth + faint weave ────────────────────────────────
+    ctx.fillStyle = CLOTH.ground;
     ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
-    // ── Yard corners: solid player color, white inner area, 4 colored spots ──
+    ctx.strokeStyle = CLOTH.weave;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (wv = 4; wv < CANVAS_SIZE; wv += 6) {   // weft
+      ctx.moveTo(0, wv + 0.5); ctx.lineTo(CANVAS_SIZE, wv + 0.5);
+    }
+    for (wv = 5; wv < CANVAS_SIZE; wv += 17) {  // sparser warp
+      ctx.moveTo(wv + 0.5, 0); ctx.lineTo(wv + 0.5, CANVAS_SIZE);
+    }
+    ctx.stroke();
+
+    // ── Yard corners: darker-red appliqué devices with floral rosettes ──────
     var yardDefs = [
-      { player: 'yellow', row: 6, col: 0, color: BC.yellow },
-      { player: 'red',    row: 0, col: 0, color: BC.red    },
-      { player: 'green',  row: 0, col: 6, color: BC.green  },
-      { player: 'black',  row: 6, col: 6, color: BC.black  },
+      { player: 'yellow', row: 6, col: 0 },
+      { player: 'red',    row: 0, col: 0 },
+      { player: 'green',  row: 0, col: 6 },
+      { player: 'black',  row: 6, col: 6 },
     ];
     yardDefs.forEach(function (yd) {
       var x0 = yd.col * CELL, y0 = yd.row * CELL;
       var w  = 3 * CELL,      h  = 3 * CELL;
+      var yi = Math.max(5, CELL * 0.12);
 
-      // Solid colored fill
-      ctx.fillStyle = yd.color;
-      ctx.fillRect(x0, y0, w, h);
-
-      // White inner rounded rectangle
-      var ip = CELL * 0.18;
-      ctx.fillStyle = '#FFFFFF';
-      ctx.beginPath();
-      ctx.roundRect(x0 + ip, y0 + ip, w - ip * 2, h - ip * 2, CELL * 0.18);
+      // Darker red corner-device patch with gilt running stitch
+      patchPath(x0 + yi, y0 + yi, w - yi * 2, h - yi * 2, CELL * 0.30, yd.row * 13 + yd.col + 3);
+      ctx.fillStyle = CLOTH.yardRed;
       ctx.fill();
+      ctx.strokeStyle = CLOTH.gilt;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([5, 3]);
+      ctx.stroke();
+      ctx.setLineDash([]);
 
-      // 4 colored circle spots
-      var spotR = CELL * 0.35;
-      YARD_SPOT_OFFSETS.forEach(function (off, si) {
+      // Central stitched floral rosette ornament
+      drawFloralRosette(x0 + 1.5 * CELL, y0 + 1.5 * CELL, CELL * 0.32);
+
+      // 4 rosette "seats" — ivory ring with petal ticks + player-colour centre
+      YARD_SPOT_OFFSETS.forEach(function (off) {
         var sx = x0 + off[0] * CELL;
         var sy = y0 + off[1] * CELL;
+        var t, ta;
+        ctx.strokeStyle = CLOTH.ivory;
+        ctx.lineCap = 'round';
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.arc(sx, sy, spotR, 0, Math.PI * 2);
-        ctx.fillStyle = yd.color;
+        for (t = 0; t < 8; t++) {                // petal stitch ticks
+          ta = t * Math.PI / 4 + Math.PI / 8;
+          ctx.moveTo(sx + Math.cos(ta) * CELL * 0.35, sy + Math.sin(ta) * CELL * 0.35);
+          ctx.lineTo(sx + Math.cos(ta) * CELL * 0.43, sy + Math.sin(ta) * CELL * 0.43);
+        }
+        ctx.stroke();
+        ctx.beginPath();                         // ivory ring
+        ctx.arc(sx, sy, CELL * 0.29, 0, Math.PI * 2);
+        ctx.strokeStyle = CLOTH.ivory;
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+        ctx.beginPath();                         // player-colour centre
+        ctx.arc(sx, sy, CELL * 0.14, 0, Math.PI * 2);
+        ctx.fillStyle = BC[yd.player];
         ctx.fill();
-        ctx.strokeStyle = 'rgba(0,0,0,0.18)';
+        ctx.strokeStyle = 'rgba(242,232,213,0.85)';
         ctx.lineWidth = 1;
         ctx.stroke();
       });
-
-      // Border outline
-      ctx.strokeStyle = 'rgba(0,0,0,0.35)';
-      ctx.lineWidth = 2;
-      ctx.strokeRect(x0 + 1, y0 + 1, w - 2, h - 2);
     });
 
-    // ── Arm & cross cells ─────────────────────────────────────────────────────
-    // Home column mapping: which cells get player color (the final approach lane)
+    // ── Cruciform path: checkered embroidered patches ────────────────────────
+    // Home lane mapping: which cells get player colour (final approach)
     var homeCells = {};
     // South (yellow): col 4, rows 6–8
     for (var r2 = 6; r2 <= 8; r2++) homeCells[r2 + ',' + 4] = BC.yellow;
@@ -609,35 +755,39 @@
       for (var c = 0; c < GRID; c++) {
         if (!isCross(r, c)) continue;
         var isCenter = (r >= 3 && r <= 5 && c >= 3 && c <= 5);
-        if (isCenter) continue; // drawn separately below
+        if (isCenter) continue; // charkoni drawn separately below
 
         var cx2 = c * CELL, cy2 = r * CELL;
         var homeColor = homeCells[r + ',' + c];
+        var castle = isCastle(r, c);
+        var inset  = Math.max(2, CELL * 0.05);
+        var seed   = r * 31 + c * 7;
 
-        if (homeColor) {
-          ctx.fillStyle = homeColor;
-          ctx.fillRect(cx2, cy2, CELL, CELL);
-        } else {
-          ctx.fillStyle = '#FAFAF5';
-          ctx.fillRect(cx2, cy2, CELL, CELL);
+        // Patch fill: indigo castle / player lane / alternating ivory-ochre
+        var fill;
+        if (castle && !homeColor) fill = CLOTH.indigo;
+        else if (homeColor)       fill = homeColor;
+        else fill = ((r + c) % 2 === 0) ? CLOTH.ivory : CLOTH.ochre;
 
-          // Castle squares: gold tint + star
-          if (isCastle(r, c)) {
-            ctx.fillStyle = 'rgba(255,210,0,0.22)';
-            ctx.fillRect(cx2, cy2, CELL, CELL);
-          }
-        }
+        patchPath(cx2 + inset, cy2 + inset, CELL - inset * 2, CELL - inset * 2, CELL * 0.12, seed);
+        ctx.fillStyle = fill;
+        ctx.fill();
 
-        // Castle star marker on all castle squares (including home column ones)
-        if (isCastle(r, c)) {
-          var starColor = homeColor ? 'rgba(255,255,255,0.7)' : '#C8960C';
-          drawStar(cx2 + CELL / 2, cy2 + CELL / 2, 5, CELL * 0.3, CELL * 0.13, starColor);
-        }
+        // Couched outline: gilt thread; ivory on home-lane patches so the
+        // lac-red lane still reads against the red ground
+        ctx.strokeStyle = homeColor ? CLOTH.ivory : CLOTH.gilt;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 2.5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
 
-        // ── Path indicators ───────────────────────────────────────────────
         var midX = cx2 + CELL / 2, midY = cy2 + CELL / 2;
-        if (homeColor) {
-          // Directional chevron on home-column cells showing final approach
+
+        if (castle) {
+          // Castle mark: ivory cross-stitch X (on indigo, or over a lane patch)
+          drawXStitch(midX, midY, CELL * 0.24, homeColor ? 'rgba(242,232,213,0.92)' : CLOTH.ivory);
+        } else if (homeColor) {
+          // Directional chevron stitch on home-lane cells (final approach)
           // yellow home (col 4 rows 6-8): UP; green (col 4 rows 0-2): DOWN
           // red home (row 4 cols 0-2): RIGHT; black (row 4 cols 6-8): LEFT
           var chAngle = 0;
@@ -654,66 +804,109 @@
           ctx.lineTo(-aw * 0.55, -aw * 0.7);
           ctx.lineTo(-aw * 0.55,  aw * 0.7);
           ctx.closePath();
-          ctx.fillStyle = 'rgba(255,255,255,0.45)';
+          ctx.fillStyle = 'rgba(242,232,213,0.6)';
           ctx.fill();
           ctx.restore();
-        } else if (!isCastle(r, c)) {
-          // Small dot marker on regular path cells
+        } else {
+          // Tiny stitched diamond on regular path patches
           ctx.beginPath();
-          ctx.arc(midX, midY, CELL * 0.07, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(80,60,30,0.3)';
+          ctx.moveTo(midX, midY - CELL * 0.07);
+          ctx.lineTo(midX + CELL * 0.07, midY);
+          ctx.lineTo(midX, midY + CELL * 0.07);
+          ctx.lineTo(midX - CELL * 0.07, midY);
+          ctx.closePath();
+          ctx.fillStyle = 'rgba(122,37,28,0.30)';
           ctx.fill();
         }
-
-        // Grid line
-        ctx.strokeStyle = 'rgba(0,0,0,0.28)';
-        ctx.lineWidth = 0.75;
-        ctx.strokeRect(cx2 + 0.5, cy2 + 0.5, CELL - 1, CELL - 1);
       }
     }
 
-    // ── Center 3×3: 4-color triangle pinwheel ────────────────────────────────
+    // ── Centre 3×3: the charkoni medallion ───────────────────────────────────
     var cx0 = 3 * CELL, cy0 = 3 * CELL, cw = 3 * CELL;
     var mid = cx0 + cw / 2, midy = cy0 + cw / 2;
+    var cIn = Math.max(3, CELL * 0.07);
 
-    // 4 triangles meeting at center point
-    var tris = [
-      { color: BC.yellow, pts: [[cx0, cy0+cw],[cx0+cw, cy0+cw],[mid, midy]] }, // bottom → yellow
-      { color: BC.green,  pts: [[cx0, cy0],[cx0+cw, cy0],[mid, midy]] },        // top → green
-      { color: BC.red,    pts: [[cx0, cy0],[cx0, cy0+cw],[mid, midy]] },        // left → red
-      { color: BC.black,  pts: [[cx0+cw, cy0],[cx0+cw, cy0+cw],[mid, midy]] }, // right → black
-    ];
-    tris.forEach(function (tri) {
+    // Deep indigo medallion field
+    patchPath(cx0 + cIn, cy0 + cIn, cw - cIn * 2, cw - cIn * 2, CELL * 0.18, 999);
+    ctx.fillStyle = CLOTH.charkoni;
+    ctx.fill();
+    ctx.strokeStyle = CLOTH.gilt;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Outer gilt stitch ring
+    ctx.beginPath();
+    ctx.arc(mid, midy, CELL * 1.02, 0, Math.PI * 2);
+    ctx.strokeStyle = CLOTH.gilt;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([3, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Lotus-rosette medallion: 12 alternating ivory/gilt petals
+    var pk, ang;
+    for (pk = 0; pk < 12; pk++) {
+      ang = pk * Math.PI / 6;
+      ctx.save();
+      ctx.translate(mid, midy);
+      ctx.rotate(ang);
       ctx.beginPath();
-      ctx.moveTo(tri.pts[0][0], tri.pts[0][1]);
-      ctx.lineTo(tri.pts[1][0], tri.pts[1][1]);
-      ctx.lineTo(tri.pts[2][0], tri.pts[2][1]);
-      ctx.closePath();
-      ctx.fillStyle = tri.color;
+      ctx.ellipse(0, -CELL * 0.62, CELL * 0.13, CELL * 0.30, 0, 0, Math.PI * 2);
+      ctx.fillStyle = (pk % 2 === 0) ? CLOTH.ivory : CLOTH.gilt;
       ctx.fill();
+      ctx.strokeStyle = 'rgba(31,42,68,0.5)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.restore();
+    }
+    ctx.beginPath();                  // gilt heart
+    ctx.arc(mid, midy, CELL * 0.30, 0, Math.PI * 2);
+    ctx.fillStyle = CLOTH.gilt;
+    ctx.fill();
+    ctx.beginPath();                  // ivory centre dot
+    ctx.arc(mid, midy, CELL * 0.16, 0, Math.PI * 2);
+    ctx.fillStyle = CLOTH.ivory;
+    ctx.fill();
+
+    // 4 subtle directional notches in player colours (legibility: which lane
+    // enters from which side — bottom yellow, top green, left red, right black)
+    var notches = [
+      { color: BC.yellow, x: mid, y: cy0 + cw - cIn - 4, ang: -Math.PI / 2 },
+      { color: BC.green,  x: mid, y: cy0 + cIn + 4,      ang:  Math.PI / 2 },
+      { color: BC.red,    x: cx0 + cIn + 4,      y: midy, ang: 0 },
+      { color: BC.black,  x: cx0 + cw - cIn - 4, y: midy, ang: Math.PI }
+    ];
+    notches.forEach(function (n) {
+      var ns = CELL * 0.15;
+      ctx.save();
+      ctx.translate(n.x, n.y);
+      ctx.rotate(n.ang);
+      ctx.beginPath();
+      ctx.moveTo(ns, 0);
+      ctx.lineTo(-ns * 0.4, -ns * 0.75);
+      ctx.lineTo(-ns * 0.4,  ns * 0.75);
+      ctx.closePath();
+      ctx.globalAlpha = 0.9;
+      ctx.fillStyle = n.color;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = 'rgba(242,232,213,0.8)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.restore();
     });
 
-    // White circle at center
-    ctx.beginPath();
-    ctx.arc(mid, midy, CELL * 0.48, 0, Math.PI * 2);
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+    // ── Hemmed cloth edge + gilt running-stitch border band ──────────────────
+    ctx.strokeStyle = CLOTH.frame;
+    ctx.lineWidth = 7;
+    ctx.strokeRect(3.5, 3.5, CANVAS_SIZE - 7, CANVAS_SIZE - 7);
+    ctx.strokeStyle = CLOTH.gilt;
     ctx.lineWidth = 1.5;
-    ctx.stroke();
-
-    // Gold star in center circle
-    drawStar(mid, midy, 6, CELL * 0.34, CELL * 0.15, '#DAA520');
-
-    // Center border
-    ctx.strokeStyle = 'rgba(0,0,0,0.4)';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(cx0, cy0, cw, cw);
-
-    // ── Outer border ──────────────────────────────────────────────────────────
-    ctx.strokeStyle = '#2a1805';
-    ctx.lineWidth = 5;
-    ctx.strokeRect(2.5, 2.5, CANVAS_SIZE - 5, CANVAS_SIZE - 5);
+    ctx.setLineDash([6, 4]);
+    ctx.strokeRect(9.5, 9.5, CANVAS_SIZE - 19, CANVAS_SIZE - 19);
+    ctx.setLineDash([]);
   }
 
   // Collect all board pieces keyed by "row,col" for stacking
@@ -794,10 +987,6 @@
 
     valid.forEach(function (piece) {
       ctx.save();
-      ctx.globalAlpha = 0.4;
-      ctx.strokeStyle = '#FFD700';
-      ctx.lineWidth = 3;
-
       var hx, hy;
       if (piece.state === 'yard') {
         var yardPcsH = playerPieces(piece.owner).filter(function (p) { return p.state === 'yard'; });
@@ -812,15 +1001,17 @@
         if (pos) { hx = cx(pos[1]); hy = cy(pos[0]); }
       }
       if (hx !== undefined) {
-        // Pulsing gold ring around the piece
+        // Gilt stitched ring around the piece (never neon)
         ctx.beginPath();
-        ctx.arc(hx, hy, CELL * 0.38, 0, Math.PI * 2);
-        ctx.strokeStyle = '#FFD700';
+        ctx.arc(hx, hy, CELL * 0.40, 0, Math.PI * 2);
+        ctx.strokeStyle = CLOTH.glow;
         ctx.lineWidth = 3;
-        ctx.globalAlpha = 0.85;
+        ctx.globalAlpha = 0.75;
+        ctx.setLineDash([6, 4]);
         ctx.stroke();
-        ctx.globalAlpha = 0.2;
-        ctx.fillStyle = '#FFD700';
+        ctx.setLineDash([]);
+        ctx.globalAlpha = 0.22;
+        ctx.fillStyle = CLOTH.glow;
         ctx.fill();
       }
       ctx.restore();
@@ -851,22 +1042,38 @@
       var c2 = cv.getContext('2d');
       var faceUp = animating ? (Math.random() < 0.5) : (shells ? shells[i] : false);
 
-      // Draw cowrie: oval
+      // Shell body on the cloth patch (cream mouth-up, tan back mouth-down)
       c2.beginPath();
       c2.ellipse(16, 10, 14, 8, 0, 0, Math.PI * 2);
-      c2.fillStyle = faceUp ? '#F5E6C8' : '#8B6914';
+      c2.fillStyle = faceUp ? '#EFE6D0' : '#D8C49A';
       c2.fill();
-      c2.strokeStyle = '#5a3a10';
-      c2.lineWidth = 1.5;
+      c2.strokeStyle = '#6B5640';
+      c2.lineWidth = 1.4;
       c2.stroke();
 
-      // Slit in center
-      c2.beginPath();
-      c2.moveTo(4, 10);
-      c2.bezierCurveTo(8, faceUp ? 14 : 6, 24, faceUp ? 14 : 6, 28, 10);
-      c2.strokeStyle = faceUp ? '#8B6914' : '#F5E6C8';
-      c2.lineWidth = 1.5;
-      c2.stroke();
+      if (faceUp) {
+        // Mouth-up: dark serrated slit across the cream face
+        c2.strokeStyle = '#6B5640';
+        c2.lineWidth = 1.6;
+        c2.beginPath();
+        c2.moveTo(4, 10);
+        c2.bezierCurveTo(9, 12.5, 23, 12.5, 28, 10);
+        c2.stroke();
+        // Serration teeth crossing the slit
+        c2.lineWidth = 0.9;
+        c2.beginPath();
+        for (var tx = 7; tx <= 25; tx += 2.5) {
+          c2.moveTo(tx, 9.4);
+          c2.lineTo(tx, 12.4);
+        }
+        c2.stroke();
+      } else {
+        // Mouth-down: smooth glossy back with a single sheen
+        c2.beginPath();
+        c2.ellipse(12.5, 7.4, 6.5, 3, -0.35, 0, Math.PI * 2);
+        c2.fillStyle = 'rgba(255,250,235,0.55)';
+        c2.fill();
+      }
 
       container.appendChild(cv);
     }
@@ -908,7 +1115,7 @@
     if (pl) {
       var name = state.currentPlayer.charAt(0).toUpperCase() + state.currentPlayer.slice(1);
       pl.textContent = name;
-      pl.style.color = PIECE_COLORS[state.currentPlayer];
+      pl.style.color = UI_COLORS[state.currentPlayer];
     }
 
     var rollBtn = document.getElementById('pc-roll-btn');
@@ -950,7 +1157,7 @@
     el.innerHTML = state.players.map(function (pl) {
       var home = playerPieces(pl).filter(function (p) { return p.state === 'home'; }).length;
       return '<div class="pc-score-row">' +
-        '<span class="pc-score-dot" style="background:' + PIECE_COLORS[pl] + '"></span>' +
+        '<span class="pc-score-dot" style="background:' + UI_COLORS[pl] + '"></span>' +
         '<span class="pc-score-name">' + pl.charAt(0).toUpperCase() + pl.slice(1) + '</span>' +
         '<span class="pc-score-val">' + home + '/4</span>' +
         '</div>';
@@ -1016,20 +1223,22 @@
     var dhx = cx(destPos[1]);
     var dhy = cy(destPos[0]);
 
-    // Outer pulsing ring
+    // Destination ring: gilt stitch glow (reads on red ground and on patches)
     ctx.save();
     ctx.beginPath();
     ctx.arc(dhx, dhy, CELL * 0.44, 0, Math.PI * 2);
-    ctx.strokeStyle = PIECE_COLORS[piece.owner];
+    ctx.strokeStyle = CLOTH.glow;
     ctx.lineWidth = 3;
-    ctx.globalAlpha = 0.85;
+    ctx.globalAlpha = 0.8;
+    ctx.setLineDash([6, 4]);
     ctx.stroke();
+    ctx.setLineDash([]);
 
     // Ghost fill
     ctx.beginPath();
     ctx.arc(dhx, dhy, CELL * 0.44, 0, Math.PI * 2);
-    ctx.fillStyle = PIECE_COLORS[piece.owner];
-    ctx.globalAlpha = 0.22;
+    ctx.fillStyle = CLOTH.glow;
+    ctx.globalAlpha = 0.18;
     ctx.fill();
 
     // Ghost piece
@@ -1443,8 +1652,8 @@
     });
     window.cgMobileResize = function () { recalcSize(); redraw(); };
 
-    // Room mode
-    if (typeof RoomBridge !== 'undefined' && RoomBridge.isActive()) {
+    // Room mode (RoomBridge is null - not undefined - in standalone mode)
+    if (window.RoomBridge && RoomBridge.isActive()) {
       initRoomMode();
     }
   }
@@ -1493,7 +1702,7 @@
       {
         target: '#pc-board',
         title: 'Castle Squares',
-        body: 'Marked squares on the board are Castles - safe zones where your pieces cannot be captured.',
+        body: 'The indigo patches stitched with an ivory X are Castles - safe zones where your pieces cannot be captured.',
         position: 'right',
         highlight: true,
         beforeStep: null, afterStep: null,

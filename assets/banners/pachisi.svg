@@ -1,85 +1,96 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280">
   <defs>
-    <!-- stitched square trios: vertical slice of a horizontal arm -->
-    <g id="ph1">
-      <rect width="26" height="26" rx="2" fill="#A33B2A" stroke="#EDE6D2" stroke-width="1.3" stroke-dasharray="4 3"/>
-      <rect y="28" width="26" height="26" rx="2" fill="#EDE6D2" stroke="#b89a64" stroke-width="1.3" stroke-dasharray="4 3"/>
-      <rect y="56" width="26" height="26" rx="2" fill="#D9A441" stroke="#EDE6D2" stroke-width="1.3" stroke-dasharray="4 3"/>
+    <!-- checkered patch trios: vertical slices of the embroidered arm -->
+    <g id="pa1">
+      <rect width="26" height="26" rx="3" fill="#F2E8D5" stroke="#C9B26B" stroke-width="1.5" stroke-dasharray="4 2.5"/>
+      <rect y="28" width="26" height="26" rx="3" fill="#E3CFA0" stroke="#C9B26B" stroke-width="1.5" stroke-dasharray="4 2.5"/>
+      <rect y="56" width="26" height="26" rx="3" fill="#F2E8D5" stroke="#C9B26B" stroke-width="1.5" stroke-dasharray="4 2.5"/>
     </g>
-    <g id="ph2">
-      <rect width="26" height="26" rx="2" fill="#D9A441" stroke="#EDE6D2" stroke-width="1.3" stroke-dasharray="4 3"/>
-      <rect y="28" width="26" height="26" rx="2" fill="#EDE6D2" stroke="#b89a64" stroke-width="1.3" stroke-dasharray="4 3"/>
-      <rect y="56" width="26" height="26" rx="2" fill="#A33B2A" stroke="#EDE6D2" stroke-width="1.3" stroke-dasharray="4 3"/>
+    <g id="pa2">
+      <rect width="26" height="26" rx="3" fill="#E3CFA0" stroke="#C9B26B" stroke-width="1.5" stroke-dasharray="4 2.5"/>
+      <rect y="28" width="26" height="26" rx="3" fill="#F2E8D5" stroke="#C9B26B" stroke-width="1.5" stroke-dasharray="4 2.5"/>
+      <rect y="56" width="26" height="26" rx="3" fill="#E3CFA0" stroke="#C9B26B" stroke-width="1.5" stroke-dasharray="4 2.5"/>
     </g>
-    <!-- horizontal slice of a vertical arm -->
-    <g id="pv1">
-      <rect width="26" height="26" rx="2" fill="#A33B2A" stroke="#EDE6D2" stroke-width="1.3" stroke-dasharray="4 3"/>
-      <rect x="28" width="26" height="26" rx="2" fill="#EDE6D2" stroke="#b89a64" stroke-width="1.3" stroke-dasharray="4 3"/>
-      <rect x="56" width="26" height="26" rx="2" fill="#D9A441" stroke="#EDE6D2" stroke-width="1.3" stroke-dasharray="4 3"/>
+    <!-- indigo castle square with ivory cross-stitch -->
+    <g id="cstl">
+      <rect width="26" height="26" rx="3" fill="#2C3E66" stroke="#C9B26B" stroke-width="1.5" stroke-dasharray="4 2.5"/>
+      <path d="M6 6 L20 20 M20 6 L6 20" stroke="#F2E8D5" stroke-width="2.4" stroke-dasharray="3 2" stroke-linecap="round" fill="none"/>
     </g>
-    <g id="pv2">
-      <rect width="26" height="26" rx="2" fill="#D9A441" stroke="#EDE6D2" stroke-width="1.3" stroke-dasharray="4 3"/>
-      <rect x="28" width="26" height="26" rx="2" fill="#EDE6D2" stroke="#b89a64" stroke-width="1.3" stroke-dasharray="4 3"/>
-      <rect x="56" width="26" height="26" rx="2" fill="#A33B2A" stroke="#EDE6D2" stroke-width="1.3" stroke-dasharray="4 3"/>
+    <!-- cowrie mouth-up: cream face, dark serrated slit -->
+    <g id="cw1">
+      <ellipse rx="9" ry="6" fill="#EFE6D0" stroke="#6B5640" stroke-width="1.2"/>
+      <path d="M-5 0 Q0 1.8 5 0" stroke="#6B5640" stroke-width="1.4" fill="none"/>
+      <path d="M-3.4 -1.2 V1.9 M-1.2 -1.4 V2.1 M1 -1.4 V2.1 M3.2 -1.2 V1.9" stroke="#6B5640" stroke-width=".7" fill="none"/>
     </g>
-    <!-- cowrie -->
-    <g id="pcw">
-      <ellipse rx="8" ry="5.5" fill="#EDE6D2" stroke="#c4b58f" stroke-width="1.2"/>
-      <path d="M-4.5 0 H4.5" stroke="#8a7550" stroke-width="1.4" stroke-dasharray="1.6 1.4"/>
+    <!-- cowrie mouth-down: smooth glossy back -->
+    <g id="cw0">
+      <ellipse rx="9" ry="6" fill="#D8C49A" stroke="#6B5640" stroke-width="1.2"/>
+      <ellipse cx="-2.5" cy="-1.8" rx="4" ry="2" fill="#FFF8E8" opacity=".55"/>
     </g>
+    <!-- beehive turned-wood pawn: fill/stroke set on each use -->
+    <g id="pwn">
+      <ellipse cy="15" rx="14" ry="4" fill="#2A0D09" opacity=".4"/>
+      <path d="M-13 12 Q-15 -1 -5 -7 Q-3.6 -7.9 -3.4 -9.6 A3.6 3.6 0 1 1 3.4 -9.6 Q3.6 -7.9 5 -7 Q15 -1 13 12 Q0 16 -13 12 Z"/>
+      <path d="M-12.6 6 Q0 9.5 12.6 6 M-10.6 -1.5 Q0 1 10.6 -1.5" fill="none" stroke="#2A0D09" stroke-opacity=".4" stroke-width="1.2"/>
+      <ellipse cx="-5" cy="-2.5" rx="2.2" ry="4.6" fill="#FFF5DC" opacity=".5" transform="rotate(-18 -5 -2.5)"/>
+    </g>
+    <!-- lotus petal for the charkoni medallion -->
+    <g id="ptl"><ellipse cx="60" rx="24" ry="11" fill="#F2E8D5" stroke="#1F2A44" stroke-opacity=".5"/></g>
   </defs>
 
-  <!-- indigo cloth ground with faint weave -->
-  <rect width="640" height="280" fill="#1d1830"/>
-  <g stroke="#EDE6D2" stroke-width="1" opacity=".05">
-    <path d="M0 30 H640 M0 90 H640 M0 150 H640 M0 210 H640 M0 268 H640"/>
+  <!-- madder-red ground cloth with faint weave -->
+  <rect width="640" height="280" fill="#8E2C21"/>
+  <g stroke="#000" opacity=".06" stroke-width="1">
+    <path d="M0 22 H640 M0 58 H640 M0 94 H640 M0 130 H640 M0 166 H640 M0 202 H640 M0 238 H640 M0 270 H640"/>
+    <path d="M60 0 V280 M180 0 V280 M300 0 V280 M420 0 V280 M540 0 V280"/>
+  </g>
+  <!-- hemmed edge in the crop zones -->
+  <rect x="0" y="0" width="640" height="8" fill="#5E1F17"/>
+  <rect x="0" y="272" width="640" height="8" fill="#5E1F17"/>
+  <!-- floral border hints (crop zones): dotted vine + gilt running stitch -->
+  <path d="M0 17 H640" stroke="#E3CFA0" stroke-width="3.4" stroke-dasharray="3.4 28.6" stroke-linecap="round" fill="none"/>
+  <path d="M16 17 H640" stroke="#4A6B3A" stroke-width="2.2" stroke-dasharray="2.2 29.8" stroke-linecap="round" fill="none"/>
+  <path d="M0 263 H640" stroke="#E3CFA0" stroke-width="3.4" stroke-dasharray="3.4 28.6" stroke-linecap="round" fill="none"/>
+  <path d="M16 263 H640" stroke="#4A6B3A" stroke-width="2.2" stroke-dasharray="2.2 29.8" stroke-linecap="round" fill="none"/>
+  <path d="M0 30 H640 M0 250 H640" stroke="#C9B26B" stroke-width="1.3" stroke-dasharray="6 4" opacity=".7" fill="none"/>
+
+  <!-- charkoni medallion edge entering from the left -->
+  <g transform="translate(28 140)">
+    <circle r="100" fill="#1F2A44" stroke="#C9B26B" stroke-width="2" stroke-dasharray="6 4"/>
+    <circle r="86" fill="none" stroke="#C9B26B" stroke-width="1.4" stroke-dasharray="3 3"/>
+    <use href="#ptl"/>
+    <use href="#ptl" transform="rotate(30)"/>
+    <use href="#ptl" transform="rotate(60)"/>
+    <use href="#ptl" transform="rotate(-30)"/>
+    <use href="#ptl" transform="rotate(-60)"/>
+    <circle r="26" fill="#C9B26B"/>
+    <circle r="14" fill="#F2E8D5"/>
   </g>
 
-  <!-- right arm -->
-  <use href="#ph1" x="363" y="99"/><use href="#ph2" x="391" y="99"/><use href="#ph1" x="419" y="99"/><use href="#ph2" x="447" y="99"/><use href="#ph1" x="475" y="99"/><use href="#ph2" x="503" y="99"/><use href="#ph1" x="531" y="99"/><use href="#ph2" x="559" y="99"/><use href="#ph1" x="587" y="99"/><use href="#ph2" x="615" y="99"/>
-  <!-- left arm -->
-  <use href="#ph2" x="225" y="99"/><use href="#ph1" x="197" y="99"/><use href="#ph2" x="169" y="99"/><use href="#ph1" x="141" y="99"/><use href="#ph2" x="113" y="99"/><use href="#ph1" x="85" y="99"/><use href="#ph2" x="57" y="99"/><use href="#ph1" x="29" y="99"/><use href="#ph2" x="1" y="99"/><use href="#ph1" x="-27" y="99"/>
-  <!-- upper arm -->
-  <use href="#pv1" x="279" y="69"/><use href="#pv2" x="279" y="41"/><use href="#pv1" x="279" y="13"/>
-  <!-- lower arm -->
-  <use href="#pv2" x="279" y="183"/><use href="#pv1" x="279" y="211"/><use href="#pv2" x="279" y="239"/>
+  <!-- sweep of the checkered arm with gilt outlines -->
+  <use href="#pa1" x="138" y="99"/><use href="#pa2" x="166" y="99"/>
+  <use href="#pa1" x="194" y="99"/><use href="#pa2" x="222" y="99"/>
+  <use href="#pa1" x="250" y="99"/><use href="#pa2" x="278" y="99"/>
+  <use href="#pa1" x="306" y="99"/><use href="#pa2" x="334" y="99"/>
+  <use href="#pa1" x="362" y="99"/><use href="#pa2" x="390" y="99"/>
+  <use href="#pa1" x="418" y="99"/><use href="#pa2" x="446" y="99"/>
+  <use href="#pa1" x="474" y="99"/><use href="#pa2" x="502" y="99"/>
+  <use href="#pa1" x="530" y="99"/><use href="#pa2" x="558" y="99"/>
+  <use href="#pa1" x="586" y="99"/><use href="#pa2" x="614" y="99"/>
+  <!-- indigo X-stitch castle squares set into the arm -->
+  <use href="#cstl" x="278" y="127"/>
+  <use href="#cstl" x="474" y="127"/>
 
-  <!-- charkoni: quartered centre square -->
-  <g stroke="#EDE6D2" stroke-width="1.4" stroke-dasharray="4 3">
-    <path d="M279 99 H361 L320 140 Z" fill="#A33B2A"/>
-    <path d="M361 99 V181 L320 140 Z" fill="#D9A441"/>
-    <path d="M361 181 H279 L320 140 Z" fill="#A33B2A"/>
-    <path d="M279 181 V99 L320 140 Z" fill="#D9A441"/>
-  </g>
-  <rect x="279" y="99" width="82" height="82" fill="none" stroke="#EDE6D2" stroke-width="2" stroke-dasharray="5 4"/>
+  <!-- three beehive pawns standing on the arm: red, green, black -->
+  <use href="#pwn" x="370" y="132" fill="#B0392B" stroke="#F2E8D5" stroke-width="2"/>
+  <use href="#pwn" x="414" y="124" fill="#4A6B3A" stroke="#F2E8D5" stroke-width="2"/>
+  <use href="#pwn" x="552" y="130" fill="#23262E" stroke="#F2E8D5" stroke-width="2"/>
 
-  <!-- beehive wooden pawns at the centre -->
-  <g transform="translate(302 126)">
-    <path d="M-9 10 Q-11 -6 -4 -11 Q0 -14 4 -11 Q11 -6 9 10 Z" fill="#A33B2A" stroke="#5e1f15" stroke-width="2"/>
-    <path d="M-9.5 2 H9.5 M-8 -5 H8" stroke="#5e1f15" stroke-width="1.4"/>
-    <circle cy="-13" r="3.4" fill="#A33B2A" stroke="#5e1f15" stroke-width="2"/>
-  </g>
-  <g transform="translate(338 126)">
-    <path d="M-9 10 Q-11 -6 -4 -11 Q0 -14 4 -11 Q11 -6 9 10 Z" fill="#D9A441" stroke="#8a6420" stroke-width="2"/>
-    <path d="M-9.5 2 H9.5 M-8 -5 H8" stroke="#8a6420" stroke-width="1.4"/>
-    <circle cy="-13" r="3.4" fill="#D9A441" stroke="#8a6420" stroke-width="2"/>
-  </g>
-  <g transform="translate(302 162)">
-    <path d="M-9 10 Q-11 -6 -4 -11 Q0 -14 4 -11 Q11 -6 9 10 Z" fill="#3F6B4F" stroke="#1f3a28" stroke-width="2"/>
-    <path d="M-9.5 2 H9.5 M-8 -5 H8" stroke="#1f3a28" stroke-width="1.4"/>
-    <circle cy="-13" r="3.4" fill="#3F6B4F" stroke="#1f3a28" stroke-width="2"/>
-  </g>
-  <g transform="translate(338 162)">
-    <path d="M-9 10 Q-11 -6 -4 -11 Q0 -14 4 -11 Q11 -6 9 10 Z" fill="#3C4E7A" stroke="#1d2a48" stroke-width="2"/>
-    <path d="M-9.5 2 H9.5 M-8 -5 H8" stroke="#1d2a48" stroke-width="1.4"/>
-    <circle cy="-13" r="3.4" fill="#3C4E7A" stroke="#1d2a48" stroke-width="2"/>
-  </g>
-
-  <!-- six cowrie shells thrown near the right arm -->
-  <g transform="translate(430 205) rotate(-15)"><use href="#pcw"/></g>
-  <g transform="translate(460 215) rotate(20)"><use href="#pcw"/></g>
-  <g transform="translate(490 200) rotate(-30)"><use href="#pcw"/></g>
-  <g transform="translate(444 230) rotate(8)"><use href="#pcw"/></g>
-  <g transform="translate(478 232) rotate(-12)"><use href="#pcw"/></g>
-  <g transform="translate(514 222) rotate(32)"><use href="#pcw"/></g>
+  <!-- six cowries scattered on the cloth below the arm -->
+  <g transform="translate(206 215) rotate(-16)"><use href="#cw1"/></g>
+  <g transform="translate(238 226) rotate(22)"><use href="#cw1"/></g>
+  <g transform="translate(270 210) rotate(-28)"><use href="#cw0"/></g>
+  <g transform="translate(302 228) rotate(10)"><use href="#cw1"/></g>
+  <g transform="translate(336 214) rotate(-8)"><use href="#cw0"/></g>
+  <g transform="translate(366 227) rotate(30)"><use href="#cw1"/></g>
 </svg>
