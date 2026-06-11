@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280">
+  <!-- Latrunculi banner: scratched travertine board, glass counters cobalt vs bone, chipped corner -->
+  <defs>
+    <path id="gr" fill="none" d="M58 44V232M122 44V232M186 44V232M250 44V232M314 44V232M378 44V232M442 44V232M506 44V232M570 44V232M58 44H570M58 91H570M58 138H570M58 185H570M58 232H570"/>
+    <g id="bp"><circle r="17" fill="#2E4F8C" stroke="#1c3460" stroke-width="2"/><ellipse cx="-5" cy="-6" rx="7" ry="4.5" fill="#FFFFFF" opacity="0.45"/><circle cx="5" cy="6" r="2.5" fill="#5a7cc0" opacity="0.7"/></g>
+    <g id="wp"><circle r="17" fill="#EDE6D2" stroke="#b3a584" stroke-width="2"/><ellipse cx="-5" cy="-6" rx="7" ry="4.5" fill="#FFFFFF" opacity="0.75"/></g>
+  </defs>
+  <rect width="640" height="280" fill="#3b342a"/>
+  <!-- stone slab with chipped top-right edge -->
+  <path d="M0 0H548L568 16L588 5L607 24L625 12L640 26V280H0Z" fill="#cfc4ae"/>
+  <ellipse cx="160" cy="90" rx="95" ry="40" fill="#dbd2bd" opacity="0.5"/>
+  <ellipse cx="480" cy="200" rx="110" ry="45" fill="#c2b59c" opacity="0.4"/>
+  <ellipse cx="350" cy="58" rx="80" ry="28" fill="#d8cdb6" opacity="0.45"/>
+  <path d="M572 20l-12 16m26-9l-9 14" stroke="#7a6c54" stroke-width="1.5" fill="none" opacity="0.7"/>
+  <!-- incised grid: groove + light catch -->
+  <use href="#gr" stroke="#7a6c54" stroke-width="2.5"/>
+  <use href="#gr" x="1" y="1.3" stroke="#ece2cc" stroke-width="1" opacity="0.8"/>
+  <!-- cobalt glass counters -->
+  <use href="#bp" x="90" y="68"/><use href="#bp" x="218" y="68"/><use href="#bp" x="410" y="68"/>
+  <use href="#bp" x="282" y="115"/><use href="#bp" x="346" y="115"/>
+  <use href="#bp" x="154" y="162"/><use href="#bp" x="474" y="162"/>
+  <!-- bone glass counters -->
+  <use href="#wp" x="538" y="115"/><use href="#wp" x="218" y="162"/><use href="#wp" x="410" y="162"/>
+  <use href="#wp" x="90" y="209"/><use href="#wp" x="282" y="209"/><use href="#wp" x="346" y="209"/><use href="#wp" x="538" y="209"/>
+  <!-- captured counters set off the grid at the margin -->
+  <ellipse cx="602" cy="154" rx="17" ry="13" fill="#2E4F8C" stroke="#1c3460" stroke-width="2"/>
+  <ellipse cx="599" cy="149" rx="6" ry="3.5" fill="#FFFFFF" opacity="0.35"/>
+  <use href="#wp" x="608" y="194"/>
+</svg>

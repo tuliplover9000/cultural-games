@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280">
+  <defs>
+    <!-- carved cup -->
+    <g id="pgc">
+      <circle r="30" fill="#6a4022"/>
+      <circle r="25" fill="#2e1a0c"/>
+      <path d="M-22 -10 a25 25 0 0 1 44 0" stroke="#180c03" stroke-width="5" fill="none" opacity=".85"/>
+      <path d="M-24 12 a27 27 0 0 0 48 0" stroke="#8a5a2e" stroke-width="2.5" fill="none"/>
+    </g>
+    <!-- cowrie shell -->
+    <g id="pgs">
+      <ellipse rx="6" ry="4.2" fill="#F2EDE0" stroke="#bba87f" stroke-width="1"/>
+      <path d="M-3 0 H3" stroke="#9a8a68" stroke-width="1.1"/>
+    </g>
+  </defs>
+
+  <!-- dark carved wood plank with grain -->
+  <rect width="640" height="280" fill="#4a2c16"/>
+  <g stroke="#3a2110" stroke-width="2" fill="none" opacity=".8">
+    <path d="M0 24 q160 8 320 0 t320 4"/>
+    <path d="M0 74 q140 -7 300 0 t340 -3"/>
+    <path d="M0 150 q180 6 340 0 t300 5"/>
+    <path d="M0 228 q150 -6 310 0 t330 -4"/>
+    <path d="M0 262 q170 7 330 0 t310 3"/>
+  </g>
+  <g stroke="#5e3a1e" stroke-width="1.4" fill="none" opacity=".8">
+    <path d="M0 46 q200 6 380 0 t260 4"/>
+    <path d="M0 250 q190 -5 360 0 t280 3"/>
+  </g>
+
+  <!-- brass accent line along the plank edge -->
+  <path d="M0 55 H640" stroke="#e8a030" stroke-width="3"/>
+  <path d="M0 52.5 H640" stroke="#ffd57a" stroke-width="1" opacity=".7"/>
+
+  <!-- two rows of seven cups -->
+  <use href="#pgc" x="56" y="112"/><use href="#pgc" x="144" y="112"/><use href="#pgc" x="232" y="112"/><use href="#pgc" x="320" y="112"/><use href="#pgc" x="408" y="112"/><use href="#pgc" x="496" y="112"/><use href="#pgc" x="584" y="112"/>
+  <use href="#pgc" x="56" y="192"/><use href="#pgc" x="144" y="192"/><use href="#pgc" x="232" y="192"/><use href="#pgc" x="320" y="192"/><use href="#pgc" x="408" y="192"/><use href="#pgc" x="496" y="192"/><use href="#pgc" x="584" y="192"/>
+
+  <!-- shells heaped unevenly: top row -->
+  <use href="#pgs" x="50" y="108"/><use href="#pgs" x="62" y="114"/><use href="#pgs" x="54" y="120"/><use href="#pgs" x="66" y="106"/><use href="#pgs" x="58" y="100"/>
+  <use href="#pgs" x="140" y="110"/><use href="#pgs" x="150" y="116"/><use href="#pgs" x="138" y="120"/>
+  <use href="#pgs" x="226" y="110"/><use href="#pgs" x="238" y="114"/><use href="#pgs" x="230" y="120"/><use href="#pgs" x="240" y="104"/>
+  <use href="#pgs" x="316" y="114"/><use href="#pgs" x="326" y="108"/>
+  <use href="#pgs" x="402" y="110"/><use href="#pgs" x="414" y="114"/><use href="#pgs" x="406" y="120"/><use href="#pgs" x="416" y="104"/><use href="#pgs" x="398" y="104"/><use href="#pgs" x="410" y="98"/>
+  <use href="#pgs" x="580" y="110"/><use href="#pgs" x="590" y="116"/><use href="#pgs" x="584" y="120"/><use href="#pgs" x="592" y="104"/>
+
+  <!-- shells: bottom row (one cup just emptied, one heaped) -->
+  <use href="#pgs" x="52" y="190"/><use href="#pgs" x="62" y="196"/><use href="#pgs" x="58" y="184"/>
+  <use href="#pgs" x="138" y="188"/><use href="#pgs" x="150" y="192"/><use href="#pgs" x="142" y="198"/><use href="#pgs" x="152" y="182"/><use href="#pgs" x="146" y="176"/>
+  <use href="#pgs" x="316" y="190"/><use href="#pgs" x="326" y="196"/><use href="#pgs" x="320" y="200"/><use href="#pgs" x="328" y="184"/>
+  <use href="#pgs" x="404" y="192"/><use href="#pgs" x="414" y="188"/>
+  <use href="#pgs" x="492" y="190"/><use href="#pgs" x="502" y="194"/><use href="#pgs" x="496" y="200"/><use href="#pgs" x="504" y="182"/><use href="#pgs" x="488" y="182"/>
+  <use href="#pgs" x="580" y="190"/><use href="#pgs" x="590" y="196"/><use href="#pgs" x="586" y="182"/>
+
+  <!-- a few shells mid-sow between the rows -->
+  <g transform="translate(276 150) rotate(-25)"><use href="#pgs"/></g>
+  <g transform="translate(312 154) rotate(15)"><use href="#pgs"/></g>
+  <g transform="translate(352 148) rotate(-10)"><use href="#pgs"/></g>
+  <g transform="translate(388 154) rotate(30)"><use href="#pgs"/></g>
+</svg>

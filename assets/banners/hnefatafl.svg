@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280">
+  <!-- Hnefatafl banner: 11x11 tafl board (top edge cropped), gold king ringed by bone defenders and red attackers -->
+  <defs>
+    <rect id="dq" width="32" height="32" fill="#A8845A"/>
+    <g id="ra"><use href="#dq"/><use href="#dq" x="64"/><use href="#dq" x="128"/><use href="#dq" x="192"/><use href="#dq" x="256"/><use href="#dq" x="320"/></g>
+    <g id="rb"><use href="#dq" x="32"/><use href="#dq" x="96"/><use href="#dq" x="160"/><use href="#dq" x="224"/><use href="#dq" x="288"/></g>
+    <g id="at"><circle r="12" fill="#8B2020" stroke="#4A0808" stroke-width="2"/><ellipse cx="-3.5" cy="-4" rx="4.5" ry="3" fill="#C84040"/></g>
+    <g id="df"><circle r="12" fill="#F0E6C8" stroke="#7a5020" stroke-width="2"/><ellipse cx="-3.5" cy="-4" rx="4.5" ry="3" fill="#FFFFFF" opacity="0.85"/></g>
+    <g id="xc"><rect width="32" height="32" fill="#4A1010" stroke="#D4A017" stroke-width="1.5"/><path d="M5 5L27 27M27 5L5 27" stroke="#D4A017" stroke-width="2.5" fill="none"/></g>
+  </defs>
+  <rect width="640" height="280" fill="#1E1A14"/>
+  <rect x="36" y="0" width="4" height="280" fill="#262019"/>
+  <rect x="88" y="0" width="4" height="280" fill="#262019"/>
+  <rect x="548" y="0" width="4" height="280" fill="#262019"/>
+  <rect x="600" y="0" width="4" height="280" fill="#262019"/>
+  <rect x="128" y="0" width="384" height="280" fill="#2E2218"/>
+  <!-- board: 11x11, cell 32, rows 0-2 cropped above the frame -->
+  <rect x="144" y="-101" width="352" height="352" fill="#C4A265"/>
+  <use href="#ra" x="144" y="-5"/><use href="#rb" x="144" y="27"/>
+  <use href="#ra" x="144" y="59"/><use href="#rb" x="144" y="91"/>
+  <use href="#ra" x="144" y="123"/><use href="#rb" x="144" y="155"/>
+  <use href="#ra" x="144" y="187"/><use href="#rb" x="144" y="219"/>
+  <rect x="144" y="-101" width="352" height="352" fill="none" stroke="#C4A265" stroke-width="3" opacity="0.6"/>
+  <!-- corner squares and throne -->
+  <use href="#xc" x="144" y="219"/><use href="#xc" x="464" y="219"/>
+  <rect x="304" y="59" width="32" height="32" fill="#4A1010" stroke="#D4A017" stroke-width="1.5"/>
+  <!-- attackers: red, radial formation -->
+  <use href="#at" x="256" y="235"/><use href="#at" x="288" y="235"/><use href="#at" x="320" y="235"/><use href="#at" x="352" y="235"/><use href="#at" x="384" y="235"/><use href="#at" x="320" y="203"/>
+  <use href="#at" x="160" y="43"/><use href="#at" x="160" y="75"/><use href="#at" x="160" y="107"/><use href="#at" x="160" y="139"/><use href="#at" x="192" y="75"/>
+  <use href="#at" x="480" y="43"/><use href="#at" x="480" y="75"/><use href="#at" x="480" y="107"/><use href="#at" x="448" y="75"/>
+  <use href="#at" x="416" y="139"/>
+  <!-- defenders: bone ring around the king -->
+  <use href="#df" x="288" y="43"/><use href="#df" x="320" y="43"/><use href="#df" x="352" y="43"/>
+  <use href="#df" x="288" y="75"/><use href="#df" x="352" y="75"/>
+  <use href="#df" x="288" y="107"/><use href="#df" x="320" y="107"/><use href="#df" x="352" y="107"/>
+  <use href="#df" x="320" y="139"/><use href="#df" x="256" y="171"/>
+  <!-- gold king on the throne -->
+  <g transform="translate(320 75)"><circle r="14" fill="#D4A017" stroke="#5a3010" stroke-width="2.5"/><rect x="-2.5" y="-9" width="5" height="18" fill="#3a1a00"/><rect x="-9" y="-2.5" width="18" height="5" fill="#3a1a00"/><ellipse cx="-5" cy="-7" rx="4" ry="2.5" fill="#F5D660" opacity="0.8"/></g>
+  <!-- captured pieces resting beside the board -->
+  <use href="#df" x="62" y="212"/><use href="#at" x="96" y="230"/>
+  <!-- angular notch marks on the frame (rune-ish, not real runes) -->
+  <g stroke="#C4A265" stroke-width="3" fill="none" opacity="0.55">
+    <path d="M540 72l10-22 10 22"/>
+    <path d="M570 50v32"/>
+    <path d="M582 50l14 16-14 16"/>
+  </g>
+</svg>

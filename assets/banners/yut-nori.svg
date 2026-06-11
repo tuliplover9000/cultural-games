@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280">
+  <defs>
+    <circle id="yn" r="10" fill="#7a3a10" stroke="#3d1a00" stroke-width="2.5"/>
+    <path id="ys" d="M0 -6.5 L1.9 -2 6.5 -2 3 1.4 4.3 6.5 0 3.4 -4.3 6.5 -3 1.4 -6.5 -2 -1.9 -2 Z" fill="#f5d060"/>
+    <g id="yc">
+      <circle r="15" fill="#1a6b52" stroke="#0d3d2e" stroke-width="3"/>
+      <use href="#ys"/>
+    </g>
+    <rect id="yk" x="-42" y="-6.5" width="84" height="13" rx="6.5"/>
+  </defs>
+
+  <!-- warm parchment field -->
+  <rect width="640" height="280" fill="#ede0bc"/>
+  <ellipse cx="140" cy="60" rx="170" ry="70" fill="#e4d4a8" opacity=".5"/>
+  <ellipse cx="520" cy="230" rx="190" ry="80" fill="#e2d2a4" opacity=".45"/>
+  <ellipse cx="540" cy="60" rx="130" ry="55" fill="#f2e6c6" opacity=".6"/>
+
+  <!-- path lines: square plus diagonals -->
+  <g stroke="#a07020" stroke-width="2.5" fill="none">
+    <path d="M155 55 H485 V225 H155 Z"/>
+    <path d="M155 55 L485 225 M485 55 L155 225"/>
+  </g>
+
+  <!-- perimeter stations -->
+  <use href="#yn" x="221" y="55"/><use href="#yn" x="287" y="55"/><use href="#yn" x="353" y="55"/><use href="#yn" x="419" y="55"/>
+  <use href="#yn" x="221" y="225"/><use href="#yn" x="287" y="225"/><use href="#yn" x="419" y="225"/>
+  <use href="#yn" x="155" y="89"/><use href="#yn" x="155" y="157"/><use href="#yn" x="155" y="191"/>
+  <use href="#yn" x="485" y="89"/><use href="#yn" x="485" y="157"/><use href="#yn" x="485" y="191"/>
+  <!-- diagonal stations -->
+  <use href="#yn" x="210" y="83"/><use href="#yn" x="265" y="112"/>
+  <use href="#yn" x="430" y="83"/><use href="#yn" x="375" y="112"/>
+  <use href="#yn" x="210" y="197"/><use href="#yn" x="265" y="168"/>
+  <use href="#yn" x="430" y="197"/><use href="#yn" x="375" y="168"/>
+
+  <!-- big starred stations: three corners, centre, and the red start corner -->
+  <use href="#yc" x="155" y="55"/>
+  <use href="#yc" x="485" y="55"/>
+  <use href="#yc" x="155" y="225"/>
+  <g transform="translate(485 225)">
+    <circle r="15" fill="#8B0018" stroke="#4a0010" stroke-width="3"/>
+    <use href="#ys"/>
+  </g>
+  <g transform="translate(320 140)">
+    <circle r="15" fill="#7a5a10" stroke="#3d2a00" stroke-width="3"/>
+    <use href="#ys"/>
+  </g>
+
+  <!-- four yut sticks just landed -->
+  <g transform="translate(248 132) rotate(-25)">
+    <use href="#yk" fill="#f5deb3" stroke="#8B4513" stroke-width="2"/>
+    <path d="M-32 0 H32" stroke="#dcc290" stroke-width="1.6"/>
+  </g>
+  <g transform="translate(272 156) rotate(-6)">
+    <use href="#yk" fill="#5d4037" stroke="#2e1a10" stroke-width="2"/>
+    <path d="M-34 -2 H32 M-26 3 H26" stroke="#2e1a10" stroke-width="1.4" fill="none"/>
+  </g>
+  <g transform="translate(392 128) rotate(16)">
+    <use href="#yk" fill="#f5deb3" stroke="#8B4513" stroke-width="2"/>
+    <path d="M-32 0 H32" stroke="#dcc290" stroke-width="1.6"/>
+  </g>
+  <g transform="translate(372 156) rotate(36)">
+    <use href="#yk" fill="#5d4037" stroke="#2e1a10" stroke-width="2"/>
+    <path d="M-34 -2 H32 M-26 3 H26" stroke="#2e1a10" stroke-width="1.4" fill="none"/>
+  </g>
+
+  <!-- mal pieces: red pair stacked on the bottom edge, blue runners -->
+  <circle cx="353" cy="226" r="12" fill="#c0392b" stroke="#7a0000" stroke-width="3"/>
+  <circle cx="353" cy="214" r="12" fill="#c0392b" stroke="#7a0000" stroke-width="3"/>
+  <circle cx="265" cy="112" r="12" fill="#1a3a6b" stroke="#0a1a3b" stroke-width="3"/>
+  <circle cx="485" cy="123" r="12" fill="#1a3a6b" stroke="#0a1a3b" stroke-width="3"/>
+</svg>

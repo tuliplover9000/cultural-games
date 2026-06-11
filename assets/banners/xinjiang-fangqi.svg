@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280">
+  <!-- Xinjiang Fangqi banner: poplar board, chekich-dotted 7x7 grid, carnelian vs teal stones, saffron-ringed square, ikat band -->
+  <defs>
+    <g id="dr"><circle r="2.2" fill="#7A4F28"/><circle cx="40" r="2.2" fill="#7A4F28"/><circle cx="80" r="2.2" fill="#7A4F28"/><circle cx="120" r="2.2" fill="#7A4F28"/><circle cx="160" r="2.2" fill="#7A4F28"/><circle cx="200" r="2.2" fill="#7A4F28"/><circle cx="240" r="2.2" fill="#7A4F28"/></g>
+    <g id="cp"><circle r="13" fill="#A33B2A" stroke="#6E2418" stroke-width="2"/><ellipse cx="-4" cy="-4" rx="5" ry="3.5" fill="#D96A4A"/></g>
+    <g id="tp"><circle r="13" fill="#2E7F7A" stroke="#1A4E4A" stroke-width="2"/><ellipse cx="-4" cy="-4" rx="5" ry="3.5" fill="#6FC2B8"/></g>
+  </defs>
+  <rect width="640" height="280" fill="#3B2A1E"/>
+  <rect x="16" y="8" width="608" height="256" rx="16" fill="#6B4226" stroke="#4A2D18" stroke-width="5"/>
+  <rect x="38" y="30" width="564" height="212" rx="8" fill="#D9B07C"/>
+  <rect x="50" y="48" width="540" height="6" rx="3" fill="#B9854E" opacity="0.35"/>
+  <rect x="60" y="120" width="520" height="5" rx="2" fill="#B9854E" opacity="0.28"/>
+  <rect x="50" y="216" width="540" height="6" rx="3" fill="#B9854E" opacity="0.35"/>
+  <!-- burnt-ink 7x7 grid -->
+  <path fill="none" stroke="#5C3A1E" stroke-width="2.5" d="
+    M200 44H440M200 76H440M200 108H440M200 140H440M200 172H440M200 204H440M200 236H440
+    M200 44V236M240 44V236M280 44V236M320 44V236M360 44V236M400 44V236M440 44V236"/>
+  <!-- punched chekich dots at intersections -->
+  <use href="#dr" x="200" y="44"/><use href="#dr" x="200" y="76"/><use href="#dr" x="200" y="108"/><use href="#dr" x="200" y="140"/><use href="#dr" x="200" y="172"/><use href="#dr" x="200" y="204"/><use href="#dr" x="200" y="236"/>
+  <!-- center dot-rosette -->
+  <circle cx="320" cy="140" r="9" fill="none" stroke="#7A4F28" stroke-width="2"/>
+  <circle cx="320" cy="140" r="3.2" fill="#7A4F28"/>
+  <circle cx="320" cy="126" r="2" fill="#7A4F28"/><circle cx="320" cy="154" r="2" fill="#7A4F28"/>
+  <circle cx="332" cy="133" r="2" fill="#7A4F28"/><circle cx="332" cy="147" r="2" fill="#7A4F28"/>
+  <circle cx="308" cy="133" r="2" fill="#7A4F28"/><circle cx="308" cy="147" r="2" fill="#7A4F28"/>
+  <!-- carnelian stones, with one completed 2x2 square ringed saffron -->
+  <use href="#cp" x="240" y="108"/><use href="#cp" x="280" y="108"/><use href="#cp" x="240" y="140"/><use href="#cp" x="280" y="140"/>
+  <rect x="222" y="90" width="76" height="68" rx="12" fill="none" stroke="#E8A013" stroke-width="3" opacity="0.9"/>
+  <use href="#cp" x="200" y="76"/><use href="#cp" x="320" y="76"/><use href="#cp" x="440" y="76"/><use href="#cp" x="400" y="108"/><use href="#cp" x="360" y="172"/><use href="#cp" x="240" y="204"/>
+  <!-- teal glazed discs -->
+  <use href="#tp" x="280" y="76"/><use href="#tp" x="360" y="108"/><use href="#tp" x="400" y="140"/><use href="#tp" x="200" y="172"/><use href="#tp" x="280" y="172"/><use href="#tp" x="320" y="204"/><use href="#tp" x="400" y="204"/><use href="#tp" x="440" y="204"/><use href="#tp" x="440" y="140"/>
+  <!-- reserve stones on the wood, mid-deployment -->
+  <use href="#tp" x="100" y="178"/><use href="#tp" x="130" y="200"/>
+  <use href="#cp" x="516" y="186"/><use href="#cp" x="546" y="204"/><use href="#cp" x="530" y="162"/>
+  <!-- desaturated ikat band along the bottom crop-safe edge -->
+  <rect x="0" y="248" width="640" height="32" fill="#9c4868"/>
+  <path d="M0 252l16 8 16-8 16 8 16-8 16 8 16-8 16 8 16-8 16 8 16-8 16 8 16-8 16 8 16-8 16 8 16-8 16 8 16-8 16 8 16-8 16 8 16-8 16 8 16-8 16 8 16-8 16 8 16-8 16 8 16-8 16 8 16-8 16 8 16-8 16 8 16-8 16 8 16-8 16 8 16-8" fill="none" stroke="#c79a4a" stroke-width="6" opacity="0.85"/>
+  <path d="M0 270l16 6 16-6 16 6 16-6 16 6 16-6 16 6 16-6 16 6 16-6 16 6 16-6 16 6 16-6 16 6 16-6 16 6 16-6 16 6 16-6 16 6 16-6 16 6 16-6 16 6 16-6 16 6 16-6 16 6 16-6 16 6 16-6 16 6 16-6 16 6 16-6 16 6 16-6 16 6 16-6" fill="none" stroke="#4a6a9c" stroke-width="5" opacity="0.8"/>
+</svg>

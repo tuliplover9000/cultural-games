@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280">
+  <defs>
+    <!-- carved groove division -->
+    <g id="pug">
+      <path d="M0 0 q3 17 0 34 q-3 17 0 34" stroke="#5a4730" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M3 2 q3 16 0 32 q-3 16 0 32" stroke="#e0d2b4" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".85"/>
+    </g>
+    <!-- corn-kernel discs -->
+    <g id="puc">
+      <circle r="15" fill="#E8D9A0" stroke="#c9a84c" stroke-width="3.5"/>
+      <path d="M-6 -4 a8 8 0 0 1 10 -3" stroke="#f5ecc8" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </g>
+    <g id="pur">
+      <circle r="15" fill="#8E2323" stroke="#5e1515" stroke-width="3.5"/>
+      <path d="M-6 -4 a8 8 0 0 1 10 -3" stroke="#b04a3a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </g>
+    <!-- split-cane stick die -->
+    <rect id="pus" x="-48" y="-6" width="96" height="12" rx="6"/>
+  </defs>
+
+  <!-- limestone / stucco ground -->
+  <rect width="640" height="280" fill="#cbb89a"/>
+  <ellipse cx="120" cy="70" rx="150" ry="60" fill="#d6c5a8" opacity=".5"/>
+  <ellipse cx="500" cy="230" rx="180" ry="70" fill="#c0ac8a" opacity=".45"/>
+  <ellipse cx="560" cy="80" rx="120" ry="50" fill="#d2bf9e" opacity=".5"/>
+  <ellipse cx="230" cy="245" rx="130" ry="45" fill="#d6c5a8" opacity=".4"/>
+
+  <!-- track rails carved into the stone -->
+  <path d="M26 104 H617" stroke="#5a4730" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M28 107.5 H615" stroke="#e0d2b4" stroke-width="1.4" fill="none" opacity=".8"/>
+  <path d="M26 172 H617" stroke="#5a4730" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M28 175.5 H615" stroke="#e0d2b4" stroke-width="1.4" fill="none" opacity=".8"/>
+
+  <!-- 12 groove lines = 11 divisions -->
+  <use href="#pug" x="30" y="104"/><use href="#pug" x="83" y="104"/><use href="#pug" x="136" y="104"/>
+  <use href="#pug" x="189" y="104"/><use href="#pug" x="242" y="104"/><use href="#pug" x="295" y="104"/>
+  <use href="#pug" x="348" y="104"/><use href="#pug" x="401" y="104"/><use href="#pug" x="454" y="104"/>
+  <use href="#pug" x="507" y="104"/><use href="#pug" x="560" y="104"/><use href="#pug" x="613" y="104"/>
+
+  <!-- corn-kernel runners: cream team advancing left, red team right -->
+  <use href="#puc" x="109" y="138"/>
+  <use href="#puc" x="215" y="138"/>
+  <use href="#pur" x="480" y="138"/>
+  <use href="#pur" x="533" y="138"/>
+
+  <!-- the signature stack at centre: red carrier with cream captive on top -->
+  <ellipse cx="321" cy="146" rx="18" ry="6" fill="#a8957a" opacity=".7"/>
+  <use href="#pur" x="321" y="142"/>
+  <use href="#puc" x="321" y="126"/>
+
+  <!-- four split-cane stick dice beside the track -->
+  <g transform="translate(130 208) rotate(-10)">
+    <use href="#pus" fill="#e8dcc2" stroke="#a08c60" stroke-width="2"/>
+    <path d="M-40 0 H40" stroke="#c8b890" stroke-width="1.6"/>
+  </g>
+  <g transform="translate(285 214) rotate(6)">
+    <use href="#pus" fill="#4a3520" stroke="#2e2012" stroke-width="2"/>
+    <path d="M-38 -2 H36 M-30 3 H30" stroke="#2e2012" stroke-width="1.4" fill="none"/>
+  </g>
+  <g transform="translate(425 207) rotate(-4)">
+    <use href="#pus" fill="#e8dcc2" stroke="#a08c60" stroke-width="2"/>
+    <path d="M-40 0 H40" stroke="#c8b890" stroke-width="1.6"/>
+  </g>
+  <g transform="translate(545 215) rotate(12)">
+    <use href="#pus" fill="#4a3520" stroke="#2e2012" stroke-width="2"/>
+    <path d="M-38 -2 H36 M-30 3 H30" stroke="#2e2012" stroke-width="1.4" fill="none"/>
+  </g>
+</svg>

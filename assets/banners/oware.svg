@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280">
+  <!-- Oware banner: carved amber board, cream pits, gold seeds mid-sow -->
+  <defs>
+    <g id="sd"><circle r="7" fill="#C89B3C" stroke="#8a6418" stroke-width="1.5"/><circle cx="-2" cy="-2.4" r="2.2" fill="#e8c060"/></g>
+    <circle id="pt" r="34" fill="#FBF5E6" stroke="#7a4a18" stroke-width="3"/>
+  </defs>
+  <rect width="640" height="280" fill="#3a2008"/>
+  <rect x="0" y="0" width="640" height="34" fill="#2a1604"/>
+  <rect x="0" y="246" width="640" height="34" fill="#2a1604"/>
+  <rect x="26" y="54" width="596" height="184" rx="26" fill="#241204"/>
+  <rect x="22" y="48" width="596" height="184" rx="26" fill="#c07a30"/>
+  <rect x="34" y="56" width="572" height="9" rx="4" fill="#e09850" opacity="0.35"/>
+  <rect x="48" y="69" width="510" height="5" rx="2" fill="#e09850" opacity="0.22"/>
+  <rect x="40" y="218" width="540" height="5" rx="2" fill="#8a5018" opacity="0.3"/>
+  <rect x="22" y="48" width="596" height="184" rx="26" fill="none" stroke="#5a3010" stroke-width="4"/>
+  <!-- pits 2x6 -->
+  <use href="#pt" x="80" y="102"/><use href="#pt" x="176" y="102"/><use href="#pt" x="272" y="102"/><use href="#pt" x="368" y="102"/><use href="#pt" x="464" y="102"/><use href="#pt" x="560" y="102"/>
+  <use href="#pt" x="80" y="178"/><use href="#pt" x="176" y="178"/><use href="#pt" x="272" y="178"/><use href="#pt" x="368" y="178"/><use href="#pt" x="464" y="178"/><use href="#pt" x="560" y="178"/>
+  <!-- seeds: top row 4,6,5,3,0(sown),6 -->
+  <use href="#sd" x="71" y="94"/><use href="#sd" x="89" y="94"/><use href="#sd" x="71" y="110"/><use href="#sd" x="89" y="110"/>
+  <use href="#sd" x="163" y="94"/><use href="#sd" x="176" y="91"/><use href="#sd" x="189" y="94"/><use href="#sd" x="163" y="110"/><use href="#sd" x="176" y="113"/><use href="#sd" x="189" y="110"/>
+  <use href="#sd" x="263" y="94"/><use href="#sd" x="281" y="94"/><use href="#sd" x="263" y="110"/><use href="#sd" x="281" y="110"/><use href="#sd" x="272" y="102"/>
+  <use href="#sd" x="358" y="109"/><use href="#sd" x="378" y="109"/><use href="#sd" x="368" y="94"/>
+  <use href="#sd" x="547" y="94"/><use href="#sd" x="560" y="91"/><use href="#sd" x="573" y="94"/><use href="#sd" x="547" y="110"/><use href="#sd" x="560" y="113"/><use href="#sd" x="573" y="110"/>
+  <!-- seeds: bottom row 5,3,4,6,2,4 -->
+  <use href="#sd" x="71" y="170"/><use href="#sd" x="89" y="170"/><use href="#sd" x="71" y="186"/><use href="#sd" x="89" y="186"/><use href="#sd" x="80" y="178"/>
+  <use href="#sd" x="166" y="185"/><use href="#sd" x="186" y="185"/><use href="#sd" x="176" y="170"/>
+  <use href="#sd" x="263" y="170"/><use href="#sd" x="281" y="170"/><use href="#sd" x="263" y="186"/><use href="#sd" x="281" y="186"/>
+  <use href="#sd" x="355" y="170"/><use href="#sd" x="368" y="167"/><use href="#sd" x="381" y="170"/><use href="#sd" x="355" y="186"/><use href="#sd" x="368" y="189"/><use href="#sd" x="381" y="186"/>
+  <use href="#sd" x="456" y="178"/><use href="#sd" x="472" y="178"/>
+  <use href="#sd" x="551" y="170"/><use href="#sd" x="569" y="170"/><use href="#sd" x="551" y="186"/><use href="#sd" x="569" y="186"/>
+  <!-- three seeds mid-sow above the just-emptied pit -->
+  <use href="#sd" x="446" y="58"/><use href="#sd" x="466" y="48"/><use href="#sd" x="486" y="60"/>
+</svg>

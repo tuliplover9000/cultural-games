@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280">
+  <!-- Yote banner: sand-pit board, capture mid-jump, hand reserve at left -->
+  <defs>
+    <rect id="cl" width="84" height="84" rx="12" fill="#8a5d30" stroke="#6a4422" stroke-width="2"/>
+    <g id="lp"><circle r="26" fill="#F5E6C8" stroke="#9a7030" stroke-width="3"/><circle r="16" fill="none" stroke="#9a7030" stroke-width="1.5" opacity="0.5"/><ellipse cx="-8" cy="-9" rx="9" ry="6" fill="#FFFFFF" opacity="0.7"/></g>
+    <g id="dp"><circle r="26" fill="#b03a28" stroke="#6e2014" stroke-width="3"/><circle r="16" fill="none" stroke="#6e2014" stroke-width="1.5" opacity="0.5"/><ellipse cx="-8" cy="-9" rx="9" ry="6" fill="#d96a50" opacity="0.8"/></g>
+  </defs>
+  <rect width="640" height="280" fill="#2a1606"/>
+  <rect x="6" y="14" width="78" height="252" rx="10" fill="#1d1206" stroke="#3a1a05" stroke-width="2"/>
+  <rect x="92" y="-12" width="560" height="304" rx="14" fill="#7a5028" stroke="#3a1a05" stroke-width="4"/>
+  <rect x="100" y="-4" width="544" height="10" rx="5" fill="#c4894f" opacity="0.5"/>
+  <!-- cell grid (cropped 6x5 hint) -->
+  <use href="#cl" x="108" y="-48"/><use href="#cl" x="206" y="-48"/><use href="#cl" x="304" y="-48"/><use href="#cl" x="402" y="-48"/><use href="#cl" x="500" y="-48"/><use href="#cl" x="598" y="-48"/>
+  <use href="#cl" x="108" y="50"/><use href="#cl" x="206" y="50"/><use href="#cl" x="304" y="50"/><use href="#cl" x="402" y="50"/><use href="#cl" x="500" y="50"/><use href="#cl" x="598" y="50"/>
+  <use href="#cl" x="108" y="148"/><use href="#cl" x="206" y="148"/><use href="#cl" x="304" y="148"/><use href="#cl" x="402" y="148"/><use href="#cl" x="500" y="148"/><use href="#cl" x="598" y="148"/>
+  <use href="#cl" x="108" y="246"/><use href="#cl" x="206" y="246"/><use href="#cl" x="304" y="246"/><use href="#cl" x="402" y="246"/><use href="#cl" x="500" y="246"/><use href="#cl" x="598" y="246"/>
+  <!-- settled pieces -->
+  <use href="#dp" x="150" y="92"/><use href="#dp" x="542" y="92"/><use href="#dp" x="248" y="190"/><use href="#dp" x="444" y="190"/>
+  <use href="#lp" x="346" y="190"/><use href="#lp" x="542" y="190"/><use href="#lp" x="150" y="190"/>
+  <!-- capture mid-jump: dark victim on cell, light piece in the air above -->
+  <use href="#dp" x="380" y="92"/>
+  <ellipse cx="380" cy="116" rx="24" ry="7" fill="#1d1206" opacity="0.45"/>
+  <g transform="translate(372 60)"><circle r="29" fill="#F5E6C8" stroke="#9a7030" stroke-width="3.5"/><circle r="18" fill="none" stroke="#9a7030" stroke-width="1.5" opacity="0.5"/><ellipse cx="-9" cy="-10" rx="10" ry="7" fill="#FFFFFF" opacity="0.75"/></g>
+  <!-- hand reserve of three light pieces beside the board -->
+  <g transform="translate(45 78) scale(0.82)"><use href="#lp"/></g>
+  <g transform="translate(45 140) scale(0.82)"><use href="#lp"/></g>
+  <g transform="translate(45 202) scale(0.82)"><use href="#lp"/></g>
+</svg>

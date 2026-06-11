@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280">
+  <defs>
+    <rect id="sa" width="54" height="44" fill="#e8dcc0" stroke="#8a6f4d" stroke-width="2"/>
+    <rect id="sb" width="54" height="44" fill="#ddd0b2" stroke="#8a6f4d" stroke-width="2"/>
+    <!-- light cone pawn -->
+    <g id="sc">
+      <path d="M0 -19 Q9 -2 11 13 L-11 13 Q-9 -2 0 -19 Z" fill="#F5E6C8" stroke="#9a7030" stroke-width="2.5"/>
+      <ellipse cy="13" rx="11" ry="3.2" fill="#F5E6C8" stroke="#9a7030" stroke-width="2.5"/>
+    </g>
+    <!-- dark spool pawn -->
+    <g id="sp">
+      <path d="M-10 -14 L10 -14 L3 0 L10 14 L-10 14 L-3 0 Z" fill="#2a1a10" stroke="#0d0703" stroke-width="2.5"/>
+      <ellipse cy="-14" rx="10" ry="3" fill="#3a2718" stroke="#0d0703" stroke-width="2.5"/>
+    </g>
+    <rect id="sk" x="-55" y="-6.5" width="110" height="13" rx="6.5"/>
+  </defs>
+
+  <!-- deep background -->
+  <rect width="640" height="280" fill="#211608"/>
+
+  <!-- ebony game box with gold inlay -->
+  <rect x="14" y="46" width="612" height="164" fill="#1a120a" stroke="#0d0703" stroke-width="2"/>
+  <rect x="21" y="53" width="598" height="150" fill="none" stroke="#C89B3C" stroke-width="1.6" opacity=".6"/>
+
+  <!-- 3 x 10 ivory grid -->
+  <use href="#sa" x="37" y="60"/><use href="#sb" x="94" y="60"/><use href="#sa" x="151" y="60"/><use href="#sb" x="208" y="60"/><use href="#sa" x="265" y="60"/><use href="#sb" x="322" y="60"/><use href="#sa" x="379" y="60"/><use href="#sb" x="436" y="60"/><use href="#sa" x="493" y="60"/><use href="#sb" x="550" y="60"/>
+  <use href="#sb" x="37" y="107"/><use href="#sa" x="94" y="107"/><use href="#sb" x="151" y="107"/><use href="#sa" x="208" y="107"/><use href="#sb" x="265" y="107"/><use href="#sa" x="322" y="107"/><use href="#sb" x="379" y="107"/><use href="#sa" x="436" y="107"/><use href="#sb" x="493" y="107"/><use href="#sa" x="550" y="107"/>
+  <use href="#sa" x="37" y="154"/><use href="#sb" x="94" y="154"/><use href="#sa" x="151" y="154"/><use href="#sb" x="208" y="154"/><use href="#sa" x="265" y="154"/><use href="#sb" x="322" y="154"/><use href="#sa" x="379" y="154"/><use href="#sb" x="436" y="154"/><use href="#sa" x="493" y="154"/><use href="#sb" x="550" y="154"/>
+
+  <!-- hieroglyphs on the last five squares (bottom row) -->
+  <!-- ankh -->
+  <g stroke="#4a3520" stroke-width="3" fill="none" stroke-linecap="round">
+    <circle cx="349" cy="168" r="6.5"/>
+    <path d="M349 175 V192 M340 180 H358"/>
+  </g>
+  <!-- water zigzags -->
+  <g stroke="#4a3520" stroke-width="2.5" fill="none" stroke-linejoin="round">
+    <path d="M388 164 l6 5 6 -5 6 5 6 -5 6 5"/>
+    <path d="M388 174 l6 5 6 -5 6 5 6 -5 6 5"/>
+    <path d="M388 184 l6 5 6 -5 6 5 6 -5 6 5"/>
+  </g>
+  <!-- III -->
+  <g stroke="#4a3520" stroke-width="3.5" stroke-linecap="round">
+    <path d="M455 165 V189 M463 165 V189 M471 165 V189"/>
+  </g>
+  <!-- II -->
+  <g stroke="#4a3520" stroke-width="3.5" stroke-linecap="round">
+    <path d="M514 165 V189 M526 165 V189"/>
+  </g>
+  <!-- bird -->
+  <g fill="#4a3520">
+    <ellipse cx="576" cy="178" rx="9.5" ry="6"/>
+    <circle cx="566" cy="170" r="4.2"/>
+    <path d="M562 169 l-7 2 7 2.5 z"/>
+    <path d="M583 175 l9 -7 -3 9 z"/>
+  </g>
+  <g stroke="#4a3520" stroke-width="2" stroke-linecap="round">
+    <path d="M572 184 v7 M579 184 v7"/>
+  </g>
+
+  <!-- pieces mid-race: 3 light cones, 3 dark spools -->
+  <use href="#sc" x="121" y="84"/>
+  <use href="#sc" x="235" y="131"/>
+  <use href="#sc" x="178" y="178"/>
+  <use href="#sp" x="406" y="82"/>
+  <use href="#sp" x="520" y="129"/>
+  <use href="#sp" x="64" y="176"/>
+
+  <!-- four throwing sticks in front: 2 ivory faces up, 2 bark up -->
+  <g transform="translate(120 226) rotate(-8)">
+    <use href="#sk" fill="#e9ddc2" stroke="#9a7030" stroke-width="2"/>
+  </g>
+  <g transform="translate(280 228) rotate(5)">
+    <use href="#sk" fill="#503a22" stroke="#3a2a16" stroke-width="2"/>
+    <path d="M-44 -2 H42 M-36 3 H34" stroke="#3a2a16" stroke-width="1.6" fill="none"/>
+  </g>
+  <g transform="translate(420 225) rotate(-5)">
+    <use href="#sk" fill="#e9ddc2" stroke="#9a7030" stroke-width="2"/>
+  </g>
+  <g transform="translate(555 227) rotate(10)">
+    <use href="#sk" fill="#503a22" stroke="#3a2a16" stroke-width="2"/>
+    <path d="M-44 -2 H42 M-36 3 H34" stroke="#3a2a16" stroke-width="1.6" fill="none"/>
+  </g>
+</svg>

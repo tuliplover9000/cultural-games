@@ -406,6 +406,16 @@
   align-items: center;
   justify-content: center;
   font-size: 3rem;
+  overflow: hidden;
+}
+
+/* Mini-scene banner art (assets/banners/*.svg) — fills the banner, gradient
+   classes behind it remain as the loading fallback. */
+.game-card__banner-art {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .game-card__body {
@@ -698,6 +708,15 @@
   width: 88px;
   height: 88px;
   filter: drop-shadow(0 4px 20px rgba(0,0,0,0.4));
+}
+.hfc-banner {
+  overflow: hidden;
+}
+.hfc-banner img.banner-art {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: none;
 }
 
 /* Body */
@@ -1057,6 +1076,26 @@
   align-items: center;
 }
 
+/* Banner-art collage filling the once-empty right column */
+.mission__visual {
+  display: grid;
+  gap: var(--space-3);
+}
+.mission__visual img {
+  width: 100%;
+  height: 96px;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
+}
+.mission__visual img:nth-child(1) { transform: rotate(-1.2deg) translateX(-10px); }
+.mission__visual img:nth-child(2) { transform: rotate(0.8deg) translateX(18px); }
+.mission__visual img:nth-child(3) { transform: rotate(-0.6deg); }
+@media (max-width: 900px) {
+  .mission__visual { display: none; }
+}
+
 .mission__label {
   font-size: var(--text-xs);
   font-weight: var(--weight-semibold);
@@ -1267,6 +1306,15 @@
   height: 44px;
   object-fit: contain;
   filter: brightness(0.9) saturate(0.9);
+}
+.spotlight__game-banner {
+  overflow: hidden;
+}
+.spotlight__game-banner img.banner-art {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: none;
 }
 .spotlight__game-body {
   padding: 10px 12px;

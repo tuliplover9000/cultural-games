@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280">
+  <defs>
+    <!-- cluster of five river stones -->
+    <g id="oqs">
+      <circle cx="-10" cy="-6" r="6.5" fill="#b8b0a4"/>
+      <circle cx="8" cy="-8" r="5.5" fill="#8a8278"/>
+      <circle cx="-2" cy="6" r="6" fill="#a39b8e"/>
+      <circle cx="12" cy="6" r="5" fill="#C89B3C"/>
+      <circle cx="-14" cy="8" r="5" fill="#8a8278"/>
+    </g>
+  </defs>
+
+  <!-- packed earth ground -->
+  <rect width="640" height="280" fill="#6e5340"/>
+  <ellipse cx="90" cy="50" rx="120" ry="45" fill="#79604c" opacity=".6"/>
+  <ellipse cx="540" cy="240" rx="150" ry="55" fill="#634832" opacity=".55"/>
+  <ellipse cx="580" cy="55" rx="100" ry="40" fill="#634935" opacity=".5"/>
+  <ellipse cx="160" cy="245" rx="120" ry="40" fill="#7a614d" opacity=".5"/>
+  <circle cx="50" cy="160" r="4" fill="#5d4431" opacity=".7"/>
+  <circle cx="615" cy="120" r="3.5" fill="#7d6450" opacity=".8"/>
+  <circle cx="320" cy="252" r="3" fill="#5d4431" opacity=".7"/>
+
+  <!-- chalk-drawn boat board: straight sides -->
+  <g stroke="#e8dcc2" fill="none" stroke-linecap="round">
+    <path d="M150 65 H490" stroke-width="4.5"/>
+    <path d="M150 215 H490" stroke-width="4.5"/>
+    <path d="M150 65 q-3 75 0 150" stroke-width="4"/>
+    <path d="M490 65 q3 75 0 150" stroke-width="4"/>
+    <!-- inner pit divisions -->
+    <path d="M218 67 q2 36 0 71 q-2 36 0 71" stroke-width="3.2"/>
+    <path d="M286 67 q-2 36 0 71 q2 36 0 71" stroke-width="3.2"/>
+    <path d="M354 67 q2 36 0 71 q-2 36 0 71" stroke-width="3.2"/>
+    <path d="M422 67 q-2 36 0 71 q2 36 0 71" stroke-width="3.2"/>
+    <path d="M152 140 q169 -3 336 0" stroke-width="3.2"/>
+  </g>
+
+  <!-- gold mandarin ends -->
+  <g stroke="#c9a84c" fill="none" stroke-width="5" stroke-linecap="round">
+    <path d="M150 65 A75 75 0 0 0 150 215"/>
+    <path d="M490 65 A75 75 0 0 1 490 215"/>
+  </g>
+
+  <!-- quan stones in the mandarin ends -->
+  <ellipse cx="106" cy="143" rx="17" ry="14" fill="#8a8278" stroke="#55504a" stroke-width="2"/>
+  <ellipse cx="101" cy="137" rx="6" ry="4" fill="#b8b0a4"/>
+  <ellipse cx="534" cy="138" rx="17" ry="14" fill="#9a9286" stroke="#5f574c" stroke-width="2"/>
+  <ellipse cx="529" cy="132" rx="6" ry="4" fill="#c4bcae"/>
+
+  <!-- village stones mid-game: some pits full, some just emptied -->
+  <use href="#oqs" x="184" y="102"/>
+  <use href="#oqs" x="320" y="100" transform="rotate(40 320 100)"/>
+  <use href="#oqs" x="456" y="104" transform="rotate(-25 456 104)"/>
+  <use href="#oqs" x="252" y="178" transform="rotate(70 252 178)"/>
+  <use href="#oqs" x="388" y="180" transform="rotate(-60 388 180)"/>
+  <circle cx="316" cy="176" r="6" fill="#b8b0a4"/>
+  <circle cx="328" cy="184" r="5" fill="#C89B3C"/>
+  <circle cx="186" cy="180" r="5.5" fill="#8a8278"/>
+  <circle cx="452" cy="182" r="5" fill="#a39b8e"/>
+
+  <!-- a couple of captured strays beside the board -->
+  <circle cx="560" cy="222" r="6" fill="#b8b0a4"/>
+  <circle cx="576" cy="214" r="5" fill="#8a8278"/>
+  <circle cx="84" cy="222" r="5.5" fill="#a39b8e"/>
+</svg>

@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280">
+  <defs>
+    <!-- petate straw weave -->
+    <pattern id="ptw" width="17" height="11" patternUnits="userSpaceOnUse">
+      <rect width="17" height="11" fill="#C9A86A"/>
+      <rect width="8" height="11" fill="#D9BC85" opacity=".55"/>
+      <rect width="17" height="5" fill="#BD9C5F" opacity=".45"/>
+    </pattern>
+    <!-- xicalcoliuhqui step-fret unit (red-ochre on cream) -->
+    <g id="ptf">
+      <rect y="25" width="45" height="7.5" fill="#B5532A"/>
+      <rect width="7.5" height="32.5" fill="#B5532A"/>
+      <rect width="30" height="7.5" fill="#B5532A"/>
+      <rect x="22.5" y="7.5" width="7.5" height="12.5" fill="#B5532A"/>
+      <rect x="12.5" y="12.5" width="10" height="7.5" fill="#B5532A"/>
+    </g>
+    <!-- patol bean -->
+    <ellipse id="ptb" rx="16" ry="11" fill="#1C1410"/>
+  </defs>
+
+  <rect width="640" height="280" fill="url(#ptw)"/>
+
+  <!-- amatl fret band: top crop-safe edge -->
+  <rect width="640" height="46" fill="#EAE0C8"/>
+  <use href="#ptf" x="0" y="6"/><use href="#ptf" x="45" y="6"/><use href="#ptf" x="90" y="6"/>
+  <use href="#ptf" x="135" y="6"/><use href="#ptf" x="180" y="6"/><use href="#ptf" x="225" y="6"/>
+  <use href="#ptf" x="270" y="6"/><use href="#ptf" x="315" y="6"/><use href="#ptf" x="360" y="6"/>
+  <use href="#ptf" x="405" y="6"/><use href="#ptf" x="450" y="6"/><use href="#ptf" x="495" y="6"/>
+  <use href="#ptf" x="540" y="6"/><use href="#ptf" x="585" y="6"/>
+  <rect y="41" width="640" height="5" fill="#241A12"/>
+
+  <!-- amatl fret band: bottom crop-safe edge -->
+  <rect y="234" width="640" height="46" fill="#EAE0C8"/>
+  <rect y="234" width="640" height="5" fill="#241A12"/>
+  <use href="#ptf" x="0" y="244"/><use href="#ptf" x="45" y="244"/><use href="#ptf" x="90" y="244"/>
+  <use href="#ptf" x="135" y="244"/><use href="#ptf" x="180" y="244"/><use href="#ptf" x="225" y="244"/>
+  <use href="#ptf" x="270" y="244"/><use href="#ptf" x="315" y="244"/><use href="#ptf" x="360" y="244"/>
+  <use href="#ptf" x="405" y="244"/><use href="#ptf" x="450" y="244"/><use href="#ptf" x="495" y="244"/>
+  <use href="#ptf" x="540" y="244"/><use href="#ptf" x="585" y="244"/>
+
+  <!-- stretch of the cross track, thick rubber-ink outlines -->
+  <g transform="rotate(-2 320 114)" fill="none" stroke="#241A12">
+    <rect x="58" y="82" width="64" height="64" rx="4" stroke-width="5"/>
+    <rect x="146" y="80" width="64" height="64" rx="6" stroke-width="4.5"/>
+    <rect x="234" y="82" width="64" height="64" rx="3" stroke-width="5.5"/>
+    <rect x="322" y="80" width="64" height="64" rx="5" stroke-width="4.5"/>
+    <rect x="410" y="82" width="64" height="64" rx="4" stroke-width="5"/>
+    <rect x="498" y="80" width="64" height="64" rx="6" stroke-width="5"/>
+
+    <!-- xochitl flower glyph cell -->
+    <g stroke-width="3">
+      <ellipse cx="266" cy="98" rx="8" ry="11" fill="#9E2B25"/>
+      <ellipse cx="266" cy="130" rx="8" ry="11" fill="#9E2B25"/>
+      <ellipse cx="250" cy="114" rx="11" ry="8" fill="#9E2B25"/>
+      <ellipse cx="282" cy="114" rx="11" ry="8" fill="#9E2B25"/>
+      <circle cx="266" cy="114" r="9" fill="#F2EDE0"/>
+      <circle cx="266" cy="114" r="2.6" fill="#D9A441" stroke="none"/>
+    </g>
+
+    <!-- pebble pieces: cochineal vs turquoise -->
+    <circle cx="90" cy="114" r="14" fill="#9E2B25" stroke-width="3"/>
+    <circle cx="178" cy="112" r="14" fill="#4FA3A5" stroke-width="3"/>
+    <circle cx="442" cy="114" r="14" fill="#9E2B25" stroke-width="3"/>
+    <circle cx="530" cy="112" r="14" fill="#4FA3A5" stroke-width="3"/>
+  </g>
+
+  <!-- five black patol beans, three pit-up -->
+  <g transform="translate(150 196) rotate(-20)">
+    <use href="#ptb"/><ellipse rx="7" ry="3.8" fill="#EDE6D2"/>
+  </g>
+  <g transform="translate(240 210) rotate(15)">
+    <use href="#ptb"/><ellipse rx="4" ry="2.4" cx="-3" cy="-3" fill="#3a2c20"/>
+  </g>
+  <g transform="translate(330 188) rotate(-8)">
+    <use href="#ptb"/><ellipse rx="7" ry="3.8" fill="#EDE6D2"/>
+  </g>
+  <g transform="translate(415 206) rotate(28)">
+    <use href="#ptb"/><ellipse rx="4" ry="2.4" cx="-3" cy="-3" fill="#3a2c20"/>
+  </g>
+  <g transform="translate(505 192) rotate(-30)">
+    <use href="#ptb"/><ellipse rx="7" ry="3.8" fill="#EDE6D2"/>
+  </g>
+</svg>

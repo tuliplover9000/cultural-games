@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280">
+  <!-- Filipino Dama banner: tilted checkerboard, glossy red vs cream draughts, stacked dama king, sliding piece with ghost trail -->
+  <defs>
+    <rect id="dk" width="56" height="56" fill="#7B3A10"/>
+    <g id="rA"><use href="#dk" x="152"/><use href="#dk" x="264"/><use href="#dk" x="376"/><use href="#dk" x="488"/></g>
+    <g id="rB"><use href="#dk" x="96"/><use href="#dk" x="208"/><use href="#dk" x="320"/><use href="#dk" x="432"/></g>
+    <g id="cw"><circle r="20" fill="#FFF0C0" stroke="#A07830" stroke-width="2.5"/><circle r="12.5" fill="none" stroke="#A07830" stroke-width="1.5" opacity="0.5"/><ellipse cx="-6" cy="-7" rx="8" ry="5" fill="#FFFFFF" opacity="0.7"/></g>
+    <g id="cr"><circle r="20" fill="#C41E3A" stroke="#7A0020" stroke-width="2.5"/><circle r="12.5" fill="none" stroke="#7A0020" stroke-width="1.5" opacity="0.5"/><ellipse cx="-6" cy="-7" rx="8" ry="5" fill="#ff7a90" opacity="0.55"/></g>
+  </defs>
+  <rect width="640" height="280" fill="#2A0E00"/>
+  <g transform="rotate(-3 320 140)">
+    <rect x="68" y="-116" width="504" height="512" fill="#5C2800" stroke="#2A0E00" stroke-width="3"/>
+    <rect x="88" y="-96" width="464" height="464" fill="none" stroke="#C89B3C" stroke-width="2.5"/>
+    <rect x="96" y="-88" width="448" height="448" fill="#E8C97A"/>
+    <use href="#rA" y="-88"/><use href="#rB" y="-32"/>
+    <use href="#rA" y="24"/><use href="#rB" y="80"/>
+    <use href="#rA" y="136"/><use href="#rB" y="192"/>
+    <use href="#rA" y="248"/>
+    <!-- red side -->
+    <use href="#cr" x="180" y="52"/><use href="#cr" x="404" y="52"/><use href="#cr" x="516" y="52"/><use href="#cr" x="236" y="108"/>
+    <!-- red dama: two stacked discs -->
+    <use href="#cr" x="460" y="113"/>
+    <use href="#cr" x="460" y="102"/>
+    <circle cx="460" cy="102" r="4" fill="#C89B3C"/>
+    <!-- cream side -->
+    <use href="#cw" x="124" y="220"/><use href="#cw" x="236" y="220"/><use href="#cw" x="516" y="164"/><use href="#cw" x="292" y="164"/>
+    <!-- cream piece mid-diagonal-slide with ghost trail -->
+    <circle cx="348" cy="220" r="20" fill="none" stroke="#FFF0C0" stroke-width="2" opacity="0.16"/>
+    <circle cx="367" cy="201" r="20" fill="none" stroke="#FFF0C0" stroke-width="2" opacity="0.32"/>
+    <use href="#cw" x="390" y="178"/>
+  </g>
+</svg>
