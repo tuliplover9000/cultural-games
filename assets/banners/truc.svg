@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="trfelt" cx=".48" cy=".42" r=".75">
+      <stop offset="0" stop-color="#266048"/>
+      <stop offset="1" stop-color="#1d4a38"/>
+    </radialGradient>
+    <!-- red stripe back -->
+    <pattern id="trbk" width="26" height="26" patternUnits="userSpaceOnUse">
+      <rect width="26" height="26" fill="#FDFBF3"/>
+      <path d="M0 26 L26 0 M-6.5 6.5 L6.5 -6.5 M19.5 32.5 L32.5 19.5" stroke="#7e1f1f" stroke-width="8" fill="none"/>
+    </pattern>
+    <!-- basto cudgel -->
+    <path id="trb" d="M-4 -42 L4 -42 L6 -10 Q10 6 7 28 Q5 40 0 40 Q-5 40 -7 28 Q-10 6 -6 -10 Z" fill="#3e7d3a" stroke="#3a2a16" stroke-width="2.5"/>
+    <!-- copa cup -->
+    <g id="trcu" stroke="#3a2a16" stroke-width="2.5">
+      <path d="M-17 -16 Q-17 6 0 6 Q17 6 17 -16 Z" fill="#B83232"/>
+      <rect x="-17" y="-16" width="34" height="6" fill="#E0A92E"/>
+      <rect x="-3" y="6" width="6" height="10" fill="#E0A92E"/>
+      <path d="M-13 16 L13 16 L9 22 L-9 22 Z" fill="#E0A92E"/>
+    </g>
+  </defs>
+
+  <rect width="640" height="280" fill="url(#trfelt)"/>
+
+  <!-- red-striped card back, tilted -->
+  <g transform="translate(104 66) rotate(-14)">
+    <rect x="6" y="8" width="124" height="174" rx="10" fill="#0c2418" opacity=".4"/>
+    <rect width="124" height="174" rx="10" fill="#FDFBF3" stroke="#3a2a16" stroke-width="3"/>
+    <rect x="11" y="11" width="102" height="152" rx="5" fill="url(#trbk)" stroke="#3a2a16" stroke-width="2"/>
+  </g>
+
+  <!-- ace of espases (1 pinta break) -->
+  <g transform="translate(258 60) rotate(-4)">
+    <rect x="6" y="8" width="124" height="174" rx="10" fill="#0c2418" opacity=".4"/>
+    <rect width="124" height="174" rx="10" fill="#FDFBF3" stroke="#3a2a16" stroke-width="3"/>
+    <rect x="10" y="10" width="104" height="154" rx="4" fill="none" stroke="#3a2a16" stroke-width="2"/>
+    <rect x="52" y="7" width="20" height="6" fill="#FDFBF3"/>
+    <g stroke="#3a2a16" stroke-width="2.5">
+      <path d="M62 32 L68 44 L66 116 L62 124 L58 116 L56 44 Z" fill="#5b7a99"/>
+      <rect x="46" y="118" width="32" height="8" rx="4" fill="#E0A92E"/>
+      <rect x="58" y="126" width="8" height="20" fill="#7a4a22"/>
+      <circle cx="62" cy="151" r="6" fill="#E0A92E"/>
+    </g>
+  </g>
+
+  <!-- 2 of copes thrown over it (2 pinta breaks) -->
+  <g transform="translate(352 84) rotate(9)">
+    <rect x="6" y="8" width="124" height="174" rx="10" fill="#0c2418" opacity=".4"/>
+    <rect width="124" height="174" rx="10" fill="#FDFBF3" stroke="#3a2a16" stroke-width="3"/>
+    <rect x="10" y="10" width="104" height="154" rx="4" fill="none" stroke="#3a2a16" stroke-width="2"/>
+    <rect x="34" y="7" width="16" height="6" fill="#FDFBF3"/>
+    <rect x="74" y="7" width="16" height="6" fill="#FDFBF3"/>
+    <use href="#trcu" x="62" y="56"/>
+    <use href="#trcu" x="62" y="126"/>
+  </g>
+
+  <!-- 3 of bastos lands on top (3 pinta breaks) -->
+  <g transform="translate(432 64) rotate(21)">
+    <rect x="6" y="8" width="124" height="174" rx="10" fill="#0c2418" opacity=".4"/>
+    <rect width="124" height="174" rx="10" fill="#FDFBF3" stroke="#3a2a16" stroke-width="3"/>
+    <rect x="10" y="10" width="104" height="154" rx="4" fill="none" stroke="#3a2a16" stroke-width="2"/>
+    <rect x="26" y="7" width="14" height="6" fill="#FDFBF3"/>
+    <rect x="55" y="7" width="14" height="6" fill="#FDFBF3"/>
+    <rect x="84" y="7" width="14" height="6" fill="#FDFBF3"/>
+    <g transform="translate(36 92) rotate(-15)"><use href="#trb"/></g>
+    <g transform="translate(88 92) rotate(15)"><use href="#trb"/></g>
+    <use href="#trb" x="62" y="84"/>
+  </g>
+</svg>

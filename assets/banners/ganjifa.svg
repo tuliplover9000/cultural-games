@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="gjlac" cx=".46" cy=".44" r=".8">
+      <stop offset="0" stop-color="#2A140A"/>
+      <stop offset="1" stop-color="#140A04"/>
+    </radialGradient>
+    <radialGradient id="gjbk" cx=".42" cy=".4" r=".85">
+      <stop offset="0" stop-color="#1A2B62"/>
+      <stop offset="1" stop-color="#060D28"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="640" height="280" fill="url(#gjlac)"/>
+  <!-- lacquer sheen bands (crop-safe, full-bleed) -->
+  <rect y="60" width="640" height="2" fill="#3a2010" opacity=".5"/>
+  <rect y="226" width="640" height="2" fill="#3a2010" opacity=".5"/>
+
+  <!-- face-down disc: dark patterned back -->
+  <g transform="translate(132 132)">
+    <circle cx="5" cy="7" r="60" fill="#000000" opacity=".45"/>
+    <circle r="60" fill="url(#gjbk)" stroke="#C8960C" stroke-width="3"/>
+    <circle r="50" fill="none" stroke="#C8960C" stroke-width="1.2" opacity=".55"/>
+    <g fill="#D4A017" opacity=".8">
+      <path d="M0 -34 L6 -8 L32 -8 L11 6 L19 32 L0 16 L-19 32 L-11 6 L-32 -8 L-6 -8 Z" opacity=".9"/>
+      <circle cx="0" cy="-44" r="2.4"/><circle cx="42" cy="-14" r="2.4"/>
+      <circle cx="26" cy="36" r="2.4"/><circle cx="-26" cy="36" r="2.4"/>
+      <circle cx="-42" cy="-14" r="2.4"/>
+    </g>
+  </g>
+
+  <!-- fan of painted discs, overlapping left to right -->
+  <!-- Surkh: ivory disc, crimson rings, gold-coin motif -->
+  <g transform="translate(232 152)">
+    <circle cx="5" cy="7" r="58" fill="#000000" opacity=".45"/>
+    <circle r="58" fill="#FFFAEE" stroke="#C8960C" stroke-width="3"/>
+    <circle r="47" fill="none" stroke="#9B0000" stroke-width="2.4"/>
+    <circle r="36" fill="none" stroke="#D4A017" stroke-width="1.6"/>
+    <circle cx="-11" cy="-8" r="9" fill="#D4A017" stroke="#7A5008" stroke-width="1.6"/>
+    <circle cx="11" cy="-8" r="9" fill="#D4A017" stroke="#7A5008" stroke-width="1.6"/>
+    <circle cx="0" cy="9" r="9" fill="#D4A017" stroke="#7A5008" stroke-width="1.6"/>
+  </g>
+
+  <!-- Taj: crimson disc, gold rings, crown motif -->
+  <g transform="translate(316 130)">
+    <circle cx="5" cy="7" r="58" fill="#000000" opacity=".45"/>
+    <circle r="58" fill="#8B1A1A" stroke="#C8960C" stroke-width="3"/>
+    <circle r="47" fill="none" stroke="#D4A017" stroke-width="2"/>
+    <circle r="36" fill="#FAF0D8" stroke="#7A5008" stroke-width="1.4"/>
+    <path d="M-18 12 L-18 -6 L-9 2 L0 -14 L9 2 L18 -6 L18 12 Z" fill="#D4A017" stroke="#7A5008" stroke-width="1.8"/>
+    <rect x="-18" y="12" width="36" height="5" fill="#D4A017" stroke="#7A5008" stroke-width="1.4"/>
+    <circle cx="0" cy="-17" r="2.6" fill="#9B0000"/>
+  </g>
+
+  <!-- Shamshir: gold disc, sword motif -->
+  <g transform="translate(402 152)">
+    <circle cx="5" cy="7" r="58" fill="#000000" opacity=".45"/>
+    <circle r="58" fill="#D4A017" stroke="#7A5008" stroke-width="3"/>
+    <circle r="47" fill="none" stroke="#FFFAEE" stroke-width="2" opacity=".8"/>
+    <circle r="36" fill="#FFFAEE" stroke="#7A5008" stroke-width="1.4"/>
+    <path d="M-14 -22 Q14 -16 16 12 Q16 20 10 22 Q12 12 4 2 Q-6 -10 -14 -22 Z" fill="#2C5F8A" stroke="#1A0D05" stroke-width="1.6"/>
+    <rect x="2" y="18" width="14" height="5" rx="2" transform="rotate(45 9 20)" fill="#C8960C" stroke="#7A5008" stroke-width="1.2"/>
+  </g>
+
+  <!-- Qimash: ivory disc, green rings, cloth motif -->
+  <g transform="translate(486 126)">
+    <circle cx="5" cy="7" r="58" fill="#000000" opacity=".45"/>
+    <circle r="58" fill="#FFFAEE" stroke="#C8960C" stroke-width="3"/>
+    <circle r="47" fill="none" stroke="#4A7C3F" stroke-width="2.4"/>
+    <circle r="36" fill="none" stroke="#D4A017" stroke-width="1.6"/>
+    <path d="M-18 -10 L18 -10 L14 0 L18 10 L-18 10 L-14 0 Z" fill="#4A7C3F" stroke="#1A0D05" stroke-width="1.6"/>
+    <path d="M-10 -10 L-10 10 M0 -10 L0 10 M10 -10 L10 10" stroke="#FFFAEE" stroke-width="1.6" opacity=".7" fill="none"/>
+  </g>
+
+  <!-- Ghulam: crimson disc edging out of frame right -->
+  <g transform="translate(572 162)">
+    <circle cx="5" cy="7" r="58" fill="#000000" opacity=".45"/>
+    <circle r="58" fill="#8B1A1A" stroke="#C8960C" stroke-width="3"/>
+    <circle r="47" fill="none" stroke="#D4A017" stroke-width="2"/>
+    <circle r="36" fill="#FAF0D8" stroke="#7A5008" stroke-width="1.4"/>
+    <circle cx="-6" cy="-10" r="7" fill="#C4732A" stroke="#1A0D05" stroke-width="1.5"/>
+    <path d="M-16 22 Q-14 2 -6 0 Q4 2 4 22 Z" fill="#2C5F8A" stroke="#1A0D05" stroke-width="1.5"/>
+  </g>
+</svg>

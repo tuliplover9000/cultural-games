@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <!-- chieu sedge weave -->
+    <pattern id="tlm" width="15" height="13" patternUnits="userSpaceOnUse">
+      <rect width="15" height="13" fill="#C9A45C"/>
+      <rect width="15" height="6" fill="#BD9852" opacity=".5"/>
+      <rect width="5" height="13" fill="#D4B26C" opacity=".45"/>
+    </pattern>
+    <path id="tls" d="M0 -11 C7 -3 11 2 7 7 C4 10.5 1.5 8.5 0.8 6 L2.5 12 L-2.5 12 L-0.8 6 C-1.5 8.5 -4 10.5 -7 7 C-11 2 -7 -3 0 -11 Z" fill="#26221E"/>
+    <path id="tlh" d="M0 5 C0 -1 -5 -6 -9 -4 C-14 -2 -13 5 -8 9 L0 16 L8 9 C13 5 14 -2 9 -4 C5 -6 0 -1 0 5 Z" fill="#C03A2B"/>
+    <path id="tlz" d="M-7 -5 L0 -12 L7 -5 L0 2 Z M-7 5 L0 -2 L7 5 L0 12 Z" fill="#1C1410"/>
+  </defs>
+
+  <rect width="640" height="280" fill="url(#tlm)"/>
+
+  <!-- red stamped border sliver, left edge -->
+  <rect width="10" height="280" fill="#B23A2E"/>
+  <rect x="38" width="5" height="280" fill="#B23A2E"/>
+  <g fill="#B23A2E">
+    <path d="M24 6 L33 18 L24 30 L15 18 Z"/><path d="M24 50 L33 62 L24 74 L15 62 Z"/>
+    <path d="M24 94 L33 106 L24 118 L15 106 Z"/><path d="M24 138 L33 150 L24 162 L15 150 Z"/>
+    <path d="M24 182 L33 194 L24 206 L15 194 Z"/><path d="M24 226 L33 238 L24 250 L15 238 Z"/>
+    <path d="M24 270 L33 282 L24 294 L15 282 Z"/>
+  </g>
+
+  <!-- Dong Ho pig card back -->
+  <g transform="translate(112 60) rotate(-9)">
+    <rect x="5" y="7" width="132" height="184" rx="9" fill="#1C1410" opacity=".25"/>
+    <rect width="132" height="184" rx="9" fill="#F4EAD8" stroke="#FFFFFF" stroke-width="2"/>
+    <rect x="6" y="6" width="120" height="172" rx="7" fill="none" stroke="#FFFFFF" stroke-width="2.5"/>
+    <rect x="11" y="11" width="110" height="162" rx="6" fill="none" stroke="#B23A2E" stroke-width="2.5"/>
+    <circle cx="66" cy="92" r="46" fill="none" stroke="#B23A2E" stroke-width="1.8" opacity=".8"/>
+    <g transform="translate(11 13) scale(1.1)" stroke="#26221E" stroke-width="1.6" stroke-linejoin="round">
+      <path d="M73 69 q7 -4 5 2 q-2 5 -6 2" fill="none"/>
+      <path d="M38 84 L37 95 L42 95 L42 86 Z M50 87 L50 96 L55 96 L55 87 Z M63 86 L63 95 L68 95 L67 85 Z" fill="#B23A2E"/>
+      <path d="M27 58 L22 49 L33 55 Z" fill="#B23A2E"/>
+      <ellipse cx="53" cy="74" rx="21" ry="13.5" fill="#B23A2E"/>
+      <circle cx="30" cy="67" r="9.5" fill="#B23A2E"/>
+      <ellipse cx="21.5" cy="70" rx="3.6" ry="4.6" fill="#F4EAD8"/>
+      <circle cx="21" cy="68.6" r="0.8" fill="#26221E" stroke="none"/>
+      <circle cx="21" cy="71.6" r="0.8" fill="#26221E" stroke="none"/>
+      <circle cx="30.5" cy="64" r="1.2" fill="#26221E" stroke="none"/>
+      <circle cx="55" cy="72" r="7" fill="#F4EAD8"/>
+      <path d="M55 65 a7 7 0 0 1 0 14 a3.5 3.5 0 0 1 0 -7 a3.5 3.5 0 0 0 0 -7 Z" fill="#2E6B4F" stroke="none"/>
+      <circle cx="55" cy="68.5" r="1.1" fill="#2E6B4F" stroke="none"/>
+      <circle cx="55" cy="75.5" r="1.1" fill="#F4EAD8" stroke="none"/>
+    </g>
+  </g>
+
+  <!-- fanned hand of three pip cards -->
+  <g transform="rotate(-16 450 350)">
+    <rect x="318" y="58" width="132" height="184" rx="9" fill="#1C1410" opacity=".25" transform="translate(5 7)"/>
+    <rect x="318" y="58" width="132" height="184" rx="9" fill="#F4EAD8" stroke="#26221E" stroke-width="2.5"/>
+    <use href="#tls" x="384" y="100"/><use href="#tls" x="384" y="150"/><use href="#tls" x="384" y="200"/>
+  </g>
+  <g transform="rotate(-3 450 350)">
+    <rect x="318" y="54" width="132" height="184" rx="9" fill="#1C1410" opacity=".25" transform="translate(5 7)"/>
+    <rect x="318" y="54" width="132" height="184" rx="9" fill="#F4EAD8" stroke="#26221E" stroke-width="2.5"/>
+    <use href="#tlh" x="354" y="92"/><use href="#tlh" x="414" y="92"/>
+    <use href="#tlh" x="354" y="186"/><use href="#tlh" x="414" y="186"/>
+  </g>
+  <g transform="rotate(11 450 350)">
+    <rect x="318" y="58" width="132" height="184" rx="9" fill="#1C1410" opacity=".25" transform="translate(5 7)"/>
+    <rect x="318" y="58" width="132" height="184" rx="9" fill="#F4EAD8" stroke="#26221E" stroke-width="2.5"/>
+    <use href="#tlz" x="384" y="150"/>
+  </g>
+
+  <!-- watermelon seeds -->
+  <g fill="#1C1410">
+    <path d="M232 226 C238 220 246 221 248 228 C250 235 243 241 236 238 C230 235 229 230 232 226 Z"/>
+    <path d="M270 244 C276 238 284 239 286 246 C288 253 281 259 274 256 C268 253 267 248 270 244 Z"/>
+    <path d="M206 252 C212 246 220 247 222 254 C224 261 217 267 210 264 C204 261 203 256 206 252 Z"/>
+  </g>
+  <circle cx="240" cy="227" r="1.8" fill="#F4EAD8" opacity=".5"/>
+  <circle cx="278" cy="245" r="1.8" fill="#F4EAD8" opacity=".5"/>
+</svg>
