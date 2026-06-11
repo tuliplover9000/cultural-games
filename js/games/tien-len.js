@@ -443,6 +443,183 @@
     return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
+  /* ── VN Tết reskin (tl-vn): hand-drawn card art + display-only accents ──
+     Visual layer only — zero game logic. Everything here is gated by the
+     tl-vn root class added in buildUI()/renderGameOver(). Cuarenta has its
+     own builder file and never receives tl-vn, so it is unaffected.
+     All strings are internal constants — innerHTML-safe by construction. */
+  var VN_SKIN = true;
+
+  var VN_BG        = '#F4EAD8';   // card cream (điệp-paper warm stock)
+  var VN_INK       = '#26221E';   // ink keyline / spades / clubs
+  var VN_SUIT_RED  = '#C03A2B';   // hearts / diamonds
+  var VN_DH_RED    = '#B23A2E';   // Đông Hồ stamp red
+  var VN_DH_GREEN  = '#2E6B4F';   // Đông Hồ mat green
+  var VN_GOLD      = '#E8B33C';   // gold leaf (court accents)
+  var VN_FLESH     = '#e9bd92';
+  var VN_SUIT_INK  = { '♥': VN_SUIT_RED, '♦': VN_SUIT_RED, '♠': VN_INK, '♣': VN_INK };
+
+  function vnN(v) { return String(Math.round(v * 100) / 100); }
+
+  // Suit pip shapes, centred on (0,0), ~18 units tall (scaled via vnPip()).
+  var VN_PIP_PATH = {
+    '♥': 'M0 7.4 C-8 0.6 -9.2 -6 -4.8 -8 C-1.8 -9.3 -0.2 -6.6 0 -4.8 C0.2 -6.6 1.8 -9.3 4.8 -8 C9.2 -6 8 0.6 0 7.4 Z',
+    '♦': 'M0 -9 Q4 -4.4 6.2 0 Q4 4.4 0 9 Q-4 4.4 -6.2 0 Q-4 -4.4 0 -9 Z',
+    '♠': 'M0 -8.8 C6.6 -2.4 8.6 2 5.2 5 C2.7 7.1 0.6 5.2 0 3.4 C-0.6 5.2 -2.7 7.1 -5.2 5 C-8.6 2 -6.6 -2.4 0 -8.8 Z M-3.3 9.2 C-1.3 7.4 -0.8 5 0 2.4 C0.8 5 1.3 7.4 3.3 9.2 Z',
+  };
+
+  function vnPip(suit, x, y, s, flip) {
+    var col = VN_SUIT_INK[suit];
+    var jit = ((Math.round(x) * 13 + Math.round(y) * 7) % 5) - 2;  // deterministic hand-drawn tilt
+    var rot = (flip ? 180 : 0) + jit;
+    var body;
+    if (suit === '♣') {
+      body = '<circle cx="0" cy="-4.4" r="4.5" fill="' + col + '"/>'
+           + '<circle cx="-4.3" cy="2.6" r="4.5" fill="' + col + '"/>'
+           + '<circle cx="4.3" cy="2.6" r="4.5" fill="' + col + '"/>'
+           + '<path d="M-3.4 9.4 C-1.4 7.4 -0.9 4.4 0 1.2 C0.9 4.4 1.4 7.4 3.4 9.4 Z" fill="' + col + '"/>';
+    } else {
+      body = '<path d="' + VN_PIP_PATH[suit] + '" fill="' + col + '"/>';
+    }
+    return '<g transform="translate(' + vnN(x) + ' ' + vnN(y) + ') rotate(' + vnN(rot) + ') scale(' + vnN(s) + ')">' + body + '</g>';
+  }
+
+  // Classic pip layouts for 2–10 (viewBox 100×150; pips below y=80 flipped).
+  var VN_PIP_LAYOUT = {
+    2:  [[50, 46, 1.25], [50, 104, 1.25]],
+    3:  [[50, 44, 1.15], [50, 75, 1.15], [50, 106, 1.15]],
+    4:  [[34, 47, 1.1], [66, 47, 1.1], [34, 103, 1.1], [66, 103, 1.1]],
+    5:  [[34, 46, 1.05], [66, 46, 1.05], [50, 75, 1.05], [34, 104, 1.05], [66, 104, 1.05]],
+    6:  [[34, 45, 1], [66, 45, 1], [34, 75, 1], [66, 75, 1], [34, 105, 1], [66, 105, 1]],
+    7:  [[34, 44, 0.95], [66, 44, 0.95], [50, 59, 0.95],
+         [34, 74, 0.95], [66, 74, 0.95], [34, 104, 0.95], [66, 104, 0.95]],
+    8:  [[34, 44, 0.9], [66, 44, 0.9], [50, 59, 0.9],
+         [34, 74, 0.9], [66, 74, 0.9], [50, 90, 0.9], [34, 104, 0.9], [66, 104, 0.9]],
+    9:  [[34, 42, 0.85], [66, 42, 0.85], [34, 64, 0.85], [66, 64, 0.85], [50, 75, 0.85],
+         [34, 86, 0.85], [66, 86, 0.85], [34, 108, 0.85], [66, 108, 0.85]],
+    10: [[34, 42, 0.82], [66, 42, 0.82], [50, 53, 0.82], [34, 64, 0.82], [66, 64, 0.82],
+         [34, 86, 0.82], [66, 86, 0.82], [50, 97, 0.82], [34, 108, 0.82], [66, 108, 0.82]],
+  };
+
+  // Court cards — naive single full-length figures, flat woodblock fills,
+  // thick ink outlines, no gradients. Tết palette: green tunic, stamp-red robes.
+  function vnFaceJ(suit) {       // young page: cap + feather, green tunic
+    return '<path d="M41 35 Q50 26 59 35 L59 38 L41 38 Z" fill="' + VN_DH_RED + '" stroke="' + VN_INK + '" stroke-width="2"/>'
+         + '<path d="M57 30 Q63 23 66 26 Q62 30 58 33 Z" fill="' + VN_DH_GREEN + '" stroke="' + VN_INK + '" stroke-width="1.2"/>'
+         + '<circle cx="50" cy="46" r="8.5" fill="' + VN_FLESH + '" stroke="' + VN_INK + '" stroke-width="2"/>'
+         + '<path d="M47 49 Q50 51.5 53 49" fill="none" stroke="' + VN_INK + '" stroke-width="1.2" stroke-linecap="round"/>'
+         + '<path d="M40 57 L60 57 L65 96 L35 96 Z" fill="' + VN_DH_GREEN + '" stroke="' + VN_INK + '" stroke-width="2"/>'
+         + '<rect x="38.5" y="74" width="23" height="4" fill="' + VN_GOLD + '" stroke="' + VN_INK + '" stroke-width="1"/>'
+         + '<line x1="44" y1="96" x2="43" y2="114" stroke="#6b4520" stroke-width="5"/>'
+         + '<line x1="56" y1="96" x2="57" y2="114" stroke="#6b4520" stroke-width="5"/>'
+         + '<line x1="60" y1="66" x2="70" y2="74" stroke="' + VN_FLESH + '" stroke-width="4" stroke-linecap="round"/>'
+         + vnPip(suit, 72, 80, 0.6);
+  }
+  function vnFaceQ(suit) {       // queen: small crown, stamp-red gown, flower
+    return '<path d="M42 37 L42 30 L46 34 L50 28 L54 34 L58 30 L58 37 Z" fill="' + VN_GOLD + '" stroke="' + VN_INK + '" stroke-width="2"/>'
+         + '<circle cx="50" cy="47" r="8.5" fill="' + VN_FLESH + '" stroke="' + VN_INK + '" stroke-width="2"/>'
+         + '<path d="M42 45 Q39 54 42 60 M58 45 Q61 54 58 60" fill="none" stroke="' + VN_INK + '" stroke-width="1.6"/>'
+         + '<path d="M47 50 Q50 52.5 53 50" fill="none" stroke="' + VN_INK + '" stroke-width="1.2" stroke-linecap="round"/>'
+         + '<path d="M38 59 L62 59 L68 112 L32 112 Z" fill="' + VN_DH_RED + '" stroke="' + VN_INK + '" stroke-width="2"/>'
+         + '<rect x="34" y="103" width="32" height="5" fill="' + VN_GOLD + '" stroke="' + VN_INK + '" stroke-width="1"/>'
+         + '<line x1="40" y1="66" x2="31" y2="59" stroke="' + VN_FLESH + '" stroke-width="4" stroke-linecap="round"/>'
+         + '<line x1="29" y1="62" x2="28" y2="56" stroke="#4a6b3a" stroke-width="2"/>'
+         + '<circle cx="28" cy="52" r="3.4" fill="' + VN_GOLD + '" stroke="' + VN_INK + '" stroke-width="1.2"/>'
+         + '<circle cx="28" cy="52" r="1.3" fill="' + VN_DH_RED + '"/>'
+         + '<line x1="60" y1="66" x2="70" y2="72" stroke="' + VN_FLESH + '" stroke-width="4" stroke-linecap="round"/>'
+         + vnPip(suit, 73, 78, 0.6);
+  }
+  function vnFaceK(suit) {       // bearded king: crown + jewel, robe w/ gold trim
+    return '<path d="M40 38 L40 29 L45 35 L50 27 L55 35 L60 29 L60 38 Z" fill="' + VN_GOLD + '" stroke="' + VN_INK + '" stroke-width="2"/>'
+         + '<circle cx="50" cy="33" r="1.6" fill="' + VN_DH_RED + '"/>'
+         + '<circle cx="50" cy="48" r="8.5" fill="' + VN_FLESH + '" stroke="' + VN_INK + '" stroke-width="2"/>'
+         + '<path d="M43 51 Q50 62 57 51 L56 58 Q50 66 44 58 Z" fill="#ece4d4" stroke="' + VN_INK + '" stroke-width="1.5"/>'
+         + '<path d="M37 62 L63 62 L69 114 L31 114 Z" fill="' + VN_DH_RED + '" stroke="' + VN_INK + '" stroke-width="2"/>'
+         + '<path d="M37 62 L43 114 M63 62 L57 114" fill="none" stroke="' + VN_GOLD + '" stroke-width="2.5" opacity="0.9"/>'
+         + '<rect x="33" y="105" width="34" height="5" fill="' + VN_GOLD + '" stroke="' + VN_INK + '" stroke-width="1"/>'
+         + '<line x1="62" y1="68" x2="72" y2="54" stroke="' + VN_FLESH + '" stroke-width="4" stroke-linecap="round"/>'
+         + vnPip(suit, 74, 47, 0.6);
+  }
+
+  // Ace: one large pip inside a fine lozenge frame.
+  function vnAce(suit) {
+    return '<path d="M50 32 L76 75 L50 118 L24 75 Z" fill="none" stroke="' + VN_SUIT_INK[suit] + '" stroke-width="1.4" opacity="0.3"/>'
+         + vnPip(suit, 50, 75, 2.3);
+  }
+
+  function vnCorner(rank, suit) {
+    var two = rank.length > 1;   // "10" needs a narrower index
+    return '<text class="tl-vn-ix' + (two ? ' tl-vn-ix--10' : '') + '" x="6" y="21" font-size="' + (two ? 13 : 17)
+         + '" font-weight="bold" font-family="Georgia, serif" fill="' + VN_SUIT_INK[suit] + '">' + rank + '</text>'
+         + vnPip(suit, 12, 31, 0.48);
+  }
+
+  function vnCardSVG(rank, suit) {
+    var mid;
+    if (rank === 'J' || rank === 'Q' || rank === 'K') {
+      mid = '<rect x="23" y="27" width="54" height="96" rx="3" fill="none" stroke="' + VN_INK + '" stroke-width="1.3" opacity="0.5"/>'
+          + (rank === 'J' ? vnFaceJ(suit) : (rank === 'Q' ? vnFaceQ(suit) : vnFaceK(suit)));
+    } else if (rank === 'A') {
+      mid = vnAce(suit);
+    } else {
+      var lay = VN_PIP_LAYOUT[+rank], out = '', i;
+      for (i = 0; i < lay.length; i++) out += vnPip(suit, lay[i][0], lay[i][1], lay[i][2], lay[i][1] > 80);
+      mid = out;
+    }
+    return '<svg viewBox="0 0 100 150" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+      + '<rect x="1" y="1" width="98" height="148" rx="9" fill="' + VN_BG + '"/>'
+      + '<rect x="3.5" y="3.5" width="93" height="143" rx="7" fill="none" stroke="' + VN_INK + '" stroke-width="1" opacity="0.25"/>'
+      + vnCorner(rank, suit)
+      + '<g transform="rotate(180 50 75)">' + vnCorner(rank, suit) + '</g>'
+      + mid
+      + '</svg>';
+  }
+
+  // Đông Hồ "Đàn lợn"-style âm-dương pig: flat woodblock shapes, ink keyline,
+  // yin-yang swirl on the flank. Used on card backs + the CHẶT HEO stamp.
+  function vnPig() {
+    return '<g stroke="' + VN_INK + '" stroke-width="1.6" stroke-linejoin="round">'
+      + '<path d="M73 69 q7 -4 5 2 q-2 5 -6 2" fill="none"/>'
+      + '<path d="M38 84 L37 95 L42 95 L42 86 Z M50 87 L50 96 L55 96 L55 87 Z M63 86 L63 95 L68 95 L67 85 Z" fill="' + VN_DH_RED + '"/>'
+      + '<path d="M27 58 L22 49 L33 55 Z" fill="' + VN_DH_RED + '"/>'
+      + '<ellipse cx="53" cy="74" rx="21" ry="13.5" fill="' + VN_DH_RED + '"/>'
+      + '<circle cx="30" cy="67" r="9.5" fill="' + VN_DH_RED + '"/>'
+      + '<ellipse cx="21.5" cy="70" rx="3.6" ry="4.6" fill="' + VN_BG + '"/>'
+      + '<circle cx="21" cy="68.6" r="0.8" fill="' + VN_INK + '" stroke="none"/>'
+      + '<circle cx="21" cy="71.6" r="0.8" fill="' + VN_INK + '" stroke="none"/>'
+      + '<circle cx="30.5" cy="64" r="1.2" fill="' + VN_INK + '" stroke="none"/>'
+      + '<circle cx="55" cy="72" r="7" fill="' + VN_BG + '"/>'
+      + '<path d="M55 65 a7 7 0 0 1 0 14 a3.5 3.5 0 0 1 0 -7 a3.5 3.5 0 0 0 0 -7 Z" fill="' + VN_DH_GREEN + '" stroke="none"/>'
+      + '<circle cx="55" cy="68.5" r="1.1" fill="' + VN_DH_GREEN + '" stroke="none"/>'
+      + '<circle cx="55" cy="75.5" r="1.1" fill="' + VN_BG + '" stroke="none"/>'
+      + '</g>';
+  }
+
+  // Card back: điệp-paper cream ground, thin white border, red frame, pig medallion.
+  function vnBackSVG() {
+    return '<svg viewBox="0 0 100 140" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+      + '<rect x="0.5" y="0.5" width="99" height="139" rx="8" fill="' + VN_BG + '" stroke="#FFFFFF" stroke-width="1"/>'
+      + '<rect x="4" y="4" width="92" height="132" rx="6" fill="none" stroke="#FFFFFF" stroke-width="2"/>'
+      + '<rect x="7.5" y="7.5" width="85" height="125" rx="5" fill="none" stroke="' + VN_DH_RED + '" stroke-width="2"/>'
+      + '<circle cx="50" cy="70" r="35" fill="none" stroke="' + VN_DH_RED + '" stroke-width="1.4" opacity="0.8"/>'
+      + vnPig()
+      + '</svg>';
+  }
+  var VN_BACK_SVG = vnBackSVG();
+
+  function vnBackHTML(sizeCls) {
+    return '<div class="tl-card-back ' + sizeCls + '">' + (VN_SKIN ? VN_BACK_SVG : '') + '</div>';
+  }
+
+  function vnPigStampSVG() {
+    return '<svg class="tl-vn-callout__pig" viewBox="14 44 68 54" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' + vnPig() + '</svg>';
+  }
+
+  // Display-only snapshot: was the last rendered pile a lone 2 ("heo")?
+  // Lets the render path spot "bomb just chopped a 2" without touching logic,
+  // and works identically for local play and synced online state.
+  var vnPrevPileWasHeo = false;
+
   /* ── Rendering ── */
   function render() {
     const el = document.getElementById('game-container');
@@ -488,7 +665,7 @@
       else         { hintText = '✗ Not a valid hand';            hintCls = 'invalid'; }
     }
 
-    return `<div class="tl-game${gameSpeed === 2 ? ' tl-fast' : ''}${twoPlayer ? ' tl-1v1' : ''}">
+    return `<div class="tl-game${VN_SKIN ? ' tl-vn' : ''}${gameSpeed === 2 ? ' tl-fast' : ''}${twoPlayer ? ' tl-1v1' : ''}">
   <div class="tl-status-bar ${statusCls}">${statusInner}</div>
   <div class="tl-table">
     ${zoneTop()}
@@ -507,7 +684,7 @@
     const n      = state.hands[abs].length;
     const active = state.current === abs;
     const show   = Math.min(n, 11);
-    const backs  = Array(show).fill('<div class="tl-card-back tl-card-back--sm"></div>').join('');
+    const backs  = Array(show).fill(vnBackHTML('tl-card-back--sm')).join('');
     return `<div class="tl-zone tl-zone--top">
   <div class="tl-zone__name${active ? ' active' : ''}">${pName(abs)}${active ? ' ●' : ''}</div>
   <div class="tl-opp-cards--top">${backs}</div>
@@ -520,7 +697,7 @@
     const active = state.current === idx;
     const name   = pName(idx);
     const show   = Math.min(n, 6);
-    const backs  = Array(show).fill('<div class="tl-card-back tl-card-back--xs"></div>').join('');
+    const backs  = Array(show).fill(vnBackHTML('tl-card-back--xs')).join('');
     return `<div class="tl-zone tl-zone--${side}">
   <div class="tl-zone__name${active ? ' active' : ''}">${name}${active ? ' ●' : ''}</div>
   <div class="tl-opp-cards--side">${backs}</div>
@@ -560,9 +737,26 @@
       ? `<div class="tl-play-info">by ${pName(state.pileOwner)} · ${TYPE_LABEL[state.pileType.type]}</div>`
       : '';
 
+    // VN display accents — derived purely from already-rendered pile data.
+    // CHẶT HEO: the previously rendered pile was a lone 2 and a bomb
+    // (four-of-a-kind, or 3+ consecutive pairs) just landed on it.
+    const isBomb = hasPile && state.pileType &&
+      (state.pileType.type === 'quad' ||
+       (state.pileType.type === 'seqpair' && state.pileType.len >= 6));
+    const chatHeo = VN_SKIN && justChanged && isBomb && vnPrevPileWasHeo;
+    vnPrevPileWasHeo = hasPile && state.pileType &&
+      state.pileType.type === 'single' && state.pile[0].rank === '2';
+    const heoTag = VN_SKIN && hasPile && state.pile.some(c => c.rank === '2')
+      ? '<span class="tl-vn-heo">heo!</span>'
+      : '';
+    const callout = chatHeo
+      ? `<div class="tl-vn-callout">${vnPigStampSVG()}<div class="tl-vn-callout__text">CHẶT HEO!</div></div>`
+      : '';
+
     return `<div class="tl-center">
-  <div class="tl-play-area${hasPile ? ' has-cards' : ''}">${pileHTML}</div>
+  <div class="tl-play-area${hasPile ? ' has-cards' : ''}">${pileHTML}${heoTag}</div>
   ${info}
+  ${callout}
 </div>`;
   }
 
@@ -619,6 +813,7 @@
   }
 
   function cardInner(c) {
+    if (VN_SKIN) return vnCardSVG(c.rank, c.suit);
     return `<div class="tl-card__corner tl-card__corner--tl"><div class="tl-card__rank">${c.rank}</div><div class="tl-card__suit-s">${c.suit}</div></div><div class="tl-card__center">${c.suit}</div><div class="tl-card__corner tl-card__corner--br"><div class="tl-card__rank">${c.rank}</div><div class="tl-card__suit-s">${c.suit}</div></div>`;
   }
 
@@ -629,10 +824,11 @@
     let btnLabel = 'Play Again';
     if (vsOnline && !isHost) btnLabel = 'Waiting for host…';
 
-    el.innerHTML = `<div class="tl-game">
+    el.innerHTML = `<div class="tl-game${VN_SKIN ? ' tl-vn' : ''}">
   <div class="tl-gameover visible">
     <div class="tl-gameover__icon">${isP ? '🏆' : '🃏'}</div>
     <h2>${isP ? 'Tiến Lên!' : `${pName(w)} Wins!`}</h2>
+    ${VN_SKIN ? '<p class="tl-vn-flavor">Tới rồi!</p>' : ''}
     <p>${isP ? 'You emptied your hand first. Go forward!' : `${pName(w)} played all their cards first.`}</p>
     <button class="tl-btn tl-btn--play" id="tl-new"${vsOnline && !isHost ? ' disabled' : ''}>${btnLabel}</button>
     ${vsOnline ? `<button class="tl-btn tl-btn--ghost" id="tl-leave" style="margin-top:0.5rem">Leave Room</button>` : ''}

@@ -47,6 +47,49 @@
   var canvas, ctx;
   var aiTimeout = null;
 
+  // ── Colour bridge (window.CGTheme) — "oasis bazaar" palette ────────
+  // Light = warm midday teahouse; dark = lamplit evening (dimmer wood,
+  // deeper adobe). Re-read on every theme change, never hardcode in draws.
+  var C = {};
+  function readColors() {
+    var dark = (window.CGTheme && typeof window.CGTheme.getTheme === 'function')
+      ? window.CGTheme.getTheme() === 'dark' : false;
+    C = {
+      // table surround + board
+      backdrop:  dark ? '#2A1D14' : '#3B2A1E',                          // deep adobe
+      bezel:     dark ? '#56351C' : '#6B4226',                          // walnut bezel
+      bezelEdge: dark ? '#3A2312' : '#4A2D18',
+      bezelLine: dark ? 'rgba(242,227,194,0.16)' : 'rgba(242,227,194,0.25)',
+      wood:      dark ? '#B89464' : '#D9B07C',                          // poplar/apricot
+      woodWear:  dark ? 'rgba(74,42,12,0.32)'   : 'rgba(122,69,24,0.28)', // radial wear glaze
+      grain:     dark ? 'rgba(90,56,24,0.30)'   : 'rgba(139,90,46,0.26)',
+      grid:      dark ? 'rgba(74,46,22,0.75)'   : 'rgba(92,58,30,0.70)', // burnt-ink brown
+      dot:       dark ? '#5E3C1E' : '#7A4F28',                          // punched chekich dots
+      dotPunch:  'rgba(0,0,0,0.25)',
+      // P1 (BLACK) — carnelian river pebbles
+      p1:        dark ? '#96351F' : '#A33B2A',
+      p1Hi:      dark ? '#C75E3E' : '#D96A4A',
+      p1Rim:     dark ? '#5E1F12' : '#6E2418',
+      p1Ghost:   dark ? 'rgba(150,53,31,0.50)'  : 'rgba(163,59,42,0.45)',
+      // P2 (WHITE) — teal glazed ceramic discs
+      p2:        dark ? '#2A726E' : '#2E7F7A',
+      p2Hi:      dark ? '#5FB0A7' : '#6FC2B8',
+      p2Rim:     dark ? '#15413E' : '#1A4E4A',
+      p2Ghost:   dark ? 'rgba(42,114,110,0.55)' : 'rgba(46,127,122,0.50)',
+      p2Spark:   'rgba(255,255,255,0.55)',
+      // accents
+      gold:      '#E8A013',                                             // saffron
+      goldSoft:  'rgba(245,201,92,0.55)',
+      ikat:      '#C2185B',                                             // capture flash
+      shadow:    'rgba(0,0,0,0.30)'
+    };
+  }
+
+  // Deterministic per-intersection hash — stable stone jitter, no flicker.
+  function stoneHash(r, c) {
+    return ((r * 31 + c * 17 + 11) * 13) % 100;
+  }
+
   // ── Helpers ────────────────────────────────────────────────────────
   function getOpponent(player) { return player === BLACK ? WHITE : BLACK; }
 
@@ -146,6 +189,29 @@
     });
   }
 
+  // DISPLAY ONLY — which stones belong to the 2x2 square(s) just completed
+  // at (row,col). Pure read of the board, used by the capture flash; the
+  // capture rules themselves live in detectCaptures above and are untouched.
+  function getFangCells(row, col, player) {
+    var cells = [];
+    var seen = {};
+    var offsets = [[0,0],[0,-1],[-1,0],[-1,-1]];
+    offsets.forEach(function(offset) {
+      var r = row + offset[0];
+      var c = col + offset[1];
+      if (r < 0 || r + 1 >= BOARD_SIZE || c < 0 || c + 1 >= BOARD_SIZE) return;
+      var corners = [[r,c],[r,c+1],[r+1,c],[r+1,c+1]];
+      var complete = corners.every(function(k) { return state.board[k[0]][k[1]] === player; });
+      if (complete) {
+        corners.forEach(function(k) {
+          var key = k[0] + ',' + k[1];
+          if (!seen[key]) { seen[key] = true; cells.push({ row: k[0], col: k[1] }); }
+        });
+      }
+    });
+    return cells;
+  }
+
   function removeCaptures(captures) {
     captures.forEach(function(c) {
       var capturedColor = state.board[c.row][c.col];
@@ -219,7 +285,7 @@
 
     if (captures.length > 0) {
       state.animating = true;
-      animateCaptures(captures, function() {
+      animateCaptures(captures, getFangCells(row, col, player), function() {
         removeCaptures(captures);
         state.animating = false;
         if (captures.length >= 4 && window.Achievements) Achievements.checkAction('xf_mass_capture');
@@ -240,19 +306,33 @@
   }
 
   // ── Capture animation ──────────────────────────────────────────────
-  function animateCaptures(captures, callback) {
+  // Ikat-magenta flash: captured stones get a filled pulse, the four
+  // stones of the completed fang get a ring pulse. Display only.
+  function animateCaptures(captures, fangCells, callback) {
     var frame = 0;
     var totalFrames = 18;
     function step() {
       render();
       var alpha = Math.sin((frame / totalFrames) * Math.PI) * 0.75;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = C.ikat;
       captures.forEach(function(c) {
         var xy = getCellXY(c.row, c.col);
-        ctx.fillStyle = 'rgba(180,30,30,' + alpha + ')';
         ctx.beginPath();
         ctx.arc(xy.x, xy.y, state.cellSize * 0.35, 0, Math.PI * 2);
         ctx.fill();
       });
+      ctx.globalAlpha = Math.min(1, alpha + 0.2);
+      ctx.strokeStyle = C.ikat;
+      ctx.lineWidth = 3;
+      fangCells.forEach(function(f) {
+        var xy = getCellXY(f.row, f.col);
+        ctx.beginPath();
+        ctx.arc(xy.x, xy.y, state.cellSize * 0.40, 0, Math.PI * 2);
+        ctx.stroke();
+      });
+      ctx.restore();
       frame++;
       if (frame < totalFrames) requestAnimationFrame(step);
       else callback();
@@ -269,159 +349,143 @@
   }
 
   function renderBoard() {
-    // Background - warm parchment
-    ctx.fillStyle = '#F5EDD6';
+    var boardPx = (BOARD_SIZE - 1) * state.cellSize;
+    var x0 = state.padX, y0 = state.padY;
+    var x1 = x0 + boardPx, y1 = y0 + boardPx;
+    var bezelOut = 32;  // walnut bezel outer reach (PADDING is 40, so it fits)
+    var woodIn   = 22;  // wood surface reach beyond the grid
+
+    // Deep adobe surround
+    ctx.fillStyle = C.backdrop;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Decorative border
-    renderBorder();
+    // Walnut bezel
+    ctx.fillStyle = C.bezel;
+    ctx.fillRect(x0 - bezelOut, y0 - bezelOut, boardPx + 2 * bezelOut, boardPx + 2 * bezelOut);
+    ctx.strokeStyle = C.bezelEdge;
+    ctx.lineWidth = 3;
+    ctx.strokeRect(x0 - bezelOut + 1.5, y0 - bezelOut + 1.5, boardPx + 2 * bezelOut - 3, boardPx + 2 * bezelOut - 3);
 
-    // Grid lines
-    ctx.strokeStyle = '#2C1810';
-    ctx.lineWidth = 1.5;
+    // Worn poplar/apricot tabletop
+    ctx.fillStyle = C.wood;
+    ctx.fillRect(x0 - woodIn, y0 - woodIn, boardPx + 2 * woodIn, boardPx + 2 * woodIn);
+
+    // Subtle radial wear toward the edges (2-stop, transparent centre)
+    var wcx = (x0 + x1) / 2, wcy = (y0 + y1) / 2;
+    var wear = ctx.createRadialGradient(wcx, wcy, boardPx * 0.22, wcx, wcy, boardPx * 0.85);
+    wear.addColorStop(0, 'rgba(0,0,0,0)');
+    wear.addColorStop(1, C.woodWear);
+    ctx.fillStyle = wear;
+    ctx.fillRect(x0 - woodIn, y0 - woodIn, boardPx + 2 * woodIn, boardPx + 2 * woodIn);
+
+    // Thin silk inlay line where bezel meets wood
+    ctx.strokeStyle = C.bezelLine;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x0 - woodIn - 2.5, y0 - woodIn - 2.5, boardPx + 2 * woodIn + 5, boardPx + 2 * woodIn + 5);
+
+    // 3 faint long grain streaks (deterministic gentle waves)
+    ctx.strokeStyle = C.grain;
+    var wx0 = x0 - woodIn, wx1 = x1 + woodIn;
+    var woodH = boardPx + 2 * woodIn;
+    var k, gy, seg, segW, amp;
+    for (k = 0; k < 3; k++) {
+      gy = (y0 - woodIn) + woodH * (0.20 + k * 0.30) + (k === 1 ? 6 : -4);
+      amp = 2 + k;
+      segW = (wx1 - wx0 - 8) / 4;
+      ctx.lineWidth = 1 + k * 0.3;
+      ctx.beginPath();
+      ctx.moveTo(wx0 + 4, gy);
+      for (seg = 0; seg < 4; seg++) {
+        ctx.quadraticCurveTo(
+          wx0 + 4 + segW * seg + segW / 2,
+          gy + (seg % 2 === 0 ? amp : -amp),
+          wx0 + 4 + segW * (seg + 1),
+          gy
+        );
+      }
+      ctx.stroke();
+    }
+
+    // Hand-inked grid lines — burnt ink, width varies deterministically
+    ctx.strokeStyle = C.grid;
     var gridEnd = (BOARD_SIZE - 1) * state.cellSize;
     for (var i = 0; i < BOARD_SIZE; i++) {
       var startX = state.padX + i * state.cellSize;
       var startY = state.padY + i * state.cellSize;
 
       // Vertical line
+      ctx.lineWidth = 1.2 + ((i * 37) % 7) * 0.1;       // 1.2 - 1.8
       ctx.beginPath();
       ctx.moveTo(startX, state.padY);
       ctx.lineTo(startX, state.padY + gridEnd);
       ctx.stroke();
 
       // Horizontal line
+      ctx.lineWidth = 1.2 + ((i * 37 + 5) % 7) * 0.1;
       ctx.beginPath();
       ctx.moveTo(state.padX, startY);
       ctx.lineTo(state.padX + gridEnd, startY);
       ctx.stroke();
     }
 
-    // Intersection dots
-    ctx.fillStyle = '#2C1810';
+    // Punched chekich dots at every intersection
     for (var r = 0; r < BOARD_SIZE; r++) {
       for (var c = 0; c < BOARD_SIZE; c++) {
         var xy = getCellXY(r, c);
+        ctx.fillStyle = C.dot;
         ctx.beginPath();
-        ctx.arc(xy.x, xy.y, 2.5, 0, Math.PI * 2);
+        ctx.arc(xy.x, xy.y, 2.6, 0, Math.PI * 2);
+        ctx.fill();
+        // tiny offset pit for a punched-stamp feel
+        ctx.fillStyle = C.dotPunch;
+        ctx.beginPath();
+        ctx.arc(xy.x + 0.5, xy.y + 0.6, 1.1, 0, Math.PI * 2);
         ctx.fill();
       }
     }
-  }
 
-  function renderBorder() {
-    // Xinjiang stepped-diamond geometric border (terracotta on parchment)
-    var boardPx = (BOARD_SIZE - 1) * state.cellSize;
-    var x0 = state.padX;
-    var y0 = state.padY;
-    var x1 = state.padX + boardPx;
-    var y1 = state.padY + boardPx;
-    var margin = 18;
-
-    ctx.save();
-    ctx.strokeStyle = '#8B4513';
-    ctx.fillStyle   = '#8B4513';
-    ctx.lineWidth   = 1.5;
-
-    // Outer border frame
-    ctx.strokeRect(x0 - margin, y0 - margin, boardPx + 2 * margin, boardPx + 2 * margin);
-
-    // Inner border line (double-line effect)
-    ctx.strokeRect(x0 - margin + 4, y0 - margin + 4, boardPx + 2 * margin - 8, boardPx + 2 * margin - 8);
-
-    // Diamond motifs on each edge (4 per edge)
-    var diamondSize = 6;
-    var i;
-
-    // Top edge
-    for (i = 0; i < 4; i++) {
-      var cx = x0 + (i + 0.5) * (boardPx / 4);
-      var cy = y0 - margin + 2;
+    // Chekich dot rosette around the centre intersection
+    var mid = Math.floor(BOARD_SIZE / 2);
+    var mxy = getCellXY(mid, mid);
+    var rosR = state.cellSize * 0.16;
+    ctx.fillStyle = C.dot;
+    for (k = 0; k < 8; k++) {
+      var a = (k / 8) * Math.PI * 2 + Math.PI / 8;
       ctx.beginPath();
-      ctx.moveTo(cx,               cy - diamondSize);
-      ctx.lineTo(cx + diamondSize, cy);
-      ctx.lineTo(cx,               cy + diamondSize);
-      ctx.lineTo(cx - diamondSize, cy);
-      ctx.closePath();
+      ctx.arc(mxy.x + Math.cos(a) * rosR, mxy.y + Math.sin(a) * rosR, 1.8, 0, Math.PI * 2);
       ctx.fill();
     }
-    // Bottom edge
-    for (i = 0; i < 4; i++) {
-      cx = x0 + (i + 0.5) * (boardPx / 4);
-      cy = y1 + margin - 2;
-      ctx.beginPath();
-      ctx.moveTo(cx,               cy - diamondSize);
-      ctx.lineTo(cx + diamondSize, cy);
-      ctx.lineTo(cx,               cy + diamondSize);
-      ctx.lineTo(cx - diamondSize, cy);
-      ctx.closePath();
-      ctx.fill();
-    }
-    // Left edge
-    for (i = 0; i < 4; i++) {
-      cx = x0 - margin + 2;
-      cy = y0 + (i + 0.5) * (boardPx / 4);
-      ctx.beginPath();
-      ctx.moveTo(cx - diamondSize, cy);
-      ctx.lineTo(cx,               cy + diamondSize);
-      ctx.lineTo(cx + diamondSize, cy);
-      ctx.lineTo(cx,               cy - diamondSize);
-      ctx.closePath();
-      ctx.fill();
-    }
-    // Right edge
-    for (i = 0; i < 4; i++) {
-      cx = x1 + margin - 2;
-      cy = y0 + (i + 0.5) * (boardPx / 4);
-      ctx.beginPath();
-      ctx.moveTo(cx - diamondSize, cy);
-      ctx.lineTo(cx,               cy + diamondSize);
-      ctx.lineTo(cx + diamondSize, cy);
-      ctx.lineTo(cx,               cy - diamondSize);
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    // Corner diamond accents
-    var corners = [
-      [x0 - margin, y0 - margin],
-      [x1 + margin, y0 - margin],
-      [x0 - margin, y1 + margin],
-      [x1 + margin, y1 + margin]
-    ];
-    corners.forEach(function(corner) {
-      ctx.beginPath();
-      ctx.moveTo(corner[0],               corner[1] - diamondSize - 2);
-      ctx.lineTo(corner[0] + diamondSize + 2, corner[1]);
-      ctx.lineTo(corner[0],               corner[1] + diamondSize + 2);
-      ctx.lineTo(corner[0] - diamondSize - 2, corner[1]);
-      ctx.closePath();
-      ctx.fill();
-    });
-
-    ctx.restore();
   }
 
   function renderHighlights() {
-    // Last placed piece highlight
+    // Last placed piece highlight — saffron ring with a soft glow
     if (state.selectedCell) {
       var xy = getCellXY(state.selectedCell.row, state.selectedCell.col);
-      ctx.strokeStyle = '#D4A017';
-      ctx.lineWidth = 3;
+      ctx.strokeStyle = C.goldSoft;
+      ctx.lineWidth = 6;
       ctx.beginPath();
-      ctx.arc(xy.x, xy.y, state.cellSize * 0.38, 0, Math.PI * 2);
+      ctx.arc(xy.x, xy.y, state.cellSize * 0.40, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.strokeStyle = C.gold;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(xy.x, xy.y, state.cellSize * 0.40, 0, Math.PI * 2);
       ctx.stroke();
     }
 
-    // Hover ghost piece
+    // Hover ghost piece + saffron legal-spot ring
     if (state.hoverCell && !state.gameOver && !state.animating) {
       if (!state.aiEnabled || state.currentTurn === state.humanColor) {
         var hxy = getCellXY(state.hoverCell.row, state.hoverCell.col);
-        var ghostColor = state.currentTurn === BLACK ? 'rgba(26,16,8,0.35)' : 'rgba(240,234,214,0.55)';
-        ctx.fillStyle = ghostColor;
+        ctx.fillStyle = state.currentTurn === BLACK ? C.p1Ghost : C.p2Ghost;
         ctx.beginPath();
         ctx.arc(hxy.x, hxy.y, state.cellSize * 0.32, 0, Math.PI * 2);
         ctx.fill();
+        ctx.strokeStyle = C.gold;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(hxy.x, hxy.y, state.cellSize * 0.38, 0, Math.PI * 2);
+        ctx.stroke();
       }
     }
   }
@@ -447,9 +511,9 @@
       if (r < 0 || r + 1 >= BOARD_SIZE || c < 0 || c + 1 >= BOARD_SIZE) return;
       var corners = [state.board[r][c], state.board[r][c+1], state.board[r+1][c], state.board[r+1][c+1]];
       if (corners.every(function(p) { return p === player; })) {
-        // Draw gold square outline
+        // Draw saffron square outline
         var topLeft = getCellXY(r, c);
-        ctx.strokeStyle = '#D4A017';
+        ctx.strokeStyle = C.gold;
         ctx.lineWidth = 2.5;
         ctx.setLineDash([4, 3]);
         ctx.strokeRect(
@@ -472,37 +536,60 @@
         if (piece === EMPTY) continue;
         var xy = getCellXY(r, c);
         var radius = state.cellSize * 0.32;
-
-        // Shadow
-        ctx.beginPath();
-        ctx.arc(xy.x + 1.5, xy.y + 2, radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(0,0,0,0.3)';
-        ctx.fill();
-
-        // Body
-        ctx.beginPath();
-        ctx.arc(xy.x, xy.y, radius, 0, Math.PI * 2);
+        var h = stoneHash(r, c);
 
         if (piece === BLACK) {
-          ctx.fillStyle = '#1A1008';
-          ctx.fill();
-          // Subtle highlight
-          ctx.fillStyle = 'rgba(80,50,20,0.5)';
+          // Carnelian river pebble — matte, slightly irregular.
+          // Per-stone radius + rotation jitter from the deterministic hash.
+          var pr   = radius * (0.96 + (h % 8) * 0.01);          // 0.96 - 1.03
+          var rot  = ((h % 12) / 12) * Math.PI;                 // squash axis
+          var hiA  = -2.35 + ((h % 5) - 2) * 0.12;              // highlight angle
+
+          // Shadow
           ctx.beginPath();
-          ctx.arc(xy.x - radius * 0.25, xy.y - radius * 0.25, radius * 0.45, 0, Math.PI * 2);
+          ctx.ellipse(xy.x + 1.5, xy.y + 2, pr, pr * 0.93, rot, 0, Math.PI * 2);
+          ctx.fillStyle = C.shadow;
+          ctx.fill();
+
+          // Body — subtly squashed ellipse, pebble-like
+          ctx.beginPath();
+          ctx.ellipse(xy.x, xy.y, pr, pr * 0.93, rot, 0, Math.PI * 2);
+          ctx.fillStyle = C.p1;
+          ctx.fill();
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = C.p1Rim;
+          ctx.stroke();
+
+          // Single matte highlight, upper-left biased
+          ctx.beginPath();
+          ctx.arc(xy.x + Math.cos(hiA) * pr * 0.38, xy.y + Math.sin(hiA) * pr * 0.38, pr * 0.30, 0, Math.PI * 2);
+          ctx.fillStyle = C.p1Hi;
           ctx.fill();
         } else {
-          ctx.fillStyle = '#F0EAD6';
+          // Teal glazed ceramic disc — smoother and glossier than P1.
+          // Shadow
+          ctx.beginPath();
+          ctx.arc(xy.x + 1.5, xy.y + 2, radius, 0, Math.PI * 2);
+          ctx.fillStyle = C.shadow;
           ctx.fill();
-          ctx.strokeStyle = '#2C1810';
-          ctx.lineWidth = 1.5;
+
+          // Body — perfect circle with a dark pooled-glaze rim
           ctx.beginPath();
           ctx.arc(xy.x, xy.y, radius, 0, Math.PI * 2);
+          ctx.fillStyle = C.p2;
+          ctx.fill();
+          ctx.lineWidth = 2.5;
+          ctx.strokeStyle = C.p2Rim;
           ctx.stroke();
-          // Subtle highlight
-          ctx.fillStyle = 'rgba(255,255,255,0.6)';
+
+          // Glaze hot-spot + small sharp gloss spark
           ctx.beginPath();
-          ctx.arc(xy.x - radius * 0.25, xy.y - radius * 0.25, radius * 0.35, 0, Math.PI * 2);
+          ctx.ellipse(xy.x - radius * 0.32, xy.y - radius * 0.34, radius * 0.34, radius * 0.22, -0.6, 0, Math.PI * 2);
+          ctx.fillStyle = C.p2Hi;
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(xy.x - radius * 0.44, xy.y - radius * 0.46, radius * 0.09, 0, Math.PI * 2);
+          ctx.fillStyle = C.p2Spark;
           ctx.fill();
         }
       }
@@ -728,6 +815,15 @@
   var _origThemeChange = window.CGTheme.onThemeChange;
   window.CGTheme.onThemeChange = function() {
     if (_origThemeChange) _origThemeChange();
+    readColors();
+    render();
+  };
+  // theme.js fires CGTheme.onchange(theme) — chain it (senet house pattern)
+  // so the canvas palette re-reads and the board repaints on toggle.
+  var _origOnChange = window.CGTheme.onchange;
+  window.CGTheme.onchange = function(t) {
+    if (typeof _origOnChange === 'function') { try { _origOnChange(t); } catch (e) {} }
+    readColors();
     render();
   };
 
@@ -736,6 +832,8 @@
     canvas = document.getElementById('xf-board');
     if (!canvas) return;
     ctx = canvas.getContext('2d');
+
+    readColors();
 
     // Fixed internal resolution; CSS handles display scaling
     canvas.width  = 560;

@@ -1,31 +1,81 @@
 /* ═══════════════════════════════════════════════════════════════
    xinjiang-fangqi.css
-   Xinjiang Fangqi — Silk Road earth-tone board game styles
+   Xinjiang Fangqi — Silk-Road oasis teahouse table
    Namespace: xf-
-   Uses CSS variables so both light and dark themes work correctly.
+
+   Theming: the game container is a fixed warm-dark "teahouse table"
+   surround in BOTH themes, so its chrome uses local --xf-* custom
+   properties (silk-cream on dark wood — always legible). The values
+   are tuned per theme via [data-theme="dark"] overrides below, the
+   same override mechanism the rest of the site uses.
 ═══════════════════════════════════════════════════════════════ */
 
-/* ── Game container layout ─────────────────────────────────── */
+/* ── Game container layout + oasis-bazaar palette ──────────────── */
 .xf-game-container {
+  /* local palette (light theme = warm midday teahouse) */
+  --xf-adobe-1: #3B2A1E;          /* deep adobe backdrop, top */
+  --xf-adobe-2: #2A1D14;          /* deep adobe backdrop, bottom */
+  --xf-card-bg: #4A3424;          /* warm dark wood cards */
+  --xf-card-border: #6B4226;      /* walnut */
+  --xf-silk: #F2E3C2;             /* undyed-silk text */
+  --xf-silk-muted: #C9A87A;       /* muted silk */
+  --xf-saffron: #E8A013;
+  --xf-carnelian: #A33B2A;
+  --xf-carnelian-hi: #D96A4A;
+  --xf-carnelian-rim: #6E2418;
+  --xf-teal: #2E7F7A;
+  --xf-teal-rim: #1A4E4A;
+
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   justify-content: center;
   gap: var(--space-6, 1.5rem);
-  padding: var(--space-4, 1rem) 0;
+  padding: calc(14px + var(--space-4, 1rem)) var(--space-4, 1rem) var(--space-4, 1rem);
   position: relative;
+  background: linear-gradient(180deg, var(--xf-adobe-1), var(--xf-adobe-2));
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-/* ── Board wrap ────────────────────────────────────────────── */
+/* Lamplit-evening values for dark theme */
+[data-theme="dark"] .xf-game-container {
+  --xf-adobe-1: #2E2014;
+  --xf-adobe-2: #1F140C;
+  --xf-card-bg: #3C2A1C;
+  --xf-card-border: #553318;
+  --xf-silk: #EDDDB9;
+  --xf-silk-muted: #BC9C70;
+}
+
+/* ── Atlas/etles ikat accent band (single, top of container) ───── */
+/* Data-URI SVG: desaturated vertical stripes with feathered sawtooth
+   edges — magenta / lake blue / saffron / violet on silk cream.      */
+.xf-game-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 14px;
+  pointer-events: none;
+  background-repeat: repeat-x;
+  background-size: 96px 14px;
+  opacity: 0.9;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='96'%20height='14'%20viewBox='0%200%2096%2014'%3E%3Cdefs%3E%3Cfilter%20id='f'%20x='-10%25'%20y='-30%25'%20width='120%25'%20height='160%25'%3E%3CfeGaussianBlur%20stdDeviation='0.5'/%3E%3C/filter%3E%3C/defs%3E%3Crect%20width='96'%20height='14'%20fill='%23EDE0C4'/%3E%3Cg%20filter='url(%23f)'%20opacity='0.85'%3E%3Cpolygon%20fill='%23B14066'%20points='2,0%206,3.5%202,7%206,10.5%202,14%2018,14%2014,10.5%2018,7%2014,3.5%2018,0'/%3E%3Cpolygon%20fill='%2338689A'%20points='22,0%2026,3.5%2022,7%2026,10.5%2022,14%2032,14%2028,10.5%2032,7%2028,3.5%2032,0'/%3E%3Cpolygon%20fill='%23D5A23B'%20points='36,0%2040,3.5%2036,7%2040,10.5%2036,14%2056,14%2052,10.5%2056,7%2052,3.5%2056,0'/%3E%3Cpolygon%20fill='%23604B82'%20points='60,0%2064,3.5%2060,7%2064,10.5%2060,14%2070,14%2066,10.5%2070,7%2066,3.5%2070,0'/%3E%3Cpolygon%20fill='%23B14066'%20points='74,0%2078,3.5%2074,7%2078,10.5%2074,14%2082,14%2078,10.5%2082,7%2078,3.5%2082,0'/%3E%3Cpolygon%20fill='%2338689A'%20points='86,0%2090,3.5%2086,7%2090,10.5%2086,14%2094,14%2090,10.5%2094,7%2090,3.5%2094,0'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ── Board wrap ────────────────────────────────────────────────── */
 .xf-board-wrap {
   position: relative;
   flex-shrink: 0;
-  background: #1A0A04;
+  background: #241409;
+  border: 1px solid rgba(242, 227, 194, 0.10);
   border-radius: 8px;
   padding: 12px;
   box-shadow:
-    0 4px 24px rgba(0,0,0,0.45),
-    inset 0 1px 0 rgba(255,200,100,0.08);
+    0 4px 24px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 200, 100, 0.08);
 }
 
 #xf-board {
@@ -38,7 +88,7 @@
   touch-action: none;
 }
 
-/* ── Sidebar ───────────────────────────────────────────────── */
+/* ── Sidebar ───────────────────────────────────────────────────── */
 .xf-sidebar {
   flex: 1;
   min-width: 180px;
@@ -49,15 +99,16 @@
   padding-top: 4px;
 }
 
-/* ── Turn indicator ────────────────────────────────────────── */
+/* ── Turn indicator ────────────────────────────────────────────── */
 .xf-turn-wrap {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 10px 14px;
-  background: var(--color-surface, #fff);
-  border: 1px solid var(--color-border, #ddd);
+  background: var(--xf-card-bg);
+  border: 1px solid var(--xf-card-border);
   border-radius: 8px;
+  box-shadow: inset 0 1px 0 rgba(242, 227, 194, 0.06);
 }
 
 .xf-turn-disc {
@@ -68,30 +119,33 @@
   transition: background 0.25s;
 }
 
+/* "Black" plays carnelian river pebbles */
 .xf-turn-disc[data-color="black"] {
-  background: #1A1008;
-  border: 2px solid #5a3010;
-  box-shadow: inset 0 1px 3px rgba(255,255,255,0.12);
+  background: var(--xf-carnelian);
+  border: 2px solid var(--xf-carnelian-rim);
+  box-shadow: inset 2px 2px 3px rgba(255, 200, 160, 0.35);
 }
 
+/* "White" plays teal glazed ceramic discs */
 .xf-turn-disc[data-color="white"] {
-  background: #F0EAD6;
-  border: 2px solid #2C1810;
+  background: var(--xf-teal);
+  border: 2px solid var(--xf-teal-rim);
+  box-shadow: inset 2px 2px 3px rgba(220, 255, 248, 0.40);
 }
 
 .xf-turn-disc[data-color="draw"] {
-  background: linear-gradient(135deg, #1A1008 50%, #F0EAD6 50%);
-  border: 2px solid #8B4513;
+  background: linear-gradient(135deg, var(--xf-carnelian) 50%, var(--xf-teal) 50%);
+  border: 2px solid var(--xf-card-border);
 }
 
 .xf-turn-label {
   font-weight: 600;
   font-size: 0.95rem;
-  color: var(--color-text);
+  color: var(--xf-silk);
   transition: color 0.25s;
 }
 
-/* ── Piece counters ────────────────────────────────────────── */
+/* ── Piece counters ────────────────────────────────────────────── */
 .xf-counters {
   display: flex;
   flex-direction: column;
@@ -101,16 +155,17 @@
 .xf-counter {
   padding: 10px 14px;
   border-radius: 8px;
-  border: 1px solid var(--color-border, #ddd);
-  background: var(--color-surface, #fff);
+  border: 1px solid var(--xf-card-border);
+  background: var(--xf-card-bg);
+  box-shadow: inset 0 1px 0 rgba(242, 227, 194, 0.06);
 }
 
 .xf-counter--black {
-  border-left: 3px solid #5a3010;
+  border-left: 3px solid var(--xf-carnelian);
 }
 
 .xf-counter--white {
-  border-left: 3px solid #a09070;
+  border-left: 3px solid var(--xf-teal);
 }
 
 .xf-counter__header {
@@ -128,19 +183,21 @@
 }
 
 .xf-counter__disc--black {
-  background: #1A1008;
-  border: 1.5px solid #5a3010;
+  background: var(--xf-carnelian);
+  border: 1.5px solid var(--xf-carnelian-rim);
+  box-shadow: inset 1.5px 1.5px 2px rgba(255, 200, 160, 0.35);
 }
 
 .xf-counter__disc--white {
-  background: #F0EAD6;
-  border: 1.5px solid #2C1810;
+  background: var(--xf-teal);
+  border: 1.5px solid var(--xf-teal-rim);
+  box-shadow: inset 1.5px 1.5px 2px rgba(220, 255, 248, 0.40);
 }
 
 .xf-counter__name {
   font-weight: 600;
   font-size: 0.88rem;
-  color: var(--color-text);
+  color: var(--xf-silk);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -160,7 +217,7 @@
 
 .xf-counter__row dt {
   font-size: 0.8rem;
-  color: var(--color-text-muted);
+  color: var(--xf-silk-muted);
   font-weight: 400;
 }
 
@@ -168,50 +225,73 @@
   margin: 0;
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--color-accent-gold, #C89B3C);
+  color: var(--xf-saffron);
   min-width: 24px;
   text-align: right;
 }
 
-/* ── Move counter ──────────────────────────────────────────── */
+/* ── Move counter ──────────────────────────────────────────────── */
 .xf-moves {
   margin: 0;
   font-size: 0.8rem;
-  color: var(--color-text-muted);
+  color: var(--xf-silk-muted);
   text-align: center;
 }
 
-/* ── AI toggle ─────────────────────────────────────────────── */
+/* ── AI toggle ─────────────────────────────────────────────────── */
 .xf-ai-label {
   display: flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
   font-size: 0.88rem;
-  color: var(--color-text-muted);
+  color: var(--xf-silk-muted);
   user-select: none;
 }
 
 .xf-ai-label input[type="checkbox"] {
-  accent-color: var(--color-accent-gold, #C89B3C);
+  accent-color: var(--xf-saffron);
   width: 16px;
   height: 16px;
   cursor: pointer;
 }
 
-/* ── Button row ────────────────────────────────────────────── */
+/* ── Button row ────────────────────────────────────────────────── */
 .xf-btn-row {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-/* ── Game over overlay ─────────────────────────────────────── */
+/* Buttons sit on the fixed dark adobe surround in both themes, so
+   re-anchor the shared variants to the local silk/saffron palette. */
+.xf-game-container .btn-secondary {
+  color: var(--xf-saffron);
+  border-color: var(--xf-saffron);
+}
+
+.xf-game-container .btn-secondary:hover {
+  background-color: var(--xf-saffron);
+  color: #2A1D14;
+}
+
+.xf-game-container .btn-ghost {
+  color: var(--xf-silk);
+  border-color: var(--xf-card-border);
+}
+
+.xf-game-container .btn-ghost:hover {
+  background-color: rgba(242, 227, 194, 0.08);
+  border-color: var(--xf-silk-muted);
+  color: var(--xf-silk);
+}
+
+/* ── Game over overlay ─────────────────────────────────────────── */
 .xf-overlay {
   position: absolute;
   inset: 0;
   border-radius: 8px;
-  background: rgba(10, 5, 2, 0.88);
+  background: rgba(26, 13, 7, 0.88);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -228,8 +308,8 @@
   margin: 0;
   font-size: clamp(1.6rem, 4vw, 2.4rem);
   font-weight: 700;
-  color: #D4A017;
-  text-shadow: 0 2px 12px rgba(212, 160, 23, 0.5);
+  color: #E8A013;
+  text-shadow: 0 2px 12px rgba(232, 160, 19, 0.5);
   font-family: 'Playfair Display', serif;
   letter-spacing: 0.02em;
 }
@@ -237,25 +317,28 @@
 .xf-overlay__sub {
   margin: 0;
   font-size: 0.9rem;
-  color: #c8b080;
+  color: #C9A87A;
   text-align: center;
   max-width: 280px;
 }
 
-/* ── Fullscreen adjustments ────────────────────────────────── */
+/* ── Fullscreen adjustments ────────────────────────────────────── */
 .fs-mode .xf-game-container {
   justify-content: center;
+  border-radius: 0;
 }
 
 .fs-mode .xf-sidebar {
   max-width: 200px;
 }
 
-/* ── Mobile: stack canvas above sidebar ────────────────────── */
+/* ── Mobile: stack canvas above sidebar ────────────────────────── */
 @media (max-width: 600px) {
   .xf-game-container {
     flex-direction: column;
     align-items: stretch;
+    padding-left: var(--space-3, 0.75rem);
+    padding-right: var(--space-3, 0.75rem);
   }
 
   .xf-board-wrap {

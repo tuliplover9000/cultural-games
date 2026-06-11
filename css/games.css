@@ -2090,6 +2090,30 @@
   box-shadow: 0 8px 28px rgba(36,26,18,0.35);
 }
 
+/* Dark theme: the full-brightness amatl cream glared against the dark site.
+   Deepen the page-side surround (and flip chrome text light), then re-pin the
+   true codex colors INSIDE the board and dim the whole mat slightly — the
+   fret border + glyph data-URIs hardcode their colors, so a filter is the
+   only way to dim them uniformly. */
+html[data-theme="dark"] .pt-game-wrap {
+  --pt-amatl: #2b2114;
+  --pt-ink:   #E2D7BE;
+  --pt-bone:  #ddd3bd;
+  border-color: rgba(0,0,0,0.6);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.5);
+}
+html[data-theme="dark"] .pt-board {
+  --pt-amatl: #EAE0C8;   /* board interior keeps codex values */
+  --pt-ink:   #241A12;
+  --pt-bone:  #F2EDE0;
+  filter: brightness(0.84) saturate(0.93);
+}
+html[data-theme="dark"] .pt-dice-row:not(:empty) {
+  background: rgba(234,224,200,0.10);
+  border-radius: 10px;
+  padding: 6px 12px;
+}
+
 /* -- Board: petate reed mat + xicalcoliuhqui step-fret border band -------- */
 .pt-board {
   display: grid;
@@ -2218,23 +2242,37 @@
 }
 
 /* Valid (selectable) cells: warm yellow-ochre glow/outline */
+/* Valid targets: ochre alone vanished against the straw mat — use a filled
+   ochre cell with a bone inner ring + red-ochre outer ring and a slight lift
+   so it reads at a glance on any background. */
 .pt-cell--valid {
   cursor: pointer;
-  background: rgba(217,164,65,0.2);
-  box-shadow: 0 0 0 2px var(--pt-ochre), 0 0 12px 2px rgba(217,164,65,0.5);
-  z-index: 1;
+  background: rgba(217,164,65,0.55);
+  box-shadow:
+    inset 0 0 0 2px var(--pt-bone),
+    0 0 0 3px var(--pt-ochre-rd),
+    0 3px 9px rgba(36,26,18,0.45);
+  transform: scale(1.07);
+  z-index: 2;
 }
 
-/* Landing preview: pulsing ochre - only on hover */
+/* Landing preview: pulsing red-ochre + bone — only on hover */
 @keyframes pt-pulse-preview {
-  0%, 100% { box-shadow: 0 0 0 2px rgba(217,164,65,0.9), 0 0 10px rgba(217,164,65,0.45); }
-  50%      { box-shadow: 0 0 0 4px var(--pt-ochre), 0 0 18px rgba(217,164,65,0.8); }
+  0%, 100% {
+    box-shadow: inset 0 0 0 2px var(--pt-bone), 0 0 0 3px var(--pt-ochre-rd), 0 0 6px 2px rgba(181,83,42,0.55);
+    transform: scale(1.05);
+  }
+  50% {
+    box-shadow: inset 0 0 0 3px var(--pt-bone), 0 0 0 5px var(--pt-ochre-rd), 0 0 16px 5px rgba(181,83,42,0.85);
+    transform: scale(1.11);
+  }
 }
 
 .pt-cell--preview {
   animation: pt-pulse-preview 0.75s ease infinite;
-  background: rgba(217,164,65,0.35) !important;
-  border-color: var(--pt-ochre) !important;
+  background: rgba(217,164,65,0.8) !important;
+  border-color: var(--pt-ochre-rd) !important;
+  z-index: 3;
 }
 
 /* Start cell while selectable: its idle pulse would mask the valid glow,
@@ -5604,7 +5642,9 @@
     repeating-linear-gradient(90deg,
       rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 0) 84px,
       rgba(24, 12, 4, 0.30) 84px, rgba(24, 12, 4, 0.30) 87px),
-    repeating-linear-gradient(87deg,
+    /* 90deg, NOT 87deg: a tilted 1px-period repeating gradient over a large
+       area stalls software rasterization (screenshot capture / some GPUs). */
+    repeating-linear-gradient(90deg,
       rgba(255, 228, 180, 0.03) 0px, rgba(255, 228, 180, 0.03) 1px,
       rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 6px),
     linear-gradient(180deg, #6A4528 0%, #5C3A21 42%, #4A2C16 100%);
@@ -5811,4 +5851,255 @@
   .cu-mini { width: 17px; height: 24px; }
   .cu-score-sub { display: none; }
   .cu-callout { font-size: clamp(1.5rem, 9vw, 2.2rem); }
+}
+
+
+/* =============================================================================
+   TIẾN LÊN VN reskin — tl-vn scope
+   Tết chiếu-mat scene: the whole game panel becomes a chiếu hoa — golden woven
+   sedge mat with a stamped red medallion border — sitting on dark lacquer.
+   Hand-drawn SVG bài tây faces + Đông Hồ pig card backs are built in
+   tien-len.js, gated by the tl-vn root class. EVERY selector below contains
+   .tl-vn (keyframes carry a tl-vn- prefix). Cuarenta's root (.tl-game.cu-game)
+   never receives .tl-vn, so its shared-.tl- reskin is untouched.
+============================================================================= */
+
+/* ── The chiếu hoa: fine sedge weave + stamped red border, lacquer edge ──
+   Backgrounds + inset shadows only — zero layout impact. The inset lacquer
+   ring paints OVER the background, so the band strips are positioned 7px in. */
+.tl-vn.tl-game {
+  background-image:
+    repeating-linear-gradient(90deg,
+      #B23A2E 0px,  #B23A2E 6px,  #E8B33C 6px,  #E8B33C 8px,
+      #B23A2E 8px,  #B23A2E 18px, rgba(244, 234, 216, 0.85) 18px,
+      rgba(244, 234, 216, 0.85) 20px, #B23A2E 20px, #B23A2E 26px),
+    repeating-linear-gradient(90deg,
+      #B23A2E 0px,  #B23A2E 6px,  #E8B33C 6px,  #E8B33C 8px,
+      #B23A2E 8px,  #B23A2E 18px, rgba(244, 234, 216, 0.85) 18px,
+      rgba(244, 234, 216, 0.85) 20px, #B23A2E 20px, #B23A2E 26px),
+    repeating-linear-gradient(0deg,
+      #B23A2E 0px,  #B23A2E 6px,  #E8B33C 6px,  #E8B33C 8px,
+      #B23A2E 8px,  #B23A2E 18px, rgba(244, 234, 216, 0.85) 18px,
+      rgba(244, 234, 216, 0.85) 20px, #B23A2E 20px, #B23A2E 26px),
+    repeating-linear-gradient(0deg,
+      #B23A2E 0px,  #B23A2E 6px,  #E8B33C 6px,  #E8B33C 8px,
+      #B23A2E 8px,  #B23A2E 18px, rgba(244, 234, 216, 0.85) 18px,
+      rgba(244, 234, 216, 0.85) 20px, #B23A2E 20px, #B23A2E 26px),
+    repeating-linear-gradient(90deg,
+      rgba(0, 0, 0, 0.045) 0px, rgba(0, 0, 0, 0.045) 11px,
+      rgba(255, 244, 214, 0.05) 11px, rgba(255, 244, 214, 0.05) 22px),
+    repeating-linear-gradient(180deg,
+      rgba(168, 133, 63, 0.4) 0px, rgba(168, 133, 63, 0.4) 1px,
+      rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 4px),
+    linear-gradient(180deg, #CFAB63 0%, #C9A45C 45%, #BB9651 100%);
+  background-size:
+    100% 9px, 100% 9px, 9px 100%, 9px 100%,
+    auto, auto, auto;
+  background-position:
+    left 0px top 7px, left 0px bottom 7px, left 7px top 0px, right 7px top 0px,
+    0 0, 0 0, 0 0;
+  background-repeat:
+    no-repeat, no-repeat, no-repeat, no-repeat,
+    repeat, repeat, repeat;
+  box-shadow: inset 0 0 0 7px #1C1410;
+}
+
+/* ── Chrome: lacquer panels + cinnabar/gold accents on the mat ── */
+.tl-vn .tl-status-bar {
+  background: rgba(28, 20, 16, 0.82);
+  border-color: rgba(232, 179, 60, 0.32);
+  color: #EFE3CC;
+}
+.tl-vn .tl-status-bar.your-turn {
+  background: rgba(158, 27, 27, 0.88);
+  border-color: rgba(242, 193, 78, 0.65);
+  color: #F2C14E;
+}
+
+.tl-vn .tl-zone__name { color: rgba(74, 50, 22, 0.78); }
+.tl-vn .tl-zone__name.active {
+  color: #F2C14E;
+  background: #1C1410;
+  padding: 1px 8px;
+  border-radius: var(--radius-full);
+  box-shadow: 0 1px 3px rgba(28, 20, 16, 0.4);
+}
+.tl-vn .tl-zone__count { color: rgba(74, 50, 22, 0.6); }
+
+.tl-vn .tl-play-area {
+  position: relative;
+  background: rgba(94, 62, 22, 0.16);
+  border-color: rgba(158, 27, 27, 0.28);
+}
+.tl-vn .tl-play-area.has-cards { border-color: rgba(158, 27, 27, 0.45); }
+.tl-vn .tl-play-area-empty     { color: rgba(74, 50, 22, 0.5); }
+.tl-vn .tl-play-info           { color: rgba(74, 50, 22, 0.66); }
+
+.tl-vn .tl-hand {
+  background: rgba(94, 62, 22, 0.16);
+  border-color: rgba(158, 27, 27, 0.22);
+}
+
+.tl-vn .tl-hint         { color: rgba(74, 50, 22, 0.66); }
+.tl-vn .tl-hint.valid   { color: #1F5B3F; }
+.tl-vn .tl-hint.invalid { color: #8E1A12; }
+
+.tl-vn .tl-btn--play {
+  background: #9E1B1B;
+  border-color: #C0392B;
+}
+.tl-vn .tl-btn--play:not(:disabled):hover {
+  background: #C0392B;
+  border-color: #E8B33C;
+}
+.tl-vn .tl-btn--pass {
+  color: #3A2614;
+  border-color: rgba(58, 38, 20, 0.5);
+}
+.tl-vn .tl-btn--pass:not(:disabled):hover {
+  background: rgba(28, 20, 16, 0.1);
+  border-color: rgba(58, 38, 20, 0.85);
+}
+.tl-vn .tl-btn--ghost {
+  background: rgba(28, 20, 16, 0.08);
+  color: rgba(58, 38, 20, 0.85);
+  border-color: rgba(58, 38, 20, 0.32);
+}
+.tl-vn .tl-btn--ghost:hover {
+  background: rgba(28, 20, 16, 0.16);
+  border-color: rgba(58, 38, 20, 0.6);
+  color: #2C1D10;
+}
+.tl-vn .tl-speed-btn.active {
+  background: #1C1410;
+  border-color: #E8B33C;
+  color: #F2C14E;
+}
+
+.tl-vn .tl-log {
+  background: rgba(28, 20, 16, 0.82);
+  border-color: rgba(232, 179, 60, 0.18);
+}
+.tl-vn .tl-log__title { color: #B9A584; }
+.tl-vn .tl-log__entry {
+  color: rgba(185, 165, 132, 0.9);
+  border-bottom-color: rgba(239, 227, 204, 0.07);
+}
+.tl-vn .tl-log__entry.you { color: #F2C14E; }
+.tl-vn .tl-log__entry.sys { color: rgba(185, 165, 132, 0.66); }
+
+/* ── Cards: hand-drawn SVG faces on warm cream stock ── */
+.tl-vn .tl-card {
+  background: #F4EAD8;
+  border-color: rgba(38, 34, 30, 0.4);
+  box-shadow: 0 3px 8px rgba(28, 16, 8, 0.45);
+  overflow: hidden;
+}
+.tl-vn .tl-card svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.tl-vn .tl-card.selected {
+  border-color: #9E1B1B;
+  box-shadow: 0 8px 20px rgba(158, 27, 27, 0.5);
+}
+.tl-vn .tl-card.clickable:hover:not(.selected) {
+  border-color: #C0392B;
+  box-shadow: 0 6px 14px rgba(158, 27, 27, 0.32);
+}
+
+/* ── Card backs: điệp-paper cream + Đông Hồ pig medallion (SVG injected) ── */
+.tl-vn .tl-card-back {
+  background: #EFE3CC;
+  border: 1px solid rgba(178, 58, 46, 0.45);
+  box-shadow: 0 2px 4px rgba(28, 16, 8, 0.45);
+  overflow: hidden;
+}
+.tl-vn .tl-card-back svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── "heo!" tag when a 2 sits on the pile ── */
+.tl-vn .tl-vn-heo {
+  position: absolute;
+  top: 3px;
+  right: 8px;
+  font-size: 10px;
+  font-style: italic;
+  font-weight: 700;
+  color: #9E1B1B;
+  background: rgba(244, 234, 216, 0.92);
+  border: 1px solid rgba(158, 27, 27, 0.4);
+  border-radius: var(--radius-full);
+  padding: 0 7px;
+  pointer-events: none;
+  animation: tl-vn-heo-pop 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes tl-vn-heo-pop {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── CHẶT HEO! callout: pig stamp + gold shout over the table centre ── */
+.tl-vn .tl-center { position: relative; }
+.tl-vn .tl-vn-callout {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+  z-index: 6;
+  animation: tl-vn-shout 1.25s ease-out both;
+}
+.tl-vn .tl-vn-callout__pig {
+  width: 52px;
+  height: 42px;
+  filter: drop-shadow(0 3px 6px rgba(28, 16, 8, 0.55));
+}
+.tl-vn .tl-vn-callout__text {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 6vw, 3rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  color: #F2C14E;
+  text-shadow:
+    0 2px 0 #9E1B1B,
+    0 4px 0 rgba(74, 12, 8, 0.6),
+    0 8px 24px rgba(0, 0, 0, 0.55);
+}
+@keyframes tl-vn-shout {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.4) rotate(-6deg); }
+  16%  { opacity: 1; transform: translate(-50%, -50%) scale(1.12) rotate(2deg); }
+  28%  { transform: translate(-50%, -50%) scale(1); }
+  82%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.04); }
+}
+
+/* ── Game over: gold headline + Tết flavor line ── */
+.tl-vn .tl-gameover h2 { color: #F2C14E; }
+.tl-vn .tl-gameover p  { color: #B9A584; }
+.tl-vn .tl-vn-flavor {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: #EFE3CC;
+  margin-bottom: var(--space-2);
+}
+
+/* ── Mobile: keep SVG indices legible on 38px-wide cards ── */
+@media (max-width: 600px) {
+  .tl-vn .tl-card svg .tl-vn-ix     { font-size: 21px; }
+  .tl-vn .tl-card svg .tl-vn-ix--10 { font-size: 15px; }
+  .tl-vn .tl-vn-callout__pig  { width: 40px; height: 32px; }
+  .tl-vn .tl-vn-callout__text { font-size: clamp(1.4rem, 8.5vw, 2rem); }
 }
