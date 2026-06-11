@@ -43,16 +43,17 @@
   <script src="../../shared/orientation-lock.js"></script>
 
   <style>
-    /* ── Cuarenta — Spanish suit card colors (reuses .tl-card base) ── */
-    .cu-card--oros    { color: #9a6e00; }
-    .cu-card--copas   { color: #c81414; }
-    .cu-card--espadas { color: #1a4a8a; }
-    .cu-card--bastos  { color: #2a6a2a; }
+    /* ── Cuarenta — French-deck suit colors (SVG faces self-color; these keep
+           any inherited text in suit color) ── */
+    .cu-card--oros    { color: #C03A2B; }   /* diamonds */
+    .cu-card--copas   { color: #C03A2B; }   /* hearts */
+    .cu-card--espadas { color: #26221E; }   /* spades */
+    .cu-card--bastos  { color: #26221E; }   /* clubs */
 
-    /* Highlighted table cards (capturable) */
+    /* Highlighted table cards (capturable) — warm lamplight gold */
     .tl-card.cu-capture-hl {
-      outline: 2px solid #4aff7a;
-      box-shadow: 0 0 10px rgba(74,255,74,0.5);
+      outline: 2px solid #FFD75E;
+      box-shadow: 0 0 12px rgba(255, 205, 90, 0.6);
     }
 
     /* Table area: allow wrapping for many cards */
@@ -99,7 +100,7 @@
 
     /* Flash message in status bar */
     .tl-status-bar.cu-flash {
-      color: #4aff7a;
+      color: #ffd75e;
       font-weight: 600;
       animation: cu-flash-in 600ms ease both;
     }
@@ -188,8 +189,8 @@
         </summary>
         <div class="accordion__body">
           <p>
-            Cuarenta uses a 40-card Spanish deck (suits: Coins ◉, Cups ♥, Swords ♠, Clubs ♣;
-            ranks: A, 2–7, J, Kn, K — ranks 8 and 9 are excluded).
+            Cuarenta uses a 40-card deck — an ordinary poker deck (♥ ♦ ♣ ♠) with the
+            8s, 9s and 10s removed (ranks: A, 2–7, J, Q, K).
             First player to reach <strong>40 points</strong> wins.
           </p>
           <ol>
@@ -197,7 +198,7 @@
             <li><strong>Your turn:</strong> Click a card in your hand to select it, then click <strong>Play Card</strong> (or click the table area). Green highlights show which table cards you'd capture.</li>
             <li><strong>Captures:</strong>
               <ul>
-                <li><strong>Sequence:</strong> if your card + 2 or more consecutive table cards form a run of 3+, you capture them all. Rank order: A–2–3–4–5–6–7–J–Kn–K (7 and J are adjacent — ranks 8/9 don't exist).</li>
+                <li><strong>Sequence:</strong> if your card + 2 or more consecutive table cards form a run of 3+, you capture them all. Rank order: A–2–3–4–5–6–7–J–Q–K (7 and J are adjacent — the 8s, 9s and 10s aren't in play).</li>
                 <li><strong>Pair:</strong> if your card matches the rank of any table card(s), you capture all matching cards.</li>
                 <li>Sequences take priority over pairs.</li>
               </ul>
@@ -208,8 +209,8 @@
             <li><strong>Scoring per round:</strong>
               <ul>
                 <li>Each Ace (A) captured: 1 pt (max 4)</li>
-                <li>7 of Coins (7◉): 1 pt</li>
-                <li>Jack of Coins (J◉): 1 pt</li>
+                <li>7 of Diamonds (7♦): 1 pt</li>
+                <li>Jack of Diamonds (J♦): 1 pt</li>
                 <li>Each table clear: 1 pt</li>
                 <li>Most cards captured: 1 pt (tie = 0)</li>
               </ul>
@@ -235,12 +236,15 @@
             Spanish cards.
           </p>
           <p>
-            The game is played with a baraja española (Spanish-suited deck), a colonial
-            inheritance that arrived with conquistadors in the 16th century and was thoroughly
-            adopted into Andean culture. Over four centuries the Ecuadorian variant evolved
-            its own rules — particularly the Caída mechanic and the 40-point scoring
-            target — creating a game that feels distinctly local even as it shares ancestry
-            with Spanish games like Brisca and Scopa.
+            The game is played with a cheap poker deck stripped of its 8s, 9s and 10s —
+            and those removed cards do double duty as the scorekeeper's tools: a face-up
+            card on the table is a <em>tanto</em> worth 2 points, and five tantos are
+            traded in for a face-down card, the <em>perro</em> ("dog"), worth 10. Card
+            play itself is a colonial inheritance that arrived in the 16th century and was
+            thoroughly adopted into Andean culture; over the centuries the Ecuadorian
+            variant evolved its own rules — particularly the Caída mechanic and the
+            40-point target — creating a game that feels distinctly local even as it
+            shares ancestry with Spanish games like Brisca and Scopa.
           </p>
           <p>
             Cuarenta is serious business: national tournaments draw crowds, and skilled

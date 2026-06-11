@@ -156,10 +156,43 @@
     elBoard.innerHTML = html;
   }
 
+  // Bean dice art - codex style: flat fills, thick ink outlines (no gradients)
+  var BEAN_INK  = '#241A12';   // outline black-brown
+  var BEAN_FILL = '#1C1410';   // near-black patol bean
+  var BEAN_PIT  = '#EDE6D2';   // rough off-white carved pit
+
+  function beanSVG(marked) {
+    var s = '<svg viewBox="0 0 52 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+            '<path d="M27 5 C19 3 8 7 7 16 C6 24 14 29 25 29 C37 29 46 24 46 16 ' +
+            'C46 9 38 4 32 5 C31 7 29 7 27 5 Z" fill="' + BEAN_FILL +
+            '" stroke="#000000" stroke-width="2"/>';
+    if (marked) {
+      // marked face up: single rough carved pit
+      s += '<path d="M20 12 C24 9 32 10 33 15 C34 20 28 23 23 22 C18 21 17 15 20 12 Z" fill="' +
+           BEAN_PIT + '" stroke="' + BEAN_INK + '" stroke-width="1.2"/>';
+    } else {
+      // plain side: faint seam line only
+      s += '<path d="M16 20 C22 23 32 23 38 19" fill="none" stroke="#000000" stroke-width="1.5" opacity="0.5"/>';
+    }
+    return s + '</svg>';
+  }
+
+  // Scatter animation bookkeeping: only animate a FRESH roll (rollBeans()
+  // creates a new rollDetail array each throw), and only within its first
+  // 450ms, so re-renders during piece movement don't re-trigger it.
+  var lastRollRef = null;
+  var lastRollAt  = 0;
+
   function renderDice() {
-    if (!state.rollDetail.length) { elDiceRow.innerHTML = ''; return; }
+    if (!state.rollDetail.length) { elDiceRow.innerHTML = ''; lastRollRef = null; return; }
+    if (state.rollDetail !== lastRollRef) {
+      lastRollRef = state.rollDetail;
+      lastRollAt  = Date.now();
+    }
+    var rolling = (Date.now() - lastRollAt) < 450;
     var beans = state.rollDetail.map(function (m) {
-      return '<div class="pt-bean' + (m ? ' pt-bean--marked' : '') + '">' + (m ? '●' : '○') + '</div>';
+      return '<div class="pt-bean' + (m ? ' pt-bean--marked' : '') +
+             (rolling ? ' pt-bean--rolling' : '') + '">' + beanSVG(m) + '</div>';
     }).join('');
     elDiceRow.innerHTML = beans + (state.roll > 0
       ? '<span class="pt-roll-total">Move: ' + state.roll + '</span>'
@@ -177,9 +210,9 @@
     var pDone = state.pieces[PLAYER].filter(function (p) { return p === TRACK_LENGTH; }).length;
     var aDone = state.pieces[AI].filter(function (p) { return p === TRACK_LENGTH; }).length;
     elScore.innerHTML =
-      '<span><span class="pt-score__label" style="color:#3a9abf">' + p1Name() + '</span> - ' +
+      '<span><span class="pt-score__label" style="color:#9E2B25">' + p1Name() + '</span> - ' +
         pDone + '/6 done &middot; ' + state.coins[PLAYER] + ' coins</span>' +
-      '<span><span class="pt-score__label" style="color:#d45a20">' + p2Name() + '</span> - ' +
+      '<span><span class="pt-score__label" style="color:#3D7F81">' + p2Name() + '</span> - ' +
         aDone + '/6 done &middot; ' + state.coins[AI] + ' coins</span>';
   }
 
