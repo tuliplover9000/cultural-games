@@ -67,7 +67,7 @@
     };
     render();
     elRollBtn.disabled = false;
-    setStatus(p1Name() + ' - roll the sticks!');
+    setStatus(p1Name() + ' - throw the corn!');
   }
 
   // ── Dice ──────────────────────────────────────────────────────────────
@@ -150,7 +150,7 @@
         myStack.prisoners++;
         // Remove enemy stack from board
         foeStacks.splice(i, 1);
-        addLog(playerName(who) + ' captures ' + playerName(foe) + '\'s piece!');
+        addLog(playerName(who) + ' grabs ' + playerName(foe) + '\'s load!');
         return;
       }
     }
@@ -178,7 +178,7 @@
         state.offBoard[foe] += stack.prisoners;   // release prisoners back to foe
         state.stacks[who].splice(stackIdx, 1);
         state.captured[who]++;
-        addLog(playerName(who) + ' exits a piece! (' + state.captured[who] + '/' + PIECES + ')');
+        addLog(playerName(who) + ' brings a stick home! (' + state.captured[who] + '/' + PIECES + ')');
         render();
         callback();
         return;
@@ -225,7 +225,7 @@
     if (window.Auth && Auth.isLoggedIn())
       Auth.recordResult('puluc', winner === PLAYER ? 'win' : 'loss');
     elRollBtn.disabled = true;
-    setStatus('🎉 ' + playerName(winner) + ' wins! All ' + PIECES + ' pieces escaped.');
+    setStatus('🎉 ' + playerName(winner) + ' wins! All ' + PIECES + ' sticks reached the field.');
     addLog('─── ' + playerName(winner) + ' wins! ───');
     renderScore();
     render();
@@ -252,8 +252,8 @@
     } else {
       elRollBtn.disabled = false;
       var msg = mode === 'vs-human'
-        ? playerName(next) + ' - roll the sticks!'
-        : 'Your turn - roll the sticks!';
+        ? playerName(next) + ' - throw the corn!'
+        : 'Your turn - throw the corn!';
       setStatus(msg);
       render();
     }
@@ -267,7 +267,7 @@
     state.phase = 'moving';
     var roll  = rollSticks();
     renderDice();
-    addLog(p2Name() + ' rolls ' + roll);
+    addLog(p2Name() + ' throws ' + roll);
 
     var moves = getValidMoves(AI, roll);
     if (moves.length === 0) {
@@ -337,7 +337,7 @@
     }).join('');
     elDiceRow.innerHTML =
       '<div class="pu-sticks">' + stickHtml + '</div>' +
-      '<div class="pu-roll-total">Roll: <strong>' + state.roll + '</strong></div>';
+      '<div class="pu-roll-total">Throw: <strong>' + state.roll + '</strong></div>';
   }
 
   function renderTrack() {
@@ -424,8 +424,8 @@
 
   function renderScore() {
     elScore.innerHTML =
-      '<span>' + p1Name() + ': ' + state.captured[PLAYER] + '/' + PIECES + ' exited</span>' +
-      '<span>' + p2Name() + ': ' + state.captured[AI]     + '/' + PIECES + ' exited</span>';
+      '<span>' + p1Name() + ': ' + state.captured[PLAYER] + '/' + PIECES + ' home</span>' +
+      '<span>' + p2Name() + ': ' + state.captured[AI]     + '/' + PIECES + ' home</span>';
   }
 
   function render() {
@@ -442,7 +442,7 @@
     var curTurn = state.turn;
     var roll    = rollSticks();
     renderDice();
-    addLog(playerName(curTurn) + ' rolls ' + roll);
+    addLog(playerName(curTurn) + ' throws ' + roll);
 
     var moves = getValidMoves(curTurn, roll);
     if (moves.length === 0) {
@@ -460,7 +460,7 @@
 
     // Auto-move if only one option
     if (moves.length === 1) {
-      setStatus(playerName(curTurn) + ' rolled ' + roll + ' - moving automatically…');
+      setStatus(playerName(curTurn) + ' threw ' + roll + ' - moving automatically…');
       setTimeout(function () {
         state._validMoves = null;
         state.phase       = 'moving';
@@ -471,9 +471,9 @@
 
     var hasEnter = moves.some(function (m) { return m.type === 'enter'; });
     var hint = hasEnter
-      ? 'Click your entry zone or a highlighted piece.'
-      : 'Click a highlighted piece to move.';
-    setStatus(playerName(curTurn) + ' rolled ' + roll + ' - ' + hint);
+      ? 'Click your entry zone or a glowing stick.'
+      : 'Click a glowing stick to move.';
+    setStatus(playerName(curTurn) + ' threw ' + roll + ' - ' + hint);
   }
 
   // ── Track click handler ───────────────────────────────────────────────
@@ -599,14 +599,14 @@ if (window.CGTutorial) {
   CGTutorial.register('puluc', [
     {
       target:   '#pu-track',
-      title:    'The Puluc Track',
-      body:     'This is the race track. Your pieces (dark) and the AI\'s pieces (light) battle up and down it. Capture opponent pieces by landing on them and escort them to your end.',
+      title:    'The Road (Bej)',
+      body:     'The track is a strip of swept clay divided by corn cobs. Your yellow maize sticks race right; the dark sticks race left. Land on an enemy stick to capture it and carry it as a prisoner.',
       position: 'bottom',
     },
     {
       target:   '#pu-roll-btn',
-      title:    'Roll the Sticks',
-      body:     'Click Roll to throw the corn-kernel dice. The result determines how many spaces your active piece moves this turn.',
+      title:    'Throw the Corn',
+      body:     'Click Throw the Corn to toss the four corn-kernel dice. Kernels landing charcoal-eye up determine how many spaces your stick moves this turn.',
       position: 'top',
     },
     {
@@ -618,7 +618,7 @@ if (window.CGTutorial) {
     {
       target:   '#pu-score',
       title:    'Score Tracker',
-      body:     'Each time you escort captured prisoners off the track you gain a point. The first to the target score wins the match.',
+      body:     'A stick that runs off the far end of the road comes home to the field (kol), releasing any prisoners it carried. Bring all 5 sticks home to win.',
       position: 'bottom',
     },
     {

@@ -2619,35 +2619,63 @@ html[data-theme="dark"] .pt-dice-row:not(:empty) {
   .pt-score > span { min-width: 140px; font-size: 0.8rem; }
 }
 
-/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
-   PULUC Ã¢â‚¬â€ Maya / Mesoamerica
+/* =============================================================================
+   PULUC - Q'eqchi' Maya, Guatemala
    Prefix: pu-
-   Theme:  deep forest green Ã‚Â· jade Ã‚Â· raw linen
-Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
+   Reskin: corn laid on a firelit swept clay floor at night (Culin 1907,
+   Verbeeck 1998). There is NO board object - the track is bare ground with
+   corn-cob dividers, the pieces are split sticks, and the dice are four
+   corn kernels with a charcoal-burned "eye" on one face.
+   Palette: night hut #2A201A | indigo jaspe #1E2A45 / ikat #C9CFDB |
+            firelit clay #7A4E33 -> #4A2E1E | cob kernels #EFE6CE on pith
+            #B98A5C, husk #D9BC8A | yellow-maize stick #E8B83A / #B8860F |
+            blue-black stick #4A3C5C / #6B5B85 | ember #E8923A / #F5B45E |
+            red maize #A33B2A | text #F4EFE6 / #C0C4CC
+============================================================================= */
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Design tokens Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Design tokens ---------------------------------------------------------- */
 .pu-game-wrap {
-  --pu-bg:          #16270d;
-  --pu-board-frame: #0c1a06;
-  --pu-space:       #233f17;
-  --pu-space-alt:   #1e3813;
-  --pu-border:      rgba(120, 185, 70, 0.2);
-  --pu-player:      #f0e0a0;
-  --pu-ai:          #9b2c2c;
-  --pu-selected:    #ffe066;
-  --pu-stick:       #5a3e18;
-  --pu-stick-1:     #ddb84a;
-  --pu-gold:        #c8a050;
-  --pu-gold-light:  #f0d080;
-  --pu-gold-dim:    rgba(200, 160, 80, 0.55);
-  --pu-text:        #cdc08a;
+  --pu-night:     #2A201A;
+  --pu-indigo:    #1E2A45;
+  --pu-clay:      #7A4E33;
+  --pu-clay-mid:  #5E3B27;
+  --pu-clay-edge: #4A2E1E;
+  --pu-maize:     #E8B83A;
+  --pu-maize-dk:  #B8860F;
+  --pu-maize-hi:  #F6D87E;
+  --pu-bark:     #4A3C5C;
+  --pu-bark-dk:  #322A42;
+  --pu-bark-hi:  #6B5B85;
+  --pu-ember:    #E8923A;
+  --pu-ember-hi: #F5B45E;
+  --pu-danger:   #A33B2A;
+  --pu-charcoal: #2B2622;
+  --pu-text:     #F4EFE6;
+  --pu-text-dim: #C0C4CC;
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Outer wrap Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* Light theme: keep the night scene but lift the backdrop and the clay pool
+   a step so it sits comfortably on the light page (reverse of Patolli's
+   dark-theme var-override pattern). */
+html[data-theme="light"] .pu-game-wrap {
+  --pu-night:     #42332A;
+  --pu-clay:      #8A5C3E;
+  --pu-clay-mid:  #6E4830;
+  --pu-clay-edge: #573825;
+}
+
+/* -- Outer wrap: the swept floor of the hut at night ------------------------- */
 .pu-game-wrap {
-  background: var(--pu-bg);
+  position: relative;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 40%,
+      rgba(232,146,58,0.09) 0%, rgba(232,146,58,0) 70%),
+    repeating-linear-gradient(112deg,
+      rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 2px,
+      rgba(0,0,0,0)    2px, rgba(0,0,0,0)    9px),
+    var(--pu-night);
   border-radius: 16px;
-  padding: 1.5rem;
+  padding: 2.1rem 1.5rem 1.5rem;   /* extra top room for the jaspe band */
   display: flex;
   flex-direction: column;
   align-items: stretch;   /* let children fill the full width */
@@ -2656,9 +2684,23 @@ html[data-theme="dark"] .pt-dice-row:not(:empty) {
   font-family: var(--font-body, 'Inter', sans-serif);
   width: 100%;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Track outer shell (column: board + entry row) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* One narrow indigo jaspe (ikat) textile band along the top */
+.pu-game-wrap::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 14px;
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='14'><rect width='64' height='14' fill='%231E2A45'/><g fill='%23C9CFDB' opacity='0.5'><rect x='4' y='3' width='7' height='1.5' rx='0.7'/><rect x='14' y='8' width='5' height='1.4' rx='0.7'/><rect x='25' y='4' width='8' height='1.5' rx='0.7'/><rect x='38' y='9' width='6' height='1.4' rx='0.7'/><rect x='49' y='3' width='7' height='1.5' rx='0.7'/><rect x='58' y='7' width='5' height='1.4' rx='0.7'/><rect x='9' y='11' width='4' height='1.3' rx='0.6'/><rect x='33' y='11' width='4' height='1.3' rx='0.6'/><rect x='20' y='1' width='4' height='1.3' rx='0.6'/><rect x='44' y='1' width='4' height='1.3' rx='0.6'/></g></svg>") repeat-x left top / 64px 14px;
+  border-bottom: 2px solid rgba(0,0,0,0.35);
+  pointer-events: none;
+}
+
+/* -- Track outer shell (column: board strip + entry row) --------------------- */
 .pu-track {
   display: flex;
   flex-direction: column;
@@ -2666,120 +2708,163 @@ html[data-theme="dark"] .pt-dice-row:not(:empty) {
   width: 100%;
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Board strip Ã¢â‚¬â€ the 11 cells Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- The firelight pool: bare clay ground, feathered into the dark ------------ */
 .pu-board {
   display: flex;
   gap: 4px;
-  background: var(--pu-board-frame);
-  border: 2px solid rgba(100, 160, 55, 0.28);
-  border-radius: 12px;
-  padding: 8px;
+  background: radial-gradient(ellipse 92% 150% at 50% 50%,
+    var(--pu-clay) 0%, var(--pu-clay-mid) 50%,
+    var(--pu-clay-edge) 76%, rgba(42,32,26,0) 100%);
+  border: none;
+  border-radius: 24px;
+  padding: 12px 10px 8px;
   width: 100%;
   box-sizing: border-box;
-  /* subtle inner glow to suggest carved wood */
-  box-shadow: inset 0 2px 12px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.35);
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Individual track spaces Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Track spaces: swept-earth patches, no boxes ------------------------------ */
 .pu-space {
   flex: 1;
   min-width: 0;           /* allow shrinking below content size */
   height: 6rem;
-  background: var(--pu-space);
-  border: 1px solid rgba(90, 145, 45, 0.18);
-  border-radius: 6px;
+  background: radial-gradient(ellipse 85% 58% at 50% 62%,
+    rgba(0,0,0,0.16) 0%, rgba(0,0,0,0.05) 62%, rgba(0,0,0,0) 100%);
+  border: none;
+  border-radius: 12px;
   position: relative;
   display: flex;
   flex-direction: column-reverse;  /* pieces stack from bottom upward */
   align-items: center;
   justify-content: flex-start;
   padding: 4px 2px 18px;
-  gap: 3px;
+  gap: 0;                          /* layers overlap via margins instead */
   box-sizing: border-box;
-  /* inset shadow gives a "carved pit" feel */
-  box-shadow: inset 0 2px 5px rgba(0,0,0,0.45);
   transition: background 0.12s;
 }
 
-.pu-space:nth-child(even) { background: var(--pu-space-alt); }
+.pu-space:nth-child(even) {
+  background: radial-gradient(ellipse 85% 58% at 50% 62%,
+    rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.03) 62%, rgba(0,0,0,0) 100%);
+}
+
+/* Corn-cob dividers laid crosswise in the gaps between spaces */
+.pu-space + .pu-space::before {
+  content: '';
+  position: absolute;
+  left: -2px;             /* centre of the 4px flex gap */
+  top: 50%;
+  width: 14px;
+  height: 74%;
+  transform: translate(-50%, -50%) rotate(-2deg);
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 72'><path d='M9 56 C5 62 4 68 7 72 L9 65 L11 72 C14 68 13 62 9 56 Z' fill='%23D9BC8A'/><rect x='3.5' y='2' width='11' height='58' rx='5.5' fill='%23B98A5C'/><line x1='6.2' y1='6' x2='6.2' y2='56' stroke='%23EFE6CE' stroke-width='2.6' stroke-dasharray='2.8 1.8' stroke-linecap='round'/><line x1='9' y1='4.5' x2='9' y2='57.5' stroke='%23F6EFDC' stroke-width='2.8' stroke-dasharray='2.8 1.8' stroke-dashoffset='2.3' stroke-linecap='round'/><line x1='11.8' y1='6' x2='11.8' y2='56' stroke='%23EFE6CE' stroke-width='2.6' stroke-dasharray='2.8 1.8' stroke-linecap='round'/></svg>") no-repeat center / contain;
+  filter: drop-shadow(2px 3px 2px rgba(0,0,0,0.45));
+  pointer-events: none;
+  z-index: 0;
+}
+
+.pu-space:nth-child(even)::before {
+  transform: translate(-50%, -50%) rotate(2.5deg);
+}
 
 /* Small space number at the bottom */
 .pu-space__num {
   position: absolute;
-  bottom: 3px;
+  bottom: 4px;
   left: 0;
   right: 0;
   text-align: center;
   font-size: 8px;
   font-weight: 700;
-  color: rgba(140, 200, 90, 0.28);
+  color: rgba(245, 180, 94, 0.32);
   letter-spacing: 0.02em;
   pointer-events: none;
   user-select: none;
 }
 
-/* First and last spaces Ã¢â‚¬â€ entry/exit accent */
-.pu-space[data-pos="0"]  { border-color: rgba(200,240,120,0.25); }
-.pu-space[data-pos="10"] { border-color: rgba(200,100,80,0.25); }
+/* Ends of the road: faint ember wash on entry, red-maize wash on exit */
+.pu-space[data-pos="0"]  { box-shadow: inset 0 0 14px rgba(245,180,94,0.14); }
+.pu-space[data-pos="10"] { box-shadow: inset 0 0 14px rgba(163,59,42,0.22); }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Pieces Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Pieces: split sticks (oblong, slightly irregular - NOT tokens) ----------- */
 .pu-piece {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
+  width: 1.3rem;
+  height: 2.3rem;
+  border-radius: 0.62rem 0.55rem 0.6rem 0.66rem / 0.5rem 0.46rem 0.52rem 0.48rem;
   flex-shrink: 0;
   position: relative;
   z-index: 1;
-  transition: transform 0.12s, box-shadow 0.12s;
+  box-shadow: 0 2px 3px rgba(0,0,0,0.55);   /* thin shadow under each layer */
+  transition: box-shadow 0.12s;
 }
 
+/* lengthwise split line down the stick face */
+.pu-piece::after {
+  content: '';
+  position: absolute;
+  left: 46%;
+  top: 9%;
+  bottom: 11%;
+  width: 1.5px;
+  border-radius: 1px;
+  background: rgba(0,0,0,0.2);
+}
+
+/* hand-cut irregularity: alternate lean up the pile */
+.pu-space .pu-piece:nth-child(odd)  { transform: rotate(-3deg); }
+.pu-space .pu-piece:nth-child(even) { transform: rotate(2.5deg) translateX(2px); }
+
+/* prisoner-carrying: each layer overlaps the one beneath - height at a glance */
+.pu-space .pu-piece + .pu-piece { margin-bottom: -1.5rem; }
+
 .pu-piece--player {
-  background: radial-gradient(circle at 35% 30%, #fff8d8 0%, #e8d080 45%, #b08830 100%);
-  border: 2px solid rgba(200, 160, 50, 0.75);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.55), inset 0 1px 2px rgba(255,255,200,0.3);
+  background: linear-gradient(105deg,
+    var(--pu-maize-hi) 0%, var(--pu-maize) 38%,
+    var(--pu-maize) 58%, var(--pu-maize-dk) 100%);
+  border: 1px solid rgba(122, 82, 10, 0.85);
 }
 
 .pu-piece--ai {
-  background: radial-gradient(circle at 35% 30%, #d04040 0%, #8b1c1c 50%, #4a0a0a 100%);
-  border: 2px solid rgba(160, 50, 50, 0.75);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.55), inset 0 1px 2px rgba(255,150,150,0.15);
+  background: linear-gradient(105deg,
+    var(--pu-bark-hi) 0%, var(--pu-bark) 42%,
+    var(--pu-bark) 60%, var(--pu-bark-dk) 100%);
+  border: 1px solid rgba(26, 20, 38, 0.9);
 }
+.pu-piece--ai::after { background: rgba(255,255,255,0.14); }
 
-/* Prisoner Ã¢â‚¬â€ smaller, dimmer, shown underneath lead piece */
+/* Prisoner - the carried load under the lead stick */
 .pu-piece--prisoner {
-  width: 1.45rem;
-  height: 1.45rem;
-  opacity: 0.48;
+  height: 2.05rem;
+  opacity: 0.85;
   z-index: 0;
 }
 
 /* Waiting (off-board, not yet entered) */
 .pu-piece--waiting {
-  width: 1.55rem;
-  height: 1.55rem;
+  width: 1rem;
+  height: 1.7rem;
   opacity: 0.72;
 }
 
-/* Scored (permanently exited) */
+/* Scored (home in the field) */
 .pu-piece--scored {
-  width: 1.55rem;
-  height: 1.55rem;
-  opacity: 0.28;
+  width: 1rem;
+  height: 1.7rem;
+  opacity: 0.3;
   border-style: dashed;
 }
 
-/* Selectable Ã¢â‚¬â€ gold glow + pointer */
+/* Selectable - ember glow + pointer */
 .pu-piece--selectable {
   cursor: pointer;
   animation: pu-pulse 1.3s ease-in-out infinite;
 }
 
 @keyframes pu-pulse {
-  0%, 100% { box-shadow: 0 0 0 2px var(--pu-selected), 0 0 6px  rgba(255,220,80,0.4); }
-  50%       { box-shadow: 0 0 0 4px var(--pu-selected), 0 0 16px rgba(255,220,80,0.7); }
+  0%, 100% { box-shadow: 0 0 0 2px var(--pu-ember), 0 0 8px rgba(232,146,58,0.45); }
+  50%      { box-shadow: 0 0 0 3px var(--pu-ember-hi), 0 0 18px rgba(245,180,94,0.7); }
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Entry zones (below board) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Entry zones (the dark edge of the firelight, below the road) ------------- */
 .pu-entry-row {
   display: flex;
   justify-content: space-between;
@@ -2791,8 +2876,8 @@ html[data-theme="dark"] .pt-dice-row:not(:empty) {
 .pu-offboard {
   flex: 0 1 48%;
   max-width: 48%;
-  background: rgba(0,0,0,0.22);
-  border: 1px solid var(--pu-border);
+  background: rgba(0,0,0,0.28);
+  border: 1px solid rgba(245,180,94,0.16);
   border-radius: 8px;
   padding: 8px 10px;
   box-sizing: border-box;
@@ -2803,14 +2888,13 @@ html[data-theme="dark"] .pt-dice-row:not(:empty) {
 
 .pu-offboard--selectable {
   cursor: pointer;
-  border-color: rgba(255, 220, 80, 0.7);
-  box-shadow: 0 0 0 2px rgba(255,220,80,0.3), 0 0 14px rgba(255,220,80,0.25);
+  border-color: rgba(245, 180, 94, 0.75);
   animation: pu-zone-pulse 1.3s ease-in-out infinite;
 }
 
 @keyframes pu-zone-pulse {
-  0%, 100% { box-shadow: 0 0 0 1px rgba(255,220,80,0.35), 0 0 8px  rgba(255,220,80,0.2); }
-  50%       { box-shadow: 0 0 0 3px rgba(255,220,80,0.55), 0 0 20px rgba(255,220,80,0.4); }
+  0%, 100% { box-shadow: 0 0 0 1px rgba(232,146,58,0.4),  0 0 8px  rgba(232,146,58,0.25); }
+  50%      { box-shadow: 0 0 0 3px rgba(245,180,94,0.6),  0 0 20px rgba(245,180,94,0.4); }
 }
 
 .pu-offboard__head {
@@ -2826,13 +2910,13 @@ html[data-theme="dark"] .pt-dice-row:not(:empty) {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--pu-gold-dim);
+  color: var(--pu-text-dim);
 }
 
 .pu-offboard__dir {
   font-size: 9px;
   letter-spacing: 0.1em;
-  color: rgba(140, 200, 90, 0.4);
+  color: rgba(232, 146, 58, 0.55);
 }
 
 .pu-offboard__pieces {
@@ -2842,7 +2926,7 @@ html[data-theme="dark"] .pt-dice-row:not(:empty) {
   align-items: center;
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Stick dice Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Corn-kernel dice ---------------------------------------------------------- */
 .pu-dice-row {
   display: flex;
   flex-direction: column;
@@ -2851,93 +2935,84 @@ html[data-theme="dark"] .pt-dice-row:not(:empty) {
   width: 100%;
 }
 
-/* The four sticks laid out in a row */
+/* The four kernels tossed onto the clay */
 .pu-sticks {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 14px;
 }
 
-/* A single stick Ã¢â‚¬â€ tall narrow slab, like carved wood/bone */
+/* One kernel: broad rounded crown, tapered base */
 .pu-stick {
-  width: 1.05rem;
-  height: 4rem;
-  border-radius: 10px 10px 8px 8px;
+  width: 1.7rem;
+  height: 2rem;
+  border-radius: 50% 50% 44% 44% / 60% 60% 42% 42%;
   position: relative;
-  /* blank side: dark, dense wood grain */
-  background: linear-gradient(
-    to right,
-    #2c1a08 0%,
-    #47300e 22%,
-    #3a2409 44%,
-    #512e0d 66%,
-    #3a2409 80%,
-    #2c1a08 100%
-  );
-  border: 1px solid rgba(30, 15, 5, 0.9);
-  box-shadow:
-    3px 4px 8px rgba(0,0,0,0.65),
-    inset 1px 0 2px rgba(255,255,255,0.04),
-    inset -1px 0 1px rgba(0,0,0,0.3);
-  transition: background 0.15s, box-shadow 0.15s;
+  background: radial-gradient(circle at 38% 30%,
+    #F8E9B8 0%, var(--pu-maize) 48%, var(--pu-maize-dk) 100%);
+  border: 1px solid rgba(140, 100, 18, 0.8);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.55), inset 0 1px 2px rgba(255,245,200,0.4);
   flex-shrink: 0;
+  animation: pu-settle 0.5s cubic-bezier(0.3, 1.35, 0.55, 1) backwards;
 }
 
-/* marked side: lighter heartwood, clearly painted/carved */
+/* tossed-and-settled scatter: each kernel lands with its own lean */
+.pu-stick:nth-child(1) { transform: rotate(-9deg);                 animation-delay: 0s;    }
+.pu-stick:nth-child(2) { transform: rotate(6deg) translateY(2px);  animation-delay: 0.06s; }
+.pu-stick:nth-child(3) { transform: rotate(-4deg) translateY(1px); animation-delay: 0.12s; }
+.pu-stick:nth-child(4) { transform: rotate(10deg);                 animation-delay: 0.18s; }
+
+/* no 100% frame: each kernel settles into its own resting transform above */
+@keyframes pu-settle {
+  0%  { opacity: 0; transform: translateY(-18px) rotate(26deg) scale(1.1); }
+  60% { opacity: 1; transform: translateY(2px) rotate(-7deg); }
+}
+
+/* Charcoal-burned "eye" face up - this kernel counts toward the throw */
 .pu-stick--marked {
-  background: linear-gradient(
-    to right,
-    #8a5c18 0%,
-    #c8902a 22%,
-    #b07820 44%,
-    #d4a030 66%,
-    #b07820 80%,
-    #8a5c18 100%
-  );
-  border-color: rgba(140, 90, 15, 0.85);
   box-shadow:
-    3px 4px 8px rgba(0,0,0,0.5),
-    inset 1px 0 3px rgba(255,220,140,0.18),
-    0 0 10px rgba(200,155,40,0.25);
+    0 2px 5px rgba(0,0,0,0.55),
+    inset 0 1px 2px rgba(255,245,200,0.4),
+    0 0 10px rgba(245,180,94,0.3);
 }
 
-/* Carved stripe mark on the light face */
 .pu-stick--marked::after {
   content: '';
   position: absolute;
-  left: 18%;
-  right: 18%;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 3px;
-  border-radius: 2px;
-  background: rgba(255, 248, 210, 0.9);
-  box-shadow: 0 0 5px rgba(255, 240, 180, 0.7);
+  top: 26%;
+  left: 50%;
+  width: 0.58rem;
+  height: 0.72rem;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 42% 32%, #4A413A 0%, var(--pu-charcoal) 65%);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.8), 0 0 0 2px rgba(120,80,20,0.3);
 }
 
-/* Small dot at midpoint of blank face for symmetry with marked */
+/* Blank face up: only the faintest unburned dimple */
 .pu-stick:not(.pu-stick--marked)::after {
   content: '';
   position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  top: 50%;
+  top: 28%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(255, 255, 255, 0.04);
+  width: 0.5rem;
+  height: 0.62rem;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: rgba(0,0,0,0.06);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.1);
 }
 
 .pu-roll-total {
   font-size: 0.95rem;
   font-weight: 700;
-  color: var(--pu-gold-light);
+  color: var(--pu-ember-hi);
   letter-spacing: 0.05em;
   text-align: center;
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Controls Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Controls ------------------------------------------------------------------ */
 .pu-controls {
   display: flex;
   flex-wrap: wrap;
@@ -2957,27 +3032,27 @@ html[data-theme="dark"] .pt-dice-row:not(:empty) {
   font-size: 0.9rem;
   font-weight: 600;
   font-family: inherit;
-  border: 1.5px solid var(--pu-gold);
+  border: 1.5px solid var(--pu-ember);
   border-radius: 8px;
-  background: rgba(200,160,80,0.13);
-  color: var(--pu-gold-light);
+  background: rgba(232,146,58,0.13);
+  color: var(--pu-ember-hi);
   cursor: pointer;
   letter-spacing: 0.04em;
   transition: background 0.14s, border-color 0.14s, opacity 0.14s;
 }
 
-.pu-btn:hover:not(:disabled) { background: rgba(200,160,80,0.25); }
+.pu-btn:hover:not(:disabled) { background: rgba(232,146,58,0.26); }
 .pu-btn:disabled              { opacity: 0.35; cursor: not-allowed; }
 
 .pu-btn--secondary {
-  border-color: rgba(200,160,80,0.3);
+  border-color: rgba(232,146,58,0.3);
   background: transparent;
-  color: var(--pu-gold-dim);
+  color: rgba(244,239,230,0.6);
 }
 .pu-btn--secondary:hover:not(:disabled) {
-  border-color: var(--pu-gold);
-  color: var(--pu-gold-light);
-  background: rgba(200,160,80,0.1);
+  border-color: var(--pu-ember);
+  color: var(--pu-ember-hi);
+  background: rgba(232,146,58,0.1);
 }
 
 .pu-btn--mode {
@@ -2985,26 +3060,26 @@ html[data-theme="dark"] .pt-dice-row:not(:empty) {
   font-size: 11px;
   font-weight: 600;
   background: transparent;
-  border: 1px solid rgba(200,160,80,0.22);
-  color: rgba(200,160,80,0.42);
+  border: 1px solid rgba(232,146,58,0.25);
+  color: rgba(244,239,230,0.45);
   box-shadow: none;
 }
 .pu-btn--mode.active {
-  border-color: var(--pu-gold);
-  color: var(--pu-gold-light);
-  background: rgba(200,160,80,0.14);
+  border-color: var(--pu-ember);
+  color: var(--pu-ember-hi);
+  background: rgba(232,146,58,0.14);
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Status Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Status ---------------------------------------------------------------------- */
 .pu-status {
   font-size: 0.95rem;
-  color: var(--pu-gold-light);
+  color: var(--pu-text);
   text-align: center;
   min-height: 1.4em;
   font-weight: 500;
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Score Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Score ------------------------------------------------------------------------ */
 .pu-score {
   display: flex;
   gap: 0.75rem;
@@ -3015,9 +3090,9 @@ html[data-theme="dark"] .pt-dice-row:not(:empty) {
 .pu-score > span {
   font-size: 0.84rem;
   font-weight: 600;
-  color: var(--pu-gold-dim);
-  background: rgba(255,255,255,0.04);
-  border: 1px solid var(--pu-border);
+  color: var(--pu-text-dim);
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(245,180,94,0.18);
   border-radius: 20px;
   padding: 3px 14px;
   min-width: 155px;
@@ -3025,7 +3100,7 @@ html[data-theme="dark"] .pt-dice-row:not(:empty) {
   letter-spacing: 0.02em;
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Log Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Log --------------------------------------------------------------------------- */
 .pu-log {
   list-style: none;
   padding: 0;
@@ -3040,17 +3115,17 @@ html[data-theme="dark"] .pt-dice-row:not(:empty) {
 
 .pu-log li {
   font-size: 0.78rem;
-  color: rgba(205, 190, 145, 0.6);
+  color: rgba(244,239,230,0.55);
   padding: 1px 6px;
-  border-left: 2px solid rgba(200,160,80,0.18);
+  border-left: 2px solid rgba(232,146,58,0.2);
 }
 
 .pu-log li:first-child {
-  color: rgba(205,190,145,0.9);
-  border-left-color: var(--pu-gold);
+  color: rgba(244,239,230,0.92);
+  border-left-color: var(--pu-ember);
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Thinking dots Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Thinking dots ------------------------------------------------------------------ */
 .pu-thinking {
   display: inline-flex;
   gap: 4px;
@@ -3062,7 +3137,7 @@ html[data-theme="dark"] .pt-dice-row:not(:empty) {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--pu-gold);
+  background: var(--pu-ember);
   animation: pu-dot 1s infinite;
 }
 
@@ -3074,16 +3149,18 @@ html[data-theme="dark"] .pt-dice-row:not(:empty) {
   40%           { opacity: 1;   transform: scale(1.2); }
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Responsive Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Responsive ----------------------------------------------------------------------- */
 @media (max-width: 560px) {
-  .pu-game-wrap    { padding: 1rem 0.75rem; gap: 0.75rem; }
-  .pu-board        { padding: 5px; gap: 3px; }
+  .pu-game-wrap    { padding: 1.7rem 0.75rem 1rem; gap: 0.75rem; }
+  .pu-board        { padding: 8px 6px 5px; gap: 3px; }
   .pu-space        { height: 4.6rem; padding: 3px 1px 16px; }
-  .pu-piece        { width: 1.5rem;  height: 1.5rem; }
-  .pu-piece--prisoner { width: 1.1rem; height: 1.1rem; }
+  .pu-space + .pu-space::before { width: 10px; left: -1.5px; }
+  .pu-piece        { width: 1rem; height: 1.75rem; }
+  .pu-space .pu-piece + .pu-piece { margin-bottom: -1.15rem; }
+  .pu-piece--prisoner { height: 1.55rem; }
   .pu-piece--waiting,
-  .pu-piece--scored   { width: 1.2rem; height: 1.2rem; }
-  .pu-stick        { width: 0.85rem; height: 3rem; }
+  .pu-piece--scored   { width: 0.8rem; height: 1.35rem; }
+  .pu-stick        { width: 1.4rem; height: 1.65rem; }
   .pu-btn          { padding: 0.4rem 0.9rem; font-size: 0.85rem; }
   .pu-score > span { min-width: 130px; font-size: 0.78rem; }
   .pu-offboard     { padding: 6px 8px; }
