@@ -177,20 +177,20 @@
   var cnv, ctx;
 
   var C = {
-    bg:        '#2a1606',
-    board:     '#7a5028',
-    boardHi:   '#c4894f',
-    line:      '#3a1a05',
-    strongPt:  '#C89B3C',
-    darkPiece: '#1a0a00',
-    darkRing:  '#5a3010',
-    darkShine: 'rgba(255,255,255,0.10)',
-    lightPiece:'#F5E6C8',
-    lightRing: '#9a7030',
-    lightShine:'rgba(255,255,255,0.45)',
-    selected:  '#E8C84A',
-    validDot:  'rgba(232,200,74,0.38)',
-    capRing:   '#e05040',
+    bg:        '#C7A76C',   // raffia mat surround
+    board:     '#4A2A1C',   // palissandre rosewood
+    boardHi:   '#8A5638',
+    line:      '#D9C49A',   // incised pale grooves
+    strongPt:  '#D9C49A',   // worn cuvettes
+    darkPiece: '#2F2B27',   // basalt pebble
+    darkRing:  '#6E675D',
+    darkShine: 'rgba(255,255,255,0.16)',
+    lightPiece:'#EDE5D3',   // quartz pebble
+    lightRing: '#A9894F',
+    lightShine:'rgba(255,255,255,0.55)',
+    selected:  '#E0973E',   // market amber glow
+    validDot:  'rgba(110,131,69,0.55)',  // rice-terrace green
+    capRing:   '#A8432A',   // laterite red
   };
 
   function cellSize()        { return (cnv.width - PAD * 2) / (COLS - 1); }
@@ -233,18 +233,42 @@
     ctx.fillStyle = C.bg;
     ctx.fillRect(0, 0, cnv.width, cnv.height);
 
+    // Raffia weave across the whole mat (deterministic, no random)
+    ctx.fillStyle = 'rgba(169,137,79,0.28)';
+    for (var ry = 0; ry < cnv.height; ry += 7) {
+      ctx.fillRect(0, ry, cnv.width, 2);
+    }
+    ctx.fillStyle = 'rgba(169,137,79,0.18)';
+    for (var rx = 0; rx < cnv.width; rx += 16) {
+      ctx.fillRect(rx, 0, 3, cnv.height);
+    }
+
     var bx = PAD - cs * 0.52, by = PAD - cs * 0.52;
     var bw = (COLS - 1) * cs + cs * 1.04, bh = (ROWS - 1) * cs + cs * 1.04;
     ctx.fillStyle = C.board;
     drawRoundRect(bx, by, bw, bh, 8); ctx.fill();
 
-    // Board highlight strip
+    // Rosewood grain — clipped to the plank
+    ctx.save();
+    drawRoundRect(bx, by, bw, bh, 8); ctx.clip();
+    var darkFracs = [0.14, 0.33, 0.52, 0.71, 0.88];
+    var darkHts   = [3, 2, 4, 2, 3];
+    ctx.fillStyle = 'rgba(51,31,21,0.30)';
+    for (var gi = 0; gi < darkFracs.length; gi++) {
+      ctx.fillRect(bx, by + bh * darkFracs[gi], bw, darkHts[gi]);
+    }
+    ctx.fillStyle = 'rgba(138,86,56,0.22)';
+    ctx.fillRect(bx, by + bh * 0.24, bw, 3);
+    ctx.fillRect(bx, by + bh * 0.62, bw, 2);
+    ctx.restore();
+
+    // Subtle top sheen on the plank
     ctx.fillStyle = C.boardHi;
-    ctx.globalAlpha = 0.25;
+    ctx.globalAlpha = 0.12;
     drawRoundRect(bx + 2, by + 2, bw - 4, bh * 0.25, 6); ctx.fill();
     ctx.globalAlpha = 1;
 
-    // ── Draw edges (each once)
+    // ── Draw edges (carved grooves — shadow then pale incision)
     var drawn = {};
     for (var i = 0; i < TOTAL; i++) {
       var p1 = ptXY(col(i), row(i));
@@ -253,29 +277,38 @@
         if (drawn[key]) return;
         drawn[key] = true;
         var p2 = ptXY(col(edge.to), row(edge.to));
+        // groove shadow, offset down-right
+        ctx.beginPath();
+        ctx.moveTo(p1.x + 1, p1.y + 1);
+        ctx.lineTo(p2.x + 1, p2.y + 1);
+        ctx.strokeStyle = 'rgba(31,18,12,0.5)';
+        ctx.lineWidth   = 2;
+        ctx.stroke();
+        // pale incision
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
         ctx.lineTo(p2.x, p2.y);
         ctx.strokeStyle = C.line;
-        ctx.lineWidth   = 1.4;
+        ctx.lineWidth   = 2;
         ctx.stroke();
       });
     }
 
-    // ── Strong-point gold diamonds
+    // ── Strong points: worn cuvettes (shallow rubbed hollows)
     for (var r = 0; r < ROWS; r++) {
       for (var c = 0; c < COLS; c++) {
         if ((c + r) % 2 !== 0) continue;
         var pt = ptXY(c, r);
-        var s  = Math.max(3, cs * 0.12);
+        var cr = cs * 0.10;
         ctx.beginPath();
-        ctx.moveTo(pt.x,     pt.y - s);
-        ctx.lineTo(pt.x + s, pt.y);
-        ctx.lineTo(pt.x,     pt.y + s);
-        ctx.lineTo(pt.x - s, pt.y);
-        ctx.closePath();
-        ctx.fillStyle = C.strongPt;
+        ctx.arc(pt.x, pt.y, cr, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(217,196,154,0.16)';
         ctx.fill();
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, cr, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(217,196,154,0.55)';
+        ctx.lineWidth   = 1.2;
+        ctx.stroke();
       }
     }
 
@@ -303,7 +336,7 @@
         var pt = ptXY(col(+fi), row(+fi));
         ctx.beginPath();
         ctx.arc(pt.x, pt.y, pr + 5, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(232,200,74,0.55)';
+        ctx.strokeStyle = 'rgba(224,151,62,0.55)';
         ctx.lineWidth   = 2;
         ctx.stroke();
       });
@@ -313,7 +346,7 @@
         var pt = ptXY(col(+tIdx), row(+tIdx));
         ctx.beginPath();
         ctx.arc(pt.x, pt.y, pr * 0.45, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(232,200,74,0.22)';
+        ctx.fillStyle = 'rgba(224,151,62,0.20)';
         ctx.fill();
       });
     }
@@ -346,16 +379,28 @@
       var isBlack = state.board[pi] === BLACK;
       var isSel   = pi === state.selected || pi === state.capturing;
 
-      // Shadow
+      // Shadow (squashed pebble footprint)
       ctx.beginPath();
-      ctx.arc(pt2.x + 1.5, pt2.y + 2, pr, 0, Math.PI * 2);
+      ctx.ellipse(pt2.x + 1.5, pt2.y + 2, pr, pr * 0.94, 0, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(0,0,0,0.38)';
       ctx.fill();
 
-      // Body
+      // Body — water-rounded stone with radial sheen
+      var grad = ctx.createRadialGradient(
+        pt2.x - pr * 0.3, pt2.y - pr * 0.32, pr * 0.1,
+        pt2.x, pt2.y, pr);
+      if (isBlack) {
+        grad.addColorStop(0,    '#565048');
+        grad.addColorStop(0.55, '#2F2B27');
+        grad.addColorStop(1,    '#1E1B18');
+      } else {
+        grad.addColorStop(0,   '#FBF6E9');
+        grad.addColorStop(0.5, '#EDE5D3');
+        grad.addColorStop(1,   '#C8BFA9');
+      }
       ctx.beginPath();
-      ctx.arc(pt2.x, pt2.y, pr, 0, Math.PI * 2);
-      ctx.fillStyle   = isBlack ? C.darkPiece : C.lightPiece;
+      ctx.ellipse(pt2.x, pt2.y, pr, pr * 0.94, 0, 0, Math.PI * 2);
+      ctx.fillStyle   = grad;
       ctx.fill();
       ctx.strokeStyle = isBlack ? C.darkRing : C.lightRing;
       ctx.lineWidth   = 1.5;
