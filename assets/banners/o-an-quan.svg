@@ -5,7 +5,7 @@
       <circle cx="-10" cy="-6" r="6.5" fill="#b8b0a4"/>
       <circle cx="8" cy="-8" r="5.5" fill="#8a8278"/>
       <circle cx="-2" cy="6" r="6" fill="#a39b8e"/>
-      <circle cx="12" cy="6" r="5" fill="#C89B3C"/>
+      <circle cx="12" cy="6" r="5" fill="#B5A284"/>
       <circle cx="-14" cy="8" r="5" fill="#8a8278"/>
     </g>
   </defs>
@@ -19,6 +19,12 @@
   <circle cx="50" cy="160" r="4" fill="#5d4431" opacity=".7"/>
   <circle cx="615" cy="120" r="3.5" fill="#7d6450" opacity=".8"/>
   <circle cx="320" cy="252" r="3" fill="#5d4431" opacity=".7"/>
+
+  <!-- subtle mortar joints suggesting a brick courtyard -->
+  <g stroke="#74432F" stroke-width="2" opacity=".35">
+    <path d="M0 95 H640"/>
+    <path d="M0 250 H640"/>
+  </g>
 
   <!-- chalk-drawn boat board: straight sides -->
   <g stroke="#e8dcc2" fill="none" stroke-linecap="round">
@@ -34,8 +40,8 @@
     <path d="M152 140 q169 -3 336 0" stroke-width="3.2"/>
   </g>
 
-  <!-- gold mandarin ends -->
-  <g stroke="#c9a84c" fill="none" stroke-width="5" stroke-linecap="round">
+  <!-- chalk mandarin-arc ends -->
+  <g stroke="#F4EDDD" fill="none" stroke-width="4" stroke-linecap="round">
     <path d="M150 65 A75 75 0 0 0 150 215"/>
     <path d="M490 65 A75 75 0 0 1 490 215"/>
   </g>
@@ -53,7 +59,7 @@
   <use href="#oqs" x="252" y="178" transform="rotate(70 252 178)"/>
   <use href="#oqs" x="388" y="180" transform="rotate(-60 388 180)"/>
   <circle cx="316" cy="176" r="6" fill="#b8b0a4"/>
-  <circle cx="328" cy="184" r="5" fill="#C89B3C"/>
+  <circle cx="328" cy="184" r="5" fill="#B5A284"/>
   <circle cx="186" cy="180" r="5.5" fill="#8a8278"/>
   <circle cx="452" cy="182" r="5" fill="#a39b8e"/>
 

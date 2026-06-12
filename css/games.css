@@ -760,8 +760,7 @@
 }
 
 /* =============================================================================
-   Ãƒâ€ Ã„â€šn Quan Ã¢â‚¬â€ Phase 3
-   Traditional Vietnamese lacquerware aesthetic
+   O An Quan -- Phase 3 / Chalk-on-brick courtyard (Nguyen Phan Chanh register)
 ============================================================================= */
 
 .oaq-game {
@@ -770,15 +769,20 @@
   flex-direction: column;
   gap: var(--space-3);
   font-family: var(--font-body);
-  color: #f0d8b0;
-  background: radial-gradient(ellipse at 50% 15%, #2e1008 0%, #150404 100%);
+  color: #F4EDDD;
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(232,201,142,0.10), rgba(0,0,0,0) 60%),
+    radial-gradient(circle at 0% 0%, rgba(85,96,62,0.28), rgba(0,0,0,0) 40%),
+    radial-gradient(circle at 100% 0%, rgba(85,96,62,0.22), rgba(0,0,0,0) 40%),
+    linear-gradient(180deg, rgba(0,0,0,0) 70%, rgba(56,44,34,0.35) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='64' viewBox='0 0 140 64'%3E%3Crect width='140' height='64' fill='%2374432F'/%3E%3Crect x='1' y='2' width='66' height='28' fill='%239B5E44'/%3E%3Crect x='70' y='2' width='68' height='28' fill='%23B0735A'/%3E%3Crect x='1' y='34' width='32' height='28' fill='%23B0735A'/%3E%3Crect x='35' y='34' width='68' height='28' fill='%239B5E44'/%3E%3Crect x='105' y='34' width='34' height='28' fill='%238F5238'/%3E%3C/svg%3E");
   border-radius: var(--radius-xl);
   border: 1px solid rgba(240,216,176,0.06);
   box-shadow: 0 4px 24px rgba(0,0,0,0.5);
   min-height: 420px;
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Turn banner Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Turn banner -- */
 .oaq-turn-banner {
   text-align: center;
   padding: 10px var(--space-4);
@@ -791,35 +795,35 @@
 }
 
 .oaq-turn-banner.p1 {
-  background: rgba(44, 120, 115, 0.18);
-  color: #6ed8d0;
-  border: 1px solid rgba(44, 120, 115, 0.38);
-  box-shadow: 0 0 16px rgba(44,120,115,0.12), inset 0 1px 0 rgba(110,216,208,0.08);
+  background: rgba(159,191,122,0.15);
+  color: #C9DDA8;
+  border: 1px solid rgba(159,191,122,0.45);
+  box-shadow: 0 0 16px rgba(159,191,122,0.15), inset 0 1px 0 rgba(159,191,122,0.08);
 }
 
 .oaq-turn-banner.p2 {
-  background: rgba(192, 64, 64, 0.18);
-  color: #f07070;
-  border: 1px solid rgba(192, 64, 64, 0.38);
-  box-shadow: 0 0 16px rgba(192,64,64,0.12), inset 0 1px 0 rgba(240,112,112,0.08);
+  background: rgba(224,135,106,0.15);
+  color: #F0B49C;
+  border: 1px solid rgba(224,135,106,0.5);
+  box-shadow: 0 0 16px rgba(224,135,106,0.15), inset 0 1px 0 rgba(224,135,106,0.08);
 }
 
 .oaq-turn-banner.gameover {
-  background: rgba(200, 149, 42, 0.18);
-  color: #f5cc50;
-  border: 1px solid rgba(200, 149, 42, 0.45);
-  box-shadow: 0 0 16px rgba(200,149,42,0.15);
+  background: rgba(232,201,142,0.16);
+  color: #E8C98E;
+  border: 1px solid rgba(232,201,142,0.45);
+  box-shadow: 0 0 16px rgba(232,201,142,0.15);
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Score bar Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Score bar -- */
 .oaq-score-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: var(--space-2);
   padding: 10px var(--space-4);
-  background: rgba(0,0,0,0.28);
-  border: 1px solid rgba(240,216,176,0.06);
+  background: rgba(56,44,34,0.35);
+  border: 1px solid rgba(244,237,221,0.12);
   border-radius: var(--radius-lg);
 }
 
@@ -834,7 +838,7 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: rgba(240,216,176,0.4);
+  color: rgba(244,237,221,0.55);
   font-weight: 600;
 }
 
@@ -846,38 +850,36 @@
 }
 
 .oaq-score-player.p1 .oaq-score-player__num {
-  color: #5bc8c0;
-  text-shadow: 0 0 18px rgba(91,200,192,0.45);
+  color: #9FBF7A;
+  text-shadow: 0 0 18px rgba(159,191,122,0.4);
 }
 .oaq-score-player.p2 .oaq-score-player__num {
-  color: #e06060;
-  text-shadow: 0 0 18px rgba(224,96,96,0.45);
+  color: #E0876A;
+  text-shadow: 0 0 18px rgba(224,135,106,0.4);
 }
 
 .oaq-score-divider {
   font-size: var(--text-xl);
-  color: rgba(240,216,176,0.14);
+  color: rgba(244,237,221,0.18);
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Board Ã¢â‚¬â€ lacquered Vietnamese wood Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Board (chalk-drawn on brick) -- */
 .oaq-board {
   display: grid;
   grid-template-columns: 88px repeat(5, 1fr) 88px;
   grid-template-rows: 1fr 1fr;
   gap: 8px;
-  background: linear-gradient(170deg, #4a1208 0%, #220604 55%, #350a06 100%);
+  background: rgba(56,44,34,0.10);
   padding: 14px;
-  border-radius: 22px;
-  border: 3px solid #7a2a14;
-  border-top-color: #a03820;
+  border-radius: 10px;
+  border: 3px solid #F4EDDD;
   box-shadow:
-    0 14px 42px rgba(0,0,0,0.85),
-    0 0 0 1px rgba(255,120,60,0.06),
-    inset 0 2px 0 rgba(255,160,80,0.14),
-    inset 0 -4px 16px rgba(0,0,0,0.65);
+    0 0 0 1px rgba(244,237,221,0.18),
+    0 0 14px rgba(244,237,221,0.10),
+    inset 0 0 18px rgba(56,44,34,0.18);
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Quan pits (carved end stores) Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Quan arcs (chalk-drawn end stores) -- */
 .oaq-quan {
   grid-row: 1 / 3;
   display: flex;
@@ -885,18 +887,16 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background: radial-gradient(ellipse at 50% 25%, #1e0804 0%, #080101 80%);
-  border: 2px solid #8a3818;
-  border-top-color: #b84a22;
-  border-radius: 50px;
+  background: rgba(56,44,34,0.12);
+  border: 3px solid #F4EDDD;
+  border-radius: 999px;
   padding: 16px 8px;
   min-height: 148px;
   position: relative;
   box-shadow:
-    inset 0 8px 24px rgba(0,0,0,0.95),
-    inset 0 2px 8px rgba(0,0,0,0.8),
-    0 0 20px rgba(180,80,20,0.15),
-    0 4px 12px rgba(0,0,0,0.5);
+    0 0 0 1px rgba(244,237,221,0.18),
+    0 0 14px rgba(244,237,221,0.10),
+    inset 0 0 18px rgba(56,44,34,0.18);
 }
 
 .oaq-quan--p2 { grid-column: 1; }
@@ -906,61 +906,59 @@
   font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: rgba(240,216,176,0.35);
+  color: rgba(56,44,34,0.55);
   font-weight: 700;
 }
 
-/* Seeds inside the quan Ã¢â‚¬â€ shift below the label, fill the rest of the pit */
+/* Seeds inside the quan -- shift below the label, fill the rest of the pit */
 .oaq-quan-seeds {
   inset: 26px 0 0 0 !important;
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Small pits (oval, carved) Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Dan cells (chalk-outlined squares) -- */
 .oaq-pit {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(ellipse at 50% 28%, #200804 0%, #080101 80%);
-  border: 2px solid #5a1808;
-  border-radius: 50%;
+  background: rgba(56,44,34,0.10);
+  border: 2.5px solid #E2D6BF;
+  border-radius: 7px;
   min-height: 74px;
   cursor: default;
   transition: border-color 150ms, box-shadow 150ms, transform 120ms;
   position: relative;
-  box-shadow:
-    inset 0 6px 22px rgba(0,0,0,0.95),
-    inset 0 2px 8px rgba(0,0,0,0.8),
-    0 2px 5px rgba(0,0,0,0.4);
+  box-shadow: inset 0 0 10px rgba(56,44,34,0.20);
 }
+
+/* Hand-drawn wobble so no two outlines look identically machined */
+.oaq-pit:nth-child(odd) { border-radius: 8px 6px 9px 5px; }
+.oaq-pit:nth-child(3n)  { border-radius: 5px 9px 6px 8px; }
 
 /* Clickable (valid moves for current player) */
 .oaq-pit.clickable {
   cursor: pointer;
-  border-color: #c8871a;
+  border-color: #FFFDF5;
   box-shadow:
-    inset 0 6px 22px rgba(0,0,0,0.85),
-    0 0 8px rgba(200,135,26,0.2),
-    0 2px 5px rgba(0,0,0,0.4);
+    0 0 10px rgba(244,237,221,0.35),
+    inset 0 0 10px rgba(56,44,34,0.15);
 }
 
 .oaq-pit.clickable:hover {
-  border-color: #f0a830;
+  border-color: #FFFDF5;
   box-shadow:
-    inset 0 5px 18px rgba(0,0,0,0.55),
-    0 0 22px rgba(240,168,48,0.55),
-    0 0 8px rgba(240,168,48,0.3),
-    0 2px 5px rgba(0,0,0,0.4);
+    0 0 18px rgba(244,237,221,0.55),
+    inset 0 0 10px rgba(56,44,34,0.15);
   transform: scale(1.06);
 }
 
 .oaq-pit.active {
-  border-color: #f5cc50;
+  border-color: #E8C98E;
   box-shadow:
-    inset 0 4px 14px rgba(0,0,0,0.5),
-    0 0 24px rgba(245,204,80,0.4);
+    0 0 24px rgba(232,201,142,0.45),
+    inset 0 0 10px rgba(56,44,34,0.15);
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Round pebble seeds (absolute, circular arrangement) Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- River pebble seeds (absolute, circular arrangement) -- */
 .oaq-seeds {
   position: absolute;
   inset: 0;
@@ -974,17 +972,24 @@
   border-radius: 50%;
   left: calc(50% + var(--x, 0px) - 5.5px);
   top:  calc(50% + var(--y, 0px) - 5.5px);
-  background: radial-gradient(circle at 38% 32%, #e8c87a 0%, #b07828 40%, #6a3e10 72%, #3a1e06 100%);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,220,120,0.18);
+  border-radius: 48% 52% 50% 50%;
+  background: radial-gradient(circle at 36% 30%, #CDBA9C 0%, #8E8A82 55%, #5C544A 100%);
+  box-shadow: 0 1px 3px rgba(56,44,34,0.55), inset 0 1px 1px rgba(255,255,255,0.25);
 }
+
+/* Mixed natural-stone variety across a found handful of river pebbles */
+.oaq-seed:nth-child(5n+1) { background: radial-gradient(circle at 36% 30%, #C9BCA4 0%, #B5A284 55%, #7A6B50 100%); }
+.oaq-seed:nth-child(5n+2) { background: radial-gradient(circle at 36% 30%, #9AA0A4 0%, #73787C 55%, #4A4F53 100%); }
+.oaq-seed:nth-child(5n+3) { background: radial-gradient(circle at 36% 30%, #E0D2B6 0%, #CDBA9C 55%, #8E7E62 100%); }
+.oaq-seed:nth-child(5n+4) { background: radial-gradient(circle at 36% 30%, #837B6F 0%, #5C544A 55%, #3A352E 100%); }
 
 .oaq-seed-none {
   position: absolute;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 6px; height: 6px;
+  width: 8px; height: 8px;
   border-radius: 50%;
-  background: rgba(200,100,30,0.05);
+  background: rgba(244,237,221,0.10);
 }
 
 .oaq-seed-overflow {
@@ -993,8 +998,8 @@
   transform: translateX(-50%);
   font-size: 9px;
   font-weight: 700;
-  color: #f0ddb0;
-  background: rgba(0,0,0,0.5);
+  color: #F4EDDD;
+  background: rgba(56,44,34,0.65);
   border-radius: 8px;
   padding: 1px 5px;
   pointer-events: none;
@@ -1007,7 +1012,8 @@
   transform: translateX(-50%);
   font-size: 11px;
   font-weight: 700;
-  color: rgba(240,216,176,0.65);
+  color: rgba(244,237,221,0.9);
+  text-shadow: 0 1px 2px rgba(56,44,34,0.8);
   pointer-events: none;
   z-index: 1;
 }
@@ -1018,40 +1024,37 @@
 }
 
 @keyframes oaq-sow {
-  0%   { box-shadow: inset 0 5px 18px rgba(0,0,0,0.4), 0 0 18px rgba(232,160,48,0.55); }
-  100% { box-shadow: inset 0 5px 18px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,0.35); }
+  0%   { box-shadow: inset 0 0 10px rgba(56,44,34,0.1), 0 0 16px rgba(244,237,221,0.6); }
+  100% { box-shadow: inset 0 0 10px rgba(56,44,34,0.25), 0 0 0 rgba(244,237,221,0); }
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Flying seed cluster Ã¢â‚¬â€ circular pit-like bubble of scattered seeds Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Flying seed cluster -- chalk-sketch handful of scattered pebbles -- */
 .oaq-fly-cluster {
   width: 58px;
   height: 58px;
   /* position:fixed + left/top + transform set inline by JS */
-  background: radial-gradient(ellipse at 50% 30%, #200804 0%, #080101 82%);
-  border: 1.5px solid rgba(200,135,26,0.55);
+  background: rgba(56,44,34,0.18);
+  border: 1.5px dashed rgba(244,237,221,0.65);
   border-radius: 50%;
-  box-shadow:
-    0 0 22px rgba(200,135,26,0.4),
-    0 4px 14px rgba(0,0,0,0.7),
-    inset 0 3px 10px rgba(0,0,0,0.7);
+  box-shadow: 0 4px 12px rgba(56,44,34,0.4);
   pointer-events: none;
   z-index: 9999;
   /* Seeds inside use position:absolute relative to this fixed element */
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Status Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Status -- */
 .oaq-status {
   text-align: center;
   font-size: var(--text-sm);
-  color: rgba(240,216,176,0.45);
+  color: rgba(244,237,221,0.6);
   font-style: italic;
   min-height: 1.4em;
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Move log Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Move log -- */
 .oaq-log {
-  background: rgba(0,0,0,0.2);
-  border: 1px solid rgba(240,216,176,0.07);
+  background: rgba(56,44,34,0.3);
+  border: 1px solid rgba(244,237,221,0.1);
   border-radius: var(--radius-md);
   padding: var(--space-2) var(--space-3);
 }
@@ -1060,7 +1063,7 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: rgba(240,216,176,0.28);
+  color: rgba(244,237,221,0.28);
   margin-bottom: var(--space-1);
   font-weight: 700;
 }
@@ -1074,16 +1077,16 @@
 
 .oaq-log__entry {
   font-size: 11px;
-  color: rgba(240,216,176,0.42);
+  color: rgba(244,237,221,0.55);
   padding: 2px 0;
   border-bottom: 1px solid rgba(255,255,255,0.04);
 }
 
 .oaq-log__entry:last-child { border-bottom: none; }
-.oaq-log__entry.p1 { color: #5bc8c0; }
-.oaq-log__entry.p2 { color: #e06060; }
+.oaq-log__entry.p1 { color: #9FBF7A; }
+.oaq-log__entry.p2 { color: #E0876A; }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Actions Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Actions -- */
 .oaq-actions {
   display: flex;
   gap: var(--space-2);
@@ -1092,9 +1095,9 @@
 }
 
 .oaq-actions .btn {
-  border: 2px solid rgba(200,135,26,0.45);
-  background: rgba(200,135,26,0.1);
-  color: #f0d8b0;
+  border: 2px solid rgba(244,237,221,0.4);
+  background: rgba(244,237,221,0.08);
+  color: #F4EDDD;
   border-radius: var(--radius-md);
   padding: 9px 22px;
   font-size: var(--text-sm);
@@ -1104,11 +1107,11 @@
 }
 
 .oaq-actions .btn:hover {
-  background: rgba(200,135,26,0.22);
-  border-color: #c8871a;
+  background: rgba(244,237,221,0.18);
+  border-color: #F4EDDD;
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Game over Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Game over -- */
 .oaq-gameover {
   text-align: center;
   padding: var(--space-5) var(--space-4);
@@ -1128,11 +1131,11 @@
 .oaq-gameover h2 {
   font-size: var(--text-3xl);
   font-family: var(--font-display);
-  color: #f0c050;
+  color: #E8C98E;
   margin-bottom: var(--space-1);
 }
 
-.oaq-gameover p { color: rgba(240,216,176,0.5); margin-bottom: var(--space-4); }
+.oaq-gameover p { color: rgba(244,237,221,0.6); margin-bottom: var(--space-4); }
 
 .oaq-final-scores {
   display: flex;
@@ -1150,18 +1153,18 @@
   line-height: 1;
 }
 
-.oaq-final-score.p1 .oaq-final-score__num { color: #5bc8c0; }
-.oaq-final-score.p2 .oaq-final-score__num { color: #e06060; }
-.oaq-final-score__label { font-size: var(--text-xs); color: rgba(240,216,176,0.38); margin-top: 4px; }
+.oaq-final-score.p1 .oaq-final-score__num { color: #9FBF7A; }
+.oaq-final-score.p2 .oaq-final-score__num { color: #E0876A; }
+.oaq-final-score__label { font-size: var(--text-xs); color: rgba(244,237,221,0.5); margin-top: 4px; }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Responsive Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* -- Responsive -- */
 @media (max-width: 560px) {
   .oaq-board {
     grid-template-columns: 56px repeat(5, 1fr) 56px;
     gap: 5px;
     padding: 10px;
   }
-  .oaq-quan { min-height: 100px; border-radius: 36px; padding: 12px 6px; }
+  .oaq-quan { min-height: 100px; border-radius: 999px; padding: 12px 6px; }
   .oaq-quan__count { font-size: 2.4rem; }
   .oaq-score-player__num { font-size: var(--text-2xl); }
   .oaq-pit { min-height: 52px; }

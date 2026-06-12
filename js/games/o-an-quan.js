@@ -99,10 +99,10 @@
     if (!el) return;
     const skip = new Promise(res => { skipResolve = res; });
     const anim = el.animate([
-      { transform: 'scale(1)',    boxShadow: '0 0 0 0px rgba(200,155,60,0)',   filter: 'brightness(1)' },
-      { transform: 'scale(1.18)', boxShadow: '0 0 0 8px rgba(200,155,60,0.5)', filter: 'brightness(1.6)' },
-      { transform: 'scale(0.92)', boxShadow: '0 0 0 0px rgba(200,155,60,0)',   filter: 'brightness(0.85)' },
-      { transform: 'scale(1)',    boxShadow: '0 0 0 0px rgba(200,155,60,0)',   filter: 'brightness(1)' },
+      { transform: 'scale(1)',    boxShadow: '0 0 0 0px rgba(244,237,221,0)',   filter: 'brightness(1)' },
+      { transform: 'scale(1.18)', boxShadow: '0 0 0 8px rgba(244,237,221,0.5)', filter: 'brightness(1.6)' },
+      { transform: 'scale(0.92)', boxShadow: '0 0 0 0px rgba(244,237,221,0)',   filter: 'brightness(0.85)' },
+      { transform: 'scale(1)',    boxShadow: '0 0 0 0px rgba(244,237,221,0)',   filter: 'brightness(1)' },
     ], { duration: 380, easing: 'ease-out' });
     await Promise.race([anim.finished, skip]);
     anim.cancel();
