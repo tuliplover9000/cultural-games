@@ -7,19 +7,36 @@
 
   // ── Phase B: Data Model ────────────────────────────────────────────────────
 
+  // Real ganjifa decks are "eight-color" (ath-rangi): each suit is recognized
+  // BY its painted ground color. These ground colors follow von Leyden / V&A
+  // and Sawantwadi craft documentation.
   var SUITS = [
-    { id: 'ghulam',   name: 'Ghulam',   color: '#8B1A1A', motif: 'servant'    },
-    { id: 'taj',      name: 'Taj',      color: '#D4A017', motif: 'crown'      },
-    { id: 'shamshir', name: 'Shamshir', color: '#2C5F8A', motif: 'sword'      },
-    { id: 'qimash',   name: 'Qimash',   color: '#4A7C3F', motif: 'cloth'      },
-    { id: 'qulaba',   name: 'Qulaba',   color: '#7B3F9E', motif: 'harness'    },
-    { id: 'chang',    name: 'Chang',    color: '#C4732A', motif: 'harp'       },
-    { id: 'surkh',    name: 'Surkh',    color: '#9B0000', motif: 'gold_coins' },
-    { id: 'safed',    name: 'Safed',    color: '#6A6A52', motif: 'silver'     },
+    { id: 'ghulam',   name: 'Ghulam',   color: '#241F1C', motif: 'servant'    },
+    { id: 'taj',      name: 'Taj',      color: '#D98E1F', motif: 'crown'      },
+    { id: 'shamshir', name: 'Shamshir', color: '#3E6B35', motif: 'sword'      },
+    { id: 'qimash',   name: 'Qimash',   color: '#33505E', motif: 'cloth'      },
+    { id: 'qulaba',   name: 'Qulaba',   color: '#5E3A66', motif: 'harness'    },
+    { id: 'chang',    name: 'Chang',    color: '#7A4E22', motif: 'harp'       },
+    { id: 'surkh',    name: 'Surkh',    color: '#A8231B', motif: 'gold_coins' },
+    { id: 'safed',    name: 'Safed',    color: '#EFE6D0', motif: 'silver'     },
   ];
 
   var SUIT_MAP = {};
   SUITS.forEach(function (s) { SUIT_MAP[s.id] = s; });
+
+  // Paint color for symbols drawn ON a suit's ground: dark ink on light
+  // grounds (conch white, ochre), warm cream on the dark grounds.
+  function suitInk(suit) {
+    if (suit.id === 'safed' || suit.id === 'taj') return '#241F1C';
+    return '#F2E8CE';
+  }
+
+  // Accent (detail / outline) color for symbols on a suit's ground.
+  function suitAccent(suit) {
+    if (suit.id === 'safed') return '#A8231B';
+    if (suit.id === 'taj')   return '#7A1E14';
+    return '#D4A437';
+  }
 
   var SEATS = ['south', 'west', 'north', 'east'];
   var SEAT_LABELS = { south: 'You', west: 'West', north: 'North', east: 'East' };
@@ -289,197 +306,262 @@
   }
 
   function drawCardBackOnCtx(ctx, cx, cy, r) {
-    // Base lacquer gradient
-    var baseGrad = ctx.createRadialGradient(cx - r * 0.2, cy - r * 0.25, r * 0.05, cx, cy, r);
-    baseGrad.addColorStop(0, '#1A2B62');
-    baseGrad.addColorStop(1, '#060D28');
+    // Documented: ganjifa backs are PLAIN solid lacquer (no pattern / medallion).
+    // Lac maroon radial ground.
+    var baseGrad = ctx.createRadialGradient(cx, cy, r * 0.05, cx, cy, r);
+    baseGrad.addColorStop(0, '#7E2218');
+    baseGrad.addColorStop(1, '#5E170F');
     ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
     ctx.fillStyle = baseGrad; ctx.fill();
 
-    // Thick outer gold border
-    ctx.beginPath(); ctx.arc(cx, cy, r - 1, 0, Math.PI * 2);
-    ctx.strokeStyle = '#C8960C'; ctx.lineWidth = 2.8; ctx.stroke();
+    // Soot-black darbari edge band.
+    ctx.beginPath(); ctx.arc(cx, cy, r * 0.965, 0, Math.PI * 2);
+    ctx.strokeStyle = '#1A0E08'; ctx.lineWidth = r * 0.07; ctx.stroke();
 
-    // Outer decorative band (wide dark ring with thin gold edges)
-    ctx.beginPath(); ctx.arc(cx, cy, r * 0.88, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(212,160,23,0.7)'; ctx.lineWidth = 1.2; ctx.stroke();
-    ctx.beginPath(); ctx.arc(cx, cy, r * 0.78, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(212,160,23,0.25)'; ctx.lineWidth = 7; ctx.stroke();
-    ctx.beginPath(); ctx.arc(cx, cy, r * 0.74, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(212,160,23,0.6)'; ctx.lineWidth = 1; ctx.stroke();
+    // One fine inner ring.
+    ctx.beginPath(); ctx.arc(cx, cy, r * 0.90, 0, Math.PI * 2);
+    ctx.strokeStyle = '#3A140D'; ctx.lineWidth = 1; ctx.stroke();
 
-    // Inner ring
-    ctx.beginPath(); ctx.arc(cx, cy, r * 0.56, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(212,160,23,0.22)'; ctx.lineWidth = 6; ctx.stroke();
-    ctx.beginPath(); ctx.arc(cx, cy, r * 0.52, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(212,160,23,0.55)'; ctx.lineWidth = 1; ctx.stroke();
-
-    // Outer petals (8)
-    ctx.save(); ctx.translate(cx, cy);
-    for (var i = 0; i < 8; i++) {
-      ctx.save(); ctx.rotate(i * Math.PI / 4);
-      ctx.beginPath();
-      ctx.ellipse(0, -r * 0.35, r * 0.095, r * 0.23, 0, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(212,160,23,0.42)'; ctx.fill();
-      ctx.strokeStyle = 'rgba(212,160,23,0.2)'; ctx.lineWidth = 0.5; ctx.stroke();
-      ctx.restore();
-    }
-    // Inner petals (8, offset 22.5°)
-    for (var j = 0; j < 8; j++) {
-      ctx.save(); ctx.rotate(j * Math.PI / 4 + Math.PI / 8);
-      ctx.beginPath();
-      ctx.ellipse(0, -r * 0.2, r * 0.055, r * 0.13, 0, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(212,160,23,0.28)'; ctx.fill();
-      ctx.restore();
-    }
-    // Center medallion
-    ctx.beginPath(); ctx.arc(0, 0, r * 0.12, 0, Math.PI * 2);
-    ctx.fillStyle = '#D4A017'; ctx.fill();
-    ctx.beginPath(); ctx.arc(0, 0, r * 0.07, 0, Math.PI * 2);
-    ctx.fillStyle = '#060D28'; ctx.fill();
-    ctx.restore();
+    // Lac sheen (same specular arc as the faces).
+    ctx.beginPath();
+    ctx.ellipse(cx - r * 0.32, cy - r * 0.38, r * 0.46, r * 0.2, -0.6, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.10)'; ctx.fill();
   }
+
+  // Pip arrangements for ranks 1-10: per-rank list of [x,y] fractions of r
+  // (y negative = up) and the per-pip radius fraction. Real pip cards show N
+  // repeated suit symbols at rosette/ring arrangements.
+  var PIP_LAYOUTS = {
+    1:  { pos: [[0,0]],                                                              pr: 0.42 },
+    2:  { pos: [[0,-0.30],[0,0.30]],                                                 pr: 0.30 },
+    3:  { pos: [[0,-0.32],[-0.28,0.22],[0.28,0.22]],                                 pr: 0.26 },
+    4:  { pos: [[-0.27,-0.27],[0.27,-0.27],[-0.27,0.27],[0.27,0.27]],                pr: 0.24 },
+    5:  { pos: [[-0.27,-0.27],[0.27,-0.27],[-0.27,0.27],[0.27,0.27],[0,0]],          pr: 0.22 },
+    6:  { pos: [[-0.27,-0.36],[-0.27,0],[-0.27,0.36],[0.27,-0.36],[0.27,0],[0.27,0.36]], pr: 0.21 }
+  };
+
+  // Ring-based layouts (7-10) generated programmatically.
+  (function buildRingLayouts() {
+    function ring(count, radius, startDeg, center, pr) {
+      var pos = [];
+      for (var i = 0; i < count; i++) {
+        var a = (startDeg + i * (360 / count)) * Math.PI / 180;
+        pos.push([Math.cos(a) * radius, Math.sin(a) * radius]);
+      }
+      if (center) pos.push([0, 0]);
+      return { pos: pos, pr: pr };
+    }
+    PIP_LAYOUTS[7]  = ring(6, 0.38, -90, true,  0.19);
+    PIP_LAYOUTS[8]  = ring(8, 0.40, -90, false, 0.18);
+    PIP_LAYOUTS[9]  = ring(8, 0.40, -90, true,  0.17);
+    PIP_LAYOUTS[10] = ring(9, 0.40, -90, true,  0.16);
+  })();
 
   function drawCardFaceOnCtx(ctx, cx, cy, r, suit, rank) {
     var isCourtCard = rank >= 11;
 
-    // Outer ring
+    // ── 1. Full-disc suit ground (flat — the suit is recognized by this color) ──
     ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    if (isCourtCard) {
-      var og = ctx.createRadialGradient(cx - r * 0.15, cy - r * 0.15, 0, cx, cy, r);
-      og.addColorStop(0, '#D4A017'); og.addColorStop(1, '#7A5008');
-      ctx.fillStyle = og;
+    if (suit.id === 'safed') {
+      // Conch white gets a subtle warm radial so it doesn't read as unpainted.
+      var sg = ctx.createRadialGradient(cx - r * 0.2, cy - r * 0.25, r * 0.1, cx, cy, r);
+      sg.addColorStop(0, '#F7F0DE'); sg.addColorStop(1, '#E3D6BA');
+      ctx.fillStyle = sg;
     } else {
       ctx.fillStyle = suit.color;
     }
     ctx.fill();
 
-    // Outer ring mandala-spoke pattern (alternating dark wedges)
-    var spokes = 16;
-    for (var s = 0; s < spokes; s++) {
-      var a1 = (s / spokes) * Math.PI * 2;
-      var a2 = ((s + 0.45) / spokes) * Math.PI * 2;
-      ctx.beginPath();
-      ctx.moveTo(cx + Math.cos(a1) * r * 0.76, cy + Math.sin(a1) * r * 0.76);
-      ctx.arc(cx, cy, r * 0.76, a1, a2);
-      ctx.lineTo(cx + Math.cos(a2) * r, cy + Math.sin(a2) * r);
-      ctx.arc(cx, cy, r, a2, a1, true);
-      ctx.closePath();
-      ctx.fillStyle = 'rgba(0,0,0,0.18)'; ctx.fill();
+    // ── 2. Darbari rim: soot band + fine gold + fine conch-white rings ──
+    ctx.beginPath(); ctx.arc(cx, cy, r * 0.965, 0, Math.PI * 2);
+    ctx.strokeStyle = '#1A0E08'; ctx.lineWidth = r * 0.07; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy, r * 0.90, 0, Math.PI * 2);
+    ctx.strokeStyle = '#C9952C'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy, r * 0.86, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(242,232,206,0.8)'; ctx.lineWidth = 1; ctx.stroke();
+
+    // ── 3. Court rim flourish: extra gold ring + dotted band ──
+    if (isCourtCard) {
+      ctx.beginPath(); ctx.arc(cx, cy, r * 0.82, 0, Math.PI * 2);
+      ctx.strokeStyle = '#C9952C'; ctx.lineWidth = 1.2; ctx.stroke();
+      ctx.fillStyle = '#C9952C';
+      for (var d = 0; d < 12; d++) {
+        var da = (d * 30) * Math.PI / 180;
+        ctx.beginPath();
+        ctx.arc(cx + Math.cos(da) * r * 0.965, cy + Math.sin(da) * r * 0.965, r * 0.02, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
 
-    // Outer gold border
-    ctx.beginPath(); ctx.arc(cx, cy, r - 1, 0, Math.PI * 2);
-    ctx.strokeStyle = isCourtCard ? 'rgba(255,215,80,0.8)' : 'rgba(255,255,255,0.25)';
-    ctx.lineWidth = 1.5; ctx.stroke();
+    // ── Symbols: pip rosette (1-10) or court miniature (11-12) ──
+    if (isCourtCard) {
+      drawCourt(ctx, cx, cy, r * 0.62, suit, rank);
+    } else {
+      var layout = PIP_LAYOUTS[rank];
+      var pr = layout.pr * r;
+      for (var p = 0; p < layout.pos.length; p++) {
+        var px = cx + layout.pos[p][0] * r;
+        var py = cy + layout.pos[p][1] * r;
+        drawMotif(ctx, px, py, pr, suit, rank);
+      }
+    }
 
-    // Middle ring (warm cream with gradient)
-    ctx.beginPath(); ctx.arc(cx, cy, r * 0.74, 0, Math.PI * 2);
-    var mg = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 0.74);
-    mg.addColorStop(0, '#FFFAEE'); mg.addColorStop(1, '#EDE0C0');
-    ctx.fillStyle = mg; ctx.fill();
-    ctx.strokeStyle = isCourtCard ? '#D4A017' : suit.color;
-    ctx.lineWidth = isCourtCard ? 1.8 : 1; ctx.stroke();
+    // ── 4. Lac sheen specular arc ──
+    ctx.beginPath();
+    ctx.ellipse(cx - r * 0.32, cy - r * 0.38, r * 0.46, r * 0.2, -0.6, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.10)'; ctx.fill();
 
-    // Inner ring on middle band
-    ctx.beginPath(); ctx.arc(cx, cy, r * 0.67, 0, Math.PI * 2);
-    ctx.strokeStyle = isCourtCard ? 'rgba(212,160,23,0.35)' : 'rgba(0,0,0,0.07)';
-    ctx.lineWidth = 0.7; ctx.stroke();
-
-    // Rank numeral
-    var fontSize = Math.max(9, Math.round(r * 0.42));
-    ctx.font = 'bold ' + fontSize + 'px Cinzel, "Playfair Display", serif';
-    ctx.fillStyle = isCourtCard ? '#7A5008' : suit.color;
+    // ── 5. Rank index (digital concession — real cards carry no indices).
+    //        Kept tiny, seated on the soot rim band at the top. ──
+    ctx.font = 'bold ' + (r * 0.22) + 'px Georgia, serif';
+    ctx.fillStyle = '#E8C766';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(rankLabel(rank), cx, cy - r * 0.46);
-
-    // Center circle (luminous)
-    var ccy = cy + r * 0.05;
-    ctx.beginPath(); ctx.arc(cx, ccy, r * 0.46, 0, Math.PI * 2);
-    var cg = ctx.createRadialGradient(cx - r*0.1, ccy - r*0.1, 0, cx, ccy, r * 0.46);
-    cg.addColorStop(0, '#FFFEF8'); cg.addColorStop(1, '#F5EDD6');
-    ctx.fillStyle = cg; ctx.fill();
-    ctx.strokeStyle = isCourtCard ? '#D4A017' : suit.color;
-    ctx.lineWidth = isCourtCard ? 1.5 : 0.8; ctx.stroke();
-
-    drawMotif(ctx, cx, ccy, r * 0.36, suit, rank);
+    ctx.fillText(rankLabel(rank), cx, cy - r * 0.93);
   }
 
   function drawMotif(ctx, cx, cy, r, suit, rank) {
-    ctx.strokeStyle = '#C8960C';
-    ctx.fillStyle   = suit.color;
+    var ink    = suitInk(suit);
+    var accent = suitAccent(suit);
+    ctx.strokeStyle = accent;
+    ctx.fillStyle   = ink;
     ctx.lineWidth   = Math.max(1, r * 0.08);
 
     switch (suit.motif) {
-      case 'servant':   drawServant(ctx, cx, cy, r, rank);   break;
-      case 'crown':     drawCrown(ctx, cx, cy, r);            break;
-      case 'sword':     drawSword(ctx, cx, cy, r);            break;
-      case 'cloth':     drawCloth(ctx, cx, cy, r);            break;
-      case 'harness':   drawHarness(ctx, cx, cy, r);          break;
-      case 'harp':      drawHarp(ctx, cx, cy, r);             break;
-      case 'gold_coins':drawCoins(ctx, cx, cy, r);            break;
-      case 'silver':    drawSilver(ctx, cx, cy, r);           break;
+      case 'servant':   drawServant(ctx, cx, cy, r, rank, ink, accent);  break;
+      case 'crown':     drawCrown(ctx, cx, cy, r, ink, accent);          break;
+      case 'sword':     drawSword(ctx, cx, cy, r, ink, accent);          break;
+      case 'cloth':     drawCloth(ctx, cx, cy, r, ink, accent);          break;
+      case 'harness':   drawHarness(ctx, cx, cy, r, ink, accent);        break;
+      case 'harp':      drawHarp(ctx, cx, cy, r, ink, accent);           break;
+      case 'gold_coins':drawCoins(ctx, cx, cy, r, ink, accent);          break;
+      case 'silver':    drawSilver(ctx, cx, cy, r, ink, accent);         break;
     }
   }
 
-  function drawServant(ctx, cx, cy, r, rank) {
-    var lw = ctx.lineWidth;
+  function drawServant(ctx, cx, cy, r, rank, ink, accent) {
+    // Generic servant pip: body + head + arms (court ranks are handled by
+    // drawCourt now, so this only ever runs for ranks 1-10).
+    ctx.fillStyle = ink;
+    ctx.fillRect(cx - r * 0.1, cy, r * 0.2, r * 0.38);
+    ctx.beginPath();
+    ctx.arc(cx, cy - r * 0.05, r * 0.13, 0, Math.PI * 2);
+    ctx.fill();
+    // Arms
+    ctx.beginPath();
+    ctx.moveTo(cx - r * 0.28, cy + r * 0.12);
+    ctx.lineTo(cx - r * 0.1,  cy + r * 0.08);
+    ctx.moveTo(cx + r * 0.1,  cy + r * 0.08);
+    ctx.lineTo(cx + r * 0.28, cy + r * 0.12);
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = Math.max(1, r * 0.08);
+    ctx.stroke();
+  }
+
+  // Court miniatures — work for ALL suits. Mir (12) seated under a canopy,
+  // Wazir (11) on horseback in profile. A tiny suit motif sits at lower-right.
+  function drawCourt(ctx, cx, cy, r, suit, rank) {
+    var ink    = suitInk(suit);
+    var accent = suitAccent(suit);
+    var gold   = '#D4A437';
+
     if (rank === 12) {
-      // Mir: throne + body + head + crown
-      // Throne (rectangle at bottom)
-      ctx.fillStyle = '#C8960C';
-      ctx.fillRect(cx - r * 0.4, cy + r * 0.3, r * 0.8, r * 0.2);
-      // Body
-      ctx.fillStyle = ctx.strokeStyle;
-      ctx.fillRect(cx - r * 0.15, cy - r * 0.1, r * 0.3, r * 0.4);
-      // Head
+      // ── Mir: seated ruler under a canopy ──
+      // Canopy: shallow arc with two thin posts.
+      ctx.strokeStyle = gold;
+      ctx.lineWidth = Math.max(1, r * 0.05);
       ctx.beginPath();
-      ctx.arc(cx, cy - r * 0.25, r * 0.18, 0, Math.PI * 2);
+      ctx.moveTo(cx - r * 0.55, cy - r * 0.45);
+      ctx.quadraticCurveTo(cx, cy - r * 0.62, cx + r * 0.55, cy - r * 0.45);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx - r * 0.5, cy - r * 0.45); ctx.lineTo(cx - r * 0.5, cy - r * 0.1);
+      ctx.moveTo(cx + r * 0.5, cy - r * 0.45); ctx.lineTo(cx + r * 0.5, cy - r * 0.1);
+      ctx.stroke();
+
+      // Folded legs ellipse.
+      ctx.fillStyle = ink;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy + r * 0.22, r * 0.34, r * 0.12, 0, 0, Math.PI * 2);
       ctx.fill();
-      // Crown (3 points)
+      // Torso trapezoid.
       ctx.beginPath();
-      ctx.moveTo(cx - r * 0.2, cy - r * 0.42);
-      ctx.lineTo(cx - r * 0.2, cy - r * 0.6);
-      ctx.lineTo(cx,           cy - r * 0.72);
-      ctx.lineTo(cx + r * 0.2, cy - r * 0.6);
-      ctx.lineTo(cx + r * 0.2, cy - r * 0.42);
+      ctx.moveTo(cx - r * 0.13, cy + r * 0.18);
+      ctx.lineTo(cx + r * 0.13, cy + r * 0.18);
+      ctx.lineTo(cx + r * 0.2,  cy - r * 0.05);
+      ctx.lineTo(cx - r * 0.2,  cy - r * 0.05);
       ctx.closePath();
-      ctx.fillStyle = '#C8960C';
       ctx.fill();
-    } else if (rank === 11) {
-      // Vizier: body + head + staff
-      ctx.fillStyle = ctx.strokeStyle;
-      ctx.fillRect(cx - r * 0.12, cy - r * 0.05, r * 0.24, r * 0.45);
+      // Head.
       ctx.beginPath();
-      ctx.arc(cx, cy - r * 0.2, r * 0.15, 0, Math.PI * 2);
+      ctx.arc(cx, cy - r * 0.18, r * 0.14, 0, Math.PI * 2);
       ctx.fill();
-      // Staff
+      // Gold crown triangle on head.
+      ctx.fillStyle = gold;
       ctx.beginPath();
-      ctx.moveTo(cx + r * 0.25, cy - r * 0.5);
-      ctx.lineTo(cx - r * 0.05, cy + r * 0.45);
-      ctx.strokeStyle = '#C8960C';
-      ctx.lineWidth = lw * 1.5;
-      ctx.stroke();
-      ctx.lineWidth = lw;
+      ctx.moveTo(cx - r * 0.12, cy - r * 0.30);
+      ctx.lineTo(cx,            cy - r * 0.44);
+      ctx.lineTo(cx + r * 0.12, cy - r * 0.30);
+      ctx.closePath();
+      ctx.fill();
     } else {
-      // Generic servant: body + head + arms
-      ctx.fillStyle = ctx.strokeStyle;
-      ctx.fillRect(cx - r * 0.1, cy, r * 0.2, r * 0.38);
+      // ── Wazir: horse + rider in profile ──
+      ctx.fillStyle = ink;
+      ctx.strokeStyle = ink;
+      ctx.lineWidth = Math.max(1, r * 0.07);
+      // Horse body.
       ctx.beginPath();
-      ctx.arc(cx, cy - r * 0.05, r * 0.13, 0, Math.PI * 2);
+      ctx.ellipse(cx, cy + r * 0.12, r * 0.30, r * 0.14, 0, 0, Math.PI * 2);
       ctx.fill();
-      // Arms
+      // Neck + head (two short capsules angled up-left).
+      ctx.lineCap = 'round';
       ctx.beginPath();
-      ctx.moveTo(cx - r * 0.28, cy + r * 0.12);
-      ctx.lineTo(cx - r * 0.1,  cy + r * 0.08);
-      ctx.moveTo(cx + r * 0.1,  cy + r * 0.08);
-      ctx.lineTo(cx + r * 0.28, cy + r * 0.12);
-      ctx.strokeStyle = '#C8960C';
+      ctx.moveTo(cx - r * 0.22, cy + r * 0.05);
+      ctx.lineTo(cx - r * 0.40, cy - r * 0.18);
+      ctx.lineWidth = Math.max(2, r * 0.12);
       ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx - r * 0.40, cy - r * 0.18);
+      ctx.lineTo(cx - r * 0.52, cy - r * 0.24);
+      ctx.lineWidth = Math.max(1, r * 0.08);
+      ctx.stroke();
+      // Four straight legs.
+      ctx.lineWidth = Math.max(1, r * 0.05);
+      var legX = [-0.2, -0.05, 0.12, 0.26];
+      for (var l = 0; l < legX.length; l++) {
+        ctx.beginPath();
+        ctx.moveTo(cx + legX[l] * r, cy + r * 0.22);
+        ctx.lineTo(cx + legX[l] * r, cy + r * 0.46);
+        ctx.stroke();
+      }
+      // Tail curve.
+      ctx.beginPath();
+      ctx.moveTo(cx + r * 0.30, cy + r * 0.06);
+      ctx.quadraticCurveTo(cx + r * 0.44, cy + r * 0.18, cx + r * 0.40, cy + r * 0.40);
+      ctx.lineWidth = Math.max(1, r * 0.06);
+      ctx.stroke();
+      ctx.lineCap = 'butt';
+      // Rider: torso capsule + head above body midpoint.
+      ctx.fillStyle = ink;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy - r * 0.12, r * 0.09, r * 0.17, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(cx, cy - r * 0.30, r * 0.10, 0, Math.PI * 2);
+      ctx.fill();
+      // Gold turban dot.
+      ctx.fillStyle = gold;
+      ctx.beginPath();
+      ctx.arc(cx, cy - r * 0.38, r * 0.06, 0, Math.PI * 2);
+      ctx.fill();
     }
+
+    // Tiny suit motif at lower-right.
+    drawMotif(ctx, cx + r * 0.34, cy + r * 0.38, r * 0.14, suit, 1);
   }
 
-  function drawCrown(ctx, cx, cy, r) {
+  function drawCrown(ctx, cx, cy, r, ink, accent) {
+    ctx.fillStyle = ink; ctx.strokeStyle = accent;
+    ctx.lineWidth = Math.max(1, r * 0.08);
     // 5-point crown
     ctx.beginPath();
     ctx.moveTo(cx - r * 0.45, cy + r * 0.25);  // bottom-left
@@ -495,26 +577,27 @@
     ctx.fill();
     ctx.stroke();
     // Gem dots on band
+    ctx.fillStyle = accent;
     [-0.25, 0, 0.25].forEach(function (xOff) {
       ctx.beginPath();
       ctx.arc(cx + xOff * r, cy + r * 0.08, r * 0.05, 0, Math.PI * 2);
-      ctx.fillStyle = '#FAF0D8';
       ctx.fill();
     });
   }
 
-  function drawSword(ctx, cx, cy, r) {
+  function drawSword(ctx, cx, cy, r, ink, accent) {
     // Curved blade
     ctx.beginPath();
     ctx.moveTo(cx - r * 0.1, cy + r * 0.42);
     ctx.quadraticCurveTo(cx - r * 0.15, cy, cx + r * 0.15, cy - r * 0.42);
-    ctx.strokeStyle = '#C8960C';
+    ctx.strokeStyle = ink;
     ctx.lineWidth = Math.max(1.5, r * 0.1);
     ctx.stroke();
     // Cross guard
     ctx.beginPath();
     ctx.moveTo(cx - r * 0.3, cy + r * 0.15);
     ctx.lineTo(cx + r * 0.3, cy + r * 0.15);
+    ctx.strokeStyle = accent;
     ctx.lineWidth = Math.max(1, r * 0.07);
     ctx.stroke();
     // Handle
@@ -526,10 +609,10 @@
     ctx.stroke();
   }
 
-  function drawCloth(ctx, cx, cy, r) {
+  function drawCloth(ctx, cx, cy, r, ink, accent) {
     // 3 horizontal wavy lines
     var offsets = [-r * 0.2, 0, r * 0.2];
-    ctx.strokeStyle = '#C8960C';
+    ctx.strokeStyle = ink;
     ctx.lineWidth = Math.max(1, r * 0.07);
     offsets.forEach(function (dy) {
       ctx.beginPath();
@@ -553,11 +636,11 @@
     ctx.globalAlpha = 1;
   }
 
-  function drawHarness(ctx, cx, cy, r) {
+  function drawHarness(ctx, cx, cy, r, ink, accent) {
     // Outer circle
     ctx.beginPath();
     ctx.arc(cx, cy, r * 0.44, 0, Math.PI * 2);
-    ctx.strokeStyle = '#C8960C';
+    ctx.strokeStyle = ink;
     ctx.lineWidth = Math.max(1, r * 0.07);
     ctx.stroke();
     // Inner circle
@@ -575,12 +658,12 @@
     // Buckle dot at bottom
     ctx.beginPath();
     ctx.arc(cx, cy + r * 0.44, r * 0.06, 0, Math.PI * 2);
-    ctx.fillStyle = '#C8960C';
+    ctx.fillStyle = accent;
     ctx.fill();
   }
 
-  function drawHarp(ctx, cx, cy, r) {
-    ctx.strokeStyle = '#C8960C';
+  function drawHarp(ctx, cx, cy, r, ink, accent) {
+    ctx.strokeStyle = ink;
     ctx.lineWidth = Math.max(1, r * 0.07);
     // Harp neck/body arch
     ctx.beginPath();
@@ -614,21 +697,21 @@
     ctx.lineWidth = Math.max(1, r * 0.07);
   }
 
-  function drawCoins(ctx, cx, cy, r) {
+  function drawCoins(ctx, cx, cy, r, ink, accent) {
     // 3 stacked coin ellipses
     var coinOffsets = [r * 0.18, 0, -r * 0.18];
     coinOffsets.forEach(function (dy, i) {
       ctx.beginPath();
       ctx.ellipse(cx, cy + dy, r * 0.32, r * 0.12, 0, 0, Math.PI * 2);
-      ctx.fillStyle = '#D4A017';
+      ctx.fillStyle = ink;
       ctx.fill();
-      ctx.strokeStyle = '#C8960C';
+      ctx.strokeStyle = accent;
       ctx.lineWidth = Math.max(0.5, r * 0.05);
       ctx.stroke();
     });
   }
 
-  function drawSilver(ctx, cx, cy, r) {
+  function drawSilver(ctx, cx, cy, r, ink, accent) {
     // Trapezoid ingot
     ctx.beginPath();
     ctx.moveTo(cx - r * 0.3, cy + r * 0.28);
@@ -636,16 +719,16 @@
     ctx.lineTo(cx + r * 0.22, cy - r * 0.28);
     ctx.lineTo(cx - r * 0.22, cy - r * 0.28);
     ctx.closePath();
-    ctx.fillStyle = '#D4A017';
+    ctx.fillStyle = ink;
     ctx.fill();
-    ctx.strokeStyle = '#C8960C';
+    ctx.strokeStyle = accent;
     ctx.lineWidth = Math.max(1, r * 0.07);
     ctx.stroke();
     // Shine line
     ctx.beginPath();
     ctx.moveTo(cx - r * 0.18, cy - r * 0.05);
     ctx.lineTo(cx + r * 0.18, cy - r * 0.05);
-    ctx.strokeStyle = 'rgba(255,255,220,0.6)';
+    ctx.strokeStyle = accent;
     ctx.lineWidth = Math.max(0.5, r * 0.04);
     ctx.stroke();
   }
@@ -683,9 +766,9 @@
 
     // ── Felt: radial gradient ──
     var feltGrad = ctx.createRadialGradient(CX, CY, 60, CX, CY, 560);
-    feltGrad.addColorStop(0,   '#1E5C48');
-    feltGrad.addColorStop(0.55,'#165240');
-    feltGrad.addColorStop(1,   '#0B2A1C');
+    feltGrad.addColorStop(0,   '#2A1410');
+    feltGrad.addColorStop(0.55,'#221008');
+    feltGrad.addColorStop(1,   '#150A06');
     ctx.fillStyle = feltGrad;
     ctx.fillRect(8, 8, BASE_W - 16, BASE_H - 16);
 
@@ -724,13 +807,14 @@
       ctx.fillStyle = 'rgba(212,160,23,0.6)'; ctx.fill();
     });
 
-    // ── Center table oval (double ring) ──
+    // ── Center floor-cloth (red lacquered ground, cream-ringed) ──
     ctx.beginPath();
     ctx.ellipse(CX, CY, TABLE_W * 0.43, TABLE_H * 0.44, 0, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(212,160,23,0.18)'; ctx.lineWidth = 3; ctx.stroke();
+    ctx.fillStyle = '#5C1F1A'; ctx.fill();
+    ctx.strokeStyle = '#1A0E08'; ctx.lineWidth = 6; ctx.stroke();
     ctx.beginPath();
     ctx.ellipse(CX, CY, TABLE_W * 0.41, TABLE_H * 0.42, 0, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(212,160,23,0.10)'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.strokeStyle = '#C9952C'; ctx.lineWidth = 1.5; ctx.stroke();
 
     // ── South rail divider ──
     var railY = BASE_H - SOUTH_H;
@@ -813,7 +897,7 @@
         ctx.stroke();
       }
       ctx.font = isActive ? 'bold 10px Cinzel, serif' : '10px Cinzel, serif';
-      ctx.fillStyle = isActive ? '#D4A017' : 'rgba(245,237,214,0.45)';
+      ctx.fillStyle = isActive ? '#D4A437' : 'rgba(242,232,206,0.5)';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText(SEAT_LABELS[d.seat], d.x, d.y);
     });
@@ -860,7 +944,7 @@
     if (state.ledSuit) {
       var suit = SUIT_MAP[state.ledSuit];
       ctx.font = 'bold 11px Cinzel, serif';
-      ctx.fillStyle = 'rgba(245,237,214,0.55)';
+      ctx.fillStyle = 'rgba(242,232,206,0.7)';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText('Led: ' + suit.name, CX, CY);
     }
@@ -959,7 +1043,7 @@
       ctx.arc(cx, cy, r + 3, 0, Math.PI * 2);
       ctx.strokeStyle = 'rgba(212,160,23,' + pulse + ')';
       ctx.lineWidth = 2.5;
-      ctx.shadowColor = '#D4A017';
+      ctx.shadowColor = '#D4A437';
       ctx.shadowBlur = 8 * pulse;
       ctx.stroke();
       ctx.restore();
@@ -972,15 +1056,15 @@
     var panelW = 155;
 
     // Score box (top-right of table)
-    ctx.fillStyle = 'rgba(13,27,62,0.82)';
+    ctx.fillStyle = 'rgba(20,9,5,0.78)';
     roundRect(ctx, panelX, panelY, panelW, 100, 6);
     ctx.fill();
-    ctx.strokeStyle = 'rgba(212,160,23,0.3)';
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#C9952C';
+    ctx.lineWidth = 1.2;
     ctx.stroke();
 
     ctx.font = 'bold 11px Cinzel, serif';
-    ctx.fillStyle = '#D4A017';
+    ctx.fillStyle = '#D4A437';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
     ctx.fillText('SCORES', panelX + 10, panelY + 8);
@@ -988,7 +1072,7 @@
     ctx.beginPath();
     ctx.moveTo(panelX + 8, panelY + 20);
     ctx.lineTo(panelX + panelW - 8, panelY + 20);
-    ctx.strokeStyle = 'rgba(212,160,23,0.35)';
+    ctx.strokeStyle = 'rgba(201,149,44,0.5)';
     ctx.lineWidth = 0.7;
     ctx.stroke();
 
@@ -996,16 +1080,19 @@
     SEATS.forEach(function (seat, i) {
       var label = SEAT_LABELS[seat];
       var score = state.scores[seat];
-      ctx.fillStyle = seat === 'south' ? '#D4A017' : '#F5EDD6';
+      ctx.fillStyle = seat === 'south' ? '#D4A437' : '#F2E8CE';
       ctx.fillText(label + ': ' + score, panelX + 10, panelY + 26 + i * 18);
     });
 
     // Round indicator (below score box)
-    ctx.fillStyle = 'rgba(13,27,62,0.7)';
+    ctx.fillStyle = 'rgba(20,9,5,0.78)';
     roundRect(ctx, panelX, panelY + 108, panelW, 28, 5);
     ctx.fill();
+    ctx.strokeStyle = '#C9952C';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
     ctx.font = '11px Cinzel, serif';
-    ctx.fillStyle = '#D4A017';
+    ctx.fillStyle = '#D4A437';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
     ctx.fillText('Round ' + state.round, panelX + 10, panelY + 122);
@@ -1013,15 +1100,15 @@
     // Tricks won box (top-left of table area)
     var tpX = TABLE_X + 5;
     var tpY = TABLE_Y + 10;
-    ctx.fillStyle = 'rgba(13,27,62,0.82)';
+    ctx.fillStyle = 'rgba(20,9,5,0.78)';
     roundRect(ctx, tpX, tpY, 140, 100, 6);
     ctx.fill();
-    ctx.strokeStyle = 'rgba(212,160,23,0.3)';
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#C9952C';
+    ctx.lineWidth = 1.2;
     ctx.stroke();
 
     ctx.font = 'bold 11px Cinzel, serif';
-    ctx.fillStyle = '#D4A017';
+    ctx.fillStyle = '#D4A437';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
     ctx.fillText('TRICKS', tpX + 10, tpY + 8);
@@ -1029,13 +1116,13 @@
     ctx.beginPath();
     ctx.moveTo(tpX + 8, tpY + 20);
     ctx.lineTo(tpX + 132, tpY + 20);
-    ctx.strokeStyle = 'rgba(212,160,23,0.35)';
+    ctx.strokeStyle = 'rgba(201,149,44,0.5)';
     ctx.lineWidth = 0.7;
     ctx.stroke();
 
     ctx.font = '11px Outfit, sans-serif';
     SEATS.forEach(function (seat, i) {
-      ctx.fillStyle = seat === 'south' ? '#D4A017' : '#F5EDD6';
+      ctx.fillStyle = seat === 'south' ? '#D4A437' : '#F2E8CE';
       ctx.fillText(SEAT_LABELS[seat] + ': ' + state.tricksWon[seat], tpX + 10, tpY + 26 + i * 18);
     });
 
@@ -1047,22 +1134,28 @@
       var suit = SUIT_MAP[state.trumpSuit];
       var tX = TABLE_X + TABLE_W - 160;
       var tY = TABLE_Y + TABLE_H - 110;
-      ctx.fillStyle = 'rgba(13,27,62,0.85)';
+      ctx.fillStyle = 'rgba(20,9,5,0.78)';
       roundRect(ctx, tX, tY, 155, 100, 6);
       ctx.fill();
-      ctx.strokeStyle = suit.color;
-      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = '#C9952C';
+      ctx.lineWidth = 1.2;
       ctx.stroke();
 
       ctx.font = 'bold 11px Cinzel, serif';
-      ctx.fillStyle = '#D4A017';
+      ctx.fillStyle = '#D4A437';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
       ctx.fillText('TRUMP', tX + 10, tY + 8);
 
       ctx.font = 'bold 14px Cinzel, serif';
-      ctx.fillStyle = suit.color;
+      ctx.fillStyle = '#F2E8CE';
       ctx.fillText(suit.name, tX + 10, tY + 26);
+
+      // Small swatch of the suit ground so the player can read the trump color.
+      ctx.beginPath();
+      ctx.arc(tX + 25, tY + 60, 12, 0, Math.PI * 2);
+      ctx.fillStyle = suit.color; ctx.fill();
+      ctx.strokeStyle = '#1A0E08'; ctx.lineWidth = 2; ctx.stroke();
 
       // Small motif preview
       drawMotif(ctx, tX + 120, tY + 55, 30, suit, 1);
@@ -1081,23 +1174,23 @@
       ctx.font = 'bold 13px Cinzel, serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle = 'rgba(245,237,214,0.85)';
+      ctx.fillStyle = 'rgba(242,232,206,0.9)';
       ctx.fillText(turnText, CX, CY + TRICK_R * 2.2 + FULL_R + 18);
     }
   }
 
   function drawTrickLog(x, y, w, h) {
     // Panel background
-    ctx.fillStyle = 'rgba(13,27,62,0.82)';
+    ctx.fillStyle = 'rgba(20,9,5,0.78)';
     roundRect(ctx, x, y, w, h, 6);
     ctx.fill();
-    ctx.strokeStyle = 'rgba(212,160,23,0.3)';
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#C9952C';
+    ctx.lineWidth = 1.2;
     ctx.stroke();
 
     // Header
     ctx.font = 'bold 10px Cinzel, serif';
-    ctx.fillStyle = '#D4A017';
+    ctx.fillStyle = '#D4A437';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
     ctx.fillText('TRICK LOG', x + 10, y + 8);
@@ -1105,7 +1198,7 @@
     ctx.beginPath();
     ctx.moveTo(x + 8, y + 21);
     ctx.lineTo(x + w - 8, y + 21);
-    ctx.strokeStyle = 'rgba(212,160,23,0.35)';
+    ctx.strokeStyle = 'rgba(201,149,44,0.5)';
     ctx.lineWidth = 0.7;
     ctx.stroke();
 
@@ -1115,7 +1208,7 @@
 
     if (history.length === 0) {
       ctx.font = '10px Outfit, sans-serif';
-      ctx.fillStyle = 'rgba(245,237,214,0.3)';
+      ctx.fillStyle = 'rgba(242,232,206,0.35)';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText('No tricks played yet', x + w / 2, y + h / 2);
@@ -1148,18 +1241,18 @@
 
       // Trick # and suit name
       ctx.font = 'bold 9px Cinzel, serif';
-      ctx.fillStyle = '#D4A017';
+      ctx.fillStyle = '#D4A437';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
       ctx.fillText('#' + trickNum, x + 28, ry + 2);
 
       ctx.font = '9px Outfit, sans-serif';
-      ctx.fillStyle = suit ? suit.color : '#aaa';
+      ctx.fillStyle = '#F2E8CE';
       ctx.fillText(suit ? suit.name : '?', x + 28, ry + 13);
 
       // Winner
       ctx.font = '10px Outfit, sans-serif';
-      ctx.fillStyle = entry.winner === 'south' ? '#D4A017' : 'rgba(245,237,214,0.75)';
+      ctx.fillStyle = entry.winner === 'south' ? '#D4A437' : 'rgba(242,232,206,0.8)';
       ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';
       ctx.fillText(SEAT_LABELS[entry.winner] + ' won', x + w - 8, ry + 10);
@@ -1168,7 +1261,7 @@
 
   function drawOverlay() {
     // Semi-transparent backdrop
-    ctx.fillStyle = 'rgba(10,18,44,0.82)';
+    ctx.fillStyle = 'rgba(21,10,6,0.85)';
     ctx.fillRect(TABLE_X, TABLE_Y, TABLE_W, TABLE_H);
 
     ctx.textAlign = 'center';
@@ -1176,32 +1269,32 @@
 
     if (state.phase === 'game-over') {
       ctx.font = 'bold 32px Cinzel, serif';
-      ctx.fillStyle = '#D4A017';
+      ctx.fillStyle = '#D4A437';
       ctx.fillText('Game Over', CX, CY - 80);
 
       ctx.font = 'bold 20px Cinzel, serif';
-      ctx.fillStyle = '#F5EDD6';
+      ctx.fillStyle = '#F2E8CE';
       var winLabel = state.winner === 'south' ? 'You win!' : SEAT_LABELS[state.winner] + ' wins!';
       ctx.fillText(winLabel, CX, CY - 44);
 
       ctx.font = '14px Outfit, sans-serif';
       SEATS.forEach(function (seat, i) {
-        ctx.fillStyle = seat === state.winner ? '#D4A017' : '#F5EDD6';
+        ctx.fillStyle = seat === state.winner ? '#D4A437' : '#F2E8CE';
         ctx.fillText(SEAT_LABELS[seat] + ': ' + state.scores[seat] + ' pts', CX, CY - 8 + i * 22);
       });
 
       ctx.font = '13px Outfit, sans-serif';
-      ctx.fillStyle = 'rgba(245,237,214,0.6)';
+      ctx.fillStyle = 'rgba(242,232,206,0.65)';
       ctx.fillText('Click to play again', CX, CY + 110);
 
     } else if (state.phase === 'round-end') {
       ctx.font = 'bold 26px Cinzel, serif';
-      ctx.fillStyle = '#D4A017';
+      ctx.fillStyle = '#D4A437';
       ctx.fillText('Round ' + state.round + ' Complete', CX, CY - 90);
 
       // Tricks per seat
       ctx.font = '13px Outfit, sans-serif';
-      ctx.fillStyle = '#F5EDD6';
+      ctx.fillStyle = '#F2E8CE';
       SEATS.forEach(function (seat, i) {
         ctx.fillText(SEAT_LABELS[seat] + ': ' + state.tricksWon[seat] + ' tricks', CX, CY - 58 + i * 20);
       });
@@ -1213,22 +1306,22 @@
       });
       if (slamSeat) {
         ctx.font = 'bold 14px Cinzel, serif';
-        ctx.fillStyle = '#D4A017';
+        ctx.fillStyle = '#D4A437';
         ctx.fillText('SLAM! +5 bonus for ' + SEAT_LABELS[slamSeat], CX, CY + 20);
       }
 
       // Scores
       ctx.font = 'bold 13px Cinzel, serif';
-      ctx.fillStyle = '#D4A017';
+      ctx.fillStyle = '#D4A437';
       ctx.fillText('Cumulative Scores', CX, CY + 44);
       ctx.font = '13px Outfit, sans-serif';
-      ctx.fillStyle = '#F5EDD6';
+      ctx.fillStyle = '#F2E8CE';
       SEATS.forEach(function (seat, i) {
         ctx.fillText(SEAT_LABELS[seat] + ': ' + state.scores[seat], CX, CY + 64 + i * 18);
       });
 
       ctx.font = '13px Outfit, sans-serif';
-      ctx.fillStyle = 'rgba(245,237,214,0.6)';
+      ctx.fillStyle = 'rgba(242,232,206,0.65)';
       ctx.fillText('Click anywhere to continue', CX, CY + 150);
     }
   }
