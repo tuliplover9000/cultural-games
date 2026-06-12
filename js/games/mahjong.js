@@ -331,28 +331,40 @@
   // All artwork uses inline SVG with preserveAspectRatio="none" so it fills
   // the tile face at every size without distortion or letterboxing.
 
-  // Single bamboo stalk: rounded rect + two joint lines + left highlight
-  function mkStalk(x, y, w, h) {
+  // Single bamboo stalk: rounded rect + two joint lines + left highlight.
+  // color: 'green' (default) or 'red' — red accent sticks per HK convention.
+  function mkStalk(x, y, w, h, color) {
     const rx  = Math.max(1.5, w * 0.16);
     const j1  = y + h * 0.34;
     const j2  = y + h * 0.67;
     const hlw = Math.max(2, w * 0.22);
+    const red = color === 'red';
+    const body   = red ? '#C8281E' : '#1b9a3d';
+    const stroke = red ? '#7E1812' : '#0a4e1e';
+    const joint  = red ? '#5E0E0A' : '#083d18';
     return (
-      `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="#1b9a3d"/>` +
-      `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="none" stroke="#0a4e1e" stroke-width="1.5"/>` +
-      `<rect x="${x+rx+0.5}" y="${j1-1}" width="${w-2*rx-1}" height="2" fill="#083d18" rx="0.5"/>` +
-      `<rect x="${x+rx+0.5}" y="${j2-1}" width="${w-2*rx-1}" height="2" fill="#083d18" rx="0.5"/>` +
+      `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${body}"/>` +
+      `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="none" stroke="${stroke}" stroke-width="1.5"/>` +
+      `<rect x="${x+rx+0.5}" y="${j1-1}" width="${w-2*rx-1}" height="2" fill="${joint}" rx="0.5"/>` +
+      `<rect x="${x+rx+0.5}" y="${j2-1}" width="${w-2*rx-1}" height="2" fill="${joint}" rx="0.5"/>` +
       `<rect x="${x+2}" y="${y+rx}" width="${hlw}" height="${h-2*rx}" rx="${hlw*0.5}" fill="rgba(255,255,255,0.22)"/>`
     );
   }
 
-  // Single circle "coin": outer green ring → cream band → navy centre → highlight
-  function mkCoin(cx, cy, r) {
+  // Concentric medallion "coin", engraved two-tone per HK convention.
+  // color ∈ 'red' | 'green' | 'blue' selects the dominant paint; the inner
+  // ring uses a contrasting secondary so every coin reads two-tone.
+  function mkCoin(cx, cy, r, color) {
+    const PAINT = { red: '#C8281E', green: '#1F7A3D', blue: '#2456A4' };
+    const SECONDARY = { red: 'blue', blue: 'red', green: 'red' };
+    const paint = PAINT[color] || PAINT.blue;
+    const secondary = PAINT[SECONDARY[color] || 'red'];
     return (
-      `<circle cx="${cx}" cy="${cy}" r="${r}"        fill="#165c30"/>` +
-      `<circle cx="${cx}" cy="${cy}" r="${r*0.76}"   fill="#e0d4be"/>` +
-      `<circle cx="${cx}" cy="${cy}" r="${r*0.52}"   fill="#0f2a5c"/>` +
-      `<circle cx="${cx-r*0.24}" cy="${cy-r*0.24}" r="${r*0.18}" fill="rgba(255,255,255,0.4)"/>`
+      `<circle cx="${cx}" cy="${cy}" r="${r}"        fill="${paint}"/>` +
+      `<circle cx="${cx}" cy="${cy}" r="${r*0.74}"   fill="#F4EEDE"/>` +
+      `<circle cx="${cx}" cy="${cy}" r="${r*0.46}"   fill="${secondary}"/>` +
+      `<circle cx="${cx}" cy="${cy}" r="${r*0.18}"   fill="#F4EEDE"/>` +
+      `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#3A352B" stroke-opacity="0.3" stroke-width="1.5"/>`
     );
   }
 
@@ -381,22 +393,31 @@
        [ 4, 89, 28,  34], [36, 89, 28,  34], [68, 89, 28,  34]],
     ];
 
+    // Red accent stick positions per number (index into the layout arrays).
+    const RED = {
+      5: [3],        // middle of the 3-stick bottom row
+      7: [1],        // centre of the 3-stick top row
+      9: [3, 4, 5],  // entire middle row
+    };
+
     let body;
     if (n === 1) {
-      // Traditional 1-bamboo: stylised sparrow/bird
+      // Traditional 1-bamboo: stylised multicolour sparrow on a perch
       body =
-        `<ellipse cx="50" cy="80" rx="20" ry="13" fill="#1a7830"/>` +
-        `<circle  cx="33" cy="62" r="11"           fill="#1e8f3a"/>` +
-        `<polygon points="24,62 32,57 32,67"        fill="#c0a020"/>` +
+        `<ellipse cx="50" cy="80" rx="20" ry="13" fill="#2456A4"/>` +
+        `<circle  cx="33" cy="62" r="11"           fill="#1F7A3D"/>` +
+        `<polygon points="24,62 32,57 32,67"        fill="#C8281E"/>` +
         `<circle  cx="30" cy="59" r="3"             fill="white"/>` +
         `<circle  cx="30" cy="59" r="1.5"           fill="#111"/>` +
-        `<path d="M68,74 C82,56 92,44 86,32"  stroke="#27c060" stroke-width="3.5" fill="none" stroke-linecap="round"/>` +
-        `<path d="M68,78 C88,72 98,68 94,56"  stroke="#1a8a40" stroke-width="3"   fill="none" stroke-linecap="round"/>` +
-        `<path d="M68,82 C84,90 92,100 88,114" stroke="#27c060" stroke-width="3"  fill="none" stroke-linecap="round"/>` +
-        `<line x1="42" y1="93" x2="38" y2="112" stroke="#888" stroke-width="2.5" stroke-linecap="round"/>` +
-        `<line x1="52" y1="93" x2="56" y2="112" stroke="#888" stroke-width="2.5" stroke-linecap="round"/>`;
+        `<path d="M68,74 C82,56 92,44 86,32"  stroke="#1F7A3D" stroke-width="3.5" fill="none" stroke-linecap="round"/>` +
+        `<path d="M68,78 C88,72 98,68 94,56"  stroke="#C8281E" stroke-width="3"   fill="none" stroke-linecap="round"/>` +
+        `<path d="M68,82 C84,90 92,100 88,114" stroke="#2456A4" stroke-width="3"  fill="none" stroke-linecap="round"/>` +
+        `<line x1="42" y1="93" x2="38" y2="110" stroke="#7E5A2E" stroke-width="2.5" stroke-linecap="round"/>` +
+        `<line x1="52" y1="93" x2="56" y2="110" stroke="#7E5A2E" stroke-width="2.5" stroke-linecap="round"/>` +
+        `<rect x="30" y="112" width="40" height="4" rx="2" fill="#1F7A3D"/>`;
     } else {
-      body = L[n].map(([x,y,w,h]) => mkStalk(x,y,w,h)).join('');
+      const reds = RED[n] || [];
+      body = L[n].map(([x,y,w,h], i) => mkStalk(x, y, w, h, reds.includes(i) ? 'red' : 'green')).join('');
     }
     return `<svg class="mj-art" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 130" preserveAspectRatio="none">${body}</svg>`;
   }
@@ -420,17 +441,65 @@
        [20,  65, 12], [50,  65, 12], [80,  65, 12],
        [20, 112, 12], [50, 112, 12], [80, 112, 12]],                                           // 9
     ];
-    const body = L[n].map(([cx,cy,r]) => mkCoin(cx,cy,r)).join('');
+    // Dominant paint per coin, indexed in layout order (one entry per coin).
+    const COLORS = {
+      1: ['red'],
+      2: ['green', 'blue'],
+      3: ['blue', 'red', 'green'],
+      4: ['blue', 'green', 'green', 'blue'],
+      5: ['blue', 'green', 'red', 'green', 'blue'],
+      6: ['green', 'green', 'red', 'red', 'red', 'red'],
+      7: ['green', 'green', 'green', 'red', 'red', 'red', 'red'],
+      8: ['blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue'],
+      9: ['green', 'green', 'green', 'red', 'red', 'red', 'blue', 'blue', 'blue'],
+    };
+
+    let body;
+    if (n === 1) {
+      // 1-circle: large rosette — a petaled green ring behind a two-tone medallion.
+      const [cx, cy, r] = L[1][0];
+      let petals = '';
+      for (let k = 0; k < 12; k++) {
+        const a  = (k / 12) * Math.PI * 2;
+        const px = cx + Math.cos(a) * r * 0.95;
+        const py = cy + Math.sin(a) * r * 0.95;
+        petals += `<circle cx="${px.toFixed(2)}" cy="${py.toFixed(2)}" r="${(r*0.13).toFixed(2)}" fill="#1F7A3D"/>`;
+      }
+      // Main medallion: red outer / blue inner (override mkCoin's secondary).
+      const medallion =
+        `<circle cx="${cx}" cy="${cy}" r="${r}"        fill="#C8281E"/>` +
+        `<circle cx="${cx}" cy="${cy}" r="${r*0.74}"   fill="#F4EEDE"/>` +
+        `<circle cx="${cx}" cy="${cy}" r="${r*0.46}"   fill="#2456A4"/>` +
+        `<circle cx="${cx}" cy="${cy}" r="${r*0.18}"   fill="#F4EEDE"/>` +
+        `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#3A352B" stroke-opacity="0.3" stroke-width="1.5"/>`;
+      body = petals + medallion;
+    } else {
+      const cols = COLORS[n];
+      body = L[n].map(([cx,cy,r], i) => mkCoin(cx, cy, r, cols[i])).join('');
+    }
     return `<svg class="mj-art" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 130" preserveAspectRatio="none">${body}</svg>`;
   }
 
   const CHAR_NUMS = ['一','二','三','四','五','六','七','八','九'];
+
+  // White Dragon (白): hollow double-ruled blue frame — the classic HK rendering.
+  function whiteDragonSVG() {
+    return `<svg class="mj-art" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 130" preserveAspectRatio="none">` +
+      // Engraved groove drawn first, slightly wider and dark.
+      `<rect x="14" y="10" width="72" height="110" rx="6" fill="none" stroke="#3A352B" stroke-opacity="0.25" stroke-width="9"/>` +
+      `<rect x="28" y="26" width="44" height="78"  rx="3" fill="none" stroke="#3A352B" stroke-opacity="0.25" stroke-width="6"/>` +
+      // Blue rules on top.
+      `<rect x="14" y="10" width="72" height="110" rx="6" fill="none" stroke="#2456A4" stroke-width="7"/>` +
+      `<rect x="28" y="26" width="44" height="78"  rx="3" fill="none" stroke="#2456A4" stroke-width="4"/>` +
+      `</svg>`;
+  }
 
   function buildTileContent(tile) {
     if (tile.suit === 'c')
       return `<span class="mj-hon mj-hon--char">${CHAR_NUMS[tile.num - 1]}</span><span class="mj-hon-sub">萬</span>`;
     if (tile.suit === 'b') return bambooSVG(tile.num);
     if (tile.suit === 'o') return circleSVG(tile.num);
+    if (tile.id === 'dW') return whiteDragonSVG();
     // Winds and dragons
     return `<span class="mj-hon mj-hon--${tile.cls}">${tile.symbol}</span>`;
   }

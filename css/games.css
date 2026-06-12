@@ -3991,26 +3991,32 @@ html[data-theme="light"] .pu-game-wrap {
 .mj-wrap {
   --mj-red:         #c0392b;
   --mj-red-light:   #e74c3c;
-  --mj-gold:        #c8960c;
-  --mj-gold-light:  #f2c94c;
-  --mj-gold-dim:    #a07820;
+  --mj-gold:        #E8B54A;
+  --mj-gold-light:  #F2C96C;
+  --mj-gold-dim:    #A07820;
   --mj-green:       #1a6b3a;
   --mj-green-mid:   #27ae60;
   --mj-ivory:       #fdf8ed;
   --mj-ivory-dark:  #e8dfc0;
-  --mj-felt:        #14602e;
-  --mj-felt-mid:    #1a7838;
-  --mj-felt-dark:   #0a2e16;
-  --mj-wood:        #2c1608;
-  --mj-wood-light:  #4a2c14;
-  --mj-tile-border: #b89040;
-  --mj-char:        #c0392b;
-  --mj-bamboo:      #1a6b3a;
-  --mj-circle:      #1a3a6b;
-  --mj-wind:        #1a1a1a;
-  --mj-dragon-r:    #c0392b;
-  --mj-dragon-g:    #1a6b3a;
+  --mj-felt:        #1E5C45;
+  --mj-felt-mid:    #2A6E52;
+  --mj-felt-dark:   #142E24;
+  --mj-wood:        #3E2718;
+  --mj-wood-light:  #5B3A24;
+  --mj-tile-border: #B8AD94;
+  --mj-char:        #C8281E;
+  --mj-bamboo:      #1F7A3D;
+  --mj-circle:      #2456A4;
+  --mj-wind:        #2456A4;
+  --mj-dragon-r:    #C8281E;
+  --mj-dragon-g:    #1F7A3D;
   --mj-dragon-w:    #888;
+  /* Reskin paints + jade back + engraved groove */
+  --mj-jade:        #2E7D5B;
+  --mj-paint-blue:  #2456A4;
+  --mj-paint-green: #1F7A3D;
+  --mj-paint-red:   #C8281E;
+  --mj-groove:      rgba(58,53,43,0.35);
 }
 
 /* ── Outer wrap — rich mahogany table frame ── */
@@ -4068,7 +4074,8 @@ html[data-theme="light"] .pu-game-wrap {
   display: flex;
   align-items: stretch;
   background:
-    radial-gradient(ellipse at 50% 50%, #1e7a40 0%, #14602e 55%, #0a3c1c 100%);
+    radial-gradient(ellipse at 50% 42%, rgba(255,214,140,0.10) 0%, rgba(255,214,140,0) 60%),
+    radial-gradient(ellipse at 50% 50%, #2A6E52 0%, #1E5C45 55%, #142E24 100%);
   border-radius: 8px;
   padding: 0.35rem;
   min-height: 200px;
@@ -4306,8 +4313,8 @@ html[data-theme="light"] .pu-game-wrap {
 .mj-tile {
   width: 3rem;
   height: 4.1rem;
-  background: linear-gradient(160deg, #fffef6 0%, #f8f0da 55%, #ede0bc 100%);
-  border: 1.5px solid var(--mj-tile-border);
+  background: linear-gradient(168deg, #FFFDF4 0%, #F4EEDE 60%, #E9DFC6 100%);
+  border: 1.5px solid #B8AD94;
   border-radius: 4px 4px 5px 5px;
   box-shadow:
     inset 3px 3px 0 rgba(255,255,255,0.88),
@@ -4327,58 +4334,22 @@ html[data-theme="light"] .pu-game-wrap {
   line-height: 1;
   overflow: hidden;
 }
-/* Coloured top band — suit identity strip */
+/* Jade BACK stripe — the colored back showing along the bottom edge of an
+   upright tile (real HK faces are uniform ivory; the back is the only tint). */
 .mj-tile:not(.mj-tile--back)::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 5px;
-  border-radius: 3px 3px 0 0;
+  top: auto; bottom: 0; left: 0; right: 0;
+  height: 7px;
+  background: linear-gradient(180deg, #36906A 0%, #2E7D5B 55%, #20593F 100%);
+  border-radius: 0 0 4px 4px;
+  border-top: 1px solid rgba(32,89,63,0.55);
 }
-/* Per-suit backgrounds and band colours */
-.mj-tile--char {
-  background: linear-gradient(160deg, #fff6f6 0%, #fde8e8 55%, #f5d0d0 100%);
-  border-color: #b83030;
-}
-.mj-tile--char::before    { background: #c0392b; }
-.mj-tile--bamboo {
-  background: linear-gradient(160deg, #f4fff7 0%, #e4f8ea 55%, #ceecd6 100%);
-  border-color: #1a6b3a;
-}
-.mj-tile--bamboo::before  { background: #1a6b3a; }
-.mj-tile--circle {
-  background: linear-gradient(160deg, #f4f7ff 0%, #e4eaf8 55%, #ccd4f0 100%);
-  border-color: #1a3a6b;
-}
-.mj-tile--circle::before  { background: #1a3a6b; }
-.mj-tile--wind {
-  background: linear-gradient(160deg, #fdfcf7 0%, #f0ebda 55%, #e0d5b8 100%);
-  border-color: #555;
-}
-.mj-tile--wind::before    { background: #3a3a3a; }
-.mj-tile--dragon-r {
-  background: linear-gradient(160deg, #fff6f6 0%, #fde8e8 55%, #f5d0d0 100%);
-  border-color: #b83030;
-}
-.mj-tile--dragon-r::before { background: #c0392b; }
-.mj-tile--dragon-g {
-  background: linear-gradient(160deg, #f4fff7 0%, #e4f8ea 55%, #ceecd6 100%);
-  border-color: #1a6b3a;
-}
-.mj-tile--dragon-g::before { background: #1a6b3a; }
-.mj-tile--dragon-w {
-  background: linear-gradient(160deg, #fffef6 0%, #f8f0da 55%, #ede0bc 100%);
-  border-color: #888;
-}
-.mj-tile--dragon-w::before { background: #aaa; }
 
-/* ── Tile back — jade green with diagonal weave ── */
+/* ── Tile back — solid jade (face-down) ── */
 .mj-tile--back {
-  background:
-    repeating-linear-gradient(45deg,  rgba(255,255,255,0.06) 0, rgba(255,255,255,0.06) 1px, transparent 0, transparent 6px),
-    repeating-linear-gradient(-45deg, rgba(255,255,255,0.06) 0, rgba(255,255,255,0.06) 1px, transparent 0, transparent 6px),
-    linear-gradient(160deg, #1a6b3a 0%, #0f4a27 45%, #1a6b3a 100%);
-  border-color: #0a3018;
+  background: linear-gradient(160deg, #36906A 0%, #2E7D5B 50%, #245F46 100%);
+  border-color: #1F5C42;
   box-shadow:
     inset 2px 2px 0 rgba(255,255,255,0.12),
     inset -1px -1px 0 rgba(0,0,0,0.3),
@@ -4391,28 +4362,29 @@ html[data-theme="light"] .pu-game-wrap {
   font-weight: 900;
   line-height: 1;
   font-size: 1.65rem;
-  margin-top: 4px; /* clear the suit band */
-  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.18));
+  margin-top: 0;
+  /* paint sunk in a groove: dark above, light below */
+  text-shadow:
+    0 -1px 0 rgba(58,53,43,0.35),
+    0  1px 0 rgba(255,255,255,0.65);
 }
-.mj-hon--char     { color: var(--mj-char);     }
-.mj-hon--wind     { color: var(--mj-wind);     font-size: 1.55rem; }
+.mj-hon--char     { color: var(--mj-paint-blue); }
+.mj-hon--wind     { color: var(--mj-paint-blue); font-size: 1.55rem; }
 .mj-hon--dragon-r { color: var(--mj-dragon-r); font-size: 1.65rem; }
 .mj-hon--dragon-g { color: var(--mj-dragon-g); font-size: 1.65rem; }
-.mj-hon--dragon-w {
-  color: #222;
-  font-size: 1.65rem;
-  /* white dragon gets a visible red border-box instead of grey */
-  text-shadow: 0 0 0 #c0392b;
-}
 
-/* 萬 subscript under character numeral */
+/* 萬 numeral below the (blue) number — large and red, HK standard */
 .mj-hon-sub {
   display: block;
-  font-size: 0.62rem;
-  font-weight: 700;
-  color: #600;
+  font-size: 1.02rem;
+  font-weight: 900;
+  color: var(--mj-paint-red);
   letter-spacing: 0.02em;
   line-height: 1;
+  margin-top: 1px;
+  text-shadow:
+    0 -1px 0 rgba(58,53,43,0.35),
+    0  1px 0 rgba(255,255,255,0.65);
 }
 
 /* ── SVG tile artwork (.mj-art) ── */
@@ -4420,8 +4392,8 @@ html[data-theme="light"] .pu-game-wrap {
 .mj-art {
   position: absolute;
   left: 2px; right: 2px;
-  top: 6px;   /* just below the 5px suit band */
-  bottom: 2px;
+  top: 3px;
+  bottom: 9px;   /* clear the 7px jade back stripe */
   display: block;
   overflow: visible;
 }
@@ -4502,10 +4474,10 @@ html[data-theme="light"] .pu-game-wrap {
   height: 2.35rem;
   box-shadow: 1px 2px 4px rgba(0,0,0,0.4);
 }
-.mj-tile--sm .mj-hon     { font-size: 0.85rem; margin-top: 2px; }
-.mj-tile--sm .mj-hon-sub { font-size: 0.36rem; }
-.mj-tile--sm .mj-art     { top: 3px; left: 1px; right: 1px; bottom: 1px; }
-.mj-tile--sm::before     { height: 3px; }
+.mj-tile--sm .mj-hon     { font-size: 0.85rem; margin-top: 0; }
+.mj-tile--sm .mj-hon-sub { font-size: 0.55rem; }
+.mj-tile--sm .mj-art     { top: 2px; left: 1px; right: 1px; bottom: 5px; }
+.mj-tile--sm::before     { height: 4px; }
 
 /* ── Horizontal back-tile (left/right opponents) ── */
 .mj-tile--hz {
