@@ -1732,19 +1732,37 @@
 }
 
 .ow-board {
-  background: linear-gradient(170deg, #3d1f0a 0%, #1c0d03 55%, #2e1508 100%);
-  border-radius: 24px;
+  background:
+    repeating-linear-gradient(94deg, rgba(122,74,36,0.16) 0 2px, rgba(122,74,36,0) 2px 14px),
+    linear-gradient(170deg, #C99B5F 0%, #B8884E 55%, #A87844 100%);
+  border-radius: 28px;
   padding: var(--space-3) var(--space-4);
   box-shadow:
-    0 8px 28px rgba(0,0,0,0.7),
-    inset 0 2px 0 rgba(255,200,100,0.1),
-    inset 0 -3px 12px rgba(0,0,0,0.5),
-    inset 4px 0 10px rgba(0,0,0,0.2),
-    inset -4px 0 10px rgba(0,0,0,0.2);
-  border: 2px solid #5c3015;
+    0 10px 30px rgba(0,0,0,0.55),
+    inset 0 2px 0 rgba(255,236,200,0.35),
+    inset 0 -4px 10px rgba(74,42,20,0.45);
+  border: 3px solid #7A4A24;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  position: relative;
+}
+
+/* Chip-carved banding + single Gye Nyame adinkra along the bottom inside edge */
+.ow-board::before {
+  content: '';
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 6px;
+  height: 10px;
+  opacity: 0.5;
+  pointer-events: none;
+  background-repeat: repeat-x, no-repeat;
+  background-position: left center, center center;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='10' viewBox='0 0 20 10'%3E%3Cpath d='M0 10L10 0L20 10Z' fill='%237A4A24'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='10' viewBox='0 0 36 10'%3E%3Cg fill='none' stroke='%237A4A24' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M18 1.5C13 1.5 13 8.5 18 8.5C23 8.5 23 1.5 18 1.5'/%3E%3Cpath d='M11 5h14'/%3E%3Cpath d='M18 2.2v5.6'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 .ow-row {
@@ -1757,7 +1775,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: rgba(232,200,152,0.35);
+  color: rgba(201,179,147,0.55);
   text-align: center;
 }
 
@@ -1766,8 +1784,8 @@
   margin: 2px 0;
   background: linear-gradient(90deg,
     transparent,
-    rgba(180,100,30,0.45) 20%,
-    rgba(180,100,30,0.45) 80%,
+    rgba(232,179,60,0.4) 20%,
+    rgba(232,179,60,0.4) 80%,
     transparent
   );
 }
@@ -1779,6 +1797,13 @@
   align-items: center;
   gap: 4px;
   min-width: 60px;
+  padding: 10px 14px;
+  background: radial-gradient(ellipse at 50% 45%, #3E2412 0%, #2E1A0C 100%);
+  border: 2px solid #8A5A2C;
+  border-radius: 50% / 38%;
+  box-shadow:
+    inset 0 5px 14px rgba(0,0,0,0.6),
+    inset 0 -1px 0 rgba(255,220,170,0.2);
 }
 
 .ow-store__label {
@@ -1786,20 +1811,20 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: rgba(232,200,152,0.5);
+  color: rgba(242,230,206,0.75);
 }
 
 .ow-store__val {
   font-size: 2.4rem;
   font-weight: 700;
-  color: #ffd580;
+  color: #E8B33C;
   line-height: 1;
-  text-shadow: 0 0 14px rgba(255,200,80,0.4);
+  text-shadow: 0 0 12px rgba(232,179,60,0.35);
 }
 
 .ow-store__sub {
   font-size: 9px;
-  color: rgba(232,200,152,0.3);
+  color: rgba(201,179,147,0.5);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -1808,15 +1833,30 @@
 .ow-pit {
   width: 84px;
   height: 88px;
-  background: #1e0e04;
+  background: radial-gradient(circle at 50% 42%, #4A2A14 0%, #3A2210 55%, #33200F 100%);
   border-radius: 50%;
-  border: 2px solid #5c3015;
+  border: 2px solid #8A5A2C;
   box-shadow:
-    inset 0 4px 14px rgba(0,0,0,0.75),
-    0 2px 4px rgba(0,0,0,0.45);
+    inset 0 5px 14px rgba(0,0,0,0.6),
+    inset 0 -1px 0 rgba(255,220,170,0.25),
+    0 1px 0 rgba(255,236,200,0.3);
   position: relative;
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
+
+/* Polished-wear ring from decades of seeds rubbing the rim */
+.ow-pit::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: inherit;
+  border: 1px solid rgba(255,220,170,0.12);
+  pointer-events: none;
+}
+
+/* Hand-gouged irregularity - subtle organic asymmetry per pit */
+.ow-pit:nth-child(odd) { border-radius: 49% 51% 50% 50% / 51% 49% 50% 50%; }
+.ow-pit:nth-child(3n)  { border-radius: 51% 49% 50% 50% / 50% 50% 49% 51%; }
 
 /* Seeds container fills the pit; seeds are placed absolutely within it */
 .ow-pit__seeds {
@@ -1826,17 +1866,33 @@
 
 .ow-seed {
   position: absolute;
-  width: 6px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
   border-radius: 50%;
   /* Offset from pit centre using --x / --y; rotate via --rot */
-  left: calc(50% + var(--x, 0px) - 3px);
-  top:  calc(50% + var(--y, 0px) - 6px);
+  left: calc(50% + var(--x, 0px) - 6.5px);
+  top:  calc(50% + var(--y, 0px) - 6.5px);
   transform: rotate(var(--rot, 0deg));
   /* Warm dark-brown gradient Ã¢â‚¬â€ dried Ayo seed */
-  background: linear-gradient(160deg, #c07818 0%, #7a3e08 45%, #4a2208 100%);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,200,90,0.18);
+  background: radial-gradient(circle at 32% 28%, #EEF2E6 0%, #A8AF9C 18%, #99A38C 55%, #6A7160 100%);
+  box-shadow: 0 2px 3px rgba(0,0,0,0.55), inset 0 -2px 3px rgba(0,0,0,0.18);
 }
+
+/* Dark hilum scar on each nickernut */
+.ow-seed::after {
+  content: '';
+  position: absolute;
+  right: 2px;
+  bottom: 3px;
+  width: 2.5px;
+  height: 2.5px;
+  border-radius: 50%;
+  background: #55503F;
+}
+
+/* Per-seed tone jitter so a pitful of seeds looks natural */
+.ow-seed:nth-child(3n)   { filter: hue-rotate(-6deg) brightness(0.96); }
+.ow-seed:nth-child(3n+1) { filter: brightness(1.04); }
 
 /* The seed that just landed pops in */
 .ow-seed--new {
@@ -1856,7 +1912,7 @@
   transform: translateX(-50%);
   font-size: 11px;
   font-weight: 700;
-  color: rgba(232,200,152,0.55);
+  color: rgba(242,230,206,0.6);
   line-height: 1;
   pointer-events: none;
 }
@@ -1864,23 +1920,23 @@
 /* Clickable pits (valid player moves) */
 .ow-pit--clickable {
   cursor: pointer;
-  border-color: #8b5020;
+  border-color: #B8884E;
 }
 .ow-pit--clickable:hover {
-  border-color: #c8871a;
+  border-color: #E8B33C;
   box-shadow:
     inset 0 4px 14px rgba(0,0,0,0.5),
-    0 0 18px rgba(200,135,26,0.45),
+    0 0 18px rgba(232,179,60,0.5),
     0 2px 4px rgba(0,0,0,0.45);
 }
-.ow-pit--clickable .ow-pit__count { color: rgba(232,200,152,0.85); }
+.ow-pit--clickable .ow-pit__count { color: rgba(242,230,206,0.9); }
 
 /* Last-sown pit Ã¢â‚¬â€ glows amber */
 .ow-pit--lit {
-  border-color: #e8a030;
+  border-color: #E8B33C;
   box-shadow:
     inset 0 4px 14px rgba(0,0,0,0.4),
-    0 0 22px rgba(232,160,48,0.65),
+    0 0 22px rgba(232,179,60,0.65),
     0 2px 4px rgba(0,0,0,0.45);
   animation: ow-receive 200ms ease-out;
 }
@@ -1892,17 +1948,17 @@
 
 /* AI-selected pit Ã¢â‚¬â€ pulsing red-orange before sowing starts */
 .ow-pit--ai-select {
-  border-color: #e04020;
+  border-color: #F2C14E;
   box-shadow:
     inset 0 4px 14px rgba(0,0,0,0.4),
-    0 0 22px rgba(224,64,32,0.7),
+    0 0 22px rgba(242,193,78,0.7),
     0 2px 4px rgba(0,0,0,0.45);
   animation: ow-ai-select 0.55s ease-in-out infinite alternate;
 }
 
 @keyframes ow-ai-select {
-  from { box-shadow: inset 0 4px 14px rgba(0,0,0,0.4), 0 0 12px rgba(224,64,32,0.45); }
-  to   { box-shadow: inset 0 4px 14px rgba(0,0,0,0.25), 0 0 30px rgba(224,64,32,0.85); }
+  from { box-shadow: inset 0 4px 14px rgba(0,0,0,0.4), 0 0 12px rgba(242,193,78,0.45); }
+  to   { box-shadow: inset 0 4px 14px rgba(0,0,0,0.25), 0 0 30px rgba(242,193,78,0.85); }
 }
 
 /* Ã¢â€â‚¬Ã¢â€â‚¬ Actions Ã¢â€â‚¬Ã¢â€â‚¬ */
@@ -2042,11 +2098,12 @@
 /* Ã¢â€â‚¬Ã¢â€â‚¬ Responsive Ã¢â€â‚¬Ã¢â€â‚¬ */
 @media (max-width: 560px) {
   .ow-pit { width: 54px; height: 58px; }
-  .ow-seed { width: 5px; height: 10px; left: calc(50% + var(--x, 0px) - 2.5px); top: calc(50% + var(--y, 0px) - 5px); }
+  .ow-seed { width: 10px; height: 10px; left: calc(50% + var(--x, 0px) - 5px); top: calc(50% + var(--y, 0px) - 5px); }
+  .ow-seed::after { right: 1.5px; bottom: 2px; width: 2px; height: 2px; }
   .ow-pit__count { font-size: 10px; }
   .ow-row { gap: 5px; }
   .ow-board { padding: var(--space-2) var(--space-2); }
-  .ow-store { min-width: 44px; }
+  .ow-store { min-width: 40px; padding: 4px 5px; }
   .ow-store__val { font-size: 1.7rem; }
 }
 
