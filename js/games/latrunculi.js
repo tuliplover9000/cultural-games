@@ -229,7 +229,7 @@
       return;
     }
     if (blackCount === 0) {
-      endGame('white', 'All black pieces captured');
+      endGame('white', 'All blue pieces captured');
       return;
     }
 
@@ -237,7 +237,7 @@
     var currentMoves = getAllMovesForColor(state.currentTurn);
     if (currentMoves.length === 0) {
       var prevTurn = state.currentTurn === 'white' ? 'black' : 'white';
-      endGame(prevTurn, state.currentTurn.charAt(0).toUpperCase() + state.currentTurn.slice(1) + ' has no legal moves');
+      endGame(prevTurn, colorLabel(state.currentTurn) + ' has no legal moves');
       return;
     }
 
@@ -256,6 +256,11 @@
     if (count >= 3) {
       endGame(null, 'Threefold repetition - Draw');
     }
+  }
+
+  // Display-name helper: state values stay 'white'/'black'; UI shows White/Blue
+  function colorLabel(color) {
+    return color === 'black' ? 'Blue' : 'White';
   }
 
   function endGame(winner, message) {
@@ -280,7 +285,7 @@
     // Show overlay
     if (overlayTitleEl) {
       overlayTitleEl.textContent = winner
-        ? (winner.charAt(0).toUpperCase() + winner.slice(1) + ' Wins!')
+        ? (colorLabel(winner) + ' Wins!')
         : 'Draw!';
     }
     if (overlaySubEl) {
@@ -470,8 +475,9 @@
     var scaleY = canvas.height / rect.height;
     var clientX = e.touches ? e.touches[0].clientX : e.clientX;
     var clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    var col = Math.floor((clientX - rect.left) * scaleX / state.boardConfig.cellSize);
-    var row = Math.floor((clientY - rect.top)  * scaleY / state.boardConfig.cellSize);
+    // Subtract the wood border so taps map to the cell actually drawn there
+    var col = Math.floor(((clientX - rect.left) * scaleX - BORDER_W) / state.boardConfig.cellSize);
+    var row = Math.floor(((clientY - rect.top)  * scaleY - BORDER_W) / state.boardConfig.cellSize);
     return { row: row, col: col };
   }
 
@@ -525,11 +531,15 @@
 
   // ── Rendering ──────────────────────────────────────────────────────────────
 
-  var CELL_LIGHT = '#E8D5B0';
-  var CELL_DARK  = '#C4845A';
-  var BORDER_BG  = '#7a1515';
-  var GOLD       = '#D4A017';
-  var BORDER_W   = 18;
+  var STONE       = '#C4B69C';
+  var STONE_LIGHT = '#D8CDB4';
+  var STONE_DARK  = '#A89A7F';
+  var LINE        = '#7A6E59';
+  var LINE_DEEP   = '#5E5443';
+  var WOOD        = '#5F432C';
+  var LAMP        = '#E0A04E';
+  var OCHRE       = '#9E3B2B';
+  var BORDER_W    = 18;
 
   function render() {
     if (!ctx) return;
@@ -547,98 +557,115 @@
   }
 
   function renderBorder(boardW, boardH) {
-    // Pompeiian red border with gold meander pattern
-    ctx.fillStyle = BORDER_BG;
+    // Barracks wood surround
+    ctx.fillStyle = WOOD;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Gold meander lines - simplified repeating L-shapes
-    ctx.strokeStyle = GOLD;
-    ctx.lineWidth = 1.5;
-
-    var step = 12;
-    var i, x, y;
-
-    // Top border meander
-    for (i = 0; i < Math.ceil(canvas.width / step); i++) {
-      x = i * step;
-      y = 4;
+    // Subtle plank grain - deterministic horizontal streaks
+    ctx.strokeStyle = 'rgba(40,26,14,0.35)';
+    ctx.lineWidth = 1;
+    var fractions = [0.18, 0.42, 0.67, 0.88];
+    var gi, gy;
+    for (gi = 0; gi < fractions.length; gi++) {
+      gy = Math.round(canvas.height * fractions[gi]) + 0.5;
       ctx.beginPath();
-      if (i % 2 === 0) {
-        ctx.moveTo(x, y);
-        ctx.lineTo(x + step, y);
-        ctx.lineTo(x + step, y + 6);
-      } else {
-        ctx.moveTo(x, y + 6);
-        ctx.lineTo(x + step, y + 6);
-        ctx.lineTo(x + step, y);
-      }
+      ctx.moveTo(0, gy);
+      ctx.lineTo(canvas.width, gy);
       ctx.stroke();
     }
 
-    // Bottom border meander
-    var by = canvas.height - BORDER_W + 4;
-    for (i = 0; i < Math.ceil(canvas.width / step); i++) {
-      x = i * step;
-      ctx.beginPath();
-      if (i % 2 === 0) {
-        ctx.moveTo(x, by);
-        ctx.lineTo(x + step, by);
-        ctx.lineTo(x + step, by + 6);
-      } else {
-        ctx.moveTo(x, by + 6);
-        ctx.lineTo(x + step, by + 6);
-        ctx.lineTo(x + step, by);
-      }
-      ctx.stroke();
-    }
-
-    // Left border meander
-    for (i = 0; i < Math.ceil(canvas.height / step); i++) {
-      y = i * step;
-      ctx.beginPath();
-      if (i % 2 === 0) {
-        ctx.moveTo(4, y);
-        ctx.lineTo(4, y + step);
-        ctx.lineTo(10, y + step);
-      } else {
-        ctx.moveTo(10, y);
-        ctx.lineTo(10, y + step);
-        ctx.lineTo(4, y + step);
-      }
-      ctx.stroke();
-    }
-
-    // Right border meander
-    var rx = canvas.width - BORDER_W + 4;
-    for (i = 0; i < Math.ceil(canvas.height / step); i++) {
-      y = i * step;
-      ctx.beginPath();
-      if (i % 2 === 0) {
-        ctx.moveTo(rx, y);
-        ctx.lineTo(rx, y + step);
-        ctx.lineTo(rx + 6, y + step);
-      } else {
-        ctx.moveTo(rx + 6, y);
-        ctx.lineTo(rx + 6, y + step);
-        ctx.lineTo(rx, y + step);
-      }
-      ctx.stroke();
-    }
+    // Inner bevel around the stone area
+    var bx = BORDER_W, by = BORDER_W;
+    // light line just outside the board rect
+    ctx.strokeStyle = 'rgba(224,160,78,0.18)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(bx - 1.5, by - 1.5, boardW + 3, boardH + 3);
+    // dark line inside it
+    ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(bx + 0.5, by + 0.5, boardW - 1, boardH - 1);
   }
 
   function renderBoard(cs, cfg) {
-    var r, c;
+    var r, c, h, x, y, i;
+    var boardW = cfg.cols * cs;
+    var boardH = cfg.rows * cs;
+
+    // (a) Fill the whole board rect with stone
+    ctx.fillStyle = STONE;
+    ctx.fillRect(BORDER_W, BORDER_W, boardW, boardH);
+
+    // (b) Deterministic mottling - soft irregular patches
     for (r = 0; r < cfg.rows; r++) {
       for (c = 0; c < cfg.cols; c++) {
-        ctx.fillStyle = (r + c) % 2 === 0 ? CELL_LIGHT : CELL_DARK;
-        ctx.fillRect(BORDER_W + c * cs, BORDER_W + r * cs, cs, cs);
-
-        // Subtle grid line
-        ctx.strokeStyle = 'rgba(0,0,0,0.12)';
-        ctx.lineWidth = 0.5;
-        ctx.strokeRect(BORDER_W + c * cs, BORDER_W + r * cs, cs, cs);
+        h = (r * 31 + c * 17) % 13;
+        x = BORDER_W + c * cs;
+        y = BORDER_W + r * cs;
+        if (h < 3) {
+          ctx.fillStyle = 'rgba(216,205,180,0.25)'; // STONE_LIGHT
+          ctx.fillRect(x, y, cs, cs);
+        } else if (h > 10) {
+          ctx.fillStyle = 'rgba(168,154,127,0.22)'; // STONE_DARK
+          ctx.fillRect(x, y, cs, cs);
+        }
       }
     }
+
+    // Larger worn blotches - fixed-position radial gradients
+    var blotches = [[0.28, 0.32], [0.7, 0.6], [0.5, 0.85]];
+    var bi, bcx, bcy, br, bg;
+    for (bi = 0; bi < blotches.length; bi++) {
+      bcx = BORDER_W + boardW * blotches[bi][0];
+      bcy = BORDER_W + boardH * blotches[bi][1];
+      br = Math.min(boardW, boardH) * 0.22;
+      bg = ctx.createRadialGradient(bcx, bcy, 0, bcx, bcy, br);
+      bg.addColorStop(0, 'rgba(216,205,180,0.18)');
+      bg.addColorStop(1, 'rgba(216,205,180,0)');
+      ctx.fillStyle = bg;
+      ctx.fillRect(BORDER_W, BORDER_W, boardW, boardH);
+    }
+
+    // (c) Incised grid lines on cell boundaries, hand-scratched bow
+    ctx.strokeStyle = LINE;
+    ctx.lineWidth = 1.4;
+    // Vertical lines
+    for (c = 0; c <= cfg.cols; c++) {
+      x = BORDER_W + c * cs;
+      var vMid = BORDER_W + boardH / 2;
+      var vBow = x + (((c * 7) % 3) - 1) * 0.6;
+      ctx.beginPath();
+      ctx.moveTo(x, BORDER_W);
+      ctx.quadraticCurveTo(vBow, vMid, x, BORDER_W + boardH);
+      ctx.stroke();
+    }
+    // Horizontal lines
+    for (r = 0; r <= cfg.rows; r++) {
+      y = BORDER_W + r * cs;
+      var hMid = BORDER_W + boardW / 2;
+      var hBow = y + (((r * 7) % 3) - 1) * 0.6;
+      ctx.beginPath();
+      ctx.moveTo(BORDER_W, y);
+      ctx.quadraticCurveTo(hMid, hBow, BORDER_W + boardW, y);
+      ctx.stroke();
+    }
+
+    // (d) Darker intersection ticks
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    ctx.fillStyle = LINE_DEEP;
+    for (r = 0; r <= cfg.rows; r++) {
+      for (c = 0; c <= cfg.cols; c++) {
+        x = BORDER_W + c * cs;
+        y = BORDER_W + r * cs;
+        ctx.fillRect(x - 1.1, y - 1.1, 2.2, 2.2);
+      }
+    }
+    ctx.restore();
+
+    // (e) Outer slab edge
+    ctx.strokeStyle = LINE_DEEP;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(BORDER_W, BORDER_W, boardW, boardH);
   }
 
   function renderHighlights(cs) {
@@ -649,20 +676,20 @@
       var sc = state.selectedCell;
       x = BORDER_W + sc.col * cs;
       y = BORDER_W + sc.row * cs;
-      ctx.strokeStyle = GOLD;
+      ctx.strokeStyle = LAMP;
       ctx.lineWidth = 3.5;
       ctx.strokeRect(x + 2, y + 2, cs - 4, cs - 4);
     }
 
-    // Valid moves - semi-transparent overlay
+    // Valid moves - oil-lamp glow overlay
     for (i = 0; i < state.validMoves.length; i++) {
       vm = state.validMoves[i];
       x = BORDER_W + vm.col * cs;
       y = BORDER_W + vm.row * cs;
-      ctx.fillStyle = 'rgba(212,160,23,0.28)';
+      ctx.fillStyle = 'rgba(224,160,78,0.22)';
       ctx.fillRect(x, y, cs, cs);
       // Small center dot
-      ctx.fillStyle = 'rgba(212,160,23,0.7)';
+      ctx.fillStyle = 'rgba(224,160,78,0.7)';
       ctx.beginPath();
       ctx.arc(x + cs / 2, y + cs / 2, cs * 0.13, 0, Math.PI * 2);
       ctx.fill();
@@ -697,17 +724,17 @@
     ctx.shadowOffsetY = 3;
 
     if (owner === 'white') {
-      // Marble white disc
+      // Tinted-white glass dome (never pure white)
       grad = ctx.createRadialGradient(x - radius * 0.25, y - radius * 0.25, radius * 0.05, x, y, radius);
-      grad.addColorStop(0, '#FFFFFF');
-      grad.addColorStop(0.5, '#F0EAD6');
-      grad.addColorStop(1, '#C8B89A');
+      grad.addColorStop(0, '#FBFDF8');
+      grad.addColorStop(0.45, '#E6EBE0');
+      grad.addColorStop(1, '#C2D2C8');
     } else {
-      // Obsidian black disc
+      // Blue glass dome
       grad = ctx.createRadialGradient(x - radius * 0.25, y - radius * 0.25, radius * 0.05, x, y, radius);
-      grad.addColorStop(0, '#5a4a3a');
-      grad.addColorStop(0.4, '#2A2018');
-      grad.addColorStop(1, '#0f0a05');
+      grad.addColorStop(0, '#9FD6D2');
+      grad.addColorStop(0.45, '#2E7F85');
+      grad.addColorStop(1, '#1E5A63');
     }
 
     ctx.fillStyle = grad;
@@ -717,46 +744,29 @@
     ctx.restore();
 
     // Piece outline
-    ctx.strokeStyle = owner === 'white' ? 'rgba(160,120,60,0.5)' : 'rgba(212,160,23,0.3)';
+    ctx.strokeStyle = owner === 'white' ? 'rgba(122,110,89,0.5)' : 'rgba(20,60,66,0.6)';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.stroke();
 
-    // Marble veining for white
-    if (owner === 'white') {
-      ctx.save();
-      ctx.globalAlpha = 0.12;
-      ctx.strokeStyle = '#c8a870';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(x - radius * 0.6, y - radius * 0.3);
-      ctx.quadraticCurveTo(x - radius * 0.1, y + radius * 0.2, x + radius * 0.5, y - radius * 0.1);
-      ctx.stroke();
-      ctx.restore();
-    }
+    // Specular highlight (glass catch)
+    ctx.save();
+    ctx.fillStyle = owner === 'white' ? 'rgba(255,255,255,0.65)' : 'rgba(255,255,255,0.5)';
+    ctx.beginPath();
+    ctx.arc(x - radius * 0.3, y - radius * 0.38, radius * 0.16, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
 
-    // Highlight reflection for black
-    if (owner === 'black') {
-      ctx.save();
-      ctx.globalAlpha = 0.3;
-      ctx.fillStyle = '#a08060';
-      ctx.beginPath();
-      ctx.arc(x - radius * 0.3, y - radius * 0.35, radius * 0.22, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    // Dux marker - gold inner circle
+    // Dux marker - red-ochre ring + dot (reads on both fills)
     if (dux) {
-      ctx.strokeStyle = GOLD;
+      ctx.strokeStyle = OCHRE;
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.arc(x, y, radius * 0.45, 0, Math.PI * 2);
       ctx.stroke();
 
-      // Gold dot center
-      ctx.fillStyle = GOLD;
+      ctx.fillStyle = OCHRE;
       ctx.beginPath();
       ctx.arc(x, y, radius * 0.14, 0, Math.PI * 2);
       ctx.fill();
@@ -767,7 +777,7 @@
 
   function updateUI() {
     if (turnEl) {
-      turnEl.textContent = (state.currentTurn === 'white' ? 'White' : 'Black') + "'s turn";
+      turnEl.textContent = (state.currentTurn === 'white' ? 'White' : 'Blue') + "'s turn";
       turnEl.className = 'll-turn-indicator ' + state.currentTurn + '-turn';
     }
     if (capWEl) capWEl.textContent = state.capturedWhite;
@@ -865,7 +875,7 @@
       {
         target: '#game-container',
         title: 'The Roman Board',
-        body: 'Ludus Latrunculorum is played on a rectangular grid. White (marble) starts at the top, Black (obsidian) at the bottom. You play as White.',
+        body: 'Ludus Latrunculorum is played on a grid scratched into stone. White glass counters start at the top, blue glass at the bottom. You play as White.',
         position: 'bottom',
         highlight: true
       },
@@ -879,7 +889,7 @@
       {
         target: '#ll-board',
         title: 'The Dux Commander',
-        body: 'The Dux (marked with a gold ring) is your commander. It moves up to 1 square in any of the 8 directions, like a chess king.',
+        body: 'The Dux (marked with a red-ochre ring) is your commander. It moves up to 1 square in any of the 8 directions, like a chess king.',
         position: 'bottom',
         highlight: true
       },
