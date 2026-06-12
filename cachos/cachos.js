@@ -134,7 +134,9 @@
     var nameIdx = 0;
     for (var i = 0; i < playerCount; i++) {
       var isHuman  = (i === humanSeat);
-      var isAI     = !isHuman && !!aiSet[i];
+      // Solo play has no aiSeats list - every opponent is AI. Only room mode
+      // (which passes explicit aiSeats) can mark opponents as remote humans.
+      var isAI     = !isHuman && (_inRoom ? !!aiSet[i] : true);
       var isRemote = !isHuman && !isAI;
       players.push({
         id:           i,
@@ -181,12 +183,13 @@
 
   function getCupSVG() {
     return '<svg class="ca-cup-svg" viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg">' +
-      '<ellipse cx="30" cy="10" rx="24" ry="6" fill="#A0522D" stroke="#5C2E00" stroke-width="1.5"/>' +
-      '<path d="M6 10 Q4 10 5 16 L12 70 Q13 76 30 76 Q47 76 48 70 L55 16 Q56 10 54 10 Z" fill="#8B4513" stroke="#5C2E00" stroke-width="1.5"/>' +
-      '<line x1="12" y1="28" x2="48" y2="28" stroke="#6B3410" stroke-width="1" stroke-linecap="round" opacity="0.6"/>' +
-      '<line x1="10" y1="44" x2="50" y2="44" stroke="#6B3410" stroke-width="1" stroke-linecap="round" opacity="0.45"/>' +
-      '<line x1="11" y1="58" x2="49" y2="58" stroke="#6B3410" stroke-width="1" stroke-linecap="round" opacity="0.3"/>' +
-      '<ellipse cx="30" cy="10" rx="23" ry="5" fill="none" stroke="#C4854A" stroke-width="1" opacity="0.45"/>' +
+      '<path d="M6 10 Q4 10 5 16 L12 70 Q13 76 30 76 Q47 76 48 70 L55 16 Q56 10 54 10 Z" fill="#A9692F" stroke="#6B3F1D" stroke-width="1.5"/>' +
+      '<ellipse cx="30" cy="10" rx="24" ry="6" fill="#A9692F" stroke="#6B3F1D" stroke-width="1.5"/>' +
+      '<ellipse cx="30" cy="10" rx="19" ry="4" fill="#4A2A12"/>' +
+      '<ellipse cx="30" cy="10" rx="24" ry="6" fill="none" stroke="#C98B4B" stroke-width="1.3"/>' +
+      '<line x1="11" y1="24" x2="49" y2="24" stroke="#E8D5A8" stroke-width="1.6" stroke-dasharray="1.5 3"/>' +
+      '<line x1="13" y1="66" x2="47" y2="66" stroke="#E8D5A8" stroke-width="1.6" stroke-dasharray="1.5 3"/>' +
+      '<path d="M22 52 L22 40 Q22 36 25 35 L25 28 Q25 25 27 25 Q29 25 29 28 L29 35 Q35 36 38 40 L38 52 M30 40 L30 52 M33 41 L36 35" fill="none" stroke="#C98B4B" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>' +
       '</svg>';
   }
 
