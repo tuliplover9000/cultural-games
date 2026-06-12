@@ -14,12 +14,12 @@
   // ── Symbols ────────────────────────────────────────────────────────────────
   var IMG_BASE = '../../assets/icons/';
   var SYMBOLS = [
+    { key: 'nai', img: IMG_BASE + 'bc-nai.svg', vn: 'Nai',   en: 'Deer'    },
     { key: 'bau', img: IMG_BASE + 'bc-bau.svg', vn: 'Bầu',  en: 'Gourd'   },
+    { key: 'ga',  img: IMG_BASE + 'bc-ga.svg',  vn: 'Gà',    en: 'Rooster' },
+    { key: 'ca',  img: IMG_BASE + 'bc-ca.svg',  vn: 'Cá',    en: 'Fish'    },
     { key: 'cua', img: IMG_BASE + 'bc-cua.svg', vn: 'Cua',   en: 'Crab'    },
     { key: 'tom', img: IMG_BASE + 'bc-tom.svg', vn: 'Tôm',   en: 'Shrimp'  },
-    { key: 'ca',  img: IMG_BASE + 'bc-ca.svg',  vn: 'Cá',    en: 'Fish'    },
-    { key: 'nai', img: IMG_BASE + 'bc-nai.svg', vn: 'Nai',   en: 'Deer'    },
-    { key: 'ga',  img: IMG_BASE + 'bc-ga.svg',  vn: 'Gà',    en: 'Rooster' },
   ];
 
   // ── State ──────────────────────────────────────────────────────────────────
@@ -798,7 +798,7 @@ if (window.CGTutorial) {
     {
       target:   '#game-container',
       title:    'Welcome to Bầu Cua',
-      body:     'Bầu Cua Tôm Cá ("Gourd Crab Shrimp Fish") is a classic Vietnamese gambling game played at Tết. Bet on symbols and see if the dice match!',
+      body:     'Bầu Cua Tôm Cá ("Gourd Crab Shrimp Fish") is a beloved Vietnamese Tết game, traditionally played with family for lucky-money coins and candy. Bet on symbols and see if the dice match!',
       position: 'center',
       highlight: false,
     },

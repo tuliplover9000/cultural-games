@@ -1,30 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
-  <!-- Gourd / Calabash -->
-  <!-- Lower bulb shadow -->
-  <ellipse cx="41" cy="58" rx="19" ry="17" fill="#4a7c2f" opacity="0.4"/>
-  <!-- Lower bulb (large) -->
-  <ellipse cx="40" cy="56" rx="20" ry="18" fill="#6cb440"/>
-  <!-- Lower bulb highlight -->
-  <ellipse cx="34" cy="48" rx="7" ry="5" fill="#8fd45a" opacity="0.6"/>
-  <!-- Upper bulb shadow -->
-  <ellipse cx="41" cy="30" rx="12" ry="11" fill="#4a7c2f" opacity="0.4"/>
-  <!-- Upper bulb (smaller) -->
-  <ellipse cx="40" cy="28" rx="13" ry="12" fill="#7cc44a"/>
-  <!-- Upper bulb highlight -->
-  <ellipse cx="35" cy="22" rx="5" ry="4" fill="#a0e060" opacity="0.6"/>
-  <!-- Neck -->
-  <path d="M32,38 Q31,42 32,44 Q36,46 40,46 Q44,46 48,44 Q49,42 48,38" fill="#5aaa30"/>
-  <!-- Rib lines on lower bulb -->
-  <path d="M40,38 Q38,47 40,74" stroke="#4a8c2a" stroke-width="1.5" fill="none" opacity="0.5" stroke-dasharray="2,3"/>
-  <path d="M33,41 Q29,52 34,70" stroke="#4a8c2a" stroke-width="1.2" fill="none" opacity="0.4" stroke-dasharray="2,3"/>
-  <path d="M47,41 Q51,52 46,70" stroke="#4a8c2a" stroke-width="1.2" fill="none" opacity="0.4" stroke-dasharray="2,3"/>
-  <!-- Outline lower bulb -->
-  <ellipse cx="40" cy="56" rx="20" ry="18" fill="none" stroke="#3d6e22" stroke-width="2"/>
-  <!-- Outline upper bulb -->
-  <ellipse cx="40" cy="28" rx="13" ry="12" fill="none" stroke="#3d6e22" stroke-width="2"/>
-  <!-- Stem -->
-  <line x1="40" y1="16" x2="40" y2="10" stroke="#8B5E3C" stroke-width="3" stroke-linecap="round"/>
-  <!-- Leaf -->
-  <path d="M40,12 Q48,6 50,12 Q46,16 40,14 Z" fill="#6cb440" stroke="#3d6e22" stroke-width="1.5"/>
-  <path d="M40,12 Q44,9 45,12" stroke="#3d6e22" stroke-width="1" fill="none" opacity="0.6"/>
+  <!-- Calabash gourd, flat folk-print -->
+  <!-- Stem + tie -->
+  <path d="M40,16 Q39,10 42,6" fill="none" stroke="#3E6326" stroke-width="3" stroke-linecap="round"/>
+  <!-- Small leaf -->
+  <path d="M42,9 Q52,4 56,11 Q49,15 42,11 Z" fill="#5E8C3A" stroke="#2E2218" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M44,10 Q50,9 54,11" fill="none" stroke="#3E6326" stroke-width="1.6"/>
+  <!-- Gourd body: small top bulb + large bottom bulb -->
+  <path d="M40,16
+           Q31,17 31,27
+           Q31,33 36,35
+           Q24,40 24,54
+           Q24,70 40,70
+           Q56,70 56,54
+           Q56,40 44,35
+           Q49,33 49,27
+           Q49,17 40,16 Z"
+        fill="#5E8C3A" stroke="#2E2218" stroke-width="2.6" stroke-linejoin="round"/>
+  <!-- Red tie at the waist -->
+  <path d="M33,35 Q40,39 47,35 L47,38 Q40,42 33,38 Z" fill="#C8281E" stroke="#2E2218" stroke-width="1.6"/>
+  <!-- Vertical dark stripe -->
+  <path d="M40,42 Q38,54 40,66" fill="none" stroke="#3E6326" stroke-width="3" stroke-linecap="round"/>
+  <path d="M48,44 Q50,54 47,64" fill="none" stroke="#3E6326" stroke-width="2.4" stroke-linecap="round" opacity="0.8"/>
 </svg>

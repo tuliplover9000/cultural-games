@@ -1,35 +1,33 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
-  <!-- Shrimp — curved side view -->
-  <!-- Shadow underneath -->
-  <path d="M56,16 C60,22 62,32 58,42 C54,52 46,60 36,66 C28,70 20,70 16,66"
-        stroke="#c04060" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.3"/>
-  <!-- Main body (thick, colored stroke = segmented body) -->
-  <path d="M58,14 C62,20 64,30 60,40 C56,50 48,58 38,64 C30,68 22,68 18,64"
-        stroke="#f08090" stroke-width="8" fill="none" stroke-linecap="round"/>
-  <!-- Darker back stripe -->
-  <path d="M58,14 C62,20 64,30 60,40 C56,50 48,58 38,64 C30,68 22,68 18,64"
-        stroke="#e05070" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Arched prawn, flat folk-print -->
+  <!-- Long antennae -->
+  <g fill="none" stroke="#D9543A" stroke-width="2.2" stroke-linecap="round">
+    <path d="M60,26 Q72,16 70,6"/>
+    <path d="M58,28 Q70,24 76,16"/>
+  </g>
+  <!-- Body, arched -->
+  <path d="M58,30
+           Q60,16 44,14
+           Q26,14 20,30
+           Q16,44 24,54
+           Q32,64 44,60
+           Q34,58 32,46
+           Q32,34 46,32
+           Q56,32 56,40 Z"
+        fill="#3E7F8C" stroke="#2E2218" stroke-width="2.6" stroke-linejoin="round"/>
   <!-- Segment lines -->
-  <path d="M54,24 Q49,22 45,25" stroke="#c04060" stroke-width="2" fill="none" opacity="0.8"/>
-  <path d="M50,33 Q44,31 40,34" stroke="#c04060" stroke-width="2" fill="none" opacity="0.8"/>
-  <path d="M44,43 Q38,42 34,45" stroke="#c04060" stroke-width="2" fill="none" opacity="0.8"/>
-  <path d="M36,53 Q30,53 26,56" stroke="#c04060" stroke-width="2" fill="none" opacity="0.8"/>
+  <g fill="none" stroke="#2E2218" stroke-width="1.8" opacity="0.75">
+    <path d="M28,32 Q24,40 28,48"/>
+    <path d="M34,26 Q28,38 32,52"/>
+    <path d="M42,22 Q34,38 38,56"/>
+  </g>
   <!-- Tail fan -->
-  <path d="M18,64 Q9,73 8,77" stroke="#f08090" stroke-width="3" fill="none" stroke-linecap="round"/>
-  <path d="M18,64 Q14,75 16,79" stroke="#f08090" stroke-width="3" fill="none" stroke-linecap="round"/>
-  <path d="M18,64 Q21,75 25,77" stroke="#f08090" stroke-width="3" fill="none" stroke-linecap="round"/>
-  <!-- Rostrum (head spike) -->
-  <path d="M58,14 Q64,8 68,6" stroke="#e05070" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-  <!-- Head -->
-  <circle cx="59" cy="17" r="7" fill="#f4a0b0" stroke="#c04060" stroke-width="2"/>
+  <path d="M44,60 Q48,72 40,72 Q36,66 38,60 Z" fill="#D9543A" stroke="#2E2218" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M44,60 Q56,68 52,72 Q46,68 44,62 Z" fill="#D9543A" stroke="#2E2218" stroke-width="2.2" stroke-linejoin="round"/>
+  <!-- Little legs -->
+  <g fill="none" stroke="#2E2218" stroke-width="1.8" stroke-linecap="round">
+    <path d="M30,52 L26,60 M36,56 L34,64 M42,57 L42,65"/>
+  </g>
   <!-- Eye -->
-  <circle cx="63" cy="14" r="3" fill="#f0f0f0" stroke="#802040" stroke-width="1.5"/>
-  <circle cx="64" cy="14" r="1.4" fill="#1a0800"/>
-  <!-- Antennae -->
-  <path d="M58,12 Q52,3 44,2" stroke="#c04060" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-  <path d="M60,11 Q57,2 50,1" stroke="#c04060" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-  <!-- Swimmerets -->
-  <path d="M51,30 Q47,37 43,35" stroke="#e07088" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.7"/>
-  <path d="M45,40 Q41,47 37,45" stroke="#e07088" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.7"/>
-  <path d="M37,51 Q33,57 29,55" stroke="#e07088" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <circle cx="52" cy="26" r="2.4" fill="#2E2218"/>
 </svg>

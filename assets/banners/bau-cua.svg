@@ -1,109 +1,126 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <!-- damask hint on the red cloth -->
-    <pattern id="bcdm" width="56" height="56" patternUnits="userSpaceOnUse">
-      <rect width="56" height="56" fill="#9E1B1B"/>
-      <path d="M28 6 L40 28 L28 50 L16 28 Z" fill="#8A1414" opacity=".9"/>
-      <circle cx="28" cy="28" r="5" fill="#AA2424" opacity=".8"/>
-      <circle cx="0" cy="0" r="4" fill="#8A1414"/><circle cx="56" cy="0" r="4" fill="#8A1414"/>
-      <circle cx="0" cy="56" r="4" fill="#8A1414"/><circle cx="56" cy="56" r="4" fill="#8A1414"/>
-    </pattern>
-    <g id="bcdie">
-      <rect x="-25" y="-21" width="52" height="52" rx="10" fill="#3a0808" opacity=".4"/>
-      <rect x="-26" y="-26" width="52" height="52" rx="10" fill="#F3E6C8" stroke="#c9ad7a" stroke-width="2"/>
+  <!-- Wooden family table -->
+  <rect width="640" height="280" fill="#9C5A2E"/>
+  <g stroke="#7E441F" stroke-width="3" opacity="0.5">
+    <line x1="0" y1="44" x2="640" y2="36"/>
+    <line x1="0" y1="120" x2="640" y2="112"/>
+    <line x1="0" y1="206" x2="640" y2="214"/>
+    <line x1="0" y1="262" x2="640" y2="256"/>
+  </g>
+  <g stroke="#A9663A" stroke-width="2" opacity="0.4">
+    <line x1="0" y1="80" x2="640" y2="76"/>
+    <line x1="0" y1="166" x2="640" y2="170"/>
+  </g>
+
+  <!-- Cream paper mat, slight angle -->
+  <g transform="translate(150 140) rotate(-5)">
+    <!-- paper + double red rule -->
+    <rect x="-150" y="-92" width="300" height="184" rx="6" fill="#F5EBD8" stroke="#C8281E" stroke-width="3"/>
+    <rect x="-142" y="-84" width="284" height="168" rx="4" fill="none" stroke="#C8281E" stroke-width="2"/>
+    <!-- 2x3 grid lines -->
+    <g stroke="#C8281E" stroke-width="2.5">
+      <line x1="-47" y1="-84" x2="-47" y2="84"/>
+      <line x1="47" y1="-84" x2="47" y2="84"/>
+      <line x1="-142" y1="0" x2="142" y2="0"/>
     </g>
-  </defs>
 
-  <rect width="640" height="280" fill="url(#bcdm)"/>
+    <!-- Top row: nai (deer), bau (gourd), ga (rooster) -->
+    <!-- nai -->
+    <g transform="translate(-95 -42)">
+      <ellipse cx="0" cy="6" rx="20" ry="13" fill="#B5722F" stroke="#2E2218" stroke-width="2"/>
+      <ellipse cx="14" cy="-10" rx="8" ry="7" fill="#B5722F" stroke="#2E2218" stroke-width="2"/>
+      <path d="M12,-18 Q8,-30 12,-34 M16,-18 Q22,-28 22,-34" fill="none" stroke="#7A4A1E" stroke-width="2.4" stroke-linecap="round"/>
+      <circle cx="16" cy="-11" r="1.6" fill="#2E2218"/>
+      <path d="M-14,17 L-14,28 M-4,18 L-4,28 M6,18 L6,28 M16,16 L16,28" stroke="#2E2218" stroke-width="2.6" stroke-linecap="round"/>
+    </g>
+    <!-- bau -->
+    <g transform="translate(0 -42)">
+      <path d="M0,-30 Q-9,-29 -9,-19 Q-9,-13 -4,-11 Q-15,-6 -15,8 Q-15,24 0,24 Q15,24 15,8 Q15,-6 4,-11 Q9,-13 9,-19 Q9,-29 0,-30 Z" fill="#5E8C3A" stroke="#2E2218" stroke-width="2.2"/>
+      <path d="M0,-4 Q-2,8 0,20" fill="none" stroke="#3E6326" stroke-width="2.4"/>
+      <path d="M-7,-11 Q0,-7 7,-11 L7,-8 Q0,-4 -7,-8 Z" fill="#C8281E"/>
+    </g>
+    <!-- ga -->
+    <g transform="translate(95 -42)">
+      <ellipse cx="-2" cy="6" rx="17" ry="13" fill="#E08A1E" stroke="#2E2218" stroke-width="2"/>
+      <path d="M-16,4 Q-30,-2 -28,-18 Q-20,-10 -14,-4 Z" fill="#2F6B5E" stroke="#2E2218" stroke-width="2"/>
+      <ellipse cx="14" cy="-8" rx="7" ry="8" fill="#E08A1E" stroke="#2E2218" stroke-width="2"/>
+      <path d="M9,-16 Q12,-22 16,-18 Q20,-22 22,-16 Q16,-14 12,-15 Z" fill="#C8281E" stroke="#2E2218" stroke-width="1.6"/>
+      <path d="M20,-8 L28,-9 L20,-4 Z" fill="#E6B83C" stroke="#2E2218" stroke-width="1.4"/>
+      <circle cx="15" cy="-9" r="1.5" fill="#2E2218"/>
+    </g>
 
-  <!-- gold grid: 2 rows x 3 columns -->
-  <g stroke="#E8B33C" stroke-width="4" fill="none">
-    <line x1="213" y1="0" x2="213" y2="280"/>
-    <line x1="427" y1="0" x2="427" y2="280"/>
-    <line x1="0" y1="140" x2="640" y2="140"/>
-  </g>
-  <g stroke="#E8B33C" stroke-width="1.4" fill="none" opacity=".55">
-    <line x1="206" y1="0" x2="206" y2="280"/><line x1="220" y1="0" x2="220" y2="280"/>
-    <line x1="420" y1="0" x2="420" y2="280"/><line x1="434" y1="0" x2="434" y2="280"/>
-    <line x1="0" y1="133" x2="640" y2="133"/><line x1="0" y1="147" x2="640" y2="147"/>
-  </g>
-
-  <!-- bầu: gourd (teal) -->
-  <g transform="translate(106 92)">
-    <circle cx="0" cy="14" r="22" fill="#2E6B5A"/>
-    <circle cx="0" cy="-14" r="14" fill="#3D8270"/>
-    <path d="M0 -28 L0 -36" stroke="#E8B33C" stroke-width="4" stroke-linecap="round"/>
-    <path d="M0 -34 Q10 -42 14 -34 Q8 -28 0 -31 Z" fill="#2E6B5A"/>
-    <ellipse cx="-7" cy="8" rx="6" ry="9" fill="#F3E6C8" opacity=".3"/>
-  </g>
-
-  <!-- cua: crab (gold) -->
-  <g transform="translate(320 80)" fill="#E8B33C">
-    <ellipse cx="0" cy="4" rx="22" ry="16"/>
-    <path d="M-20 -4 Q-32 -14 -36 -24 Q-44 -30 -40 -36 Q-32 -38 -32 -28 Q-26 -20 -16 -10 Z"/>
-    <path d="M20 -4 Q32 -14 36 -24 Q44 -30 40 -36 Q32 -38 32 -28 Q26 -20 16 -10 Z"/>
-    <path d="M-18 12 L-32 20 M-14 17 L-26 28 M18 12 L32 20 M14 17 L26 28" stroke="#E8B33C" stroke-width="4" fill="none" stroke-linecap="round"/>
-    <circle cx="-7" cy="-9" r="3.4" fill="#9E1B1B" stroke="#E8B33C" stroke-width="2.4"/>
-    <circle cx="7" cy="-9" r="3.4" fill="#9E1B1B" stroke="#E8B33C" stroke-width="2.4"/>
-  </g>
-
-  <!-- tôm: shrimp (cream) -->
-  <g transform="translate(533 92)" fill="#F3E6C8">
-    <path d="M-22 -14 Q6 -26 18 -8 Q26 6 14 16 Q4 24 -4 18 Q8 16 12 6 Q14 -4 4 -10 Q-8 -16 -22 -14 Z"/>
-    <path d="M-2 -16 Q2 -6 -2 4" stroke="#F3E6C8" stroke-width="3" fill="none"/>
-    <path d="M8 -14 Q12 -4 8 6" stroke="#F3E6C8" stroke-width="3" fill="none"/>
-    <path d="M-22 -14 Q-34 -20 -40 -30 M-22 -14 Q-36 -14 -44 -20" stroke="#F3E6C8" stroke-width="2.6" fill="none" stroke-linecap="round"/>
-    <path d="M14 16 L22 26 L8 22 Z"/>
-    <circle cx="-16" cy="-16" r="2.6" fill="#9E1B1B"/>
-  </g>
-
-  <!-- cá: fish (teal) -->
-  <g transform="translate(106 196)" fill="#2E6B5A">
-    <ellipse cx="2" cy="0" rx="24" ry="14"/>
-    <path d="M-20 0 L-38 -12 L-32 0 L-38 12 Z"/>
-    <path d="M2 -13 Q10 -24 18 -13 Z"/>
-    <path d="M4 13 Q10 22 16 12 Z"/>
-    <circle cx="16" cy="-3" r="3" fill="#F3E6C8"/>
-    <path d="M-6 -6 Q0 0 -6 6 M2 -7 Q8 0 2 7" stroke="#F3E6C8" stroke-width="2" fill="none" opacity=".55"/>
+    <!-- Bottom row: ca (fish), cua (crab), tom (shrimp) -->
+    <!-- ca -->
+    <g transform="translate(-95 42)">
+      <path d="M18,0 Q4,-13 -12,-9 Q-24,-5 -22,4 Q-20,12 -8,12 Q6,12 18,2 Z" fill="#8FA3AD" stroke="#2E2218" stroke-width="2"/>
+      <path d="M16,-2 Q26,-9 28,-4 Q26,4 16,4 Z" fill="#D9543A" stroke="#2E2218" stroke-width="2"/>
+      <circle cx="-14" cy="0" r="2.4" fill="#F0E6D2" stroke="#2E2218" stroke-width="1.6"/>
+    </g>
+    <!-- cua -->
+    <g transform="translate(0 42)">
+      <ellipse cx="0" cy="2" rx="17" ry="12" fill="#D14B2A" stroke="#2E2218" stroke-width="2"/>
+      <path d="M-14,-2 Q-26,-8 -28,-18 M14,-2 Q26,-8 28,-18" fill="none" stroke="#D14B2A" stroke-width="5" stroke-linecap="round"/>
+      <path d="M-13,8 L-26,14 M-13,13 L-24,20 M13,8 L26,14 M13,13 L24,20" stroke="#2E2218" stroke-width="2.2" stroke-linecap="round"/>
+      <circle cx="-6" cy="-4" r="2.2" fill="#A33218"/><circle cx="6" cy="-4" r="2.2" fill="#A33218"/>
+    </g>
+    <!-- tom -->
+    <g transform="translate(95 42)">
+      <path d="M16,-8 Q18,-20 4,-20 Q-12,-20 -16,-6 Q-18,6 -8,14 Q-16,4 -14,-6 Q-12,-14 0,-14 Q10,-14 12,-6 Z" fill="#3E7F8C" stroke="#2E2218" stroke-width="2"/>
+      <path d="M16,-10 Q28,-18 26,-26" fill="none" stroke="#D9543A" stroke-width="2"/>
+      <path d="M-8,14 Q-4,24 -12,22 Z" fill="#D9543A" stroke="#2E2218" stroke-width="1.8"/>
+      <circle cx="10" cy="-12" r="1.8" fill="#2E2218"/>
+    </g>
   </g>
 
-  <!-- gà: rooster (gold) -->
-  <g transform="translate(320 202)" fill="#E8B33C">
-    <ellipse cx="-2" cy="2" rx="18" ry="13"/>
-    <path d="M-16 -2 Q-34 -16 -30 -34 Q-22 -26 -18 -22 Q-22 -34 -14 -40 Q-12 -28 -10 -22 Q-4 -30 2 -28 Q-4 -18 -8 -10 Z"/>
-    <path d="M10 -4 Q18 -10 20 -18 L24 -16 Q24 -8 16 0 Z"/>
-    <circle cx="20" cy="-18" r="6"/>
-    <path d="M17 -27 Q20 -31 23 -27 Q25 -24 21 -23 Z" fill="#9E1B1B"/>
-    <path d="M26 -17 L33 -15 L26 -12 Z" fill="#9E1B1B"/>
-    <path d="M-4 14 L-4 24 M4 13 L4 24" stroke="#E8B33C" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+  <!-- Porcelain plate with cobalt ring, right side -->
+  <g transform="translate(488 168)">
+    <ellipse cx="0" cy="0" rx="118" ry="62" fill="#D8D4C6"/>
+    <ellipse cx="0" cy="-6" rx="116" ry="60" fill="#F2F0E8"/>
+    <ellipse cx="0" cy="-6" rx="100" ry="50" fill="none" stroke="#3A5F8A" stroke-width="4"/>
+    <ellipse cx="0" cy="-6" rx="86" ry="42" fill="#E9E6DC"/>
+
+    <!-- three ivory dice on the plate -->
+    <g transform="translate(-34 4) rotate(-8)">
+      <rect x="-19" y="-19" width="38" height="38" rx="8" fill="#F0E6D2" stroke="#2E2218" stroke-width="2.4"/>
+      <ellipse cx="0" cy="2" rx="11" ry="7" fill="#3E7F8C"/>
+      <path d="M11,-2 Q18,-8 17,-12" fill="none" stroke="#D9543A" stroke-width="2"/>
+    </g>
+    <g transform="translate(8 8) rotate(6)">
+      <rect x="-19" y="-19" width="38" height="38" rx="8" fill="#F0E6D2" stroke="#2E2218" stroke-width="2.4"/>
+      <ellipse cx="0" cy="0" rx="12" ry="8" fill="#D14B2A"/>
+      <path d="M-9,-3 Q-16,-9 -18,-15 M9,-3 Q16,-9 18,-15" fill="none" stroke="#D14B2A" stroke-width="3" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(44 0) rotate(-3)">
+      <rect x="-19" y="-19" width="38" height="38" rx="8" fill="#F0E6D2" stroke="#2E2218" stroke-width="2.4"/>
+      <path d="M-11,-9 Q-13,-19 -9,-23 M-7,-9 Q-1,-21 3,-9" fill="none" stroke="#7A4A1E" stroke-width="2.2"/>
+      <ellipse cx="0" cy="2" rx="9" ry="7" fill="#B5722F"/>
+    </g>
+
+    <!-- upturned blue-banded bowl, mid-LIFT (above the plate) -->
+    <g transform="translate(2 -64)">
+      <path d="M-78,28 Q-78,-44 0,-44 Q78,-44 78,28 Q40,44 0,44 Q-40,44 -78,28 Z" fill="#EDEADF" stroke="#2E2218" stroke-width="2.4"/>
+      <path d="M-78,18 Q0,40 78,18" fill="none" stroke="#3A5F8A" stroke-width="7"/>
+      <ellipse cx="-26" cy="-18" rx="20" ry="26" fill="#F8F6EE" opacity="0.55"/>
+    </g>
   </g>
 
-  <!-- nai: deer (cream) -->
-  <g transform="translate(533 200)" fill="#F3E6C8">
-    <ellipse cx="-2" cy="-2" rx="19" ry="11"/>
-    <path d="M14 -8 Q20 -14 22 -24 L28 -22 Q28 -14 20 -4 Z"/>
-    <circle cx="24" cy="-26" r="5.6"/>
-    <path d="M22 -31 L16 -44 L23 -36 L24 -46 L27 -36 L34 -42 L27 -30 Z"/>
-    <path d="M-14 6 L-15 22 M-5 8 L-5 22 M5 8 L5 22 M13 6 L14 22" stroke="#F3E6C8" stroke-width="3.2" fill="none" stroke-linecap="round"/>
-    <path d="M-18 -6 L-24 -12" stroke="#F3E6C8" stroke-width="3" stroke-linecap="round"/>
+  <!-- Li xi red envelope + coins, bottom-left corner -->
+  <g transform="translate(54 232) rotate(-8)">
+    <rect x="-30" y="-34" width="60" height="80" rx="6" fill="#B3261E" stroke="#8E1B15" stroke-width="2"/>
+    <circle cx="0" cy="2" r="13" fill="none" stroke="#E6B83C" stroke-width="2.4"/>
+    <path d="M-6,2 L6,2 M0,-4 L0,8" stroke="#E6B83C" stroke-width="2.4"/>
+    <circle cx="34" cy="40" r="11" fill="#E6B83C" stroke="#9C7A1E" stroke-width="2"/>
+    <circle cx="50" cy="46" r="11" fill="#E6B83C" stroke="#9C7A1E" stroke-width="2"/>
+    <rect x="30" y="36" width="8" height="8" fill="#C8281E"/>
   </g>
 
-  <!-- three ivory dice tossed in the center -->
-  <g transform="translate(282 134) rotate(-10)">
-    <use href="#bcdie"/>
-    <circle cx="0" cy="8" r="11" fill="#2E6B5A"/>
-    <circle cx="0" cy="-8" r="7" fill="#3D8270"/>
-  </g>
-  <g transform="translate(346 122) rotate(8)">
-    <use href="#bcdie"/>
-    <ellipse cx="0" cy="2" rx="13" ry="9" fill="#C03A2B"/>
-    <path d="M-11 -4 Q-18 -12 -20 -18 M11 -4 Q18 -12 20 -18" stroke="#C03A2B" stroke-width="3.4" fill="none" stroke-linecap="round"/>
-    <circle cx="-4" cy="-2" r="1.8" fill="#F3E6C8"/><circle cx="4" cy="-2" r="1.8" fill="#F3E6C8"/>
-  </g>
-  <g transform="translate(322 178) rotate(-4)">
-    <use href="#bcdie"/>
-    <ellipse cx="1" cy="0" rx="13" ry="8" fill="#2E6B5A"/>
-    <path d="M-11 0 L-20 -7 L-17 0 L-20 7 Z" fill="#2E6B5A"/>
-    <circle cx="9" cy="-2" r="1.8" fill="#F3E6C8"/>
+  <!-- Tiny mai-blossom sprig, top-right -->
+  <g transform="translate(606 44)">
+    <path d="M0,0 Q-14,8 -22,2" fill="none" stroke="#5E8C3A" stroke-width="2.4" stroke-linecap="round"/>
+    <g fill="#E6B83C" stroke="#9C7A1E" stroke-width="1.2">
+      <circle cx="0" cy="0" r="4"/><circle cx="-7" cy="-5" r="4"/><circle cx="-13" cy="-1" r="4"/>
+      <circle cx="-9" cy="5" r="4"/><circle cx="-3" cy="6" r="4"/>
+    </g>
+    <circle cx="-6" cy="1" r="2" fill="#C8281E"/>
   </g>
 </svg>
