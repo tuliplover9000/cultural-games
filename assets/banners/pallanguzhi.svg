@@ -1,60 +1,107 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280">
   <defs>
-    <!-- carved cup -->
+    <!-- dark kuzhi pit -->
+    <radialGradient id="pgpit" cx="42%" cy="36%">
+      <stop offset="0" stop-color="#2E1B10"/>
+      <stop offset="55%" stop-color="#241309"/>
+      <stop offset="100%" stop-color="#1C0F07"/>
+    </radialGradient>
     <g id="pgc">
-      <circle r="30" fill="#6a4022"/>
-      <circle r="25" fill="#2e1a0c"/>
-      <path d="M-22 -10 a25 25 0 0 1 44 0" stroke="#180c03" stroke-width="5" fill="none" opacity=".85"/>
-      <path d="M-24 12 a27 27 0 0 0 48 0" stroke="#8a5a2e" stroke-width="2.5" fill="none"/>
+      <circle r="27" fill="#5C3A22"/>
+      <circle r="24" fill="url(#pgpit)"/>
+      <circle r="24" fill="none" stroke="#9C6B3A" stroke-width="1.6"/>
     </g>
     <!-- cowrie shell -->
-    <g id="pgs">
-      <ellipse rx="6" ry="4.2" fill="#F2EDE0" stroke="#bba87f" stroke-width="1"/>
-      <path d="M-3 0 H3" stroke="#9a8a68" stroke-width="1.1"/>
+    <g id="cow">
+      <ellipse rx="6" ry="4.2" fill="#F2E8D5" stroke="#D9C6A0" stroke-width="0.8"/>
+      <ellipse rx="6" ry="4.2" fill="#FBF6EA" opacity="0.35"/>
+      <path d="M-3 1.4 H3" stroke="#8A7355" stroke-width="1" stroke-linecap="round"/>
+    </g>
+    <!-- tamarind seed -->
+    <g id="tam">
+      <ellipse rx="5.4" ry="4" fill="#3B2314" stroke="#241208" stroke-width="0.8"/>
+      <ellipse cx="-1.6" cy="-1.2" rx="2" ry="1.3" fill="#7A5230" opacity="0.7"/>
+    </g>
+    <!-- manjadi seed -->
+    <g id="man">
+      <ellipse rx="5.2" ry="4.4" fill="#C41E12" stroke="#8E1410" stroke-width="0.8"/>
+      <ellipse cx="-1.4" cy="-1.4" rx="1.8" ry="1.2" fill="#F25C4A"/>
     </g>
   </defs>
 
-  <!-- dark carved wood plank with grain -->
-  <rect width="640" height="280" fill="#4a2c16"/>
-  <g stroke="#3a2110" stroke-width="2" fill="none" opacity=".8">
-    <path d="M0 24 q160 8 320 0 t320 4"/>
-    <path d="M0 74 q140 -7 300 0 t340 -3"/>
-    <path d="M0 150 q180 6 340 0 t300 5"/>
-    <path d="M0 228 q150 -6 310 0 t330 -4"/>
-    <path d="M0 262 q170 7 330 0 t310 3"/>
+  <!-- red-oxide thinnai floor -->
+  <rect width="640" height="280" fill="#8C3B2A"/>
+  <rect width="640" height="280" fill="url(#floor)"/>
+  <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#A14A33"/>
+    <stop offset="0.6" stop-color="#8C3B2A"/>
+    <stop offset="1" stop-color="#6E2D20"/>
+  </linearGradient>
+
+  <!-- faint kolam dot lattice, lower-left corner -->
+  <g fill="#FAF5E8" opacity="0.16">
+    <circle cx="24" cy="222" r="2"/><circle cx="44" cy="222" r="2"/><circle cx="64" cy="222" r="2"/>
+    <circle cx="34" cy="240" r="2"/><circle cx="54" cy="240" r="2"/>
+    <circle cx="24" cy="258" r="2"/><circle cx="44" cy="258" r="2"/><circle cx="64" cy="258" r="2"/>
   </g>
-  <g stroke="#5e3a1e" stroke-width="1.4" fill="none" opacity=".8">
-    <path d="M0 46 q200 6 380 0 t260 4"/>
-    <path d="M0 250 q190 -5 360 0 t280 3"/>
+  <g fill="none" stroke="#FAF5E8" stroke-width="1.2" opacity="0.13">
+    <path d="M24 222 Q34 232 44 222 Q34 212 24 222 Z"/>
+    <path d="M44 222 Q54 232 64 222 Q54 212 44 222 Z"/>
+    <path d="M24 258 Q34 248 44 258"/>
   </g>
 
-  <!-- brass accent line along the plank edge -->
-  <path d="M0 55 H640" stroke="#e8a030" stroke-width="3"/>
-  <path d="M0 52.5 H640" stroke="#ffd57a" stroke-width="1" opacity=".7"/>
+  <!-- oiled jackwood plank with rounded ends -->
+  <rect x="40" y="62" width="560" height="156" rx="40" fill="#5C3A22"/>
+  <rect x="44" y="66" width="552" height="148" rx="36" fill="url(#plank)"/>
+  <linearGradient id="plank" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#C8913F"/>
+    <stop offset="0.5" stop-color="#A8743A"/>
+    <stop offset="1" stop-color="#8A5A2B"/>
+  </linearGradient>
+  <!-- wood grain -->
+  <g stroke="#5C3A22" stroke-width="1.3" fill="none" opacity="0.35">
+    <path d="M60 92 q260 6 520 0"/>
+    <path d="M60 188 q260 -6 520 0"/>
+    <path d="M60 116 q260 5 520 0"/>
+    <path d="M60 164 q260 -5 520 0"/>
+  </g>
+  <!-- top oiled highlight -->
+  <rect x="44" y="66" width="552" height="10" rx="5" fill="#F8DEAA" opacity="0.35"/>
 
-  <!-- two rows of seven cups -->
-  <use href="#pgc" x="56" y="112"/><use href="#pgc" x="144" y="112"/><use href="#pgc" x="232" y="112"/><use href="#pgc" x="320" y="112"/><use href="#pgc" x="408" y="112"/><use href="#pgc" x="496" y="112"/><use href="#pgc" x="584" y="112"/>
-  <use href="#pgc" x="56" y="192"/><use href="#pgc" x="144" y="192"/><use href="#pgc" x="232" y="192"/><use href="#pgc" x="320" y="192"/><use href="#pgc" x="408" y="192"/><use href="#pgc" x="496" y="192"/><use href="#pgc" x="584" y="192"/>
+  <!-- brass hinge strap across the center seam, with rivets -->
+  <rect x="80" y="135" width="480" height="10" rx="5" fill="url(#brass)"/>
+  <linearGradient id="brass" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#E8C96A"/>
+    <stop offset="0.45" stop-color="#C9A227"/>
+    <stop offset="1" stop-color="#7A6526"/>
+  </linearGradient>
+  <rect x="80" y="135" width="480" height="2.5" rx="1.2" fill="#FFF5DC" opacity="0.5"/>
+  <circle cx="98" cy="140" r="2.2" fill="#7A6526"/>
+  <circle cx="542" cy="140" r="2.2" fill="#7A6526"/>
 
-  <!-- shells heaped unevenly: top row -->
-  <use href="#pgs" x="50" y="108"/><use href="#pgs" x="62" y="114"/><use href="#pgs" x="54" y="120"/><use href="#pgs" x="66" y="106"/><use href="#pgs" x="58" y="100"/>
-  <use href="#pgs" x="140" y="110"/><use href="#pgs" x="150" y="116"/><use href="#pgs" x="138" y="120"/>
-  <use href="#pgs" x="226" y="110"/><use href="#pgs" x="238" y="114"/><use href="#pgs" x="230" y="120"/><use href="#pgs" x="240" y="104"/>
-  <use href="#pgs" x="316" y="114"/><use href="#pgs" x="326" y="108"/>
-  <use href="#pgs" x="402" y="110"/><use href="#pgs" x="414" y="114"/><use href="#pgs" x="406" y="120"/><use href="#pgs" x="416" y="104"/><use href="#pgs" x="398" y="104"/><use href="#pgs" x="410" y="98"/>
-  <use href="#pgs" x="580" y="110"/><use href="#pgs" x="590" y="116"/><use href="#pgs" x="584" y="120"/><use href="#pgs" x="592" y="104"/>
+  <!-- two rows of seven pits -->
+  <use href="#pgc" x="96" y="106"/><use href="#pgc" x="164" y="106"/><use href="#pgc" x="232" y="106"/><use href="#pgc" x="300" y="106"/><use href="#pgc" x="368" y="106"/><use href="#pgc" x="436" y="106"/><use href="#pgc" x="504" y="106"/>
+  <use href="#pgc" x="96" y="174"/><use href="#pgc" x="164" y="174"/><use href="#pgc" x="232" y="174"/><use href="#pgc" x="300" y="174"/><use href="#pgc" x="368" y="174"/><use href="#pgc" x="436" y="174"/><use href="#pgc" x="504" y="174"/>
 
-  <!-- shells: bottom row (one cup just emptied, one heaped) -->
-  <use href="#pgs" x="52" y="190"/><use href="#pgs" x="62" y="196"/><use href="#pgs" x="58" y="184"/>
-  <use href="#pgs" x="138" y="188"/><use href="#pgs" x="150" y="192"/><use href="#pgs" x="142" y="198"/><use href="#pgs" x="152" y="182"/><use href="#pgs" x="146" y="176"/>
-  <use href="#pgs" x="316" y="190"/><use href="#pgs" x="326" y="196"/><use href="#pgs" x="320" y="200"/><use href="#pgs" x="328" y="184"/>
-  <use href="#pgs" x="404" y="192"/><use href="#pgs" x="414" y="188"/>
-  <use href="#pgs" x="492" y="190"/><use href="#pgs" x="502" y="194"/><use href="#pgs" x="496" y="200"/><use href="#pgs" x="504" y="182"/><use href="#pgs" x="488" y="182"/>
-  <use href="#pgs" x="580" y="190"/><use href="#pgs" x="590" y="196"/><use href="#pgs" x="586" y="182"/>
+  <!-- store troughs at the rounded ends -->
+  <ellipse cx="566" cy="140" rx="16" ry="44" fill="url(#pgpit)" stroke="#9C6B3A" stroke-width="1.6"/>
 
-  <!-- a few shells mid-sow between the rows -->
-  <g transform="translate(276 150) rotate(-25)"><use href="#pgs"/></g>
-  <g transform="translate(312 154) rotate(15)"><use href="#pgs"/></g>
-  <g transform="translate(352 148) rotate(-10)"><use href="#pgs"/></g>
-  <g transform="translate(388 154) rotate(30)"><use href="#pgs"/></g>
+  <!-- counters heaped in some pits + spilled between -->
+  <!-- cowries -->
+  <use href="#cow" x="90" y="102"/><use href="#cow" x="102" y="108"/><use href="#cow" x="94" y="113"/>
+  <use href="#cow" x="232" y="100"/><use href="#cow" x="240" y="110"/><use href="#cow" x="224" y="110"/><use href="#cow" x="232" y="112"/>
+  <use href="#cow" x="436" y="170"/><use href="#cow" x="444" y="178"/><use href="#cow" x="428" y="178"/>
+  <use href="#cow" x="96" y="172"/><use href="#cow" x="106" y="180"/>
+  <!-- tamarind -->
+  <use href="#tam" x="164" y="104"/><use href="#tam" x="172" y="112"/><use href="#tam" x="158" y="112"/>
+  <use href="#tam" x="300" y="172"/><use href="#tam" x="308" y="180"/><use href="#tam" x="292" y="180"/><use href="#tam" x="300" y="170"/>
+  <use href="#tam" x="368" y="104"/><use href="#tam" x="376" y="112"/>
+  <!-- manjadi -->
+  <use href="#man" x="504" y="104"/><use href="#man" x="512" y="112"/><use href="#man" x="497" y="112"/>
+  <use href="#man" x="232" y="174"/><use href="#man" x="240" y="180"/>
+  <use href="#man" x="566" y="128"/><use href="#man" x="566" y="142"/><use href="#man" x="560" y="152"/>
+  <!-- a few mid-sow between the rows -->
+  <g transform="translate(338 140)"><use href="#cow"/></g>
+  <g transform="translate(404 140)"><use href="#tam"/></g>
+  <g transform="translate(470 140)"><use href="#man"/></g>
 </svg>
