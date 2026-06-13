@@ -1,47 +1,119 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280">
-  <!-- Hnefatafl banner: 11x11 tafl board (top edge cropped), gold king ringed by bone defenders and red attackers -->
+  <!-- Hnefatafl banner: Ballinderry-style yew tafl board, uncheckered incised grid, arc marks,
+       Borre ring-chain border, carved-head handles, dark glass defenders + amber king vs pale bone attackers -->
   <defs>
-    <rect id="dq" width="32" height="32" fill="#A8845A"/>
-    <g id="ra"><use href="#dq"/><use href="#dq" x="64"/><use href="#dq" x="128"/><use href="#dq" x="192"/><use href="#dq" x="256"/><use href="#dq" x="320"/></g>
-    <g id="rb"><use href="#dq" x="32"/><use href="#dq" x="96"/><use href="#dq" x="160"/><use href="#dq" x="224"/><use href="#dq" x="288"/></g>
-    <g id="at"><circle r="12" fill="#8B2020" stroke="#4A0808" stroke-width="2"/><ellipse cx="-3.5" cy="-4" rx="4.5" ry="3" fill="#C84040"/></g>
-    <g id="df"><circle r="12" fill="#F0E6C8" stroke="#7a5020" stroke-width="2"/><ellipse cx="-3.5" cy="-4" rx="4.5" ry="3" fill="#FFFFFF" opacity="0.85"/></g>
-    <g id="xc"><rect width="32" height="32" fill="#4A1010" stroke="#D4A017" stroke-width="1.5"/><path d="M5 5L27 27M27 5L5 27" stroke="#D4A017" stroke-width="2.5" fill="none"/></g>
+    <!-- dark blue-green glass defender dome -->
+    <g id="df">
+      <circle r="12" fill="#1F4A42" stroke="#0a1e1a" stroke-width="1.6"/>
+      <path d="M2 8a12 12 0 0 0 9 -3" fill="none" stroke="#3E7A6C" stroke-width="1.4" opacity="0.6"/>
+      <ellipse cx="-3.6" cy="-4" rx="3.6" ry="2.4" fill="#ffffff" opacity="0.45"/>
+    </g>
+    <!-- pale bone attacker dome -->
+    <g id="at">
+      <circle r="12" fill="#E9DEC6" stroke="#6B4E2E" stroke-width="1.6"/>
+      <ellipse cx="-3.6" cy="-4" rx="3.8" ry="2.6" fill="#F4ECD8"/>
+      <ellipse cx="-3.6" cy="-4" rx="2" ry="1.3" fill="#ffffff" opacity="0.5"/>
+    </g>
+    <!-- four-arc circular mark -->
+    <g id="arc" fill="none" stroke="#5A3A1E" stroke-width="1.8">
+      <path d="M0 -11 A11 11 0 0 1 9.5 -5.5"/>
+      <path d="M11 0 A11 11 0 0 1 5.5 9.5"/>
+      <path d="M0 11 A11 11 0 0 1 -9.5 5.5"/>
+      <path d="M-11 0 A11 11 0 0 1 -5.5 -9.5"/>
+      <circle r="1.4" fill="#5A3A1E" stroke="none"/>
+    </g>
+    <!-- Borre linked ring -->
+    <g id="ring">
+      <circle r="5.5" fill="none" stroke="#52391F" stroke-width="2.6"/>
+      <circle r="5.5" cx="-0.7" cy="-0.7" fill="none" stroke="#C4A06B" stroke-width="1.1"/>
+    </g>
   </defs>
-  <rect width="640" height="280" fill="#1E1A14"/>
-  <rect x="36" y="0" width="4" height="280" fill="#262019"/>
-  <rect x="88" y="0" width="4" height="280" fill="#262019"/>
-  <rect x="548" y="0" width="4" height="280" fill="#262019"/>
-  <rect x="600" y="0" width="4" height="280" fill="#262019"/>
-  <rect x="128" y="0" width="384" height="280" fill="#2E2218"/>
-  <!-- board: 11x11, cell 32, rows 0-2 cropped above the frame -->
-  <rect x="144" y="-101" width="352" height="352" fill="#C4A265"/>
-  <use href="#ra" x="144" y="-5"/><use href="#rb" x="144" y="27"/>
-  <use href="#ra" x="144" y="59"/><use href="#rb" x="144" y="91"/>
-  <use href="#ra" x="144" y="123"/><use href="#rb" x="144" y="155"/>
-  <use href="#ra" x="144" y="187"/><use href="#rb" x="144" y="219"/>
-  <rect x="144" y="-101" width="352" height="352" fill="none" stroke="#C4A265" stroke-width="3" opacity="0.6"/>
-  <!-- corner squares and throne -->
-  <use href="#xc" x="144" y="219"/><use href="#xc" x="464" y="219"/>
-  <rect x="304" y="59" width="32" height="32" fill="#4A1010" stroke="#D4A017" stroke-width="1.5"/>
-  <!-- attackers: red, radial formation -->
-  <use href="#at" x="256" y="235"/><use href="#at" x="288" y="235"/><use href="#at" x="320" y="235"/><use href="#at" x="352" y="235"/><use href="#at" x="384" y="235"/><use href="#at" x="320" y="203"/>
-  <use href="#at" x="160" y="43"/><use href="#at" x="160" y="75"/><use href="#at" x="160" y="107"/><use href="#at" x="160" y="139"/><use href="#at" x="192" y="75"/>
-  <use href="#at" x="480" y="43"/><use href="#at" x="480" y="75"/><use href="#at" x="480" y="107"/><use href="#at" x="448" y="75"/>
-  <use href="#at" x="416" y="139"/>
-  <!-- defenders: bone ring around the king -->
-  <use href="#df" x="288" y="43"/><use href="#df" x="320" y="43"/><use href="#df" x="352" y="43"/>
-  <use href="#df" x="288" y="75"/><use href="#df" x="352" y="75"/>
-  <use href="#df" x="288" y="107"/><use href="#df" x="320" y="107"/><use href="#df" x="352" y="107"/>
-  <use href="#df" x="320" y="139"/><use href="#df" x="256" y="171"/>
-  <!-- gold king on the throne -->
-  <g transform="translate(320 75)"><circle r="14" fill="#D4A017" stroke="#5a3010" stroke-width="2.5"/><rect x="-2.5" y="-9" width="5" height="18" fill="#3a1a00"/><rect x="-9" y="-2.5" width="18" height="5" fill="#3a1a00"/><ellipse cx="-5" cy="-7" rx="4" ry="2.5" fill="#F5D660" opacity="0.8"/></g>
-  <!-- captured pieces resting beside the board -->
-  <use href="#df" x="62" y="212"/><use href="#at" x="96" y="230"/>
-  <!-- angular notch marks on the frame (rune-ish, not real runes) -->
-  <g stroke="#C4A265" stroke-width="3" fill="none" opacity="0.55">
-    <path d="M540 72l10-22 10 22"/>
-    <path d="M570 50v32"/>
-    <path d="M582 50l14 16-14 16"/>
+
+  <!-- charcoal-iron surround -->
+  <rect width="640" height="280" fill="#2E2A25"/>
+  <!-- firelight warmth from the left -->
+  <radialGradient id="fire" cx="0.12" cy="0.3" r="0.9">
+    <stop offset="0" stop-color="#E09A3E" stop-opacity="0.22"/>
+    <stop offset="1" stop-color="#E09A3E" stop-opacity="0"/>
+  </radialGradient>
+  <rect width="640" height="280" fill="url(#fire)"/>
+
+  <!-- yew board, slightly elevated -->
+  <rect x="140" y="36" width="360" height="208" rx="4" fill="#6B4E2E"/>
+  <rect x="150" y="46" width="340" height="180" fill="#9C7A4E"/>
+  <!-- grain streaks -->
+  <g fill="#6B4E2E" opacity="0.5">
+    <rect x="150" y="70"  width="340" height="3"/>
+    <rect x="150" y="118" width="340" height="2"/>
+    <rect x="150" y="168" width="340" height="3"/>
+  </g>
+  <g fill="#B8956A" opacity="0.45">
+    <rect x="150" y="92"  width="340" height="2"/>
+    <rect x="150" y="146" width="340" height="2"/>
+  </g>
+
+  <!-- uncheckered incised 9x9 grid suggestion -->
+  <g stroke="#3D2B1A" stroke-width="1.4">
+    <path d="M188 46V226M226 46V226M264 46V226M302 46V226M340 46V226M378 46V226M416 46V226M454 46V226"/>
+    <path d="M150 66H490M150 86H490M150 106H490M150 126H490M150 146H490M150 166H490M150 186H490M150 206H490"/>
+  </g>
+  <g stroke="#B8956A" stroke-width="0.8" opacity="0.5">
+    <path d="M189 46V226M341 46V226M455 46V226"/>
+    <path d="M150 67H490M150 147H490M150 207H490"/>
+  </g>
+
+  <!-- arc marks: centre throne + four corners -->
+  <use href="#arc" x="320" y="136"/>
+  <circle cx="320" cy="136" r="6.5" fill="none" stroke="#5A3A1E" stroke-width="1.6"/>
+  <use href="#arc" x="169" y="56"/>
+  <use href="#arc" x="471" y="56"/>
+  <use href="#arc" x="169" y="216"/>
+  <use href="#arc" x="471" y="216"/>
+
+  <!-- Borre ring-chain border band along the bottom edge -->
+  <g>
+    <use href="#ring" x="156" y="236"/><use href="#ring" x="170" y="236"/><use href="#ring" x="184" y="236"/>
+    <use href="#ring" x="198" y="236"/><use href="#ring" x="212" y="236"/><use href="#ring" x="226" y="236"/>
+    <use href="#ring" x="240" y="236"/><use href="#ring" x="254" y="236"/><use href="#ring" x="268" y="236"/>
+    <use href="#ring" x="282" y="236"/><use href="#ring" x="296" y="236"/><use href="#ring" x="310" y="236"/>
+    <use href="#ring" x="324" y="236"/><use href="#ring" x="338" y="236"/><use href="#ring" x="352" y="236"/>
+    <use href="#ring" x="366" y="236"/><use href="#ring" x="380" y="236"/><use href="#ring" x="394" y="236"/>
+    <use href="#ring" x="408" y="236"/><use href="#ring" x="422" y="236"/><use href="#ring" x="436" y="236"/>
+    <use href="#ring" x="450" y="236"/><use href="#ring" x="464" y="236"/><use href="#ring" x="478" y="236"/>
+  </g>
+
+  <!-- carved-head handles protruding left and right -->
+  <g fill="#6B4E2E" stroke="#3D2B1A" stroke-width="1.4">
+    <path d="M140 124c-14 0-22 6-22 16s8 16 22 16c-4-8-4-24 0-32z"/>
+    <path d="M500 124c14 0 22 6 22 16s-8 16-22 16c4-8 4-24 0-32z"/>
+  </g>
+  <g fill="none" stroke="#3D2B1A" stroke-width="1.2">
+    <path d="M126 132c4 2 4 14 0 16"/>
+    <path d="M514 132c-4 2-4 14 0 16"/>
+  </g>
+
+  <!-- mid-game: dark glass defenders ringing an amber king, bone attackers closing in -->
+  <use href="#df" x="282" y="106"/><use href="#df" x="320" y="106"/><use href="#df" x="358" y="106"/>
+  <use href="#df" x="282" y="166"/><use href="#df" x="320" y="166"/><use href="#df" x="358" y="166"/>
+  <use href="#df" x="282" y="136"/><use href="#df" x="358" y="136"/>
+
+  <use href="#at" x="226" y="86"/><use href="#at" x="416" y="86"/>
+  <use href="#at" x="188" y="136"/><use href="#at" x="454" y="136"/>
+  <use href="#at" x="226" y="186"/><use href="#at" x="416" y="186"/>
+  <use href="#at" x="320" y="66"/><use href="#at" x="320" y="206"/>
+
+  <!-- amber king with droplet crown, on the throne -->
+  <g transform="translate(320 136)">
+    <circle r="15" fill="#C8651B" stroke="#5a2c08" stroke-width="2"/>
+    <circle r="15" fill="none"/>
+    <ellipse cx="-5" cy="-6" rx="5" ry="3.4" fill="#F0A050" opacity="0.85"/>
+    <g fill="#E9DEC6" stroke="#8F3F0C" stroke-width="0.5">
+      <circle cx="0"    cy="-8.5" r="2"/>
+      <circle cx="8.1"  cy="-2.6" r="2"/>
+      <circle cx="5"    cy="6.9"  r="2"/>
+      <circle cx="-5"   cy="6.9"  r="2"/>
+      <circle cx="-8.1" cy="-2.6" r="2"/>
+      <circle cx="0"    cy="0"    r="2"/>
+    </g>
   </g>
 </svg>

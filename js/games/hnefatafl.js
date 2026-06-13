@@ -477,66 +477,171 @@
   }
 
   function drawBg() {
-    ctx.fillStyle = '#1E1A14';
-    ctx.fillRect(0, 0, csz(), csz());
+    var sz = csz();
+    ctx.fillStyle = '#2E2A25';
+    ctx.fillRect(0, 0, sz, sz);
+    // Warm hearth glow from above
+    var hg = ctx.createRadialGradient(sz/2, 0, 0, sz/2, 0, sz);
+    hg.addColorStop(0, 'rgba(224,154,62,0.10)');
+    hg.addColorStop(1, 'rgba(224,154,62,0)');
+    ctx.fillStyle = hg;
+    ctx.fillRect(0, 0, sz, sz);
   }
 
   function drawCells() {
-    for (var r = 0; r < SIZE; r++) {
-      for (var c = 0; c < SIZE; c++) {
-        var x = PAD + c * CELL, y = PAD + r * CELL;
-        ctx.fillStyle = (r + c) % 2 === 0 ? '#C4A265' : '#A8845A';
-        ctx.fillRect(x, y, CELL, CELL);
-        ctx.strokeStyle = 'rgba(0,0,0,0.12)';
-        ctx.lineWidth = 0.5;
-        ctx.strokeRect(x, y, CELL, CELL);
-      }
+    var fieldX = PAD, fieldY = PAD, fieldW = SIZE * CELL, fieldH = SIZE * CELL;
+
+    // (a) one uncheckered fill for the whole playing field
+    ctx.fillStyle = '#9C7A4E';
+    ctx.fillRect(fieldX, fieldY, fieldW, fieldH);
+
+    // (b) deterministic yew grain
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(fieldX, fieldY, fieldW, fieldH);
+    ctx.clip();
+    var darkFracs = [0.09, 0.26, 0.41, 0.58, 0.74, 0.9];
+    var darkH     = [3, 2, 4, 2, 3, 2];
+    ctx.fillStyle = 'rgba(107,78,46,0.22)';
+    for (var gi = 0; gi < darkFracs.length; gi++) {
+      ctx.fillRect(fieldX, fieldY + darkFracs[gi] * fieldH, fieldW, darkH[gi]);
+    }
+    var lightFracs = [0.17, 0.5, 0.82];
+    var lightH     = [2, 3, 2];
+    ctx.fillStyle = 'rgba(184,149,106,0.25)';
+    for (var li = 0; li < lightFracs.length; li++) {
+      ctx.fillRect(fieldX, fieldY + lightFracs[li] * fieldH, fieldW, lightH[li]);
+    }
+    ctx.restore();
+
+    // (c) incised grid lines (carved-groove read)
+    for (var k = 0; k <= SIZE; k++) {
+      var gx = fieldX + k * CELL;
+      var gy = fieldY + k * CELL;
+      // dark groove
+      ctx.strokeStyle = '#3D2B1A';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(gx, fieldY); ctx.lineTo(gx, fieldY + fieldH);
+      ctx.moveTo(fieldX, gy); ctx.lineTo(fieldX + fieldW, gy);
+      ctx.stroke();
+      // catchlight offset down/right
+      ctx.strokeStyle = 'rgba(184,149,106,0.5)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(gx + 1, fieldY); ctx.lineTo(gx + 1, fieldY + fieldH);
+      ctx.moveTo(fieldX, gy + 1); ctx.lineTo(fieldX + fieldW, gy + 1);
+      ctx.stroke();
+    }
+
+    // (d) raised trim border in the PAD band
+    var sz = csz();
+    ctx.fillStyle = '#6B4E2E';
+    ctx.fillRect(0, 0, sz, PAD);                       // top
+    ctx.fillRect(0, sz - PAD, sz, PAD);                // bottom
+    ctx.fillRect(0, 0, PAD, sz);                       // left
+    ctx.fillRect(sz - PAD, 0, PAD, sz);                // right
+    // inner edge line
+    ctx.strokeStyle = '#3D2B1A';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(fieldX, fieldY, fieldW, fieldH);
+    // outer edge line
+    ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(0.75, 0.75, sz - 1.5, sz - 1.5);
+
+    // Borre ring-chain along the four border strips
+    drawRingChain(sz);
+  }
+
+  function drawRingChain(sz) {
+    var rr = 5.5, step = 14;
+    var midTop = PAD / 2, midBot = sz - PAD / 2;
+    var midLft = PAD / 2, midRgt = sz - PAD / 2;
+    function ring(rx, ry) {
+      // skip near corners to keep them clean
+      if ((rx < 10 || rx > sz - 10) && (ry < 10 || ry > sz - 10)) return;
+      ctx.beginPath();
+      ctx.arc(rx, ry, rr, 0, Math.PI * 2);
+      ctx.strokeStyle = '#52391F';
+      ctx.lineWidth = 2.6;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(rx - 0.7, ry - 0.7, rr, 0, Math.PI * 2);
+      ctx.strokeStyle = '#C4A06B';
+      ctx.lineWidth = 1.1;
+      ctx.stroke();
+    }
+    var p;
+    for (p = step / 2; p < sz; p += step) {
+      ring(p, midTop);       // top strip
+      ring(p, midBot);       // bottom strip
+    }
+    for (p = step / 2; p < sz; p += step) {
+      ring(midLft, p);       // left strip
+      ring(midRgt, p);       // right strip
+    }
+  }
+
+  // Draw a circle as four ~70%-quarter arcs with small gaps (Ballinderry incised mark).
+  function fourArcCircle(mx, my, radius) {
+    var quarter = Math.PI / 2;
+    var gap = quarter * 0.15; // 15% gap each quarter
+    for (var q = 0; q < 4; q++) {
+      var start = q * quarter + gap;
+      var end   = (q + 1) * quarter - gap;
+      ctx.beginPath();
+      ctx.arc(mx, my, radius, start, end);
+      ctx.stroke();
     }
   }
 
   function drawSpecial() {
-    // Corners
+    // Corners — incised arc motif, no dark fill, no X
     CORNER_CELLS.forEach(function(p) {
       var x = PAD + p[1] * CELL, y = PAD + p[0] * CELL;
-      ctx.fillStyle = '#2E2218';
+      ctx.fillStyle = 'rgba(90,58,30,0.16)';
       ctx.fillRect(x, y, CELL, CELL);
-      // X rune marker
-      ctx.strokeStyle = '#C4A265';
-      ctx.lineWidth = 1.5;
-      var mx = x + CELL/2, my = y + CELL/2, ms = CELL * 0.27;
+      var mx = x + CELL/2, my = y + CELL/2;
+      ctx.strokeStyle = '#5A3A1E';
+      ctx.lineWidth = 1.8;
+      fourArcCircle(mx, my, CELL * 0.30);
+      ctx.fillStyle = '#5A3A1E';
       ctx.beginPath();
-      ctx.moveTo(mx-ms, my-ms); ctx.lineTo(mx+ms, my+ms);
-      ctx.moveTo(mx+ms, my-ms); ctx.lineTo(mx-ms, my+ms);
-      ctx.stroke();
+      ctx.arc(mx, my, 1.6, 0, Math.PI*2);
+      ctx.fill();
     });
 
-    // Throne
+    // Throne — concentric arc motif
     var tx = PAD + THRONE_C * CELL, ty = PAD + THRONE_R * CELL;
-    ctx.fillStyle = '#4A1010';
+    ctx.fillStyle = 'rgba(224,154,62,0.14)';
     ctx.fillRect(tx, ty, CELL, CELL);
-    ctx.strokeStyle = '#D4A017';
+    var tmx = tx + CELL/2, tmy = ty + CELL/2;
+    ctx.strokeStyle = '#5A3A1E';
     ctx.lineWidth = 1.8;
-    var tmx = tx + CELL/2, tmy = ty + CELL/2, ts = CELL * 0.26;
+    fourArcCircle(tmx, tmy, CELL * 0.30);
+    fourArcCircle(tmx, tmy, CELL * 0.18);
+    ctx.fillStyle = '#5A3A1E';
     ctx.beginPath();
-    ctx.moveTo(tmx, tmy-ts); ctx.lineTo(tmx, tmy+ts);
-    ctx.moveTo(tmx-ts, tmy); ctx.lineTo(tmx+ts, tmy);
-    ctx.stroke();
+    ctx.arc(tmx, tmy, 1.6, 0, Math.PI*2);
+    ctx.fill();
   }
 
   function drawHighlights() {
     if (!state.selected) return;
     var sr = state.selected[0], sc = state.selected[1];
-    ctx.fillStyle = 'rgba(240,210,60,0.32)';
+    ctx.fillStyle = 'rgba(224,154,62,0.30)';
     ctx.fillRect(PAD + sc*CELL, PAD + sr*CELL, CELL, CELL);
 
     state.validMoves.forEach(function(m) {
       var mx = cx(m[1]), my = cy(m[0]);
+      // drilled peg hole with bone-light rim
       ctx.beginPath();
-      ctx.arc(mx, my, CELL * 0.20, 0, Math.PI*2);
-      ctx.fillStyle   = 'rgba(90,200,90,0.42)';
+      ctx.arc(mx, my, CELL * 0.13, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(61,43,26,0.55)';
       ctx.fill();
-      ctx.strokeStyle = 'rgba(50,160,50,0.8)';
-      ctx.lineWidth   = 1.8;
+      ctx.strokeStyle = 'rgba(233,222,198,0.45)';
+      ctx.lineWidth   = 1.5;
       ctx.stroke();
     });
   }
@@ -552,69 +657,103 @@
 
   function drawPiece(r, c, piece) {
     var pcx = cx(c), pcy = cy(r);
-    var rad = CELL * 0.38;
-    ctx.beginPath();
-    ctx.arc(pcx, pcy, rad, 0, Math.PI*2);
 
     if (piece === KING) {
+      // Amber dome with Lindisfarne droplet crown
+      var rad = CELL * 0.42;
+      ctx.beginPath();
+      ctx.arc(pcx, pcy, rad, 0, Math.PI*2);
       var g = ctx.createRadialGradient(pcx-rad*0.35, pcy-rad*0.35, 1, pcx, pcy, rad);
-      g.addColorStop(0, '#F5D660');
-      g.addColorStop(1, '#A07010');
+      g.addColorStop(0, '#F0A050');
+      g.addColorStop(0.55, '#C8651B');
+      g.addColorStop(1, '#8F3F0C');
       ctx.fillStyle = g;
       ctx.fill();
-      ctx.strokeStyle = '#5a3010';
+      ctx.strokeStyle = '#5a2c08';
       ctx.lineWidth = 2;
       ctx.stroke();
-      // Crown cross
-      var ks = rad * 0.42;
-      ctx.strokeStyle = '#3a1a00';
-      ctx.lineWidth = 1.8;
-      ctx.beginPath();
-      ctx.moveTo(pcx, pcy-ks); ctx.lineTo(pcx, pcy+ks);
-      ctx.moveTo(pcx-ks, pcy); ctx.lineTo(pcx+ks, pcy);
-      ctx.stroke();
-      // Tip dots
-      ctx.fillStyle = '#3a1a00';
-      [[0,-1],[0,1],[-1,0],[1,0]].forEach(function(d) {
+      // Five bone droplets on a ring + one center
+      var dr = CELL * 0.045;
+      ctx.fillStyle = '#E9DEC6';
+      ctx.strokeStyle = '#8F3F0C';
+      ctx.lineWidth = 0.5;
+      var ring = CELL * 0.24;
+      for (var dpi = 0; dpi < 5; dpi++) {
+        var ang = -Math.PI/2 + dpi * (Math.PI*2/5);
+        var dx = pcx + Math.cos(ang) * ring;
+        var dy = pcy + Math.sin(ang) * ring;
         ctx.beginPath();
-        ctx.arc(pcx+d[0]*ks, pcy+d[1]*ks, 2.2, 0, Math.PI*2);
+        ctx.arc(dx, dy, dr, 0, Math.PI*2);
         ctx.fill();
-      });
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.arc(pcx, pcy, dr, 0, Math.PI*2);
+      ctx.fill();
+      ctx.stroke();
+
     } else if (piece === ATTACKER) {
-      var ga = ctx.createRadialGradient(pcx-rad*0.3, pcy-rad*0.3, 1, pcx, pcy, rad);
-      ga.addColorStop(0, '#C84040');
-      ga.addColorStop(1, '#4A0808');
+      // Pale bone dome (attackers)
+      var radA = CELL * 0.38;
+      ctx.beginPath();
+      ctx.arc(pcx, pcy, radA, 0, Math.PI*2);
+      var ga = ctx.createRadialGradient(pcx-radA*0.3, pcy-radA*0.3, 1, pcx, pcy, radA);
+      ga.addColorStop(0, '#F4ECD8');
+      ga.addColorStop(0.5, '#E9DEC6');
+      ga.addColorStop(1, '#C9B991');
       ctx.fillStyle = ga;
       ctx.fill();
-      ctx.strokeStyle = '#280000';
+      ctx.strokeStyle = 'rgba(107,78,46,0.6)';
       ctx.lineWidth = 1.5;
       ctx.stroke();
+      // specular
+      ctx.beginPath();
+      ctx.arc(pcx - radA*0.32, pcy - radA*0.32, radA*0.16, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.fill();
+
     } else {
-      var gd = ctx.createRadialGradient(pcx-rad*0.3, pcy-rad*0.3, 1, pcx, pcy, rad);
-      gd.addColorStop(0, '#FFFFFF');
-      gd.addColorStop(1, '#C8B090');
+      // Dark blue-green glass dome (defenders)
+      var radD = CELL * 0.38;
+      ctx.beginPath();
+      ctx.arc(pcx, pcy, radD, 0, Math.PI*2);
+      var gd = ctx.createRadialGradient(pcx-radD*0.3, pcy-radD*0.3, 1, pcx, pcy, radD);
+      gd.addColorStop(0, '#3E7A6C');
+      gd.addColorStop(0.55, '#1F4A42');
+      gd.addColorStop(1, '#12302B');
       ctx.fillStyle = gd;
       ctx.fill();
-      ctx.strokeStyle = '#7a5020';
+      ctx.strokeStyle = 'rgba(10,30,26,0.85)';
       ctx.lineWidth = 1.5;
       ctx.stroke();
+      // rim-light arc along lower-right quarter
+      ctx.beginPath();
+      ctx.arc(pcx, pcy, radD - 1, Math.PI*0.1, Math.PI*0.45);
+      ctx.strokeStyle = 'rgba(62,122,108,0.5)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      // glass specular
+      ctx.beginPath();
+      ctx.arc(pcx - radD*0.3, pcy - radD*0.3, radD*0.15, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      ctx.fill();
     }
   }
 
   function drawOverlay() {
-    ctx.fillStyle = 'rgba(20,14,8,0.78)';
+    ctx.fillStyle = 'rgba(26,22,18,0.82)';
     ctx.fillRect(0, 0, csz(), csz());
     var line1 = state.winner === 'draw'
       ? 'Draw \u2014 Threefold Repetition'
       : state.winner === 'defender'
         ? 'King Escapes! Defenders Win'
         : 'King Captured! Attackers Win';
-    ctx.fillStyle   = '#D4A017';
+    ctx.fillStyle   = '#E09A3E';
     ctx.font        = 'bold ' + Math.round(CELL * 0.44) + 'px Georgia, serif';
     ctx.textAlign   = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(line1, csz()/2, csz()/2 - CELL*0.4);
-    ctx.fillStyle = '#C4A265';
+    ctx.fillStyle = '#CFC4AC';
     ctx.font      = Math.round(CELL * 0.28) + 'px Georgia, serif';
     ctx.fillText('Click \u201cNew Game\u201d to play again', csz()/2, csz()/2 + CELL*0.35);
   }
