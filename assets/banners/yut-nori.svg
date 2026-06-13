@@ -1,22 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280">
   <defs>
-    <circle id="yn" r="10" fill="#7a3a10" stroke="#3d1a00" stroke-width="2.5"/>
-    <path id="ys" d="M0 -6.5 L1.9 -2 6.5 -2 3 1.4 4.3 6.5 0 3.4 -4.3 6.5 -3 1.4 -6.5 -2 -1.9 -2 Z" fill="#f5d060"/>
-    <g id="yc">
-      <circle r="15" fill="#1a6b52" stroke="#0d3d2e" stroke-width="3"/>
-      <use href="#ys"/>
-    </g>
+    <circle id="yn" r="10" fill="#F2ECCD" stroke="#2C2C2C" stroke-width="2"/>
     <rect id="yk" x="-42" y="-6.5" width="84" height="13" rx="6.5"/>
   </defs>
 
-  <!-- warm parchment field -->
-  <rect width="640" height="280" fill="#ede0bc"/>
-  <ellipse cx="140" cy="60" rx="170" ry="70" fill="#e4d4a8" opacity=".5"/>
-  <ellipse cx="520" cy="230" rx="190" ry="80" fill="#e2d2a4" opacity=".45"/>
-  <ellipse cx="540" cy="60" rx="130" ry="55" fill="#f2e6c6" opacity=".6"/>
+  <!-- hanji-cream ground with subtle straw-mat tone at the edges -->
+  <rect width="640" height="280" fill="#F2ECCD"/>
+  <ellipse cx="120" cy="50" rx="190" ry="80" fill="#E4D4A8" opacity=".45"/>
+  <ellipse cx="540" cy="240" rx="200" ry="90" fill="#DCC9A0" opacity=".4"/>
+  <ellipse cx="560" cy="46" rx="140" ry="60" fill="#ECDFBC" opacity=".5"/>
 
-  <!-- path lines: square plus diagonals -->
-  <g stroke="#a07020" stroke-width="2.5" fill="none">
+  <!-- faint round Heaven halo behind the square -->
+  <circle cx="320" cy="140" r="128" fill="none" stroke="#2C2C2C" stroke-width="2" opacity=".12"/>
+
+  <!-- ink path lines: square loop plus the two diagonals, all one ink colour -->
+  <g stroke="#2C2C2C" stroke-width="2.5" fill="none" stroke-linejoin="round" stroke-linecap="round">
     <path d="M155 55 H485 V225 H155 Z"/>
     <path d="M155 55 L485 225 M485 55 L155 225"/>
   </g>
@@ -32,40 +30,52 @@
   <use href="#yn" x="210" y="197"/><use href="#yn" x="265" y="168"/>
   <use href="#yn" x="430" y="197"/><use href="#yn" x="375" y="168"/>
 
-  <!-- big starred stations: three corners, centre, and the red start corner -->
-  <use href="#yc" x="155" y="55"/>
-  <use href="#yc" x="485" y="55"/>
-  <use href="#yc" x="155" y="225"/>
-  <g transform="translate(485 225)">
-    <circle r="15" fill="#8B0018" stroke="#4a0010" stroke-width="3"/>
-    <use href="#ys"/>
-  </g>
-  <g transform="translate(320 140)">
-    <circle r="15" fill="#7a5a10" stroke="#3d2a00" stroke-width="3"/>
-    <use href="#ys"/>
+  <!-- shortcut-entry corners: open ink discs with a second concentric ink ring -->
+  <g>
+    <use href="#yn" x="155" y="55"/><circle cx="155" cy="55" r="6.2" fill="none" stroke="#2C2C2C" stroke-width="1.3" opacity=".55"/>
+    <use href="#yn" x="485" y="55"/><circle cx="485" cy="55" r="6.2" fill="none" stroke="#2C2C2C" stroke-width="1.3" opacity=".55"/>
+    <use href="#yn" x="155" y="225"/><circle cx="155" cy="225" r="6.2" fill="none" stroke="#2C2C2C" stroke-width="1.3" opacity=".55"/>
   </g>
 
-  <!-- four yut sticks just landed -->
+  <!-- start corner: open ink disc with a thin bokjumeoni-red ring (참먹이) -->
+  <g transform="translate(485 225)">
+    <circle r="13" fill="#F2ECCD" stroke="#2C2C2C" stroke-width="2"/>
+    <circle r="7.8" fill="none" stroke="#C8453A" stroke-width="1.6"/>
+  </g>
+
+  <!-- centre 방: open ink disc with a small North-Star yellow ring -->
+  <g transform="translate(320 140)">
+    <circle r="13" fill="#F2ECCD" stroke="#2C2C2C" stroke-width="2"/>
+    <circle r="9.4" fill="none" stroke="#F4DC4A" stroke-width="2"/>
+  </g>
+
+  <!-- four birch yut sticks just landed: pale belly vs bark back, one with a back-do mark -->
   <g transform="translate(248 132) rotate(-25)">
-    <use href="#yk" fill="#f5deb3" stroke="#8B4513" stroke-width="2"/>
-    <path d="M-32 0 H32" stroke="#dcc290" stroke-width="1.6"/>
+    <use href="#yk" fill="#E9D9B6" stroke="#A9895C" stroke-width="2"/>
+    <path d="M-32 0 H32" stroke="#C9B488" stroke-width="1.4"/>
   </g>
   <g transform="translate(272 156) rotate(-6)">
-    <use href="#yk" fill="#5d4037" stroke="#2e1a10" stroke-width="2"/>
-    <path d="M-34 -2 H32 M-26 3 H26" stroke="#2e1a10" stroke-width="1.4" fill="none"/>
+    <use href="#yk" fill="#A97E69" stroke="#5C3D2C" stroke-width="2"/>
   </g>
   <g transform="translate(392 128) rotate(16)">
-    <use href="#yk" fill="#f5deb3" stroke="#8B4513" stroke-width="2"/>
-    <path d="M-32 0 H32" stroke="#dcc290" stroke-width="1.6"/>
+    <use href="#yk" fill="#E9D9B6" stroke="#A9895C" stroke-width="2"/>
+    <path d="M-32 0 H32" stroke="#C9B488" stroke-width="1.4"/>
   </g>
   <g transform="translate(372 156) rotate(36)">
-    <use href="#yk" fill="#5d4037" stroke="#2e1a10" stroke-width="2"/>
-    <path d="M-34 -2 H32 M-26 3 H26" stroke="#2e1a10" stroke-width="1.4" fill="none"/>
+    <use href="#yk" fill="#A97E69" stroke="#5C3D2C" stroke-width="2"/>
+    <!-- scorched back-do mark -->
+    <path d="M-5 -5 L5 5 M5 -5 L-5 5" stroke="#86534E" stroke-width="1.6" fill="none"/>
   </g>
 
-  <!-- mal pieces: red pair stacked on the bottom edge, blue runners -->
-  <circle cx="353" cy="226" r="12" fill="#c0392b" stroke="#7a0000" stroke-width="3"/>
-  <circle cx="353" cy="214" r="12" fill="#c0392b" stroke="#7a0000" stroke-width="3"/>
-  <circle cx="265" cy="112" r="12" fill="#1a3a6b" stroke="#0a1a3b" stroke-width="3"/>
-  <circle cx="485" cy="123" r="12" fill="#1a3a6b" stroke="#0a1a3b" stroke-width="3"/>
+  <!-- mal pieces: Team-red pair stacked on the bottom edge, Team-blue runners -->
+  <circle cx="353" cy="226" r="12" fill="#F15A48" stroke="#C23A2A" stroke-width="3"/>
+  <circle cx="353" cy="214" r="12" fill="#F15A48" stroke="#C23A2A" stroke-width="3"/>
+  <circle cx="265" cy="112" r="12" fill="#465B99" stroke="#2E3F6E" stroke-width="3"/>
+  <circle cx="485" cy="123" r="12" fill="#465B99" stroke="#2E3F6E" stroke-width="3"/>
+
+  <!-- tiny bokjumeoni-tassel accent in the corner -->
+  <g transform="translate(40 248)">
+    <path d="M0 0 q8 -10 16 0 q-8 12 -16 0 Z" fill="#C8453A"/>
+    <path d="M8 4 V18" stroke="#2E4A87" stroke-width="2.4" stroke-linecap="round"/>
+  </g>
 </svg>

@@ -77,8 +77,8 @@
   var OUTER_CORNERS = [0, 5, 10, 15]; // all four outer corners
   var SC_CORNERS    = [5, 10, 15];    // the three shortcut-entry corners
 
-  var TEAM_COLOR  = { a: '#c0392b', b: '#1a3a6b' };
-  var TEAM_DARK   = { a: '#7a0000', b: '#0a1a3b' };
+  var TEAM_COLOR  = { a: '#F15A48', b: '#465B99' };
+  var TEAM_DARK   = { a: '#C23A2A', b: '#2E3F6E' };
 
   /* Computed at resize */
   var NODE_R = 10;
@@ -562,15 +562,34 @@
     var w = canvas.width, h = canvas.height;
     ctx.clearRect(0, 0, w, h);
 
-    /* Dark lacquer background — radial gradient for depth */
+    /* 멍석 straw mat — base fill, then soft radial, then woven hatch */
+    ctx.fillStyle = '#9F8A60';
+    ctx.fillRect(0, 0, w, h);
     var bg = ctx.createRadialGradient(w * 0.5, state.boardSize * 0.45, 0, w * 0.5, state.boardSize * 0.45, w * 0.8);
-    bg.addColorStop(0, '#2e1408');
-    bg.addColorStop(1, '#0e0602');
+    bg.addColorStop(0, '#B49A6E');
+    bg.addColorStop(1, '#8E7A54');
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, w, h);
 
-    /* Gold divider between board and bottom strip */
-    ctx.strokeStyle = 'rgba(200,155,60,0.35)';
+    /* Deterministic woven hatch (no random) — horizontal + vertical straw lines */
+    ctx.strokeStyle = 'rgba(110,90,60,0.12)';
+    ctx.lineWidth   = 1;
+    var hatch;
+    for (hatch = 0; hatch <= h; hatch += 9) {
+      ctx.beginPath();
+      ctx.moveTo(0, hatch + 0.5);
+      ctx.lineTo(w, hatch + 0.5);
+      ctx.stroke();
+    }
+    for (hatch = 0; hatch <= w; hatch += 9) {
+      ctx.beginPath();
+      ctx.moveTo(hatch + 0.5, 0);
+      ctx.lineTo(hatch + 0.5, h);
+      ctx.stroke();
+    }
+
+    /* Divider between board and bottom strip */
+    ctx.strokeStyle = 'rgba(44,44,44,0.25)';
     ctx.lineWidth   = 1;
     ctx.beginPath();
     ctx.moveTo(0, state.boardSize);
@@ -597,7 +616,7 @@
 
     /* Rosettes in top-left and top-right corners only (board area) */
     var corners = [[r * 1.6, r * 1.6], [w - r * 1.6, r * 1.6]];
-    var rColors = ['#C89B3C', '#c0392b'];
+    var rColors = ['#C8453A', '#2E4A87'];
     corners.forEach(function (c, ci) {
       drawRosette(c[0], c[1], r, rColors[ci]);
     });
@@ -616,7 +635,7 @@
       var tx   = pos.x + d.ox * off;
       var ty   = pos.y + d.oy * off;
       ctx.font = 'bold ' + Math.max(9, Math.round(NODE_R * 0.82)) + 'px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
-      ctx.fillStyle   = '#C89B3C';
+      ctx.fillStyle   = '#2C2C2C';
       ctx.textAlign   = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(d.label, tx, ty);
@@ -653,43 +672,42 @@
   function drawBoardLines() {
     var i, p;
     var lw = Math.max(8, Math.round(NODE_R * 0.85));
+    var ctr = npos(22);
 
-    /* 1. Diamond fill — warm parchment gradient */
+    /* 0. Heaven halo (天圓地方) — faint round circle behind the square */
+    ctx.beginPath();
+    ctx.arc(ctr.x, ctr.y, state.boardSize * 0.46, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(44,44,44,0.12)';
+    ctx.lineWidth   = 2;
+    ctx.stroke();
+
+    /* 1. Diamond fill — hanji cream gradient */
     ctx.beginPath();
     [0, 5, 10, 15].forEach(function (cid, idx) {
       var cp = npos(cid);
       idx === 0 ? ctx.moveTo(cp.x, cp.y) : ctx.lineTo(cp.x, cp.y);
     });
     ctx.closePath();
-    var ctr = npos(22);
     var dg  = ctx.createRadialGradient(ctr.x, ctr.y, 0, ctr.x, ctr.y, state.boardSize * 0.52);
-    dg.addColorStop(0, '#ede0bc');
-    dg.addColorStop(1, '#cdb87a');
+    dg.addColorStop(0, '#F2ECCD');
+    dg.addColorStop(1, '#ECDFBC');
     ctx.fillStyle = dg;
     ctx.fill();
-    /* thin border around diamond */
-    ctx.strokeStyle = 'rgba(90,40,0,0.4)';
-    ctx.lineWidth = 1;
+    /* thin ink border around diamond */
+    ctx.strokeStyle = 'rgba(44,44,44,0.45)';
+    ctx.lineWidth = 1.5;
     ctx.stroke();
 
-    /* 2. Shortcut lanes — teal */
-    ctx.strokeStyle = '#2e7a5c';
+    /* 2. Shortcut lanes — same charcoal ink as the outer ring */
+    ctx.strokeStyle = '#2C2C2C';
     ctx.lineWidth   = lw;
     ctx.lineJoin    = 'round';
     ctx.lineCap     = 'round';
     ctx.setLineDash([]);
     [[ 5,20,21,22],[10,24,25,22],[15,26,27,22],[22,23,28,0]].forEach(function(ids) { strokePath(ids); });
 
-    /* Shortcut dashed overlay */
-    ctx.strokeStyle = 'rgba(0,0,0,0.18)';
-    ctx.lineWidth   = 1;
-    ctx.setLineDash([Math.max(4, NODE_R * 0.45), Math.max(3, NODE_R * 0.3)]);
-    ctx.lineCap     = 'round';
-    [[ 5,20,21,22],[10,24,25,22],[15,26,27,22],[22,23,28,0]].forEach(function(ids) { strokePath(ids); });
-    ctx.setLineDash([]);
-
-    /* 3. Outer ring — gold */
-    ctx.strokeStyle = '#a07020';
+    /* 3. Outer ring — charcoal ink */
+    ctx.strokeStyle = '#2C2C2C';
     ctx.lineWidth   = lw;
     ctx.lineJoin    = 'round';
     ctx.lineCap     = 'butt';
@@ -718,18 +736,18 @@
       var isSC     = SC_CORNERS.indexOf(id) >= 0; // shortcut-entry corners (5/10/15)
       var r, fill, stroke;
 
-      if (id === 0)       { r = NODE_R * 1.45; fill = '#8B0018'; stroke = '#4a0010'; }
-      else if (isSC)      { r = NODE_R * 1.35; fill = '#1a6b52'; stroke = '#0d3d2e'; }
-      else if (isCenter)  { r = NODE_R * 1.35; fill = '#7a5a10'; stroke = '#3d2a00'; }
-      else if ([20,21,24,25,26,27].indexOf(id) >= 0) { r = NODE_R * 0.85; fill = '#1e7a5e'; stroke = '#0d3d2e'; }
-      else if ([23,28].indexOf(id) >= 0)             { r = NODE_R * 0.85; fill = '#6b3010'; stroke = '#3a1800'; }
-      else                { r = NODE_R;              fill = '#7a3a10'; stroke = '#3d1a00'; }
+      if (id === 0)       { r = NODE_R * 1.45; fill = '#F2ECCD'; stroke = '#2C2C2C'; }
+      else if (isSC)      { r = NODE_R * 1.35; fill = '#F2ECCD'; stroke = '#2C2C2C'; }
+      else if (isCenter)  { r = NODE_R * 1.35; fill = '#F2ECCD'; stroke = '#2C2C2C'; }
+      else if ([20,21,24,25,26,27].indexOf(id) >= 0) { r = NODE_R * 0.85; fill = '#F2ECCD'; stroke = '#2C2C2C'; }
+      else if ([23,28].indexOf(id) >= 0)             { r = NODE_R * 0.85; fill = '#F2ECCD'; stroke = '#2C2C2C'; }
+      else                { r = NODE_R;              fill = '#F2ECCD'; stroke = '#2C2C2C'; }
 
       /* Shortcut choice highlight */
       if (state.shortcutPending) {
         var sp = state.shortcutPending;
         if (id === sp.outerNext || id === sp.shortcutFirst) {
-          fill = '#f39c12'; stroke = '#8B5000'; r *= 1.35;
+          fill = '#E0973E'; stroke = '#8B5000'; r *= 1.35;
         }
       }
 
@@ -737,7 +755,7 @@
       if (state.selectedPieceId && state.phase === 'move') {
         var destId = getDestNodeId(state.selectedPieceId);
         if (destId !== null && destId === id) {
-          fill = '#f39c12'; stroke = '#8B5000'; r *= 1.25;
+          fill = '#E0973E'; stroke = '#8B5000'; r *= 1.25;
         }
       }
 
@@ -756,11 +774,38 @@
       ctx.lineWidth = isCorner || isCenter ? 2 : 1.5;
       ctx.stroke();
 
-      /* Inner ring (depth ring) */
+      /* SC corners — double ink ring to telegraph the branch */
+      if (isSC) {
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, r * 0.62, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(44,44,44,0.55)';
+        ctx.lineWidth   = 1.3;
+        ctx.stroke();
+      }
+
+      /* Center — North-Star yellow ring */
+      if (isCenter) {
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, r * 0.72, 0, Math.PI * 2);
+        ctx.strokeStyle = '#F4DC4A';
+        ctx.lineWidth   = 2;
+        ctx.stroke();
+      }
+
+      /* Start — bokjumeoni-red inner ring (참먹이) */
+      if (id === 0) {
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, r * 0.6, 0, Math.PI * 2);
+        ctx.strokeStyle = '#C8453A';
+        ctx.lineWidth   = 1.6;
+        ctx.stroke();
+      }
+
+      /* Inner ring (faint ink depth ring) */
       if (r > NODE_R * 0.9) {
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, r * 0.65, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+        ctx.strokeStyle = 'rgba(44,44,44,0.10)';
         ctx.lineWidth = 1.5;
         ctx.stroke();
       }
@@ -768,7 +813,7 @@
       /* Specular highlight spot */
       ctx.beginPath();
       ctx.arc(pos.x - r * 0.27, pos.y - r * 0.30, r * 0.30, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255,255,255,0.25)';
+      ctx.fillStyle = 'rgba(255,255,255,0.35)';
       ctx.fill();
 
       /* Labels */
@@ -776,16 +821,16 @@
       ctx.textBaseline = 'middle';
       if (id === 0) {
         ctx.font = 'bold ' + Math.max(8, Math.floor(r * 0.70)) + 'px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
-        ctx.fillStyle = '#fff';
+        ctx.fillStyle = '#2C2C2C';
         ctx.fillText('출발', pos.x, pos.y);
       } else if (isCenter) {
         ctx.font = 'bold ' + Math.max(9, Math.floor(r * 0.80)) + 'px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
-        ctx.fillStyle = '#f5d060';
-        ctx.fillText('中', pos.x, pos.y);
+        ctx.fillStyle = '#8A6A10';
+        ctx.fillText('방', pos.x, pos.y);
       } else if (isSC) {
-        /* Gold star — shortcut entry signal */
+        /* Muted star — shortcut entry signal */
         ctx.font = 'bold ' + Math.max(7, Math.floor(r * 0.52)) + 'px sans-serif';
-        ctx.fillStyle = '#f5d060';
+        ctx.fillStyle = '#8B5000';
         ctx.fillText('★', pos.x, pos.y);
       }
     }
@@ -842,7 +887,7 @@
     if (selected) {
       ctx.beginPath();
       ctx.arc(pos.x, pos.y, r * 1.85, 0, Math.PI * 2);
-      ctx.strokeStyle = '#f5c518';
+      ctx.strokeStyle = '#F4DC4A';
       ctx.lineWidth = 3.5;
       ctx.stroke();
     }
@@ -909,7 +954,7 @@
       if (sel) {
         ctx.beginPath();
         ctx.arc(base.x, base.y, r * off.length * 1.5 + 6, 0, Math.PI * 2);
-        ctx.strokeStyle = '#f5c518';
+        ctx.strokeStyle = '#F4DC4A';
         ctx.lineWidth = 2.5;
         ctx.stroke();
       }
@@ -926,7 +971,7 @@
         /* Body */
         ctx.beginPath();
         ctx.arc(ox, base.y, r, 0, Math.PI * 2);
-        ctx.fillStyle = sel ? '#f39c12' : col + 'bb';
+        ctx.fillStyle = sel ? '#E0973E' : col + 'bb';
         ctx.fill();
         ctx.strokeStyle = sel ? '#8B5000' : dark;
         ctx.lineWidth = 1.5;
@@ -957,11 +1002,11 @@
         ctx.arc(ox, base.y, r, 0, Math.PI * 2);
         ctx.fillStyle = TEAM_COLOR[team];
         ctx.fill();
-        ctx.strokeStyle = '#C89B3C';
+        ctx.strokeStyle = '#8A6A10';
         ctx.lineWidth = 1.5;
         ctx.stroke();
         ctx.font = 'bold ' + Math.max(6, Math.floor(r * 0.9)) + 'px sans-serif';
-        ctx.fillStyle = '#f5d060';
+        ctx.fillStyle = '#F4DC4A';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('\u2714', ox, base.y);
@@ -1009,15 +1054,15 @@
       ctx.beginPath();
       if (ctx.roundRect) { ctx.roundRect(-hw, -hh, sw, sh, hw); }
       else { ctx.rect(-hw, -hh, sw, sh); }
-      ctx.fillStyle   = flat ? '#f5deb3' : '#5d4037';
+      ctx.fillStyle   = flat ? '#E9D9B6' : '#A97E69';
       ctx.fill();
-      ctx.strokeStyle = flat ? '#8B4513' : '#2e1a10';
+      ctx.strokeStyle = flat ? '#A9895C' : '#5C3D2C';
       ctx.lineWidth   = 1.5;
       ctx.stroke();
 
       /* Grain lines on flat (light) side */
       if (flat) {
-        ctx.strokeStyle = 'rgba(139,69,19,0.28)';
+        ctx.strokeStyle = 'rgba(120,90,60,0.28)';
         ctx.lineWidth   = 0.7;
         for (var g = -1; g <= 1; g++) {
           ctx.beginPath();
@@ -1025,6 +1070,19 @@
           ctx.lineTo( hw - 1, g * hh * 0.45);
           ctx.stroke();
         }
+      }
+
+      /* Back-do (백도) mark — scorched X on one designated stick */
+      if (i === 3) {
+        ctx.strokeStyle = '#86534E';
+        ctx.lineWidth   = 1.4;
+        var m = sw * 0.18;
+        ctx.beginPath();
+        ctx.moveTo(-m, -m);
+        ctx.lineTo( m,  m);
+        ctx.moveTo( m, -m);
+        ctx.lineTo(-m,  m);
+        ctx.stroke();
       }
 
       ctx.restore();
@@ -1051,7 +1109,7 @@
 
   function drawWinOverlay() {
     var w = canvas.width, h = canvas.height;
-    ctx.fillStyle = 'rgba(26,14,6,0.84)';
+    ctx.fillStyle = 'rgba(40,28,16,0.86)';
     ctx.fillRect(0, 0, w, h);
 
     var ko  = state.winner === 'a' ? '\ud300 A \uc2b9\ub9ac!' : '\ud300 B \uc2b9\ub9ac!';
@@ -1064,7 +1122,7 @@
     ctx.fillText(ko, w / 2, h / 2 - h * 0.055);
 
     ctx.font = Math.floor(h * 0.038) + 'px sans-serif';
-    ctx.fillStyle = '#f5deb3';
+    ctx.fillStyle = '#F2ECCD';
     ctx.fillText(en, w / 2, h / 2 + h * 0.025);
 
     ctx.font = Math.floor(h * 0.028) + 'px sans-serif';
@@ -1160,8 +1218,8 @@
   function updateStatus() {
     var t = state.currentTeam === 'a' ? '\ud300 A' : '\ud300 B';
     var msgs = {
-      throw: t + '\uc758 \ucc28\ub808 \u2014 \uc724 \ub358\uc9c0\uae30!',
-      move:  t + '\uc758 \ucc28\ub808 \u2014 \ub9d0 \uc120\ud0dd ' + (state.pendingMoves[0] ? '(' + state.pendingMoves[0] + ')' : ''),
+      throw: t + '\uc758 \ucc28\ub840 \u2014 \uc737 \ub358\uc9c0\uae30!',
+      move:  t + '\uc758 \ucc28\ub840 \u2014 \ub9d0 \uc120\ud0dd ' + (state.pendingMoves[0] ? '(' + state.pendingMoves[0] + ')' : ''),
     };
     setStatus(msgs[state.phase] || '');
   }
@@ -1286,7 +1344,7 @@
     window.GameResize(sz, sz);
 
     updateHUD();
-    setStatus('\ud300 A\uc758 \ucc28\ub808 (Team A\u2019s turn) \u2014 \uc724 \ub358\uc9c0\uae30!');
+    setStatus('\ud300 A\uc758 \ucc28\ub840 (Team A\u2019s turn) \u2014 \uc737 \ub358\uc9c0\uae30!');
     setThrowBtnActive(true);
     if (elThrowRes) elThrowRes.innerHTML = '';
     renderPendingMoves();

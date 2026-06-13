@@ -1,14 +1,15 @@
 /* yut-nori.css */
 
 :root {
-  --yn-team-a: #c0392b;
-  --yn-team-b: #1a5496;
+  --yn-team-a: #F15A48;
+  --yn-team-b: #465B99;
+  --yn-highlight: #E0973E;
 }
 
 /* ── 2-col layout: board left, panel right ───────────────────────────────── */
 
 .yn-game-container {
-  background: #1c0c04;
+  background: linear-gradient(160deg, #2F2114 0%, #1D140A 100%);
   border-radius: var(--radius-xl);
   padding: var(--space-4);
   display: grid;
@@ -30,7 +31,7 @@
   grid-area: board;
   line-height: 0;
   border-radius: var(--radius-lg);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 0 1px rgba(200,155,60,0.25);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 0 1px rgba(244,220,74,0.22);
 }
 
 #yn-canvas {
@@ -79,7 +80,7 @@
   min-height: 1.4em;
 }
 
-.yn-throw-result .yn-throw-ko { color: #e05050; }
+.yn-throw-result .yn-throw-ko { color: #F15A48; }
 
 .yn-pending-moves {
   grid-area: pending;
