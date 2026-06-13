@@ -1,32 +1,101 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280">
-  <!-- Filipino Dama banner: tilted checkerboard, glossy red vs cream draughts, stacked dama king, sliding piece with ghost trail -->
+  <!-- Filipino Dama banner: chalk-drawn lined board on warm gray concrete, tansan bottle caps, stacked dama, afternoon light -->
   <defs>
-    <rect id="dk" width="56" height="56" fill="#7B3A10"/>
-    <g id="rA"><use href="#dk" x="152"/><use href="#dk" x="264"/><use href="#dk" x="376"/><use href="#dk" x="488"/></g>
-    <g id="rB"><use href="#dk" x="96"/><use href="#dk" x="208"/><use href="#dk" x="320"/><use href="#dk" x="432"/></g>
-    <g id="cw"><circle r="20" fill="#FFF0C0" stroke="#A07830" stroke-width="2.5"/><circle r="12.5" fill="none" stroke="#A07830" stroke-width="1.5" opacity="0.5"/><ellipse cx="-6" cy="-7" rx="8" ry="5" fill="#FFFFFF" opacity="0.7"/></g>
-    <g id="cr"><circle r="20" fill="#C41E3A" stroke="#7A0020" stroke-width="2.5"/><circle r="12.5" fill="none" stroke="#7A0020" stroke-width="1.5" opacity="0.5"/><ellipse cx="-6" cy="-7" rx="8" ry="5" fill="#ff7a90" opacity="0.55"/></g>
+    <radialGradient id="fdAfternoon" cx="20%" cy="12%" r="100%">
+      <stop offset="0" stop-color="#E8A24A" stop-opacity="0.30"/>
+      <stop offset="1" stop-color="#E8A24A" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="fdRedCap" cx="42%" cy="38%" r="62%">
+      <stop offset="0" stop-color="#E23B4E"/>
+      <stop offset="0.55" stop-color="#C8102E"/>
+      <stop offset="1" stop-color="#7A0A18"/>
+    </radialGradient>
+    <radialGradient id="fdTinCap" cx="42%" cy="38%" r="62%">
+      <stop offset="0" stop-color="#E8ECEE"/>
+      <stop offset="0.55" stop-color="#BFC4C8"/>
+      <stop offset="1" stop-color="#8A8E90"/>
+    </radialGradient>
+    <!-- Crimped bottle cap: 21-tooth serrated rim, top face, specular -->
+    <g id="fdCapRed">
+      <path d="M20 0 L18.4 1 L20 2 L18.4 3 L20 4 L18.4 5 L20 6 L18.4 7 L20 8 L18.4 9 L20 10 L18.4 11 L20 12 L18.4 13 L20 14 L18.4 15 L20 16 L18.4 17 L20 18 L18.4 19 L20 20"
+         transform="rotate(0)" fill="none"/>
+      <circle r="20" fill="url(#fdRedCap)"/>
+      <circle r="20" fill="none" stroke="#7A0A18" stroke-width="2.5" stroke-dasharray="2.8,3.0" opacity="0.85"/>
+      <circle r="17.2" fill="none" stroke="#7A0A18" stroke-width="1.2"/>
+      <circle r="15.2" fill="#C8102E"/>
+      <circle r="10" fill="none" stroke="#FFFFFF" stroke-width="1" opacity="0.18"/>
+      <ellipse cx="-5.6" cy="-6" rx="6" ry="4" fill="#FFFFFF" opacity="0.45"/>
+    </g>
+    <g id="fdCapTin">
+      <circle r="20" fill="url(#fdTinCap)"/>
+      <circle r="20" fill="none" stroke="#8A8E90" stroke-width="2.5" stroke-dasharray="2.8,3.0" opacity="0.85"/>
+      <circle r="17.2" fill="none" stroke="#8A8E90" stroke-width="1.2"/>
+      <circle r="15.2" fill="#BFC4C8"/>
+      <circle cx="-4.4" cy="3.6" r="2" fill="#9A5B33" opacity="0.5"/>
+      <circle cx="6" cy="-2.4" r="1.6" fill="#9A5B33" opacity="0.5"/>
+      <circle cx="1" cy="6.8" r="1.4" fill="#9A5B33" opacity="0.5"/>
+      <ellipse cx="-5.6" cy="-6" rx="6" ry="4" fill="#FFFFFF" opacity="0.45"/>
+    </g>
   </defs>
-  <rect width="640" height="280" fill="#2A0E00"/>
-  <g transform="rotate(-3 320 140)">
-    <rect x="68" y="-116" width="504" height="512" fill="#5C2800" stroke="#2A0E00" stroke-width="3"/>
-    <rect x="88" y="-96" width="464" height="464" fill="none" stroke="#C89B3C" stroke-width="2.5"/>
-    <rect x="96" y="-88" width="448" height="448" fill="#E8C97A"/>
-    <use href="#rA" y="-88"/><use href="#rB" y="-32"/>
-    <use href="#rA" y="24"/><use href="#rB" y="80"/>
-    <use href="#rA" y="136"/><use href="#rB" y="192"/>
-    <use href="#rA" y="248"/>
-    <!-- red side -->
-    <use href="#cr" x="180" y="52"/><use href="#cr" x="404" y="52"/><use href="#cr" x="516" y="52"/><use href="#cr" x="236" y="108"/>
-    <!-- red dama: two stacked discs -->
-    <use href="#cr" x="460" y="113"/>
-    <use href="#cr" x="460" y="102"/>
-    <circle cx="460" cy="102" r="4" fill="#C89B3C"/>
-    <!-- cream side -->
-    <use href="#cw" x="124" y="220"/><use href="#cw" x="236" y="220"/><use href="#cw" x="516" y="164"/><use href="#cw" x="292" y="164"/>
-    <!-- cream piece mid-diagonal-slide with ghost trail -->
-    <circle cx="348" cy="220" r="20" fill="none" stroke="#FFF0C0" stroke-width="2" opacity="0.16"/>
-    <circle cx="367" cy="201" r="20" fill="none" stroke="#FFF0C0" stroke-width="2" opacity="0.32"/>
-    <use href="#cw" x="390" y="178"/>
+
+  <!-- Concrete -->
+  <rect width="640" height="280" fill="#A8A29A"/>
+  <ellipse cx="140" cy="70" rx="120" ry="60" fill="#6E6A63" opacity="0.12"/>
+  <ellipse cx="500" cy="210" rx="140" ry="70" fill="#6E6A63" opacity="0.12"/>
+  <ellipse cx="430" cy="60" rx="80" ry="40" fill="#6E6A63" opacity="0.10"/>
+  <path d="M28 50 L48 92 L36 132 L60 176" fill="none" stroke="#6E6A63" stroke-width="1" opacity="0.35"/>
+  <rect width="640" height="280" fill="url(#fdAfternoon)"/>
+
+  <!-- Chalk-drawn board: field 200..440 x, 40..240 y (8 cells of 25px) -->
+  <g stroke="#F2EFE6" fill="none">
+    <!-- square grid -->
+    <g stroke-width="1.4" opacity="0.5">
+      <path d="M200 40 L200 240 M225 40 L225 240 M250 40 L250 240 M275 40 L275 240 M300 40 L300 240 M325 40 L325 240 M350 40 L350 240 M375 40 L375 240 M400 40 L400 240 M425 40 L425 240 M450 40 L450 240"/>
+      <path d="M200 40 L450 40 M200 65 L450 65 M200 90 L450 90 M200 115 L450 115 M200 140 L450 140 M200 165 L450 165 M200 190 L450 190 M200 215 L450 215 M200 240 L450 240"/>
+    </g>
+    <!-- diagonal lined lattice connecting playable points (centers at 12.5 offsets) -->
+    <g stroke-width="1.6" stroke-linecap="round" opacity="0.6">
+      <path d="M212.5 52.5 L262.5 102.5 L312.5 52.5 M212.5 152.5 L312.5 52.5 M212.5 152.5 L312.5 252.5 M412.5 52.5 L312.5 152.5 L412.5 252.5 M362.5 102.5 L412.5 52.5 M237.5 77.5 L437.5 277.5"/>
+      <path d="M237.5 227.5 L437.5 27.5 M262.5 252.5 L462.5 52.5 M187.5 77.5 L387.5 277.5 M212.5 52.5 L437.5 277.5"/>
+      <path d="M212.5 227.5 L437.5 2.5 M312.5 252.5 L462.5 102.5"/>
+    </g>
+    <!-- double hand-drawn outer frame -->
+    <rect x="196" y="36" width="258" height="208" stroke-width="1.4" opacity="0.55"/>
+    <rect x="193" y="33" width="264" height="214" stroke-width="1.4" opacity="0.55"/>
+  </g>
+  <!-- chalk point dots at playable cells -->
+  <g fill="#F2EFE6" opacity="0.7">
+    <circle cx="212.5" cy="52.5" r="2.5"/><circle cx="262.5" cy="52.5" r="2.5"/><circle cx="312.5" cy="52.5" r="2.5"/><circle cx="362.5" cy="52.5" r="2.5"/><circle cx="412.5" cy="52.5" r="2.5"/>
+    <circle cx="237.5" cy="77.5" r="2.5"/><circle cx="287.5" cy="77.5" r="2.5"/><circle cx="337.5" cy="77.5" r="2.5"/><circle cx="387.5" cy="77.5" r="2.5"/><circle cx="437.5" cy="77.5" r="2.5"/>
+    <circle cx="212.5" cy="102.5" r="2.5"/><circle cx="262.5" cy="102.5" r="2.5"/><circle cx="312.5" cy="102.5" r="2.5"/><circle cx="362.5" cy="102.5" r="2.5"/><circle cx="412.5" cy="102.5" r="2.5"/>
+    <circle cx="237.5" cy="227.5" r="2.5"/><circle cx="287.5" cy="227.5" r="2.5"/><circle cx="337.5" cy="227.5" r="2.5"/><circle cx="387.5" cy="227.5" r="2.5"/><circle cx="437.5" cy="227.5" r="2.5"/>
+  </g>
+
+  <!-- sienna cap shadows -->
+  <g fill="#8A5A33" opacity="0.35">
+    <ellipse cx="116" cy="150" rx="20" ry="8"/>
+    <ellipse cx="540" cy="132" rx="20" ry="8"/>
+    <ellipse cx="540" cy="208" rx="20" ry="8"/>
+    <ellipse cx="362.5" cy="55" rx="20" ry="8"/>
+  </g>
+
+  <!-- vermilion target ring: a sliding cap's destination -->
+  <circle cx="287.5" cy="152.5" r="11" fill="#F4511E" opacity="0.9"/>
+  <circle cx="287.5" cy="152.5" r="11" fill="none" stroke="#F2EFE6" stroke-width="1.5"/>
+
+  <!-- loose tansan caps beside the board -->
+  <g transform="translate(112 144)"><use href="#fdCapRed"/></g>
+  <g transform="translate(536 126)"><use href="#fdCapTin"/></g>
+
+  <!-- on-board caps -->
+  <g transform="translate(212.5 102.5)"><use href="#fdCapRed"/></g>
+  <g transform="translate(362.5 202.5)"><use href="#fdCapTin"/></g>
+
+  <!-- stacked-cap dama (red) with brass glint -->
+  <g transform="translate(536 202)">
+    <use href="#fdCapRed"/>
+    <g transform="translate(0 -3.2) scale(0.66)"><use href="#fdCapRed"/></g>
+    <circle cx="0" cy="-3.2" r="6.6" fill="none" stroke="#B8860B" stroke-width="1.5"/>
+    <circle cx="0" cy="-3.2" r="2" fill="#B8860B"/>
   </g>
 </svg>

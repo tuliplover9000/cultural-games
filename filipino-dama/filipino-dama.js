@@ -400,44 +400,139 @@
   }
 
   function renderBoard() {
-    // Board background / border fill
-    ctx.fillStyle = '#2A0E00';
+    var cs = state.cellSize;
+    var fieldX = state.padX, fieldY = state.padY;
+    var fieldW = BOARD_SIZE * cs, fieldH = BOARD_SIZE * cs;
+
+    // (a) BACKDROP — sun-warmed gray concrete
+    ctx.fillStyle = '#A8A29A';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Decorative border background (slightly inset)
-    ctx.fillStyle = '#5C2800';
-    var bx = state.padX - 6, by = state.padY - 6;
-    var bw = BOARD_SIZE * state.cellSize + 12, bh = BOARD_SIZE * state.cellSize + 12;
-    ctx.fillRect(bx, by, bw, bh);
+    // Warm late-afternoon amber wash from upper-left
+    var wash = ctx.createRadialGradient(
+      canvas.width * 0.30, canvas.height * 0.12, 0,
+      canvas.width * 0.30, canvas.height * 0.12, canvas.width
+    );
+    wash.addColorStop(0, 'rgba(232,162,74,0.18)');
+    wash.addColorStop(1, 'rgba(232,162,74,0)');
+    ctx.fillStyle = wash;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Squares
-    for (var r = 0; r < BOARD_SIZE; r++) {
-      for (var c = 0; c < BOARD_SIZE; c++) {
-        var tl = getCellTL(r, c);
-        ctx.fillStyle = isDarkSq(r, c) ? '#7B3A10' : '#E8C97A';
-        ctx.fillRect(tl.x, tl.y, state.cellSize, state.cellSize);
+    // Deterministic concrete mottle — soft darker blotches
+    var blotches = [
+      [0.18, 0.22, 0.16, 0.11],
+      [0.74, 0.18, 0.13, 0.09],
+      [0.55, 0.62, 0.18, 0.12],
+      [0.28, 0.80, 0.14, 0.10],
+      [0.86, 0.70, 0.12, 0.09]
+    ];
+    ctx.fillStyle = 'rgba(110,106,99,0.12)';
+    for (var bi = 0; bi < blotches.length; bi++) {
+      var bl = blotches[bi];
+      ctx.beginPath();
+      ctx.ellipse(canvas.width * bl[0], canvas.height * bl[1],
+        canvas.width * bl[2], canvas.height * bl[3], 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Deterministic hairline cracks near edges
+    ctx.strokeStyle = 'rgba(110,106,99,0.35)';
+    ctx.lineWidth = 1;
+    var cracks = [
+      [[0.04, 0.30], [0.09, 0.38], [0.07, 0.47], [0.12, 0.55]],
+      [[0.93, 0.20], [0.88, 0.27], [0.91, 0.35], [0.86, 0.41]],
+      [[0.40, 0.94], [0.47, 0.90], [0.53, 0.95], [0.61, 0.91]]
+    ];
+    for (var ci = 0; ci < cracks.length; ci++) {
+      var crk = cracks[ci];
+      ctx.beginPath();
+      for (var cp = 0; cp < crk.length; cp++) {
+        var px = canvas.width * crk[cp][0], py = canvas.height * crk[cp][1];
+        if (cp === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+    }
+
+    // (b) FIELD — faint scuffed-smooth concrete where the board is drawn
+    ctx.fillStyle = 'rgba(242,239,230,0.06)';
+    ctx.fillRect(fieldX, fieldY, fieldW, fieldH);
+
+    // (d) PLAYABLE-CELL SCUFF — faint warm slide-marks on dark squares
+    ctx.fillStyle = 'rgba(232,162,74,0.06)';
+    for (var sr = 0; sr < BOARD_SIZE; sr++) {
+      for (var sc = 0; sc < BOARD_SIZE; sc++) {
+        if (!isDarkSq(sr, sc)) continue;
+        var stl = getCellTL(sr, sc);
+        ctx.fillRect(stl.x, stl.y, cs, cs);
       }
     }
 
-    // Board border line
-    ctx.strokeStyle = '#C89B3C';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(state.padX, state.padY, BOARD_SIZE * state.cellSize, BOARD_SIZE * state.cellSize);
-
-    // Corner accents
-    var cs = state.cellSize;
-    var corners = [
-      [state.padX, state.padY],
-      [state.padX + BOARD_SIZE * cs, state.padY],
-      [state.padX, state.padY + BOARD_SIZE * cs],
-      [state.padX + BOARD_SIZE * cs, state.padY + BOARD_SIZE * cs]
-    ];
-    ctx.fillStyle = '#C89B3C';
-    corners.forEach(function (pt) {
+    // (c) CHALK SQUARE GRID — dusty hand-drawn lattice with subtle wobble
+    ctx.strokeStyle = 'rgba(242,239,230,0.5)';
+    ctx.lineWidth = 1.4;
+    for (var gi = 0; gi <= BOARD_SIZE; gi++) {
+      var wob = ((gi % 3) - 1) * 0.6; // deterministic offset from i
+      // Vertical line
+      var vx = fieldX + gi * cs;
       ctx.beginPath();
-      ctx.arc(pt[0], pt[1], 4, 0, Math.PI * 2);
-      ctx.fill();
-    });
+      ctx.moveTo(vx + wob, fieldY);
+      ctx.lineTo(vx - wob, fieldY + fieldH * 0.5);
+      ctx.lineTo(vx + wob, fieldY + fieldH);
+      ctx.stroke();
+      // Horizontal line
+      var hy = fieldY + gi * cs;
+      ctx.beginPath();
+      ctx.moveTo(fieldX, hy + wob);
+      ctx.lineTo(fieldX + fieldW * 0.5, hy - wob);
+      ctx.lineTo(fieldX + fieldW, hy + wob);
+      ctx.stroke();
+    }
+
+    // (e) LINED-BOARD DIAGONALS — the signature point-to-point chalk lattice
+    ctx.strokeStyle = 'rgba(242,239,230,0.6)';
+    ctx.lineWidth = 1.6;
+    ctx.lineCap = 'round';
+    for (var dr = 0; dr < BOARD_SIZE; dr++) {
+      for (var dc = 0; dc < BOARD_SIZE; dc++) {
+        if (!isDarkSq(dr, dc)) continue;
+        var ctr = getCellCenter(dr, dc);
+        // down-right neighbour
+        if (dr + 1 < BOARD_SIZE && dc + 1 < BOARD_SIZE && isDarkSq(dr + 1, dc + 1)) {
+          var drn = getCellCenter(dr + 1, dc + 1);
+          ctx.beginPath();
+          ctx.moveTo(ctr.x, ctr.y);
+          ctx.lineTo(drn.x, drn.y);
+          ctx.stroke();
+        }
+        // down-left neighbour
+        if (dr + 1 < BOARD_SIZE && dc - 1 >= 0 && isDarkSq(dr + 1, dc - 1)) {
+          var dln = getCellCenter(dr + 1, dc - 1);
+          ctx.beginPath();
+          ctx.moveTo(ctr.x, ctr.y);
+          ctx.lineTo(dln.x, dln.y);
+          ctx.stroke();
+        }
+      }
+    }
+    ctx.lineCap = 'butt';
+
+    // Chalk point-dots at every playable-cell intersection
+    ctx.fillStyle = 'rgba(242,239,230,0.7)';
+    for (var pr = 0; pr < BOARD_SIZE; pr++) {
+      for (var pc = 0; pc < BOARD_SIZE; pc++) {
+        if (!isDarkSq(pr, pc)) continue;
+        var pctr = getCellCenter(pr, pc);
+        ctx.beginPath();
+        ctx.arc(pctr.x, pctr.y, cs * 0.05, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // (f) OUTER CHALK BORDER — hand-drawn double frame
+    ctx.strokeStyle = 'rgba(242,239,230,0.55)';
+    ctx.lineWidth = 1.4;
+    ctx.strokeRect(fieldX - 4, fieldY - 4, fieldW + 8, fieldH + 8);
+    ctx.strokeRect(fieldX - 7, fieldY - 7, fieldW + 14, fieldH + 14);
   }
 
   function renderHighlights() {
@@ -447,7 +542,7 @@
     if (state.selected) {
       // Highlight selected cell
       var stl = getCellTL(state.selected.row, state.selected.col);
-      ctx.fillStyle = 'rgba(212,160,23,0.40)';
+      ctx.fillStyle = 'rgba(232,162,74,0.30)';
       ctx.fillRect(stl.x, stl.y, state.cellSize, state.cellSize);
 
       // Collect valid destinations for selected piece
@@ -470,7 +565,7 @@
       if (!movablePieces.hasOwnProperty(key)) continue;
       var parts = key.split(',');
       var tl = getCellTL(parseInt(parts[0], 10), parseInt(parts[1], 10));
-      ctx.fillStyle = 'rgba(255,215,0,0.14)';
+      ctx.fillStyle = 'rgba(242,239,230,0.14)';
       ctx.fillRect(tl.x, tl.y, state.cellSize, state.cellSize);
     }
 
@@ -480,14 +575,17 @@
       var parts = key.split(',');
       var tr = parseInt(parts[0], 10), tc = parseInt(parts[1], 10);
       var tl = getCellTL(tr, tc);
-      ctx.fillStyle = 'rgba(212,160,23,0.40)';
+      ctx.fillStyle = 'rgba(232,162,74,0.22)';
       ctx.fillRect(tl.x, tl.y, state.cellSize, state.cellSize);
-      // Dot indicator
+      // Chalked target dot — the one jeepney-vermilion accent
       var center = getCellCenter(tr, tc);
-      ctx.fillStyle = 'rgba(212,160,23,0.85)';
       ctx.beginPath();
-      ctx.arc(center.x, center.y, state.cellSize * 0.12, 0, Math.PI * 2);
+      ctx.arc(center.x, center.y, state.cellSize * 0.10, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(244,81,30,0.9)';
       ctx.fill();
+      ctx.strokeStyle = 'rgba(242,239,230,0.8)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
     }
 
     // Hover highlight (valid destination hovered while piece selected)
@@ -495,7 +593,7 @@
       var hKey = state.hoverCell.row + ',' + state.hoverCell.col;
       if (destSet[hKey]) {
         var htl = getCellTL(state.hoverCell.row, state.hoverCell.col);
-        ctx.fillStyle = 'rgba(255,220,80,0.25)';
+        ctx.fillStyle = 'rgba(232,162,74,0.22)';
         ctx.fillRect(htl.x, htl.y, state.cellSize, state.cellSize);
       }
     }
@@ -504,7 +602,7 @@
     if (state.lastMove) {
       var ftl = getCellTL(state.lastMove.from.row, state.lastMove.from.col);
       var ttl = getCellTL(state.lastMove.finalPos.row, state.lastMove.finalPos.col);
-      ctx.fillStyle = 'rgba(80,180,80,0.18)';
+      ctx.fillStyle = 'rgba(232,162,74,0.14)';
       ctx.fillRect(ftl.x, ftl.y, state.cellSize, state.cellSize);
       ctx.fillRect(ttl.x, ttl.y, state.cellSize, state.cellSize);
     }
@@ -514,29 +612,100 @@
       for (var i = 0; i < state.lastMove.captures.length; i++) {
         var cap = state.lastMove.captures[i];
         var ctl = getCellTL(cap.row, cap.col);
-        ctx.fillStyle = 'rgba(200,30,30,0.22)';
+        ctx.fillStyle = 'rgba(200,30,30,0.24)';
         ctx.fillRect(ctl.x, ctl.y, state.cellSize, state.cellSize);
       }
     }
   }
 
-  function drawStar(cx, cy, outerR, innerR) {
-    var points = 5;
+  // Draw a single tansan (crimped metal bottle cap) at (cx, cy) of radius rad.
+  // kind: 'red' (Coca-Cola style) or 'tin' (bare metal).
+  function drawCapBody(cx, cy, rad, kind) {
+    // Crimped serrated rim: 42 points alternating outer radius
+    var teeth = 21;
     ctx.beginPath();
-    for (var i = 0; i < points * 2; i++) {
-      var r = i % 2 === 0 ? outerR : innerR;
-      var angle = (i * Math.PI / points) - Math.PI / 2;
-      var x = cx + r * Math.cos(angle);
-      var y = cy + r * Math.sin(angle);
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+    for (var t = 0; t < teeth * 2; t++) {
+      var a = (t / (teeth * 2)) * Math.PI * 2 - Math.PI / 2;
+      var rr = (t % 2 === 0) ? rad : rad * 0.92;
+      var x = cx + rr * Math.cos(a);
+      var y = cy + rr * Math.sin(a);
+      if (t === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     }
     ctx.closePath();
-    ctx.fillStyle = '#FFD700';
+    var grad = ctx.createRadialGradient(
+      cx - rad * 0.15, cy - rad * 0.15, rad * 0.1,
+      cx, cy, rad
+    );
+    if (kind === 'red') {
+      grad.addColorStop(0, '#E23B4E');
+      grad.addColorStop(0.55, '#C8102E');
+      grad.addColorStop(1, '#7A0A18');
+    } else {
+      grad.addColorStop(0, '#E8ECEE');
+      grad.addColorStop(0.55, '#BFC4C8');
+      grad.addColorStop(1, '#8A8E90');
+    }
+    ctx.fillStyle = grad;
     ctx.fill();
-    ctx.strokeStyle = 'rgba(120,80,0,0.7)';
-    ctx.lineWidth = 0.5;
+
+    // Skirt ring — the cap's pressed inner crimp ring
+    ctx.beginPath();
+    ctx.arc(cx, cy, rad * 0.86, 0, Math.PI * 2);
+    ctx.strokeStyle = (kind === 'red') ? '#7A0A18' : '#8A8E90';
+    ctx.lineWidth = 1.2;
     ctx.stroke();
+
+    // Top face
+    ctx.beginPath();
+    ctx.arc(cx, cy, rad * 0.76, 0, Math.PI * 2);
+    ctx.fillStyle = (kind === 'red') ? '#C8102E' : '#BFC4C8';
+    ctx.fill();
+
+    if (kind === 'tin') {
+      // Rust flecks at deterministic offsets
+      ctx.fillStyle = 'rgba(154,91,51,0.5)';
+      var flecks = [[-0.22, 0.18, 0.10], [0.30, -0.12, 0.08], [0.05, 0.34, 0.07]];
+      for (var f = 0; f < flecks.length; f++) {
+        ctx.beginPath();
+        ctx.arc(cx + rad * flecks[f][0], cy + rad * flecks[f][1], rad * flecks[f][2], 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else {
+      // Faint concentric brand ring
+      ctx.beginPath();
+      ctx.arc(cx, cy, rad * 0.5, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    // Specular highlight
+    ctx.beginPath();
+    ctx.ellipse(cx - rad * 0.28, cy - rad * 0.30, rad * 0.30, rad * 0.20, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    ctx.fill();
+  }
+
+  function drawBottleCap(cx, cy, rad, kind, dama) {
+    drawCapBody(cx, cy, rad, kind);
+
+    // DAMA — folk promotion: a second tansan stacked on top, raised slightly
+    if (dama) {
+      var topR = rad * 0.66;
+      var topY = cy - rad * 0.16;
+      drawCapBody(cx, topY, topR, kind);
+      // Brass glint ring on the stacked cap's top face
+      ctx.beginPath();
+      ctx.arc(cx, topY, topR * 0.5, 0, Math.PI * 2);
+      ctx.strokeStyle = '#B8860B';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      // Brass centre dot
+      ctx.beginPath();
+      ctx.arc(cx, topY, rad * 0.10, 0, Math.PI * 2);
+      ctx.fillStyle = '#B8860B';
+      ctx.fill();
+    }
   }
 
   function renderPieces() {
@@ -549,42 +718,15 @@
         var radius = state.cellSize * 0.38;
         var player = playerOf(piece);
 
-        // Shadow
+        // Soft sienna shadow under the cap
         ctx.beginPath();
         ctx.arc(center.x + 1.5, center.y + 2, radius, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(0,0,0,0.40)';
         ctx.fill();
 
-        // Body
-        ctx.beginPath();
-        ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
-        ctx.fillStyle = player === LIGHT ? '#FFF0C0' : '#C41E3A';
-        ctx.fill();
-
-        // Border ring
-        ctx.beginPath();
-        ctx.arc(center.x, center.y, radius - 1, 0, Math.PI * 2);
-        ctx.strokeStyle = player === LIGHT ? '#A07830' : '#7A0020';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        // Inner ring (decorative)
-        ctx.beginPath();
-        ctx.arc(center.x, center.y, radius * 0.72, 0, Math.PI * 2);
-        ctx.strokeStyle = player === LIGHT ? 'rgba(160,120,40,0.35)' : 'rgba(255,150,150,0.25)';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        // Highlight glint
-        ctx.beginPath();
-        ctx.arc(center.x - radius * 0.28, center.y - radius * 0.30, radius * 0.30, 0, Math.PI * 2);
-        ctx.fillStyle = player === LIGHT ? 'rgba(255,255,255,0.60)' : 'rgba(255,200,200,0.32)';
-        ctx.fill();
-
-        // Dama: gold star crown
-        if (isDama(piece)) {
-          drawStar(center.x, center.y, radius * 0.38, radius * 0.18);
-        }
+        // Tansan bottle cap — LIGHT → bare tin, DARK → crimson Coca-Cola cap
+        var kind = (player === LIGHT) ? 'tin' : 'red';
+        drawBottleCap(center.x, center.y, radius, kind, isDama(piece));
       }
     }
   }
@@ -735,11 +877,11 @@
   // ── Tutorial steps ───────────────────────────────────────────────────
   var fdTutorialSteps = [
     { title: 'The Board',     target: '#fd-board',        text: 'Filipino Dama is played on an 8×8 board. Pieces only occupy the dark squares.' },
-    { title: 'Your Pieces',   target: '#fd-light-pieces', text: 'You play the light (cream) pieces at the bottom. Your goal: capture all of the dark (red) pieces.' },
+    { title: 'Your Pieces',   target: '#fd-light-pieces', text: 'You play the tin (silver) bottle caps at the bottom. Your goal: capture all of the red Coca-Cola caps.' },
     { title: 'Moving',        target: '#fd-board',        text: 'Click a highlighted piece, then click a highlighted square to move. Regular pieces move diagonally forward.' },
     { title: 'Capturing',     target: '#fd-board',        text: 'Jump over an enemy to capture it — uniquely, you can capture in ALL diagonal directions, not just forward. Capture is mandatory!' },
     { title: 'Multi-jump',    target: '#fd-board',        text: 'After a capture, if another capture is available with the same piece, you must continue jumping. Captured pieces are removed at the end.' },
-    { title: 'Dama (★)',      target: '#fd-light-dama',   text: 'Reach the far end to become a Dama (★)! Dama pieces slide any number of squares diagonally and capture long-range.' }
+    { title: 'Dama',          target: '#fd-light-dama',   text: 'Reach the far end to be promoted to a Dama — shown as a second cap stacked on top, the way it is marked in a real street game. A Dama slides any number of squares diagonally and captures long-range.' }
   ];
 
   // ── Theme hook ───────────────────────────────────────────────────────

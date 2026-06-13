@@ -20,12 +20,12 @@
 .fd-board-wrap {
   position: relative;
   flex-shrink: 0;
-  background: #2A0E00;
+  background: linear-gradient(160deg, #8A857C 0%, #6E6A63 100%);
   border-radius: 8px;
   padding: 12px;
   box-shadow:
     0 4px 24px rgba(0,0,0,0.45),
-    inset 0 1px 0 rgba(255,200,100,0.08);
+    inset 0 1px 0 rgba(255,235,200,0.10);
 }
 
 #fd-board {
@@ -69,20 +69,20 @@
 }
 
 .fd-turn-disc[data-color="light"] {
-  background: #FFF0C0;
-  border: 2px solid #A07830;
+  background: #BFC4C8;
+  border: 2px solid #8A8E90;
   box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
 }
 
 .fd-turn-disc[data-color="dark"] {
-  background: #C41E3A;
-  border: 2px solid #7A0020;
+  background: #C8102E;
+  border: 2px solid #7A0A18;
   box-shadow: inset 0 1px 3px rgba(255,255,255,0.12);
 }
 
 .fd-turn-disc[data-color="draw"] {
-  background: linear-gradient(135deg, #FFF0C0 50%, #C41E3A 50%);
-  border: 2px solid #8B4513;
+  background: linear-gradient(135deg, #BFC4C8 50%, #C8102E 50%);
+  border: 2px solid #6E6A63;
 }
 
 .fd-turn-label {
@@ -107,11 +107,11 @@
 }
 
 .fd-counter--light {
-  border-left: 3px solid #A07830;
+  border-left: 3px solid #8A8E90;
 }
 
 .fd-counter--dark {
-  border-left: 3px solid #C41E3A;
+  border-left: 3px solid #C8102E;
 }
 
 .fd-counter__header {
@@ -129,13 +129,13 @@
 }
 
 .fd-counter__disc--light {
-  background: #FFF0C0;
-  border: 1.5px solid #A07830;
+  background: #BFC4C8;
+  border: 1.5px solid #8A8E90;
 }
 
 .fd-counter__disc--dark {
-  background: #C41E3A;
-  border: 1.5px solid #7A0020;
+  background: #C8102E;
+  border: 1.5px solid #7A0A18;
 }
 
 .fd-counter__name {
@@ -229,8 +229,8 @@
   margin: 0;
   font-size: clamp(1.6rem, 4vw, 2.4rem);
   font-weight: 700;
-  color: #D4A017;
-  text-shadow: 0 2px 12px rgba(212,160,23,0.5);
+  color: #F2EFE6;
+  text-shadow: 0 2px 12px rgba(232,162,74,0.5);
   font-family: 'Playfair Display', serif;
   letter-spacing: 0.02em;
 }
@@ -238,7 +238,7 @@
 .fd-overlay__sub {
   margin: 0;
   font-size: 0.9rem;
-  color: #c8b080;
+  color: #D9D4C7;
   text-align: center;
   max-width: 280px;
 }
