@@ -353,7 +353,12 @@
     if (FSMode.isActive()) FSMode.exit();
   });
   document.addEventListener('visibilitychange', function () {
-    if (document.hidden && FSMode.isActive()) FSMode.exitCSS();
+    // Only tear down the CSS-fallback fullscreen on hide. If we're in native
+    // fullscreen, the browser handles visibility itself and calling exitCSS()
+    // would wrongly fire onExit (mobile nav re-show, scroll restore, etc.).
+    if (document.hidden && wrap() && wrap().classList.contains('fs-active')) {
+      FSMode.exitCSS();
+    }
   });
 
   // ── Wire up button ─────────────────────────────────────────────────────────

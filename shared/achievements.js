@@ -368,6 +368,7 @@
 
   function evaluate(context) {
     // context: { gameId, result: 'win'|'loss', isOnline, isHost, stats, streak }
+    context = context || {};
     var stats  = context.stats  || {};
     var streak = context.streak || 0;
 
@@ -412,33 +413,49 @@
     var queued = AchievementQueue.get();
     if (!queued.length) return;
 
-    AchievementQueue.clear();
-
     var newOnes = queued.filter(function (id) { return !_unlocked[id]; });
-    if (!newOnes.length) return;
+
+    // Track which ids failed so we can re-queue them for a later retry.
+    var failed = [];
+    var succeeded = [];
 
     // Batch insert - insert each one individually (simple, avoids conflict logic)
     for (var i = 0; i < newOnes.length; i++) {
       var id = newOnes[i];
-      _unlocked[id] = true;
+      var ok = false;
       try {
-        await _pgFetch('POST', 'user_achievements', {
+        var resp = await _pgFetch('POST', 'user_achievements', {
           user_id:        _userId,
           achievement_id: id,
         });
-      } catch (e) { /* best-effort */ }
+        ok = !!(resp && resp.ok);
+      } catch (e) { ok = false; }
+
+      if (ok) {
+        _unlocked[id] = true;
+        succeeded.push(id);
+      } else {
+        failed.push(id);
+      }
     }
-    _saveLocalUnlocked(_userId);
+
+    // Persist only the confirmed unlocks locally, and rewrite the queue to hold
+    // only the ids whose remote insert did not succeed (so they retry next init).
+    if (succeeded.length) _saveLocalUnlocked(_userId);
+    AchievementQueue.clear();
+    failed.forEach(function (id) { AchievementQueue.add(id); });
+
+    if (!succeeded.length) return;
 
     // Show summary toast if multiple, or individual toasts for few
-    if (newOnes.length === 1) {
+    if (succeeded.length === 1) {
       for (var j = 0; j < ACHIEVEMENTS.length; j++) {
-        if (ACHIEVEMENTS[j].id === newOnes[0]) { _queueToast(ACHIEVEMENTS[j]); break; }
+        if (ACHIEVEMENTS[j].id === succeeded[0]) { _queueToast(ACHIEVEMENTS[j]); break; }
       }
-    } else if (newOnes.length > 1) {
+    } else if (succeeded.length > 1) {
       _queueToast({
         id: '_summary',
-        title: newOnes.length + ' Achievements Unlocked!',
+        title: succeeded.length + ' Achievements Unlocked!',
         description: 'You earned achievements while offline. Check your profile to see them.',
         tier: 'gold',
       });

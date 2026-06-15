@@ -59,7 +59,7 @@
       ]},
     { key: 'cuarenta',    name: 'Cuarenta',            culture: 'Ecuador',               type: 'Card',     icon: '🃏', svg: '../assets/icons/cuarenta.svg',   badge: 'Card · 2P',    maxPlayers: 2,
       rules: ['Play one card per turn. Match a table card\'s rank to capture (pairs), or form a run of 3+ consecutive ranks (sequence).', '¡Caída! bonus: counter your opponent\'s rank immediately after they capture. ¡Mesa! bonus: clear the table entirely.', 'Score Ases, 7 de Oros, Sota de Oros, and Mesa bonuses. First to 40 pts wins.'] },
-    { key: 'yut-nori',   name: 'Yut Nori',            culture: 'Korean',                type: 'board',    icon: '🎴', svg: '../assets/icons/yut-nori.svg',   badge: 'Race Game',    maxPlayers: 4,
+    { key: 'yut-nori',   name: 'Yut Nori',            culture: 'Korean',                type: 'Board',    icon: '🎴', svg: '../assets/icons/yut-nori.svg',   badge: 'Race Game',    maxPlayers: 4,
       seatRoles: ['team-a-1', 'team-a-2', 'team-b-1', 'team-b-2'],
       gameModes: [
         { value: '2-player',      label: '2 Players',     hint: '1 v 1' },
@@ -367,8 +367,9 @@
     var elapsed = 0;
     var maxTime = 2400;
 
-    // Decide which card index the winner lands on
-    var winnerIdx = GAMES.indexOf(winnerGame);
+    // Find the winner card by its game name, not by catalogue index — cards are
+    // re-sorted (favorites float to the top) so positions don't match GAMES order.
+    var winnerCard = elGameGrid.querySelector('.lobby-game-card[data-name="' + (window.CSS && CSS.escape ? CSS.escape(winnerGame.name) : winnerGame.name) + '"]');
 
     function tick() {
       cards.forEach(function(el){ el.classList.remove('lottery-highlight'); });
@@ -382,7 +383,7 @@
       } else {
         // Make sure we land on the winner card
         cards.forEach(function(el){ el.classList.remove('lottery-highlight'); });
-        if (cards[winnerIdx]) cards[winnerIdx].classList.add('lottery-highlight');
+        if (winnerCard) winnerCard.classList.add('lottery-highlight');
         setTimeout(function() {
           cards.forEach(function(el){ el.classList.remove('lottery-highlight'); });
           lotteryRunning = false;
@@ -395,36 +396,39 @@
   }
 
   // ── Chat ───────────────────────────────────────────────────────────────────
-  var lastChatLen = 0;
+  // Key off the newest message timestamp rather than diffing by array length.
+  // room.js caps chat_messages at 200 via slice(-199)+push, so the array length
+  // saturates at 200 and a count diff would freeze; the newest ts always changes.
+  var lastChatTs = null;
 
   function renderChat(messages) {
     if (!messages || !messages.length) {
       elChatEmpty.hidden = false;
       elChatList.innerHTML = '';
-      lastChatLen = 0;
+      lastChatTs = null;
       return;
     }
     elChatEmpty.hidden = true;
 
-    // Only re-render new messages (append-only optimisation)
-    if (messages.length > lastChatLen) {
-      var newMsgs = messages.slice(lastChatLen);
-      newMsgs.forEach(function(m) {
-        var isOwn = m.pid === myPid;
-        var li = document.createElement('li');
-        li.className = 'lobby-chat-msg' + (isOwn ? ' lobby-chat-msg--own' : '');
-        li.innerHTML =
-          '<div class="lobby-chat-msg__header">' +
-            '<span class="lobby-chat-msg__name">' + esc(m.name || 'Player') + '</span>' +
-            '<span class="lobby-chat-msg__time">' + fmtTime(m.ts) + '</span>' +
-          '</div>' +
-          '<p class="lobby-chat-msg__text">' + esc(m.text) + '</p>';
-        elChatList.appendChild(li);
-      });
-      lastChatLen = messages.length;
-      // Auto-scroll
-      elChatList.scrollTop = elChatList.scrollHeight;
-    }
+    var newestTs = messages[messages.length - 1].ts;
+    if (newestTs === lastChatTs) return; // nothing new to render
+
+    // Rebuild the full list from the (already-escaped) messages array. This
+    // handles the sliding 200-message window correctly regardless of length.
+    elChatList.innerHTML = messages.map(function(m) {
+      var isOwn = m.pid === myPid;
+      return '<li class="lobby-chat-msg' + (isOwn ? ' lobby-chat-msg--own' : '') + '">' +
+        '<div class="lobby-chat-msg__header">' +
+          '<span class="lobby-chat-msg__name">' + esc(m.name || 'Player') + '</span>' +
+          '<span class="lobby-chat-msg__time">' + fmtTime(m.ts) + '</span>' +
+        '</div>' +
+        '<p class="lobby-chat-msg__text">' + esc(m.text) + '</p>' +
+      '</li>';
+    }).join('');
+
+    lastChatTs = newestTs;
+    // Auto-scroll
+    elChatList.scrollTop = elChatList.scrollHeight;
   }
 
   // Same renderer used in in-game chat (ingame.js calls this)
@@ -546,6 +550,9 @@
         return Room.startGame(modeToStart);
       }).then(function() {
         elAssignModal.hidden = true;
+        elAssignConfirm.disabled = false;
+      }).catch(function() {
+        // Re-enable so the host can retry instead of being softlocked.
         elAssignConfirm.disabled = false;
       });
     };

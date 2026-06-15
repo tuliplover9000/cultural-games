@@ -322,6 +322,9 @@
     if (!isMobileViewport()) return;
     var c = getContainer();
     if (!c) return;
+    // Idempotent: if observers are already installed, don't double-attach.
+    // (injectButton already self-guards on its element id.)
+    if (resizeObs || mutationObs) return;
 
     var btn = injectButton();
     if (btn) {
@@ -376,7 +379,7 @@
   window.addEventListener('resize', function () {
     if (window.innerWidth === lastViewportW) return;   // height-only → ignore
     lastViewportW = window.innerWidth;
-    userIndex = 0; remeasure(); schedule();
+    userIndex = 0; init(); remeasure(); schedule();
   });
   window.addEventListener('orientationchange', function () {
     userIndex = 0;

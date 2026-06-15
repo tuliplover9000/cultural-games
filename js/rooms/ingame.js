@@ -27,7 +27,7 @@
   };
 
   function openRulesPanel(gameName) {
-    if (!elRulesPanel) return;
+    if (!elRulesPanel || !elRulesBackdrop) return;
     elRulesPanel.hidden = false;
     elRulesBackdrop.hidden = false;
     if (elRulesPanelTitle) elRulesPanelTitle.textContent = gameName;
@@ -38,7 +38,7 @@
   }
 
   function closeRulesPanel() {
-    if (!elRulesPanel) return;
+    if (!elRulesPanel || !elRulesBackdrop) return;
     elRulesPanel.classList.remove('ingame-rules-panel--open');
     elRulesBackdrop.classList.remove('ingame-rules-panel--open');
     setTimeout(function () {
@@ -278,7 +278,7 @@
             var doc        = new DOMParser().parseFromString(html, 'text/html');
             var accordions = doc.querySelectorAll('details.accordion');
             if (!accordions.length) {
-              elRulesPanelBody.innerHTML = '<p class="ingame-rules-panel__loading">No rules found.</p>';
+              if (elRulesPanelBody) elRulesPanelBody.innerHTML = '<p class="ingame-rules-panel__loading">No rules found.</p>';
               return;
             }
             var out = '';
@@ -291,7 +291,7 @@
                 '<div class="rp-section__body">' + bodyEl.innerHTML + '</div>' +
               '</div>';
             });
-            elRulesPanelBody.innerHTML = out || '<p class="ingame-rules-panel__loading">No rules found.</p>';
+            if (elRulesPanelBody) elRulesPanelBody.innerHTML = out || '<p class="ingame-rules-panel__loading">No rules found.</p>';
           })
           .catch(function () {
             if (elRulesPanelBody) elRulesPanelBody.innerHTML = '<p class="ingame-rules-panel__loading">Could not load rules.</p>';
@@ -362,7 +362,7 @@
     var frames    = elBoards ? elBoards.querySelectorAll('iframe') : [];
     instances.forEach(function(inst, idx) {
       if (frames[idx] && inst && inst.board_state && inst.status !== 'finished') {
-        frames[idx].contentWindow.postMessage({ type: 'room-state', data: inst.board_state }, '*');
+        frames[idx].contentWindow.postMessage({ type: 'room-state', data: inst.board_state }, window.location.origin);
       }
     });
   }

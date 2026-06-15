@@ -253,7 +253,8 @@
       btn.setAttribute('aria-pressed', String(!!isFav));
       btn.setAttribute('aria-label', isFav ? 'Remove from favourites' : 'Add to favourites');
       btn.classList.toggle('bp-fav-active', !!isFav);
-      btn.querySelector('svg').setAttribute('fill', isFav ? '#e74c3c' : 'none');
+      var svg = btn.querySelector('svg');
+      if (svg) svg.setAttribute('fill', isFav ? '#e74c3c' : 'none');
     },
 
     bindFavourite: function () {

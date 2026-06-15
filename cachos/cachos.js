@@ -790,9 +790,8 @@
     state.winner   = state.activePlayers[0];
     var isHumanWin = state.winner === state.humanId;
     if (window.Achievements) {
-      Achievements.evaluate();
+      Achievements.evaluate({ gameId: 'cachos', result: isHumanWin ? 'win' : 'loss' });
       if (isHumanWin) {
-        Achievements.checkAction('ca_first_win');
         if (state.playerCount === 6) Achievements.checkAction('ca_win_6player');
       }
     }

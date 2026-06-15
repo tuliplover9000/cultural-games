@@ -41,6 +41,7 @@
 
   // Listen for messages from the parent room page.
   window.addEventListener('message', function (e) {
+    if (e.origin !== window.location.origin) return;
     if (!e.data) return;
     // Parent pushes a board-state update.
     if (e.data.type === 'room-state' && _onStateFn) {

@@ -36,11 +36,11 @@
   }
 
   // Build a winner block HTML (used for both single and dual)
-  function winnerHTML(name, score) {
-    return '<div class="endscreen-winner__avatar" style="width:48px;height:48px;font-size:var(--text-2xl)">' + esc((name || '?')[0].toUpperCase()) + '</div>' +
-      '<div class="endscreen-winner__name" style="font-size:var(--text-xl)">' + esc(name || 'Unknown') + '</div>' +
-      '<div class="endscreen-winner__label">wins!</div>' +
-      (score ? '<div class="endscreen-winner__score">' + esc(score) + '</div>' : '');
+  function winnerHTML(name) {
+    var nm = String(name == null ? '' : name);
+    return '<div class="endscreen-winner__avatar" style="width:48px;height:48px;font-size:var(--text-2xl)">' + esc((nm || '?')[0].toUpperCase()) + '</div>' +
+      '<div class="endscreen-winner__name" style="font-size:var(--text-xl)">' + esc(nm || 'Unknown') + '</div>' +
+      '<div class="endscreen-winner__label">wins!</div>';
   }
 
   // Leaderboard
@@ -55,7 +55,7 @@
     var showT  = maxW > 0;
 
     elLbList.innerHTML = sorted.map(function(pid, idx) {
-      var name = names[pid] || 'Player';
+      var name = String(names[pid] || 'Player');
       var w    = wins[pid]  || 0;
       var top  = showT && w === maxW;
       return '<li class="endscreen-lb-row">' +
@@ -69,6 +69,8 @@
   }
 
   function show(room) {
+    if (!elEndscreen || !elLbList) return;
+
     var instances = room.game_instances || [];
     var names     = room.player_names || {};
     var dual      = room.dual_instance && instances.length >= 2;
@@ -93,7 +95,7 @@
       elDual.hidden   = true;
 
       var inst = instances[0] || {};
-      var winnerName = names[inst.winner_pid] || '-';
+      var winnerName = String(names[inst.winner_pid] || '-');
 
       elAvatar.textContent = (winnerName[0] || '?').toUpperCase();
       elName.textContent   = winnerName;

@@ -77,6 +77,16 @@
   var _refreshTimer = null;  // proactive token refresh timer
   var _listeners    = [];
 
+  // Mirror the module-local _user onto window._user so other modules
+  // (tournament.js, bracket.js, room.js, entry.js, bau-cua.js) that read
+  // window._user directly see the current user. Call this on every assignment
+  // or clear of _user. Returns the value for inline use.
+  function _setUser(u) {
+    _user = u;
+    try { window._user = u || null; } catch (e) {}
+    return u;
+  }
+
   // DB client for public reads (anon key, no auth needed due to public read policies)
   function getSB() {
     if (!_sb) _sb = window.supabase.createClient(SB_URL, SB_KEY, {
@@ -104,7 +114,22 @@
         expires_in:    data.expires_in || 3600,
         expires_at:    Math.floor(Date.now() / 1000) + (data.expires_in || 3600),
         user:          data.user,
+        // Persist the real profile username (when known) so boot can render the
+        // correct nav name immediately instead of a known-wrong email prefix.
+        username:      (_profile && _profile.username) || null,
       }));
+    } catch (e) {}
+  }
+
+  // Re-persist the stored session with the current _profile.username merged in.
+  // Called after _loadUserData resolves so a later reload boots with the real name.
+  function _persistUsername() {
+    try {
+      var s = JSON.parse(localStorage.getItem(SB_SESSION_KEY));
+      if (s && _profile && _profile.username) {
+        s.username = _profile.username;
+        localStorage.setItem(SB_SESSION_KEY, JSON.stringify(s));
+      }
     } catch (e) {}
   }
 
@@ -128,7 +153,7 @@
       if (!res.ok || !res.data.access_token) return false;
       _saveSession(res.data);
       _accessToken = res.data.access_token;
-      if (res.data.user) _user = res.data.user;
+      if (res.data.user) _setUser(res.data.user);
       return true;
     } catch (e) { return false; }
   }
@@ -148,7 +173,7 @@
         _emit();
       } else {
         _clearSession();
-        _user = null; _profile = null; _stats = {}; _favorites = new Set(); _coins = 0;
+        _setUser(null); _profile = null; _stats = {}; _favorites = new Set(); _coins = 0;
         _emit();
       }
     }, msUntilRefresh);
@@ -298,12 +323,14 @@
 
   /* ── Load profile + stats from DB after auth ── */
   async function _loadUserData(user) {
-    _user = user;
+    _setUser(user);
     if (!user) { _profile = null; _stats = {}; _favorites = new Set(); _coins = 0; return; }
 
     var pRes = await getSB().from('profiles').select('username,created_at,coins').eq('id', user.id).single();
     _profile = pRes.data || { username: user.email.split('@')[0], created_at: user.created_at };
     _coins   = (pRes.data && pRes.data.coins) || 0;
+    // Cache the real username into the stored session for instant correct boot.
+    if (pRes.data) _persistUsername();
 
     var sRes = await getSB().from('stats').select('game_id,wins,losses,played').eq('user_id', user.id);
     _stats = {};
@@ -345,13 +372,16 @@
     if (!res.ok) return { ok: false, error: res.data.error_description || res.data.msg || 'Invalid email or password.' };
     _saveSession(res.data);
     _scheduleRefresh(_readStoredSession());
-    try { await _loadUserData(res.data.user); } catch (e) { _user = res.data.user; }
+    try { await _loadUserData(res.data.user); } catch (e) { _setUser(res.data.user); }
     _emit();
     return { ok: true };
   }
 
   async function signUp(username, email, password) {
-    username = window.Sanitize ? Sanitize.username(username) : (username || '').trim();
+    // Account usernames are validated by the explicit regex/length checks below;
+    // Sanitize.username is a display-name sanitizer whose output can fail that
+    // regex, so don't route through it here. Trim only.
+    username = (username || '').trim();
     email    = (email    || '').trim().toLowerCase();
 
     if (username.length < 3)
@@ -390,7 +420,7 @@
       })
     );
 
-    try { await _loadUserData(res.data.user); } catch (e) { _user = res.data.user; }
+    try { await _loadUserData(res.data.user); } catch (e) { _setUser(res.data.user); }
     _emit();
     return { ok: true };
   }
@@ -402,7 +432,7 @@
     }
     if (_user) { try { localStorage.removeItem(_favCacheKey(_user.id)); } catch (e) {} }
     _clearSession();
-    _user = null; _profile = null; _stats = {}; _favorites = new Set(); _coins = 0;
+    _setUser(null); _profile = null; _stats = {}; _favorites = new Set(); _coins = 0;
     _emit();
   }
 
@@ -425,7 +455,9 @@
 
   function recordResult(gameId, outcome, roomId) {
     var now = Date.now();
-    if (_lastResultTs[gameId] && now - _lastResultTs[gameId] < 30000) return;
+    // Throttle only the duplicate server write — local stats/coins/streak still
+    // update so legitimately fast rounds are never silently dropped.
+    var throttled = !!(_lastResultTs[gameId] && now - _lastResultTs[gameId] < 2000);
     _lastResultTs[gameId] = now;
 
     // ── Optimistic local update (immediate UI feedback) ────────────────────
@@ -462,7 +494,7 @@
     // Validates the result, upserts stats, resolves any room bet, and updates
     // profiles.coins - all in one atomic DB function. Coins from the server
     // response overwrite the optimistic local value once confirmed.
-    if (!_user || !_accessToken) return;
+    if (!_user || !_accessToken || throttled) return;
     var sessionKey = _user.id + '_' + gameId + '_' +
                      Date.now().toString(36) + '_' +
                      Math.random().toString(36).slice(2, 7);
@@ -496,6 +528,7 @@
 
     overlay.removeAttribute('hidden');
     overlay.classList.add('open');
+    overlay.setAttribute('aria-labelledby', which === 'signup' ? 'auth-signup-heading' : 'auth-modal-heading');
 
     document.getElementById('auth-panel-signin').hidden = (which !== 'signin');
     document.getElementById('auth-panel-signup').hidden = (which !== 'signup');
@@ -559,7 +592,7 @@
 
         // ── Sign Up panel ──
         '<div id="auth-panel-signup" hidden>' +
-          '<h2 class="auth-heading">Create Account</h2>' +
+          '<h2 class="auth-heading" id="auth-signup-heading">Create Account</h2>' +
           '<p class="auth-subhead">Free to play. Track your wins, losses, and more.</p>' +
           '<form id="form-signup" novalidate>' +
             '<div class="form-group">' +
@@ -826,8 +859,10 @@
 
     if (stored) {
       _accessToken = stored.access_token;
-      _user        = stored.user;
-      _profile     = { username: stored.user.email.split('@')[0], created_at: stored.user.created_at };
+      _setUser(stored.user);
+      // Prefer the real username persisted from a prior _loadUserData; only fall
+      // back to the email prefix on a first-ever boot before the profile loads.
+      _profile     = { username: stored.username || stored.user.email.split('@')[0], created_at: stored.user.created_at };
       _scheduleRefresh(stored);
       // Pre-load favorites from cache so UI is instant before server responds
       try {

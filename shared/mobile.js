@@ -7,6 +7,7 @@
 
   var PHONE_MAX = 430;
   var _resizeDebounce = null;
+  var _orientDebounce = null;
   var _registeredCanvases = []; // for autoResize
 
   var MobileUtils = {
@@ -24,8 +25,8 @@
     onOrientationChange: function (cb) {
       var last = MobileUtils.isLandscape();
       var handler = function () {
-        clearTimeout(_resizeDebounce);
-        _resizeDebounce = setTimeout(function () {
+        clearTimeout(_orientDebounce);
+        _orientDebounce = setTimeout(function () {
           var now = MobileUtils.isLandscape();
           cb(now);
           last = now;

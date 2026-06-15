@@ -68,6 +68,9 @@
     try { localStorage.setItem(STORAGE_KEY, t); } catch (e) {}
     _updateBtn();
     if (typeof CGTheme.onchange === 'function') CGTheme.onchange(t);
+    // Legacy hook name: filipino-dama (and possibly others) listen on
+    // onThemeChange rather than onchange — fire both so the board repaints.
+    if (typeof CGTheme.onThemeChange === 'function') CGTheme.onThemeChange(t);
   }
 
   function _toggle() {
@@ -102,6 +105,7 @@
       // Always place immediately after #nav-auth so toggle sits
       // right beside the sign-in / account widget with no jumping.
       var navAuth = document.getElementById('nav-auth');
+      if (!navAuth || !navAuth.parentNode) return;
       navAuth.parentNode.insertBefore(btn, navAuth.nextSibling);
       _updateBtn();
     }

@@ -238,7 +238,7 @@
     var pool = seed + (fee * maxP);
     if (elPrize1st) elPrize1st.textContent = Math.floor(pool * 0.60).toLocaleString() + ' coins';
     if (elPrize2nd) elPrize2nd.textContent = Math.floor(pool * 0.30).toLocaleString() + ' coins';
-    if (elPrize3rd) elPrize3rd.textContent = Math.floor(pool * 0.10).toLocaleString() + ' coins';
+    if (elPrize3rd) elPrize3rd.textContent = Math.floor(pool * 0.05).toLocaleString() + ' coins ea (2 semi-finalists)';
     if (elTotalCost) elTotalCost.textContent = seed.toLocaleString() + ' coins';
   }
 
@@ -368,7 +368,7 @@
     if (elLobbyPlayerList) {
       elLobbyPlayerList.innerHTML = players.map(function (p) {
         return '<li class="tn-lobby__player">' +
-          '<span class="tn-lobby__player-avatar">' + esc(p.username[0].toUpperCase()) + '</span>' +
+          '<span class="tn-lobby__player-avatar">' + esc((p.username || '?').charAt(0).toUpperCase()) + '</span>' +
           '<span class="tn-lobby__player-name">' + esc(p.username) + '</span>' +
           (p.entry_fee_paid > 0 ? '<span class="tn-lobby__player-paid">\u2713 ' + p.entry_fee_paid.toLocaleString() + ' paid</span>' : '') +
         '</li>';
@@ -409,6 +409,7 @@
       }, function (payload) {
         _current = payload.new;
         if (_current.status === 'active') {
+          if (_sub) { db().removeChannel(_sub); _sub = null; }
           openBracket(tournamentId, _current.name);
           return;
         }
@@ -418,6 +419,7 @@
           return;
         }
         if (_current.status === 'completed') {
+          if (_sub) { db().removeChannel(_sub); _sub = null; }
           openBracket(tournamentId, _current.name);
           showCompletionOverlay(_current);
           return;

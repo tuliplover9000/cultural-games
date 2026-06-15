@@ -15,8 +15,16 @@
     var mount = document.getElementById('pwf-mount');
     if (!mount || !gameKey) return;
 
-    // Rooms page URL - works from pages/games/ depth (../../pages/rooms.html)
-    var roomsUrl = '../../pages/rooms.html?create=' + encodeURIComponent(gameKey);
+    // Rooms page URL - depth-aware resolution (mirrors mobile-nav.js rootHref).
+    // Game pages live at varying depths (pages/games/, cachos/, filipino-dama/,
+    // xinjiang-fangqi/), so compute the '../' prefix from the current pathname
+    // instead of hardcoding it.
+    var path = window.location.pathname;
+    var depth = (path.match(/\//g) || []).length - 1;
+    if (depth < 0) depth = 0;
+    var prefix = '';
+    for (var i = 0; i < depth; i++) prefix += '../';
+    var roomsUrl = prefix + 'pages/rooms.html?create=' + encodeURIComponent(gameKey);
 
     mount.innerHTML =
       '<div class="pwf-banner" id="pwf-banner">' +

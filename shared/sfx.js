@@ -152,6 +152,7 @@
   /* ── Win / lose chord ── */
   var lastResult = 0;
   function playResult(outcome) {
+    if (!outcome) return;                  // neutral/draw/ambiguous → no chord
     var now = Date.now();
     if (now - lastResult < 2500) return;   // never double-play
     lastResult = now;
@@ -173,8 +174,10 @@
       firedOverlays.push(el);
       var txt = (el.textContent || '').toLowerCase();
       var lose = /\b(lose|lost|defeat|ai win|opponent win|you lost)\b/.test(txt);
-      var win = /\b(win|won|victor|champion|congrat|🎉)\b/.test(txt) && !lose;
-      playResult(win ? 'win' : lose ? 'lose' : 'win'); // draws → upbeat by default
+      // \b before an emoji never matches (emoji is not a word char), so test it separately.
+      var win = (/\b(win|won|victor|champion|congrat)\b/.test(txt) || txt.indexOf('🎉') >= 0) && !lose;
+      // Ambiguous / draw results play no chord rather than misfiring 'win'.
+      playResult(win ? 'win' : lose ? 'lose' : null);
     }
   }
   if ('MutationObserver' in window) {

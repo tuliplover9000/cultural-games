@@ -68,7 +68,14 @@
         var res = await db().from('rooms')
           .insert({ code: randomCode(), game: game, host_id: getPlayerId(), status: 'waiting' })
           .select().single();
-        if (!res.error) room = res.data;
+        if (!res.error) {
+          room = res.data;
+        } else if (res.error.code !== '23505') {
+          // Not a code-collision (unique violation) - retrying won't help; report and stop.
+          if (_cbs.onError) _cbs.onError('Could not create room: ' + (res.error.message || 'unknown error'));
+          return null;
+        }
+        // else: 23505 unique-violation on code -> loop and try a new random code
       }
       if (!room) {
         if (_cbs.onError) _cbs.onError('Could not create room. Try again.');
@@ -106,7 +113,8 @@
 
     sendState: async function (gameState) {
       if (!_room) return;
-      await db().from('rooms').update({ board_state: gameState }).eq('id', _room.id);
+      var res = await db().from('rooms').update({ board_state: gameState }).eq('id', _room.id);
+      if (res && res.error && _cbs.onError) _cbs.onError('Lost sync with opponent.');
     },
 
     disconnect: function () {

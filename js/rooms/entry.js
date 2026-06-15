@@ -87,6 +87,8 @@
   // ── Name prompt ───────────────────────────────────────────────────────────
   // Calls then(name) once we have a confirmed name; shows modal if none yet.
 
+  var _nameModalOpen = false;
+
   function requireName(then) {
     // Authenticated users: use their profile name silently
     if (window._user && window._user.display_name) {
@@ -94,6 +96,10 @@
       then(window._user.display_name);
       return;
     }
+    // Guard against rapid re-entry: if the modal is already open, ignore the
+    // new request so we don't re-bind onclick and fire a stale `then` callback.
+    if (_nameModalOpen) return;
+    _nameModalOpen = true;
     // Guests: always show the modal so they can confirm / change their name
     var stored = localStorage.getItem('cg_name') || '';
     elNameInput.value = stored;
@@ -109,11 +115,17 @@
       Room.setPlayerName(v);
       elNameModal.hidden = true;
       document.body.classList.remove('creating-room');
+      _nameModalOpen = false;
       then(v);
     };
     elNameCancel.onclick = function () {
       elNameModal.hidden = true;
       document.body.classList.remove('creating-room');
+      _nameModalOpen = false;
+      // Cancelling abandons the flow: clear any pending preselect and make sure
+      // we are back on the landing view with no stray loading UI.
+      try { sessionStorage.removeItem('cg_preselect_game'); } catch (e) {}
+      showLanding();
     };
   }
 
@@ -126,11 +138,14 @@
 
   elCreateBtn.addEventListener('click', function () {
     clearError(elCreateError);
-    if (window.RateLimit && !RateLimit.check('room-create', 5, 600000)) {
-      showRateToast('Slow down! You can create up to 5 rooms every 10 minutes.');
-      return;
-    }
     requireName(function () {
+      // Consume the rate-limit token only once a name is confirmed and we are
+      // actually about to create — cancelling the modal no longer burns a slot.
+      if (window.RateLimit && !RateLimit.check('room-create', 5, 600000)) {
+        showRateToast('Slow down! You can create up to 5 rooms every 10 minutes.');
+        showLanding();
+        return;
+      }
       showLoading('Creating room…');
       var isPrivateCb = document.getElementById('rb-is-private');
       var isPrivate   = isPrivateCb ? isPrivateCb.checked : false;
@@ -155,12 +170,16 @@
     var code = elJoinCode.value.trim().toUpperCase();
     if (!code) { showError(elJoinError, 'Please enter a room code.'); return; }
     if (code.length !== 6) { showError(elJoinError, 'Room codes are 6 characters (e.g. BIRD42).'); return; }
-    if (window.RateLimit && !RateLimit.check('room-join', 10, 60000)) {
-      showError(elJoinError, 'Too many join attempts. Slow down and try again in a moment.');
-      return;
-    }
 
     requireName(function () {
+      // Consume the rate-limit token only once Room.joinRoom is actually
+      // dispatched (after name confirmation), so cancelling / auto-join replays
+      // don't double-burn the bucket.
+      if (window.RateLimit && !RateLimit.check('room-join', 10, 60000)) {
+        showError(elJoinError, 'Too many join attempts. Slow down and try again in a moment.');
+        showLanding();
+        return;
+      }
       showLoading('Joining room…');
       Room.joinRoom(code, {
         onError: function (msg) {
@@ -169,6 +188,9 @@
         },
       }).then(function (result) {
         if (!result) return;
+        // Successful join: reset the bucket so only failed in-flight attempts
+        // count toward the limit.
+        if (window.RateLimit && RateLimit.reset) RateLimit.reset('room-join');
         if (window.Achievements) Achievements.checkAction('join_room');
         window.location.href = 'room.html?id=' + encodeURIComponent(result.roomId);
       });
@@ -199,7 +221,9 @@
   var elRbRetry       = document.getElementById('rb-retry');
 
   function formatRelativeTime(iso) {
-    var diff = Math.floor((Date.now() - new Date(iso)) / 1000);
+    var t = new Date(iso).getTime();
+    if (!iso || isNaN(t)) return '';
+    var diff = Math.floor((Date.now() - t) / 1000);
     if (diff < 60)   return 'just now';
     if (diff < 3600) return Math.floor(diff / 60) + ' min ago';
     return Math.floor(diff / 3600) + ' hr ago';

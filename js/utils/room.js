@@ -104,19 +104,24 @@
   }
 
   // ── Supabase subscription ──────────────────────────────────────────────────
-  function subscribe(roomId) {
-    if (_channel) db().removeChannel(_channel);
-    _channel = db()
+  async function subscribe(roomId) {
+    var old = _channel;
+    if (old) { try { await db().removeChannel(old); } catch (e) { /* ignore */ } }
+    var ch;
+    ch = db()
       .channel('room_' + roomId)
       .on('postgres_changes', {
         event: 'UPDATE', schema: 'public', table: 'rooms',
         filter: 'id=eq.' + roomId,
       }, function (payload) {
+        // Ignore events from a stale channel (e.g. during reconnect).
+        if (ch !== _channel) return;
         var r = payload.new;
         _room = r;
         dispatch(r);
       })
       .subscribe();
+    _channel = ch;
   }
 
   function dispatch(r) {
@@ -221,12 +226,14 @@
     // ── joinRoom ─────────────────────────────────────────────────────────────
     joinRoom: async function (code, cbs) {
       _cbs = cbs || {};
+      if (!code || !String(code).trim()) return err('Please enter a room code.');
+      var c    = String(code).toUpperCase().trim();
       var pid  = getPlayerId();
       var name = getPlayerName();
 
       // Look up room by code
       var res = await db().from('rooms')
-        .select().eq('code', code.toUpperCase().trim()).limit(1);
+        .select().eq('code', c).limit(1);
       if (res.error || !res.data || !res.data.length) {
         return err('Room not found. Check the code and try again.');
       }
@@ -263,7 +270,7 @@
 
       _room = res2.data;
       subscribe(r.id);
-      return { code: code.toUpperCase().trim(), roomId: r.id, role: 'guest' };
+      return { code: c, roomId: r.id, role: 'guest' };
     },
 
     // ── leaveRoom ────────────────────────────────────────────────────────────
@@ -399,8 +406,9 @@
 
     rematch: async function () {
       if (!_room) return;
-      // Update local cache immediately so callers can launch the game optimistically
-      _room = Object.assign({}, _room, { status: 'playing', game_instances: [], bets: {} });
+      // No optimistic local mutation: let the inbound subscription event update
+      // _room like every other mutator, so concurrent mutators never read a
+      // half-applied cache. Callers should wait for onGameUpdate.
       await authDb().from('rooms').update({
         status:         'playing',
         game_instances: [],

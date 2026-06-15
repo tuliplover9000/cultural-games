@@ -62,6 +62,9 @@
     _el.trigger = document.getElementById('tt-trigger');
     _el.badge   = document.getElementById('tt-badge');
     if (!_el.trigger) return;
+    // Idempotency: never wire the click listener / MutationObserver twice.
+    if (_el.trigger.__ttWired) return;
+    _el.trigger.__ttWired = true;
 
     // Move the button inside the game container so it sits within
     // the gold-bordered game area rather than floating over the page.
