@@ -673,8 +673,8 @@
     var row = Math.round((y - state.padY) / state.cellSize);
     if (col < 0 || col >= BOARD_SIZE || row < 0 || row >= BOARD_SIZE) return null;
     // Snap distance check
-    var snapX = PADDING + col * state.cellSize;
-    var snapY = PADDING + row * state.cellSize;
+    var snapX = state.padX + col * state.cellSize;
+    var snapY = state.padY + row * state.cellSize;
     var dist  = Math.sqrt((x - snapX) * (x - snapX) + (y - snapY) * (y - snapY));
     if (dist > state.cellSize * 0.45) return null;
     return { row: row, col: col };
@@ -952,6 +952,12 @@
         setTimeout(function() {
           canvas.style.removeProperty('width');
           canvas.style.removeProperty('height');
+          // Restore windowed canvas buffer and board geometry (GameResize mutated these in fullscreen)
+          canvas.width  = 560;
+          canvas.height = 560;
+          state.cellSize = (560 - 2 * PADDING) / (BOARD_SIZE - 1);
+          state.padX = PADDING;
+          state.padY = PADDING;
           resizeCanvas();
           render();
         }, 50);

@@ -283,8 +283,15 @@
     if (totalPieces(next) === 0) { endGame(prev, 'All enemy pieces captured.'); return; }
     // F2: the player to move has no legal move → they lose.
     if (!hasAnyLegalMove(next)) { endGame(prev, playerLabel(next) + ' has no legal move.'); return; }
-    // F3: // RECONSTRUCTED draw — both sides reduced to <=3 pieces with no
-    // capture possible for either side.
+    // F3: opponent reduced to fewer than three pieces (board + hand) → you win.
+    // Only fires once both sides have committed enough pieces that this is below
+    // the win threshold; both starting with 12 in hand, it can't trigger early.
+    if (totalPieces(next) < 3) {
+      endGame(prev, playerLabel(next) + ' is down to fewer than three pieces.');
+      return;
+    }
+    // F4: draw — both sides down to a few pieces with no capture possible for
+    // either side.
     if (totalPieces(P1) <= 3 && totalPieces(P2) <= 3 &&
         !hasAnyCapture(P1) && !hasAnyCapture(P2)) {
       endGame('draw', 'Both sides are down to a few pieces with no captures left.');

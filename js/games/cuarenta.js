@@ -209,6 +209,7 @@
       turn:           'player',
       phase:          'playing',
       lastCapture:    null,
+      lastPlay:       null,
       handsDealt:     0,
       roundScores:    null,
     };
@@ -268,9 +269,9 @@
   }
 
   function isCaida(card, who) {
-    if (!G.lastCapture) return false;
+    if (!G.lastPlay) return false;
     var opp = who === 'player' ? 'ai' : 'player';
-    return G.lastCapture.who === opp && G.lastCapture.cardRank === card.rank;
+    return G.lastPlay.who === opp && G.lastPlay.cardRank === card.rank;
   }
 
   function playCard(who, handIdx) {
@@ -321,6 +322,7 @@
       G.table.push(card);
       addLog(who, name + ' placed ' + rn + sym + ' on table');
     }
+    G.lastPlay = { who: who, cardRank: card.rank };
     selectedIdx = null;
   }
 
@@ -608,6 +610,7 @@
       G.table = [];
       G.playerHand = []; G.aiHand = [];
       G.lastCapture = null;
+      G.lastPlay = null;
       G.handsDealt = 0;
       G.phase = 'playing';
       G.turn = 'player';
@@ -668,6 +671,9 @@
 
     var playBtn = el.querySelector('#cu-play-btn');
     if (playBtn) playBtn.addEventListener('click', commitPlay);
+
+    var tbl = el.querySelector('.cu-table-area');
+    if (tbl) tbl.addEventListener('click', commitPlay);
 
     var newBtn = el.querySelector('#cu-new-btn');
     if (newBtn) newBtn.addEventListener('click', function () {

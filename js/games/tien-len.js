@@ -1119,6 +1119,23 @@
     init();
   }
 
+  // ── Fullscreen resize hooks ──────────────────────────────────────────────
+  if (window.FSMode) {
+    FSMode.onEnter = function () { _fsResize(); };
+    FSMode.onExit  = function () { _fsResize(); };
+  }
+
+  function _fsResize() {
+    setTimeout(function () {
+      if (typeof render === 'function') render();
+    }, 50);
+  }
+
+  // DOM-based game - re-render to let CSS fill the new available space
+  window.GameResize = function (availW, availH) {
+    if (typeof render === 'function') render();
+  };
+
 }());
 
 /* ── Tutorial ────────────────────────────────────────────────────────────── */
@@ -1164,20 +1181,3 @@ if (window.CGTutorial) {
   ]);
   CGTutorial.initTrigger('tien-len');
 }
-
-// ── Fullscreen resize hooks ────────────────────────────────────────────────
-if (window.FSMode) {
-  FSMode.onEnter = function () { _fsResize(); };
-  FSMode.onExit  = function () { _fsResize(); };
-}
-
-function _fsResize() {
-  setTimeout(function () {
-    if (typeof render === 'function') render();
-  }, 50);
-}
-
-// DOM-based game - re-render to let CSS fill the new available space
-window.GameResize = function (availW, availH) {
-  if (typeof render === 'function') render();
-};

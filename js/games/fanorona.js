@@ -107,10 +107,11 @@
       var to = edge.to, dc = edge.dc, dr = edge.dr;
       if (board[to] !== EMPTY) return;
       if (visitedSet && visitedSet.indexOf(to) !== -1) return;
-      // Block same direction AND reversal during sequence
+      // Block repeating the same direction during a capture sequence.
+      // Reversal (opposite direction) is a different direction and is allowed;
+      // the visitedSet check above already prevents revisiting a position.
       if (lastCapDir) {
         if (dc === lastCapDir.dc  && dr === lastCapDir.dr)  return;
-        if (dc === -lastCapDir.dc && dr === -lastCapDir.dr) return;
       }
 
       // Approach: enemy immediately beyond `to` in (dc, dr)
@@ -436,9 +437,17 @@
       if (v === BLACK) blacks++;
       else if (v === WHITE) whites++;
     });
+    var blackLabel, whiteLabel;
+    if (vsAI) {
+      blackLabel = 'You';
+      whiteLabel = 'AI';
+    } else {
+      blackLabel = 'Dark';
+      whiteLabel = 'Light';
+    }
     elScore.innerHTML =
-      '<span class="fn-score__you">&#9679; You&nbsp;' + blacks + '</span>' +
-      '<span class="fn-score__ai">AI&nbsp;' + whites + '&#9675;</span>';
+      '<span class="fn-score__you">&#9679; ' + blackLabel + '&nbsp;' + blacks + '</span>' +
+      '<span class="fn-score__ai">' + whiteLabel + '&nbsp;' + whites + '&#9675;</span>';
   }
 
   // ── Human interaction ────────────────────────────────────────────────────
@@ -568,9 +577,18 @@
 
     var nextMoves = allMoves(state.board, state.turn, null, null, null);
     if (nextMoves.length === 0) {
-      state.phase = 'over';
-      setStatus('No moves available - draw!');
-      updateScore(); render(); return;
+      // A player with no legal moves loses (per the rules).
+      var blockedLoser = state.turn;
+      var blockWinner  = blockedLoser === BLACK ? WHITE : BLACK;
+      state.phase  = 'over';
+      state.winner = blockWinner;
+      setStatus(blockWinner === BLACK
+        ? '🎉 You win! Opponent has no legal moves.'
+        : 'AI wins. You have no legal moves.');
+      updateScore(); render();
+      if (window.Auth && Auth.isLoggedIn())
+        Auth.recordResult('fanorona', blockWinner === BLACK ? 'win' : 'loss');
+      return;
     }
 
     updateScore(); render();
@@ -602,7 +620,9 @@
     if (winner === BLACK) return -1000 - depth;
 
     var moves = allMoves(board, player, visitedSet, lastCapDir, capPiece);
-    if (moves.length === 0) return 0;
+    // A player with no legal moves loses, so treat it like a terminal loss
+    // for the side to move (mirrors the checkWinner returns above).
+    if (moves.length === 0) return player === WHITE ? -1000 - depth : 1000 + depth;
     if (depth === 0) return scoreBoard(board);
 
     var isMax = player === WHITE;

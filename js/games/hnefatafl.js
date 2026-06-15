@@ -264,7 +264,7 @@
     render();
     if (!vsRoom && window.Auth && Auth.recordResult) {
       var outcome = winner === 'draw' ? 'draw'
-                  : winner === humanSide ? 'win' : 'loss';
+                  : winner === (humanSide === ATTACKER ? 'attacker' : 'defender') ? 'win' : 'loss';
       Auth.recordResult('hnefatafl', outcome);
     }
   }
@@ -357,7 +357,7 @@
     if (state.gameOver) return;
     var side  = state.turn;
     var moves = getAllMoves(side);
-    if (!moves.length) return;
+    if (!moves.length) { endGame(side === ATTACKER ? 'defender' : 'attacker'); return; }
 
     var best = moves[0], bestScore = -Infinity;
     moves.forEach(function(mv) {

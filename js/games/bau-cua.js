@@ -787,6 +787,25 @@
   }
 
 
+  // ── Fullscreen resize hooks ────────────────────────────────────────────────
+  if (window.FSMode) {
+    FSMode.onEnter = function () { _fsResize(); };
+    FSMode.onExit  = function () { _fsResize(); };
+  }
+
+  function _fsResize() {
+    setTimeout(function () {
+      var container = document.getElementById('game-container');
+      if (container && typeof renderGame === 'function') renderGame(container);
+    }, 50);
+  }
+
+  // DOM-based game - re-render to let CSS fill the new available space
+  window.GameResize = function (availW, availH) {
+    if (typeof refresh === 'function') refresh();
+  };
+
+
   // ── Boot ───────────────────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', init);
 
@@ -835,21 +854,3 @@ if (window.CGTutorial) {
   ]);
   CGTutorial.initTrigger('bau-cua');
 }
-
-// ── Fullscreen resize hooks ────────────────────────────────────────────────
-if (window.FSMode) {
-  FSMode.onEnter = function () { _fsResize(); };
-  FSMode.onExit  = function () { _fsResize(); };
-}
-
-function _fsResize() {
-  setTimeout(function () {
-    var container = document.getElementById('game-container');
-    if (container && typeof renderGame === 'function') renderGame(container);
-  }, 50);
-}
-
-// DOM-based game - re-render to let CSS fill the new available space
-window.GameResize = function (availW, availH) {
-  if (typeof refresh === 'function') refresh();
-};

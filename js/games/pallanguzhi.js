@@ -302,7 +302,10 @@
     if (lit)        cls.push('pg-pit--lit');
     if (aiSelected) cls.push('pg-pit--ai-select');
 
-    return '<div class="' + cls.join(' ') + '" data-cup="' + cup + '">'
+    var a11y = clickable
+      ? ' role="button" tabindex="0" aria-label="Cup with ' + count + ' shell' + (count === 1 ? '' : 's') + '"'
+      : '';
+    return '<div class="' + cls.join(' ') + '" data-cup="' + cup + '"' + a11y + '>'
       + '<div class="pg-pit__shells">' + spiralShells(count, cup, lit) + '</div>'
       + '<div class="pg-pit__count">' + count + '</div>'
       + '</div>';
@@ -324,6 +327,12 @@
     el.querySelectorAll('.pg-pit--clickable').forEach(function (pitEl) {
       pitEl.addEventListener('click', function () {
         onCupClick(parseInt(pitEl.dataset.cup, 10));
+      });
+      pitEl.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+          e.preventDefault();
+          onCupClick(parseInt(pitEl.dataset.cup, 10));
+        }
       });
     });
   }
@@ -588,13 +597,13 @@
       {
         target: '#game-container',
         title: 'Sowing Shells',
-        body: 'Click one of your cups to pick up all its shells and distribute them one-by-one clockwise. Your side is the row closest to you.',
+        body: 'Click one of your cups to pick up all its shells and distribute them one-by-one counter-clockwise. Your side is the row closest to you.',
         position: 'bottom', highlight: true, beforeStep: null, afterStep: null,
       },
       {
         target: '#game-container',
         title: 'Capturing',
-        body: 'When your last shell lands in a cup, skip over the next cup. If the cup after that has shells, capture them - then keep going.',
+        body: 'If your last shell makes a cup hold exactly 4, you capture all 4 into your store and keep sowing. If it lands in an empty cup on your own side, you capture the shells in the directly opposite cup and your turn ends.',
         position: 'top', highlight: true, beforeStep: null, afterStep: null,
       },
       {

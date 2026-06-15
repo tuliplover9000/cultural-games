@@ -89,6 +89,19 @@
 
   var state = newState();
 
+  /* ── Online room sync state (set up in startGame when in a room) ─── */
+  var vsRoom     = false;          // true once RoomBridge is active
+  var myRoomSeat = 0;              // this client's room seat (0..3)
+  var _applyingRemote = false;     // guard: don't re-broadcast applied state
+
+  /** Map a room seat to a yut team. Seats 0/2 → Team A, 1/3 → Team B. */
+  function seatTeam(seat) { return (seat % 2 === 0) ? 'a' : 'b'; }
+
+  /** True when it is THIS client's turn to act in a room game. */
+  function myRoomTurn() {
+    return !vsRoom || seatTeam(myRoomSeat) === state.currentTeam;
+  }
+
   function newState() {
     return {
       mode:              '2p',
@@ -255,7 +268,7 @@
   function afterMove(result) {
     state.selectedPieceId = null;
 
-    if (state.phase === 'gameover') { render(); return; }
+    if (state.phase === 'gameover') { render(); broadcastState(); return; }
 
     /* Toasts */
     if (result.event === 'capture')  showToast('잡았다! Captured!');
@@ -272,6 +285,7 @@
         state.phase = 'shortcut-choice';
         setStatus('Choose: 지름길 (shortcut) or 외곽 (outer)?');
         render();
+        broadcastState();
         return;
       }
     }
@@ -293,7 +307,7 @@
       state.pendingExtraThrows--;
       state.phase = 'throw';
       updateStatus();
-      setThrowBtnActive(!(state.aiEnabled && state.currentTeam === 'b'));
+      setThrowBtnActive(!(state.aiEnabled && state.currentTeam === 'b') && myRoomTurn());
       if (state.aiEnabled && state.currentTeam === 'b') setTimeout(aiThrow, 800);
     } else {
       /* End of turn */
@@ -303,11 +317,12 @@
       state.phase = 'throw';
       updateHUD();
       updateStatus();
-      setThrowBtnActive(!(state.aiEnabled && state.currentTeam === 'b'));
+      setThrowBtnActive(!(state.aiEnabled && state.currentTeam === 'b') && myRoomTurn());
       if (state.aiEnabled && state.currentTeam === 'b') setTimeout(aiThrow, 800);
     }
     renderPendingMoves();
     render();
+    broadcastState();
   }
 
   function resolveShortcut(useShortcut) {
@@ -352,7 +367,7 @@
         if (result.value === 5) showToast('모!');
         state.phase = 'throw';
         updateStatus();
-        setThrowBtnActive(!(state.aiEnabled && state.currentTeam === 'b'));
+        setThrowBtnActive(!(state.aiEnabled && state.currentTeam === 'b') && myRoomTurn());
         if (state.aiEnabled && state.currentTeam === 'b') setTimeout(aiThrow, 600);
         render();
       } else {
@@ -361,6 +376,7 @@
         if (state.aiEnabled && state.currentTeam === 'b') setTimeout(aiMove, 800);
         render();
       }
+      broadcastState();
     });
   }
 
@@ -554,6 +570,88 @@
   }
 
   /* ══════════════════════════════════════════════════════════════════
+     ONLINE ROOM SYNC
+     The acting client is authoritative for its own turn: it generates
+     throws/moves locally (with animation) and, when each authoritative
+     action settles, broadcasts the full game state. The other client
+     adopts that state and re-renders. Input is gated so a player can
+     only act on its own seat's turn — preventing both clients from
+     rolling independently (the original desync bug).
+  ══════════════════════════════════════════════════════════════════ */
+
+  /** Serialize only the syncable game state (board geometry stays local). */
+  function serializeState() {
+    return {
+      last_actor:         'room:' + myRoomSeat,
+      mode:               state.mode,
+      phase:              state.phase,
+      currentTeam:        state.currentTeam,
+      pendingMoves:       state.pendingMoves.slice(),
+      pendingExtraThrows: state.pendingExtraThrows,
+      lastThrow:          state.lastThrow,
+      throwHistory:       state.throwHistory.slice(),
+      moCount:            state.moCount,
+      captureCount:       { a: state.captureCount.a, b: state.captureCount.b },
+      winner:             state.winner,
+      pieces:             JSON.parse(JSON.stringify(state.pieces)),
+      shortcutPending:    state.shortcutPending ? JSON.parse(JSON.stringify(state.shortcutPending)) : null,
+    };
+  }
+
+  /** Broadcast the current authoritative state to peers in the room. */
+  function broadcastState() {
+    if (!vsRoom || _applyingRemote || !window.RoomBridge) return;
+    window.RoomBridge.sendState(serializeState());
+  }
+
+  /** Adopt an authoritative state blob received from a peer. */
+  function receiveRoomState(blob) {
+    if (!blob || !vsRoom) return;
+    if (blob.last_actor === 'room:' + myRoomSeat) return; /* our own echo */
+    if (!blob.pieces) return;
+
+    _applyingRemote = true;
+
+    state.mode               = blob.mode || state.mode;
+    state.phase              = blob.phase;
+    state.currentTeam        = blob.currentTeam;
+    state.pendingMoves       = Array.isArray(blob.pendingMoves) ? blob.pendingMoves.slice() : [];
+    state.pendingExtraThrows = blob.pendingExtraThrows || 0;
+    state.lastThrow          = blob.lastThrow || null;
+    state.throwHistory       = Array.isArray(blob.throwHistory) ? blob.throwHistory.slice() : [];
+    state.moCount            = blob.moCount || 0;
+    state.captureCount       = blob.captureCount ? { a: blob.captureCount.a || 0, b: blob.captureCount.b || 0 } : { a: 0, b: 0 };
+    state.winner             = blob.winner || null;
+    state.pieces             = blob.pieces;
+    state.shortcutPending    = blob.shortcutPending || null;
+    state.selectedPieceId    = null;
+    state.animLock           = false;
+
+    if (state.lastThrow) setThrowResult(state.lastThrow);
+    /* Only the acting client (whose turn it is) may use the throw button. */
+    setThrowBtnActive(state.phase === 'throw' && myRoomTurn());
+
+    _applyingRemote = false;
+
+    updateHUD();
+    updateStatus();
+    renderPendingMoves();
+    render();
+  }
+
+  var _roomInit = false;
+  function initRoomMode() {
+    if (_roomInit) { if (vsRoom && myRoomSeat === 0) broadcastState(); return; }
+    if (!window.RoomBridge || !window.RoomBridge.isActive()) return;
+    _roomInit   = true;
+    vsRoom      = true;
+    myRoomSeat  = window.RoomBridge.getSeat();
+    window.RoomBridge.onState(receiveRoomState);
+    /* Seat 0 (Team A, first mover) seeds the authoritative initial state. */
+    if (myRoomSeat === 0) broadcastState();
+  }
+
+  /* ══════════════════════════════════════════════════════════════════
      RENDERING
   ══════════════════════════════════════════════════════════════════ */
 
@@ -604,7 +702,7 @@
     drawSticks();
     drawFinished();
 
-    if (state.phase === 'gameover') drawWinOverlay();
+    if (state.phase === 'gameover' && state.winner) drawWinOverlay();
     if (state.phase === 'shortcut-choice') drawShortcutHints();
   }
 
@@ -1155,6 +1253,7 @@
 
   canvas.addEventListener('click', function (e) {
     if (state.animLock) return;
+    if (!myRoomTurn()) return; /* online: only act on your own seat's turn */
 
     var rect = canvas.getBoundingClientRect();
     var mx   = (e.clientX - rect.left)  * (canvas.width  / rect.width);
@@ -1278,39 +1377,6 @@
   }
 
   /* ══════════════════════════════════════════════════════════════════
-     MODE SELECTION (shown on new game before first throw)
-  ══════════════════════════════════════════════════════════════════ */
-
-  function showModeSelect() {
-    /* Overlay via HTML buttons rendered on top of canvas. Reuse the
-       game container — just prompt via status and the new-game button.
-       For room mode the mode is pre-set by the room. */
-    var overlay = document.createElement('div');
-    overlay.id = 'yn-mode-overlay';
-    overlay.className = 'yn-mode-overlay';
-    overlay.innerHTML = '<h2>Select Mode</h2>'
-      + '<div class="yn-mode-buttons">'
-      + '<button class="btn btn-primary" id="yn-mode-2p">2 Players</button>'
-      + '<button class="btn btn-secondary" id="yn-mode-4p">4 Players</button>'
-      + '</div>';
-
-    var wrap = document.getElementById('yn-board-wrap');
-    if (wrap) {
-      wrap.style.position = 'relative';
-      wrap.appendChild(overlay);
-    }
-
-    document.getElementById('yn-mode-2p').onclick = function () {
-      overlay.parentNode.removeChild(overlay);
-      startGame('2p');
-    };
-    document.getElementById('yn-mode-4p').onclick = function () {
-      overlay.parentNode.removeChild(overlay);
-      startGame('4p');
-    };
-  }
-
-  /* ══════════════════════════════════════════════════════════════════
      RESIZE
   ══════════════════════════════════════════════════════════════════ */
 
@@ -1343,14 +1409,17 @@
     var sz   = wrap ? (wrap.clientWidth || 480) : 480;
     window.GameResize(sz, sz);
 
+    /* If room mode: subscribe to peer state, learn our seat, disable AI. */
+    initRoomMode();
+
     updateHUD();
     setStatus('\ud300 A\uc758 \ucc28\ub840 (Team A\u2019s turn) \u2014 \uc737 \ub358\uc9c0\uae30!');
-    setThrowBtnActive(true);
+    setThrowBtnActive(myRoomTurn());
     if (elThrowRes) elThrowRes.innerHTML = '';
     renderPendingMoves();
     render();
 
-    /* If room mode: disable AI, signal ready */
+    /* If room mode: signal ready */
     if (window.RoomBridge) {
       window.RoomBridge.gameReady && window.RoomBridge.gameReady();
     }
@@ -1366,6 +1435,7 @@
 
   if (elThrowBtn) elThrowBtn.addEventListener('click', function () {
     if (state.aiEnabled && state.currentTeam === 'b') return;
+    if (!myRoomTurn()) return; /* online: only the seat whose turn it is may throw */
     doThrow();
   });
 

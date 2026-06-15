@@ -1366,7 +1366,7 @@
     // Check front row (row2) first, then back row (row1), each in reverse render order
     var row2 = hand.slice(Math.ceil(n / 2));
     var row1 = hand.slice(0, Math.ceil(n / 2));
-    var checkOrder = row2.concat(row1).reverse();
+    var checkOrder = row2.slice().reverse().concat(row1.slice().reverse());
     for (var i = 0; i < checkOrder.length; i++) {
       var card = checkOrder[i];
       var pos  = renderedCards[card.id];

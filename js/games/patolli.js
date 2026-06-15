@@ -442,6 +442,9 @@
     state.phase = 'moving';
     setStatus('Moving…');
     movePiece(curTurn, pieceIdx, state.roll, function () {
+      if (state.pieces[curTurn].every(function (p) { return p === TRACK_LENGTH; })) {
+        gameOver(curTurn); return;
+      }
       if (state.rollAgain) {
         state.rollAgain = false;
         state.phase = 'idle';
@@ -490,7 +493,8 @@
   }
 
   function aiTurn() {
-    if (window.CGTutorial && CGTutorial.isActive) return;
+    if (mode !== 'vs-ai' || state.turn !== AI || state.phase === 'over') return;
+    if (window.CGTutorial && CGTutorial.isActive) { setTimeout(aiTurn, 600); return; }
     state.phase = 'ai-thinking';
     setStatus('AI is thinking… <span class="pt-thinking"><span></span><span></span><span></span></span>');
     render();
@@ -512,6 +516,9 @@
       setTimeout(function () {
         state.phase = 'moving';
         movePiece(AI, choice, result.value, function () {
+          if (state.pieces[AI].every(function (p) { return p === TRACK_LENGTH; })) {
+            gameOver(AI); return;
+          }
           if (result.again) {
             setTimeout(aiTurn, 400);
           } else {
@@ -660,7 +667,7 @@
     elLog        = document.getElementById('pt-log');
 
     elRollBtn.addEventListener('click', onRollClick);
-    elNewGameBtn.addEventListener('click', newGame);
+    elNewGameBtn.addEventListener('click', function () { newGame(); });
     elBoard.addEventListener('click', onBoardClick);
     elBoard.addEventListener('mouseover', onBoardMouseover);
     elBoard.addEventListener('mouseout', onBoardMouseout);

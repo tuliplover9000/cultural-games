@@ -433,6 +433,10 @@
     renderScore();
   }
 
+  // Expose render to the module-scope fullscreen/resize hooks below,
+  // which live outside this IIFE and otherwise can't reach it.
+  window.__puRender = render;
+
   // ── Roll handler ──────────────────────────────────────────────────────
   function onRollClick() {
     if (vsRoom && state.turn !== myRoomSeat) return;
@@ -645,11 +649,11 @@ if (window.FSMode) {
 
 function _fsResize() {
   setTimeout(function () {
-    if (typeof render === 'function') render();
+    if (typeof window.__puRender === 'function') window.__puRender();
   }, 50);
 }
 
 // DOM-based game - re-render to let CSS fill the new available space
 window.GameResize = function (availW, availH) {
-  if (typeof render === 'function') render();
+  if (typeof window.__puRender === 'function') window.__puRender();
 };

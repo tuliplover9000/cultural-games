@@ -364,9 +364,18 @@
       if (anim.deal) d.style.animationDelay = (i * 0.08) + 's';
       // Hotseat: Player 2 plays by tapping their face-down cards.
       if (!vsRoom && !vsAI) {
+        d.setAttribute('role', 'button');
+        d.setAttribute('aria-label', 'Play card');
+        d.setAttribute('tabindex', '0');
         (function (idx) {
           d.addEventListener('click', function () {
             if (canPlayLocal(oppP)) playCard(oppP, idx);
+          });
+          d.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+              e.preventDefault();
+              if (canPlayLocal(oppP)) playCard(oppP, idx);
+            }
           });
         }(i));
       }
@@ -385,7 +394,7 @@
       d = cardDiv(hand[i], (playable ? 'tu-card--playable' : '') + (anim.deal ? ' tu-card--dealt' : ''));
       if (anim.deal) d.style.animationDelay = (i * 0.08) + 's';
       d.setAttribute('role', 'button');
-      d.setAttribute('aria-label', 'Play card');
+      d.setAttribute('aria-label', 'Play ' + RANK_LABEL[hand[i].r] + ' of ' + hand[i].s);
       (function (idx) {
         d.addEventListener('click', function () {
           if (canPlayLocal(myPlayer)) playCard(myPlayer, idx);

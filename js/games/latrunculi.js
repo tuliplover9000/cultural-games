@@ -349,11 +349,11 @@
 
     state.moveHistory.push({ fromRow: fromRow, fromCol: fromCol, toRow: toRow, toCol: toCol });
 
-    var key = getBoardKey();
-    state.positionHistory.push(key);
-
     // Switch turns
     state.currentTurn = state.currentTurn === 'white' ? 'black' : 'white';
+
+    var key = getBoardKey();
+    state.positionHistory.push(key);
 
     checkWinConditions();
     updateUI();
@@ -406,8 +406,8 @@
         partnerValid = getPieceOwner(p2) === friendlyColor && !isDux(p2);
       }
       if (partnerValid) {
-        if (friendlyColor === 'white') state.capturedWhite++;
-        else state.capturedBlack++;
+        if (friendlyColor === 'white') state.capturedBlack++;
+        else state.capturedWhite++;
         state.board[nr][nc] = PIECE.NONE;
       }
     });
@@ -473,8 +473,9 @@
     var rect = canvas.getBoundingClientRect();
     var scaleX = canvas.width / rect.width;
     var scaleY = canvas.height / rect.height;
-    var clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    var clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    var src = (e.changedTouches && e.changedTouches[0]) || (e.touches && e.touches[0]) || e;
+    var clientX = src.clientX;
+    var clientY = src.clientY;
     // Subtract the wood border so taps map to the cell actually drawn there
     var col = Math.floor(((clientX - rect.left) * scaleX - BORDER_W) / state.boardConfig.cellSize);
     var row = Math.floor(((clientY - rect.top)  * scaleY - BORDER_W) / state.boardConfig.cellSize);
@@ -804,7 +805,7 @@
     }
 
     state.mode = mode;
-    state.boardConfig = BOARD_CONFIGS[mode];
+    state.boardConfig = Object.assign({}, BOARD_CONFIGS[mode]);
     state.board = buildInitialBoard(mode);
     state.currentTurn = 'white';
     state.selectedCell = null;

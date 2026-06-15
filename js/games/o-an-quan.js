@@ -245,11 +245,15 @@
   }
 
   async function attemptCapture(emptyIdx) {
-    const captureIdx = nextIdx(emptyIdx);
-    const myQ        = myQuan(state.currentPlayer);
-    const isSmallPit = P1_PITS.includes(captureIdx) || P2_PITS.includes(captureIdx);
+    const myQ = myQuan(state.currentPlayer);
 
-    if (isSmallPit && state.board[captureIdx] > 0) {
+    // Chained capture: from the empty landing pit, capture the next pit if it
+    // holds seeds, then continue while the following pit is empty and the one
+    // after that still holds seeds (per the documented rule). A mandarin square
+    // or a non-matching pattern stops the chain.
+    let captureIdx = nextIdx(emptyIdx);
+    while (P1_PITS.includes(captureIdx) || P2_PITS.includes(captureIdx)) {
+      if (state.board[captureIdx] <= 0) break;
       const captured = state.board[captureIdx];
 
       // Fly a cluster from the captured pit to the player's quan
@@ -274,6 +278,12 @@
       renderBoard();
       addLog(state.currentPlayer, `P${state.currentPlayer} captured ${captured} seeds!`);
       await sleep(200);
+
+      // Continue the chain only if the pit right after the one just captured is
+      // empty and the pit beyond that holds seeds.
+      const gapIdx = nextIdx(captureIdx);
+      if (state.board[gapIdx] !== 0) break;
+      captureIdx = nextIdx(gapIdx);
     }
   }
 
@@ -607,6 +617,8 @@
     if (p1Num) p1Num.textContent = state.board[Q1];
     if (p2Num) p2Num.textContent = state.board[Q2];
   }
+  // Expose for the global resize/fullscreen hooks (which live outside this IIFE).
+  window.__oaqRenderBoard = renderBoard;
 
   function renderLog() {
     const container = document.getElementById('game-container');
@@ -739,12 +751,12 @@ if (window.FSMode) {
 
 function _fsResize() {
   setTimeout(function () {
-    if (typeof renderBoard === 'function') renderBoard();
+    if (typeof window.__oaqRenderBoard === 'function') window.__oaqRenderBoard();
   }, 50);
 }
 
 // DOM-based game - re-render to let CSS fill the new available space
 window.GameResize = function (availW, availH) {
   var container = document.getElementById('game-container');
-  if (container && typeof renderBoard === 'function') renderBoard();
+  if (container && typeof window.__oaqRenderBoard === 'function') window.__oaqRenderBoard();
 };

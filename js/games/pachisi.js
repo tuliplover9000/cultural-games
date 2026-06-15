@@ -1633,11 +1633,6 @@
     canvas.addEventListener('touchend', function (e) {
       e.preventDefault();
       var t = e.changedTouches[0];
-      var rect   = canvas.getBoundingClientRect();
-      var scaleX = CANVAS_SIZE / rect.width;
-      var scaleY = CANVAS_SIZE / rect.height;
-      var x = (t.clientX - rect.left) * scaleX;
-      var y = (t.clientY - rect.top)  * scaleY;
       handleCanvasClick({ clientX: t.clientX, clientY: t.clientY });
     }, { passive: false });
 
@@ -1752,8 +1747,8 @@
     CELL = Math.floor(Math.min(availW / GRID, availH / GRID) * 0.92);
     if (CELL < 40) CELL = 40;
     CANVAS_SIZE = CELL * GRID;
-    canvas.width  = availW;
-    canvas.height = availH;
+    canvas.width  = CANVAS_SIZE;
+    canvas.height = CANVAS_SIZE;
     redraw();
   };
 

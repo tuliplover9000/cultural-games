@@ -266,6 +266,10 @@
 
     state.lastSown = -1;
 
+    // If the player about to receive the turn has no legal move, the other
+    // player claims the remaining seeds and the game ends (avoids a softlock).
+    if (endIfNoMove(1 - player)) return;
+
     // Hand off to the other player
     if (player === PLAYER) {
       state.current = AI;
@@ -292,8 +296,8 @@
     const snap  = { pits: [...state.pits], scores: [...state.scores], phase: state.phase };
     const moves = validMoves(snap, AI);
     if (!moves.length) {
-      checkEndState();
-      render();
+      // AI has no legal move: player claims the remaining seeds, game ends.
+      if (!endIfNoMove(AI)) { checkEndState(); render(); }
       return;
     }
 
@@ -315,6 +319,34 @@
       state.winner = state.scores[PLAYER] > state.scores[AI] ? PLAYER
                    : state.scores[AI] > state.scores[PLAYER] ? AI : 2;
     }
+  }
+
+  /**
+   * The player about to move (`starved`) has no legal move (no seeds on their
+   * side). Standard Oware: the other player claims every seed left on the
+   * board. Ends the game and runs the same result/log/sync block as the
+   * normal end-game branch. Returns true if the game ended.
+   */
+  function endIfNoMove(starved) {
+    const snap = { pits: [...state.pits], scores: [...state.scores], phase: state.phase };
+    if (validMoves(snap, starved).length) return false;
+
+    const claimer = 1 - starved;
+    for (let p = 0; p < 12; p++) { state.scores[claimer] += state.pits[p]; state.pits[p] = 0; }
+    state.phase   = 'gameover';
+    state.lastSown = -1;
+    state.winner  = state.scores[PLAYER] > state.scores[AI] ? PLAYER
+                  : state.scores[AI] > state.scores[PLAYER] ? AI : 2;
+    if (window.Auth && Auth.isLoggedIn())
+      Auth.recordResult('oware', state.winner === PLAYER ? 'win' : state.winner === 2 ? 'draw' : 'loss');
+    const gp1 = mode === 'vs-human' ? 'Player 1 wins!' : 'you win!';
+    const gp2 = mode === 'vs-human' ? 'Player 2 wins.' : 'opponent wins.';
+    addLog(state.winner === PLAYER ? `Game over - ${gp1}`
+         : state.winner === AI     ? `Game over - ${gp2}`
+                                   : 'Game over - it\'s a draw!');
+    if (vsRoom) syncRoomState();
+    render();
+    return true;
   }
 
   /* ════════════════════════════════════════════════════════════

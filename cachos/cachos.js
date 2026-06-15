@@ -204,7 +204,6 @@
       var fv   = FACE_VALUES[fi];
       var face = document.createElement('div');
       face.className = 'ca-die__face ca-die__face--' + fname + (fv === 1 ? ' ca-die__face--ace' : '');
-      face.setAttribute('aria-label', 'Die showing ' + fv);
       (PIP_CONFIGS[fv] || []).forEach(function (pos) {
         var pip = document.createElement('div');
         pip.className = 'ca-pip ca-pip--' + pos;
@@ -916,9 +915,8 @@
     // Try higher faces
     for (var f = (cb.face !== 1 ? cb.face + 1 : 2); f <= 6; f++) {
       var minQ = getMinQtyAI(f, cb);
-      var myCount = countOwnFace(aiPlayer, f);
       var bluff   = aiPlayer.personality === 'aggressive' ? Math.random() < 0.28 : Math.random() < 0.12;
-      var qty = Math.max(minQ, myCount > 0 ? minQ : minQ) + (bluff ? 1 : 0);
+      var qty = minQ + (bluff ? 1 : 0);
       candidates.push({ quantity: qty, face: f, playerId: aiPlayer.id });
     }
     // Pick lowest-quantity valid candidate

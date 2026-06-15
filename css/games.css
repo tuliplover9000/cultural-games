@@ -2639,7 +2639,7 @@ html[data-theme="dark"] .pt-dice-row:not(:empty) {
   gap: 0;
   justify-content: center;
   font-size: 0.88rem;
-  color: rgba(36,26,18,0.8);
+  color: color-mix(in srgb, var(--pt-ink) 80%, transparent);
   margin: 0.2rem 0 0.6rem;
   flex-wrap: wrap;
   border: 1.5px solid rgba(36,26,18,0.45);
@@ -2668,7 +2668,7 @@ html[data-theme="dark"] .pt-dice-row:not(:empty) {
   max-height: 110px;
   overflow-y: auto;
   font-size: 0.76rem;
-  color: rgba(36,26,18,0.5);
+  color: color-mix(in srgb, var(--pt-ink) 50%, transparent);
   list-style: none;
   padding: 0.4rem 0 0;
   margin: 0;
@@ -2681,7 +2681,7 @@ html[data-theme="dark"] .pt-dice-row:not(:empty) {
 }
 
 .pt-log li:first-child {
-  color: rgba(36,26,18,0.85);
+  color: color-mix(in srgb, var(--pt-ink) 85%, transparent);
 }
 
 /* -- Game over -------------------------------------------------------------- */
