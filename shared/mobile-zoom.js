@@ -168,7 +168,10 @@
     var disp = getComputedStyle(c);
     var sideBySide = disp.display === 'grid' ||
                      (disp.display === 'flex' && disp.flexDirection.indexOf('row') === 0);
-    var nonBoard = sideBySide ? 0 : Math.max(0, c.scrollHeight - canvas.offsetHeight);
+    // In force-landscape there is plenty of spare WIDTH (the long screen dim) and
+    // HEIGHT is the constraint, so give the board the full height and let the HUD
+    // sit beside it / scroll — otherwise the stacked HUD starves the board.
+    var nonBoard = (sideBySide || lsActive()) ? 0 : Math.max(0, c.scrollHeight - canvas.offsetHeight);
     var availBoardH = Math.max(120, (rect.h - nonBoard - EDGE_PAD) * userScale);
     var availBoardW = rect.w * userScale;
 
@@ -203,11 +206,15 @@
     // Safety net: if the container still overflows the viewport (tall HUD, a
     // min-height we kept on canvas containers, late layout), shrink the whole
     // container so nothing is clipped or hidden under the tab bar.
-    var limit = viewportH() - bottomReserve();
-    var cb = c.getBoundingClientRect();
-    var spill = cb.bottom - limit;
-    if (spill > 3 && cb.height > 0) {
-      c.style.zoom = String(Math.max(MIN_SCALE, (cb.height - spill - 4) / cb.height));
+    // SKIPPED under force-landscape: getBoundingClientRect() returns a rotated
+    // box there, so cb.bottom is meaningless and would wrongly shrink the board.
+    if (!lsActive()) {
+      var limit = viewportH() - bottomReserve();
+      var cb = c.getBoundingClientRect();
+      var spill = cb.bottom - limit;
+      if (spill > 3 && cb.height > 0) {
+        c.style.zoom = String(Math.max(MIN_SCALE, (cb.height - spill - 4) / cb.height));
+      }
     }
   }
 
