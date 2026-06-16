@@ -83,8 +83,17 @@
      clipped) once the bar reappeared, and jump while scrolling. Fitting to svh
      means the game always fits no matter the bar state, and never needs to
      re-fit on scroll. Falls back to innerHeight if svh is unsupported. */
+  /* force-landscape.js rotates the page 90°. When active, the game's available
+     "height" is the SHORT screen dimension (window.innerWidth) and its width is
+     the LONG one (window.innerHeight) — see availRect(). Screen-space rects are
+     rotated and unreliable here, so we use window dims + layout-space offsets. */
+  function lsActive() {
+    return document.documentElement.classList.contains('cg-landscape');
+  }
+
   var _svhProbe = null;
   function viewportH() {
+    if (lsActive()) return window.innerWidth;   // short screen dim = landscape height
     if (!_svhProbe && document.body) {
       _svhProbe = document.createElement('div');
       _svhProbe.setAttribute('aria-hidden', 'true');
@@ -103,7 +112,9 @@
     var nav = document.querySelector('.mb-nav-bar, .mb-nav');
     var h = 0;
     if (nav && getComputedStyle(nav).display !== 'none') {
-      h = nav.getBoundingClientRect().height || 0;
+      // offsetHeight is layout-space (rotation-invariant); getBoundingClientRect
+      // would return a rotated box under force-landscape.
+      h = nav.offsetHeight || nav.getBoundingClientRect().height || 0;
     }
     return h + EDGE_PAD;
   }
@@ -115,11 +126,16 @@
     var cs = getComputedStyle(c);
     var padX = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight)  || 0);
     var padY = (parseFloat(cs.paddingTop)  || 0) + (parseFloat(cs.paddingBottom) || 0);
-    var top = Math.max(c.getBoundingClientRect().top, 0);
+    // In force-landscape, getBoundingClientRect().top is rotated/meaningless;
+    // c.offsetTop is layout-space (rotation-invariant) and reserves the header.
+    var top = lsActive() ? Math.max(c.offsetTop || 0, 0)
+                         : Math.max(c.getBoundingClientRect().top, 0);
     // Cap to the viewport: some containers report a clientWidth wider than the
     // screen (content that overflows horizontally), which would size the board
-    // off-screen. The game must never be wider than the viewport.
-    var vw = document.documentElement.clientWidth || window.innerWidth;
+    // off-screen. The game must never be wider than the viewport. In
+    // force-landscape the usable width is the LONG screen dim (innerHeight).
+    var vw = lsActive() ? window.innerHeight
+                        : (document.documentElement.clientWidth || window.innerWidth);
     var usableW = Math.min(c.clientWidth, vw) - padX;
     return {
       w: Math.max(usableW, 80),

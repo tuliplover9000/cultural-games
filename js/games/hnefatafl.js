@@ -303,6 +303,8 @@
 
   // ── Click / touch input ───────────────────────────────────────────────────
   function getCanvasPt(e) {
+    // CGPointer maps correctly whether or not force-landscape rotation is active.
+    if (window.CGPointer) return CGPointer.toCanvas(canvas, e);
     var rect   = canvas.getBoundingClientRect();
     var scaleX = canvas.width  / rect.width;
     var scaleY = canvas.height / rect.height;

@@ -1,0 +1,39 @@
+/* =============================================================================
+   shared/force-landscape.css — rotate the page 90° to force landscape.
+   Activated by force-landscape.js adding .cg-landscape to <html>.
+
+   The body is rotated 90° clockwise and sized to the swapped viewport, so its
+   content fills the screen in landscape. transform-origin:top-left +
+   translateX(100vw) lands the rotated box exactly over the viewport
+   (0,0)-(100vw,100vh). Pointer math for canvas games is handled by
+   shared/pointer.js (CGPointer.toCanvas), which reads the same .cg-landscape
+   flag; DOM hit-testing is handled by the browser automatically.
+   ============================================================================= */
+
+html.cg-landscape {
+  overflow: hidden;
+  /* lock the html box to the real viewport; body is the rotated stage */
+  width: 100%;
+  height: 100%;
+}
+
+html.cg-landscape body {
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* swapped dims: body width = viewport height, body height = viewport width */
+  width: 100vh;
+  height: 100vw;
+  margin: 0;
+  transform-origin: top left;
+  transform: translateX(100vw) rotate(90deg);
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* The old "please rotate your device" prompt is futile once we force landscape
+   (and impossible to satisfy inside IG/TikTok). Suppress it while rotated. */
+html.cg-landscape .mb-land-overlay {
+  display: none !important;
+}
