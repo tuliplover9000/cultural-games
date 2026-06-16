@@ -542,16 +542,19 @@
     setThrowBtnActive(false);
     renderPendingMoves();
 
-    /* Record result */
-    if (window.Auth && window.Auth.recordResult) {
-      window.Auth.recordResult('yut-nori', winner === 'a' ? 'win' : 'loss');
-    }
-
-    /* Achievements */
-    if (window.Achievements) {
-      window.Achievements.evaluate({ gameId: 'yut-nori', result: winner === 'a' ? 'win' : 'loss', isOnline: !!window.currentRoomId });
-      if (state.captureCount[winner] >= 4 && window.Achievements.trigger) {
-        window.Achievements.trigger('yn_clean_sweep');
+    /* Record result + achievements — ONLY in offline play. In room mode the
+       acting client is always on the winning team, so recording 'a'-relative
+       here would log a Team-B winner as a loss and double-record against
+       endscreen.js (which records correctly per-seat, with the roomId). */
+    if (!vsRoom) {
+      if (window.Auth && window.Auth.recordResult) {
+        window.Auth.recordResult('yut-nori', winner === 'a' ? 'win' : 'loss');
+      }
+      if (window.Achievements) {
+        window.Achievements.evaluate({ gameId: 'yut-nori', result: winner === 'a' ? 'win' : 'loss', isOnline: !!window.currentRoomId });
+        if (state.captureCount[winner] >= 4 && window.Achievements.trigger) {
+          window.Achievements.trigger('yn_clean_sweep');
+        }
       }
     }
 

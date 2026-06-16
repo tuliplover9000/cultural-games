@@ -280,9 +280,10 @@
       await sleep(200);
 
       // Continue the chain only if the pit right after the one just captured is
-      // empty and the pit beyond that holds seeds.
+      // empty and the pit beyond that holds seeds. A mandarin square (quan)
+      // always stops the chain — captures can never leap across it.
       const gapIdx = nextIdx(captureIdx);
-      if (state.board[gapIdx] !== 0) break;
+      if (gapIdx === Q1 || gapIdx === Q2 || state.board[gapIdx] !== 0) break;
       captureIdx = nextIdx(gapIdx);
     }
   }

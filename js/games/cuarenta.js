@@ -331,6 +331,9 @@
     if (G.deck.length > 0) {
       dealHand();
       G.turn = 'player';
+      // New hand: clear the last-play marker so a caida cannot reference a card
+      // from the previous hand (caida must compare within one continuous sequence).
+      G.lastPlay = null;
       addLog('system', 'New hand dealt (' + G.deck.length + ' cards left in deck)');
       return false;
     }
