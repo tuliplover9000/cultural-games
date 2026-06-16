@@ -14,7 +14,11 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options        = "DENY"
+    # SAMEORIGIN, not DENY: the room system embeds same-origin game pages in
+    # iframes (js/rooms/ingame.js). DENY blocks ALL framing — including
+    # same-origin — which would break the entire in-room multiplayer view in
+    # production. SAMEORIGIN still blocks external sites from framing the games.
+    X-Frame-Options        = "SAMEORIGIN"
     X-XSS-Protection       = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy        = "strict-origin-when-cross-origin"

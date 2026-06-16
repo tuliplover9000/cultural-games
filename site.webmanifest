@@ -1,0 +1,18 @@
+{
+  "name": "Cultural Games",
+  "short_name": "Cultural Games",
+  "description": "Play traditional board games from world cultures — free, in your browser, no account needed.",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FBF5E6",
+  "theme_color": "#1A0E06",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
