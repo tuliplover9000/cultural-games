@@ -122,7 +122,7 @@
         </aside>
 
         <!-- CENTER: Game browser + suggestions / active game -->
-        <main class="room-panel room-panel--games" aria-label="Game selection">
+        <section class="room-panel room-panel--games" aria-label="Game selection">
           <h2 class="room-panel__title" id="center-panel-title">Pick a Game</h2>
 
           <!-- Lobby state: game selector (hidden while a game is active) -->
@@ -189,7 +189,7 @@
           <!-- Playing state: game iframe(s) fill the center panel -->
           <div id="ingame-boards" class="ingame-boards" hidden></div>
 
-        </main>
+        </section>
 
         <!-- RIGHT: Chat -->
         <aside class="room-panel room-panel--chat" id="lobby-chat-panel" aria-label="Room chat">
@@ -254,7 +254,7 @@
       <div class="ingame-chat-panel" id="ingame-chat-panel" aria-hidden="true">
         <div class="ingame-chat-panel__header">
           <h3>Chat</h3>
-          <button id="ingame-chat-close" class="btn btn-ghost btn-sm">✕</button>
+          <button id="ingame-chat-close" class="btn btn-ghost btn-sm" aria-label="Close chat">✕</button>
         </div>
         <ul id="ingame-chat-list" class="lobby-chat-list" role="log" aria-live="polite"></ul>
         <p id="ingame-chat-empty" class="lobby-chat-empty" hidden>No messages yet.</p>
@@ -317,7 +317,7 @@
   <div id="ingame-rules-panel" class="ingame-rules-panel" aria-label="Game rules" hidden>
     <div class="ingame-rules-panel__header">
       <h3 class="ingame-rules-panel__title" id="ingame-rules-panel-title">How to Play</h3>
-      <button id="ingame-rules-close" class="btn btn-ghost btn-sm">✕</button>
+      <button id="ingame-rules-close" class="btn btn-ghost btn-sm" aria-label="Close rules">✕</button>
     </div>
     <div class="ingame-rules-panel__body" id="ingame-rules-panel-body">
       <p class="ingame-rules-panel__loading">Loading…</p>
@@ -371,11 +371,11 @@
       <div id="assign-mode-section" class="assign-mode-section" hidden>
         <p class="assign-mode-label">Game Mode</p>
         <div class="assign-mode-toggle" role="group" aria-label="Game mode">
-          <button class="assign-mode-btn active" data-mode="normal" id="assign-mode-normal">
+          <button class="assign-mode-btn active" data-mode="normal" id="assign-mode-normal" aria-pressed="true">
             Normal
             <span class="assign-mode-hint">AI fills empty seats</span>
           </button>
-          <button class="assign-mode-btn" data-mode="1v1" id="assign-mode-1v1" hidden>
+          <button class="assign-mode-btn" data-mode="1v1" id="assign-mode-1v1" aria-pressed="false" hidden>
             1v1
             <span class="assign-mode-hint">Modified 2-player rules</span>
           </button>

@@ -296,12 +296,12 @@
               </select>
             </label>
             <label class="tn-form__label">Entry Fee (coins per player)
-              <input type="number" id="tn-entry-fee" min="0" max="10000" value="0" class="tn-form__input" />
-              <span class="tn-form__hint">Set to 0 for a free tournament</span>
+              <input type="number" id="tn-entry-fee" min="0" max="10000" value="0" class="tn-form__input" aria-describedby="tn-entry-fee-hint" />
+              <span class="tn-form__hint" id="tn-entry-fee-hint">Set to 0 for a free tournament</span>
             </label>
             <label class="tn-form__label">Your Prize Contribution (coins)
-              <input type="number" id="tn-host-seed" min="0" value="0" class="tn-form__input" />
-              <p class="tn-form__hint">Minimum: <strong id="tn-min-seed-display">1200</strong> coins (150 × max players)</p>
+              <input type="number" id="tn-host-seed" min="0" value="0" class="tn-form__input" aria-describedby="tn-host-seed-hint" />
+              <p class="tn-form__hint" id="tn-host-seed-hint">Minimum: <strong id="tn-min-seed-display">1200</strong> coins (150 × max players)</p>
             </label>
             <label class="tn-form__label">Match Time Limit
               <select id="tn-match-limit" class="tn-form__select">

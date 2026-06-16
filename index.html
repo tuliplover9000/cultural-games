@@ -125,7 +125,7 @@
 
         <!-- Right: featured game card slider -->
         <div class="hero__visual">
-          <p class="hfc-label">Featured Games</p>
+          <h2 class="hfc-label">Featured Games</h2>
           <div class="hfc-slider" id="hfc-slider" role="region" aria-label="Featured games"></div>
           <div class="hfc-nav">
             <button class="hfc-arrow" id="hfc-prev" aria-label="Previous game">&#8249;</button>
@@ -155,7 +155,7 @@
       </div>
     </div>
 
-    <div class="sp-quote" id="sp-quote" aria-live="polite">
+    <div class="sp-quote" id="sp-quote">
       <blockquote class="sp-quote__text" id="sp-quote-text">
         &ldquo;This game helped me connect with my Vietnamese heritage. I even got my grandma to play with me and I see her on the website by herself.&rdquo;
       </blockquote>
@@ -367,6 +367,7 @@
           var dot = document.createElement('button');
           dot.className = 'hfc-dot' + (i === 0 ? ' hfc-dot--active' : '');
           dot.setAttribute('aria-label', 'Game ' + (i + 1));
+          if (i === 0) { dot.setAttribute('aria-current', 'true'); }
           dot.addEventListener('click', function () { goTo(i); startTimer(); });
           dotsEl.appendChild(dot);
         });
@@ -378,6 +379,8 @@
           cards[current].classList.remove('hfc-card--active');
           dotsEl.querySelectorAll('.hfc-dot').forEach(function (d, i) {
             d.classList.toggle('hfc-dot--active', i === idx);
+            if (i === idx) { d.setAttribute('aria-current', 'true'); }
+            else { d.removeAttribute('aria-current'); }
           });
           current = idx;
           cards[current].classList.add('hfc-card--active');
@@ -573,6 +576,7 @@
           var dot = document.createElement('button');
           dot.className = 'spotlight__dot' + (idx === 0 ? ' spotlight__dot--active' : '');
           dot.setAttribute('aria-label', spot.culture);
+          if (idx === 0) { dot.setAttribute('aria-current', 'true'); }
           (function (i) {
             dot.addEventListener('click', function () { spGoTo(i); spStartTimer(); });
           }(idx));
@@ -586,10 +590,12 @@
           spSlides[current].classList.remove('spotlight__slide--active');
           spSlides[current].setAttribute('aria-hidden', 'true');
           spDots[current].classList.remove('spotlight__dot--active');
+          spDots[current].removeAttribute('aria-current');
           current = idx;
           spSlides[current].classList.add('spotlight__slide--active');
           spSlides[current].setAttribute('aria-hidden', 'false');
           spDots[current].classList.add('spotlight__dot--active');
+          spDots[current].setAttribute('aria-current', 'true');
         }
 
         function spStartTimer() {
@@ -627,6 +633,7 @@
         var dot = document.createElement('button');
         dot.className = 'sp-quote__dot' + (i === 0 ? ' sp-quote__dot--active' : '');
         dot.setAttribute('aria-label', 'Quote ' + (i + 1));
+        if (i === 0) { dot.setAttribute('aria-current', 'true'); }
         dot.addEventListener('click', function () { goTo(i); });
         dotsEl.appendChild(dot);
       });
@@ -648,6 +655,8 @@
           sourceEl.style.opacity = '1';
           dotsEl.querySelectorAll('.sp-quote__dot').forEach(function (d, i) {
             d.classList.toggle('sp-quote__dot--active', i === idx);
+            if (i === idx) { d.setAttribute('aria-current', 'true'); }
+            else { d.removeAttribute('aria-current'); }
           });
         }, 350);
       }

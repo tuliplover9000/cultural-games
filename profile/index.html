@@ -58,7 +58,7 @@
     <!-- Sign-out state -->
     <div id="prof-locked" class="prof-locked">
       <div class="prof-locked__icon" aria-hidden="true">&#128274;</div>
-      <h2>Sign in to view your profile</h2>
+      <h1>Sign in to view your profile</h1>
       <p>Track your wins, unlock achievements, and see your game history.</p>
       <button class="btn btn-primary btn-lg" id="prof-signin-btn">Sign In</button>
       <p style="font-size:var(--text-sm);color:var(--color-text-muted);">
@@ -120,7 +120,7 @@
             <!-- Progress -->
             <div class="ach-progress-row">
               <span class="ach-progress-count" id="ach-count">0 / 0 unlocked</span>
-              <div class="ach-progress-bar-wrap" role="progressbar" aria-label="Achievement progress">
+              <div class="ach-progress-bar-wrap" role="progressbar" aria-label="Achievement progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                 <div class="ach-progress-bar" id="ach-progress-bar" style="width:0%"></div>
               </div>
             </div>

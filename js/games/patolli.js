@@ -713,7 +713,7 @@ if (window.CGTutorial) {
     {
       target:   '#pt-roll-btn',
       title:    'Roll the Beans',
-      body:     'Click Roll to cast the patolli beans. Each marked side that lands face-up advances your piece by one space; rolling all blanks moves you five spaces.',
+      body:     'Click Roll to cast the patolli beans. Each marked side that lands face-up advances your piece by one space; rolling all blanks moves you ten spaces.',
       position: 'top',
     },
     {

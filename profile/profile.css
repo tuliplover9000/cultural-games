@@ -481,6 +481,7 @@
   gap: var(--space-3);
 }
 .prof-locked__icon { font-size: 3.5rem; }
+.prof-locked h1,
 .prof-locked h2    { font-size: var(--text-2xl); }
 .prof-locked p     { color: var(--color-text-muted); max-width: 38ch; }
 

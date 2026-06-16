@@ -164,7 +164,11 @@
     var countEl = document.getElementById('ach-count');
     if (countEl) countEl.textContent = unlocked + ' / ' + total + ' unlocked';
     var bar = document.getElementById('ach-progress-bar');
-    if (bar) setTimeout(function () { bar.style.width = pct + '%'; }, 100);
+    if (bar) {
+      var barWrap = bar.closest('.ach-progress-bar-wrap');
+      if (barWrap) barWrap.setAttribute('aria-valuenow', String(pct));
+      setTimeout(function () { bar.style.width = pct + '%'; }, 100);
+    }
 
     // Apply filters
     var filtered = all.filter(function (a) {
