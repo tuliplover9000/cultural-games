@@ -363,6 +363,8 @@
     if (state.gameOver || state.animating) return;
     if (window.CGTutorial && CGTutorial.isActive) return;
     if (state.aiEnabled && state.currentTurn !== state.humanColor) return;
+    // Online (room) mode: only act on your own seat's turn.
+    if (window.RoomBridge && RoomBridge.isActive() && state.currentTurn !== state.humanColor) return;
     if (!isDarkSq(cell.row, cell.col)) return;
 
     var r = cell.row, c = cell.col;

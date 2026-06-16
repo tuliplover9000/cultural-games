@@ -20,7 +20,7 @@
   padding: var(--space-6) var(--space-4);
   text-align: center;
 }
-.tn-bracket__error { color: #c0392b; }
+.tn-bracket__error { color: var(--color-accent-red); }
 
 /* ── Round column ─────────────────────────────────────────── */
 .tn-bracket__round {

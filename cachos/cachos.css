@@ -611,7 +611,9 @@
   border-radius: var(--radius-md);
   background: var(--color-primary);
   border: 2px solid var(--color-border);
-  color: var(--color-text);
+  /* --color-primary stays dark in both themes, so the label must be a fixed
+     light color (themed --color-text is dark in light mode -> invisible). */
+  color: #F0E6D0;
   font-size: var(--text-xl);
   font-weight: 700;
   cursor: pointer;

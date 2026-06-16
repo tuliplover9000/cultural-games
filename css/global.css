@@ -33,6 +33,14 @@
   --color-border:      #DDD0B5;
   --color-shadow:      rgba(26, 14, 6, 0.14);
 
+  /* Aliases — referenced by tournament.css / bracket.css / browse-panel.css /
+     components.css. They point at themed tokens so they adapt to dark mode
+     automatically. Without these, those `var()` references were undefined and
+     the declarations were dropped (transparent cards, invisible active tab). */
+  --color-accent:       var(--color-accent-gold);
+  --color-bg-card:      var(--color-surface);
+  --color-text-primary: var(--color-text);
+
   /* ── Typography ── */
   --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
   --font-body:    'Outfit', system-ui, -apple-system, sans-serif;
