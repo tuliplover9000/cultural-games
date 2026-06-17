@@ -161,4 +161,11 @@ window.GAMES_DATA = [
     didYouKnow: "At the highest level of Cuarenta, partners play silently across the table — communication is forbidden, and reading your partner's plays becomes a form of intuition.",
     complexity: 4, players: '2 or 4',
   },
+  {
+    key: 'scopa', name: 'Scopa', culture: 'Italy', type: 'Card', maxPlayers: 2,
+    region: 'southern-europe', path: 'games/scopa.html', howToPlay: 'how-to-play/scopa/',
+    description: "Italy's beloved \"sweep\" card game — scopa means \"broom\" — commonly associated with 18th-century Naples and counted among the country's big-three traditional games alongside Briscola and Tressette. Played with a 40-card deck, you capture face-up table cards by matching your played card's value or by taking a set that sums to it, and you score a bonus scopa whenever a capture sweeps the table clean. Much of the drama turns on the contested settebello, the 7 of coins, and the subtle primiera count in which a humble 7 outranks any king.",
+    didYouKnow: "The name means \"broom\" — for sweeping the table clean — and the single most contested card is the settebello, the 7 of coins, worth a guaranteed point and the heart of the primiera.",
+    complexity: 2, players: '2',
+  },
 ];

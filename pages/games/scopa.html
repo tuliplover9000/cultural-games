@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="canonical" href="https://playculturalgames.com/pages/games/scopa.html" />
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VWXNSYLPZE"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VWXNSYLPZE');</script>
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="description" content="Play Scopa online — Italy's beloved 'sweep' card game. Capture cards by matching or summing values, and sweep the table clean. Free to play in your browser." />
+  <meta property="og:title" content="Play Scopa Online Free — Italy's Classic Sweep Card Game | Cultural Games" />
+  <meta property="og:description" content="Play Scopa online — Italy's beloved 'sweep' card game. Capture cards by matching or summing values, and sweep the table clean. Free to play in your browser." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://playculturalgames.com/pages/games/scopa.html" />
+  <meta property="og:image" content="https://playculturalgames.com/assets/og-image.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Play Scopa Online Free — Italy's Classic Sweep Card Game | Cultural Games" />
+  <meta name="twitter:description" content="Play Scopa online — Italy's beloved 'sweep' card game. Capture cards by matching or summing values, and sweep the table clean. Free to play in your browser." />
+  <meta name="twitter:image" content="https://playculturalgames.com/assets/og-image.jpg" />
+  <meta name="keywords" content="scopa online, Italian card game online, play scopa free, scopa rules, settebello, primiera, 40 card game, Italian sweep card game, briscola tressette" />
+  <title>Play Scopa Online Free — Italy's Classic Sweep Card Game | Cultural Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="../../shared/theme.js"></script>
+  <script src="../../js/rooms/room-mode.js"></script>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../shared/theme.css" />
+  <link rel="stylesheet" href="../../css/components.css" />
+  <link rel="stylesheet" href="../../shared/toggle.css" />
+  <link rel="stylesheet" href="../../shared/tutorial.css" />
+  <link rel="stylesheet" href="../../css/auth.css" />
+  <link rel="stylesheet" href="../../css/games.css" />
+  <link rel="stylesheet" href="../../shared/achievements.css" />
+  <link rel="stylesheet" href="../../shared/fullscreen.css" />
+  <link rel="stylesheet" href="../../shared/play-with-friend.css" />
+  <link rel="stylesheet" href="../../shared/mobile.css">
+  <link rel="stylesheet" href="../../shared/mobile-nav.css">
+  <link rel="stylesheet" href="../../shared/cookie-consent.css">
+  <link rel="stylesheet" href="../../shared/mobile-landscape.css">
+  <script src="../../shared/mobile.js"></script>
+  <script src="../../shared/mobile-nav.js"></script>
+  <script src="../../shared/mobile-zoom.js"></script>
+  <script src="../../shared/sfx.js"></script>
+  <script src="../../shared/orientation-lock.js"></script>
+
+  <style>
+    /* ── Scopa — French-deck suit colors (SVG faces self-color; these keep
+           any inherited text in suit color) ── */
+    .sc-card--oros    { color: #C03A2B; }   /* coins / diamonds */
+    .sc-card--copas   { color: #C03A2B; }   /* hearts */
+    .sc-card--espadas { color: #26221E; }   /* spades */
+    .sc-card--bastos  { color: #26221E; }   /* clubs */
+
+    /* Capturable table cards — warm antique-gold outline */
+    .tl-card.sc-capture-hl {
+      outline: 2px solid #C89B3C;
+      box-shadow: 0 0 12px rgba(200, 155, 60, 0.6);
+    }
+    /* Cards the player has tapped to build their capture — teal */
+    .tl-card.sc-selected-table {
+      outline: 3px solid #2E8B7F;
+      box-shadow: 0 0 14px rgba(46, 139, 127, 0.7);
+    }
+
+    /* Table area: allow wrapping for many cards */
+    .sc-table-area {
+      flex-wrap: wrap;
+      min-height: 80px;
+      gap: 4px;
+    }
+
+    /* Table label above play area */
+    .sc-table-label {
+      font-size: var(--text-xs);
+      color: rgba(240,230,208,0.45);
+      text-align: center;
+      margin-bottom: 6px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .sc-table-count { color: rgba(240,230,208,0.25); }
+
+    /* Score strip between table and player hand */
+    .sc-score-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px var(--space-4);
+      font-size: 11px;
+      color: rgba(240,230,208,0.45);
+      border-top: 1px solid rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .sc-score-strip strong { color: var(--color-accent-gold); }
+    .sc-score-mid { color: rgba(240,230,208,0.3); }
+    .sc-score-sub { display:block; font-size:10px; color: rgba(240,230,208,0.3); }
+
+    /* CPU zone / table padding */
+    .sc-cpu-zone { padding-bottom: var(--space-2); }
+    .sc-center   { padding: var(--space-3) var(--space-4); position: relative; }
+
+    /* Deal animation for card backs (AI hand) */
+    .tl-card-back.dealing {
+      animation: tl-deal 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-delay: calc(var(--deal-i, 0) * 70ms);
+    }
+
+    /* Flash message in status bar (Scopa! etc.) */
+    .tl-status-bar.sc-flash {
+      color: #C89B3C;
+      font-weight: 600;
+      animation: sc-flash-in 600ms ease both;
+    }
+    @keyframes sc-flash-in {
+      from { opacity: 0; transform: scale(1.08); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* Big "SCOPA!" shout over the table */
+    .sc-callout {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(28px, 7vw, 56px);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #C89B3C;
+      text-shadow: 0 2px 14px rgba(0,0,0,0.55);
+      pointer-events: none;
+      z-index: 5;
+    }
+    .sc-callout--show { animation: sc-callout-pop 900ms ease both; }
+    @keyframes sc-callout-pop {
+      0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+      25%  { opacity: 1; transform: translate(-50%, -50%) scale(1.12); }
+      75%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+    }
+
+    /* Round-end scoring breakdown table */
+    .sc-breakdown {
+      margin: 0.75rem auto 0;
+      border-collapse: collapse;
+      font-size: var(--text-sm);
+      color: var(--color-text);
+    }
+    .sc-breakdown th, .sc-breakdown td {
+      padding: 4px 14px;
+      text-align: center;
+      border-bottom: 1px solid rgba(127,127,127,0.18);
+    }
+    .sc-breakdown th { color: var(--color-text-muted); font-weight: 600; }
+    .sc-breakdown td:first-child, .sc-breakdown th:first-child { text-align: left; }
+    .sc-breakdown__total td { font-weight: 700; color: var(--color-accent-gold); border-bottom: none; }
+  </style>
+</head>
+<body>
+<button id="tt-trigger" class="tt-trigger" type="button" aria-label="How to play">
+    <span class="tt-trigger__icon" aria-hidden="true">?</span>
+    <span class="tt-trigger__badge" id="tt-badge" hidden>New</span>
+  </button>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../../index.html" class="nav-logo" aria-label="Cultural Games - Home">
+        <img src="../../favicon.svg" width="32" height="32" alt="" class="nav-logo-icon" aria-hidden="true">
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="../browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="../rooms.html"  class="nav-link nav-link--rooms">Rooms</a></li>
+        <li><a href="../about.html"  class="nav-link">About</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+
+      <div class="game-nav-bar">
+        <a href="../browse.html" class="back-link">Back to Browse</a>
+      </div>
+
+      <header class="game-header">
+        <div class="game-header__icon" aria-hidden="true">
+          <img src="../../assets/icons/scopa.svg" alt="" />
+        </div>
+        <h1 class="game-header__title">Scopa</h1>
+        <p class="game-header__origin">
+          Italy &nbsp;&middot;&nbsp;
+          <span class="badge badge--card" style="display:inline-flex;vertical-align:middle;margin-left:4px;">Card</span>
+        </p>
+      </header>
+
+      <!-- Game Container -->
+      <div id="fs-game-wrap" class="fs-game-wrap">
+        <button id="fs-toggle" class="fs-toggle" aria-label="Enter fullscreen" title="Enter fullscreen">
+          <svg class="fs-toggle__icon fs-toggle__icon--enter" viewBox="0 0 18 18" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round">
+            <path d="M1 6V1h5M12 1h5v5M17 12v5h-5M6 17H1v-5"/>
+          </svg>
+          <svg class="fs-toggle__icon fs-toggle__icon--exit" viewBox="0 0 18 18" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" style="display:none">
+            <path d="M6 1v5H1M17 6h-5V1M12 17v-5h5M1 12h5v5"/>
+          </svg>
+        </button>
+        <div class="fs-sr-only" id="fs-announce" aria-live="polite"></div>
+
+        <div class="game-container" id="game-container" aria-label="Game area">
+          <div class="game-placeholder">
+            <div class="game-placeholder__icon" aria-hidden="true">🃏</div>
+            <h3>Loading…</h3>
+            <p>Scopa is loading.</p>
+          </div>
+        </div>
+      </div><!-- /#fs-game-wrap -->
+
+      <!-- Disclaimer -->
+      <div class="game-disclaimer" role="note">
+        🃏 This game uses <strong>virtual cards only</strong>. No real money is involved.
+      </div>
+
+      <!-- Play with a Friend -->
+      <div id="pwf-mount"></div>
+
+      <!-- How to Play -->
+      <details class="accordion" open>
+        <summary class="accordion__trigger">
+          <span class="accordion__title">How to Play</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Scopa is played with a 40-card deck — here, an ordinary poker deck (♥ ♦ ♣ ♠) with the
+            8s, 9s and 10s removed (ranks A, 2–7, J, Q, K). Coins (Denari) are shown as diamonds ♦.
+            Capture values: A = 1 … 7 = 7, <strong>Jack (Fante) = 8, Queen (Cavallo) = 9, King (Re) = 10</strong>.
+            First to <strong>11 points</strong> wins.
+          </p>
+          <ol>
+            <li><strong>Setup:</strong> each player gets 3 cards; 4 cards are dealt face-up to the table (once — the table is never refilled). You play first.</li>
+            <li><strong>Your turn:</strong> select a card, then press <strong>Play Card</strong>.</li>
+            <li><strong>Capturing (compulsory if possible):</strong>
+              <ul>
+                <li><strong>Single match:</strong> if any table card has the same value as your card, you <em>must</em> take a single matching card — this takes precedence over any combination. (If several match, you choose which.)</li>
+                <li><strong>Combination:</strong> only if no single matches, you may capture a set of two or more table cards whose values <em>sum</em> to your card's value.</li>
+                <li>You cannot discard while a capture is available.</li>
+              </ul>
+            </li>
+            <li><strong>A monte:</strong> if no capture is possible, your card stays face-up on the table.</li>
+            <li><strong>Scopa</strong> (+1): clearing the table with a capture is a "sweep" — except on the very last card of the final deal.</li>
+            <li><strong>Re-deal:</strong> when both hands are empty and the stock has cards, deal 3 more each (the table is untouched). Repeat until the deck is exhausted.</li>
+            <li><strong>Last trick:</strong> any cards left on the table go to the player who made the last capture.</li>
+            <li><strong>Scoring each deal</strong> (1 pt each, ties score 0):
+              <ul>
+                <li>Most cards captured (need 21+)</li>
+                <li>Most coins ♦ captured (need 6+)</li>
+                <li><strong>Settebello</strong> — the 7 of coins (7♦)</li>
+                <li><strong>Primiera</strong> — best "prime" total (7s are worth most, then 6s, aces…)</li>
+                <li>+1 per scopa (sweep)</li>
+              </ul>
+            </li>
+          </ol>
+        </div>
+      </details>
+
+      <!-- Cultural Context -->
+      <details class="accordion">
+        <summary class="accordion__trigger">
+          <span class="accordion__title">Cultural Context</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Scopa — the name means "broom," for sweeping the table clean — is one of Italy's most
+            popular traditional card games, commonly associated with 18th-century Naples and counted
+            among the country's "big three" alongside Briscola and Tressette. It is played wherever
+            Italians gather: cafés, kitchens, and seaside towns the length of the peninsula.
+          </p>
+          <p>
+            Traditional Italian decks use regional patterns (Napoletane, Piacentine, and others) with
+            four suits — Denari (Coins), Coppe (Cups), Spade (Swords) and Bastoni (Batons) — and three
+            court cards: Fante (Knave), Cavallo (Horse) and Re (King). This digital version substitutes
+            French-suited art, so Coins appear as diamonds ♦, but the values and rules are unchanged.
+          </p>
+          <p>
+            Much of Scopa's drama centres on the <em>settebello</em>, the 7 of Coins: a single, hotly
+            contested card worth a guaranteed point, and the linchpin of the <em>primiera</em>, the
+            subtle "prime" count in which 7s are worth more than any face card. The game rewards
+            memory, timing, and the patience to set up — or deny — a sweep.
+          </p>
+        </div>
+      </details>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <span class="footer-brand">Cultural Games</span>
+      <p class="footer-mission">Preserving cultural heritage through play - one game at a time.</p>
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links" role="list">
+          <li><a href="../browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="../about.html"  class="footer-link">About</a></li>
+          <li><a href="../terms.html"   class="footer-link">Terms</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy</a></li>
+        </ul>
+      </nav>
+      <div class="footer-divider"></div>
+      <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../../js/utils/helpers.js"></script>
+  <script src="../../js/utils/navigation.js"></script>
+  <script src="../../js/utils/auth.js"></script>
+  <script src="../../shared/achievement-queue.js"></script>
+  <script src="../../shared/achievements.js"></script>
+  <script src="../../js/utils/multiplayer.js"></script>
+  <script src="../../js/rooms/game-bridge.js"></script>
+  <script src="../../shared/tutorial.js"></script>
+  <script src="../../shared/fullscreen.js"></script>
+  <script src="../../js/games/scopa.js"></script>
+  <script src="../../shared/play-with-friend.js"></script>
+  <script>if (window.PWF) PWF.init("scopa");</script>
+  <script src="../../shared/cookie-consent.js"></script>
+</body>
+</html>
