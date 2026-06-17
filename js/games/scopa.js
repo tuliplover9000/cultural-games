@@ -149,6 +149,8 @@
   var anim = {
     dealHand:    false,
     dealAI:      false,
+    newTableIdx: -1,   // index of a card the player just placed (a monte) — animates in
+    aiTableIdx:  -1,   // index of a card the CPU just placed
     flashMsg:    '',
     callout:     '',
   };
@@ -283,7 +285,9 @@
     var name = who === 'player' ? 'You' : 'CPU';
 
     if (lc.sets.length === 0) {
-      // A monte — no capture possible; card stays on the table.
+      // A monte — no capture possible; card stays on the table (animates in).
+      if (who === 'player') anim.newTableIdx = G.table.length;
+      else                  anim.aiTableIdx  = G.table.length;
       G.table.push(card);
       addLog(who, name + ' placed ' + RANK_NAMES[card.rank] + SUIT_SYM[card.suit] + ' on the table');
       return false;       // resolved, advance immediately
@@ -613,13 +617,18 @@
     }
 
     var callout = anim.callout; anim.callout = '';
+    var newPIdx = anim.newTableIdx, aiPIdx = anim.aiTableIdx;
+    anim.newTableIdx = -1; anim.aiTableIdx = -1;
 
     var tableCards = G.table.map(function (card, i) {
       var cls = '';
       if (selSet[i])      cls = 'sc-selected-table';
       else if (hlSet[i])  cls = 'sc-capture-hl';
+      var sty;
+      if (i === newPIdx)     { cls += (cls ? ' ' : '') + 'played-in'; sty = ' style="--from-y:80px;--from-x:0;--play-i:0"'; }
+      else if (i === aiPIdx) { cls += (cls ? ' ' : '') + 'played-in'; sty = ' style="--from-y:-80px;--from-x:0;--play-i:0"'; }
       var data = selecting ? String(i) : undefined;
-      return scCard(card, cls, data);
+      return scCard(card, cls, data, sty);
     }).join('');
 
     var emptyMsg = G.table.length === 0

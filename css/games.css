@@ -6354,3 +6354,145 @@ html[data-theme="light"] .pu-game-wrap {
   .tl-vn .tl-vn-callout__pig  { width: 40px; height: 32px; }
   .tl-vn .tl-vn-callout__text { font-size: clamp(1.4rem, 8.5vw, 2rem); }
 }
+
+/* =============================================================================
+   SCOPA THEME — Italian green felt ("panno verde") + antique gold
+   Scope: EVERY rule lives under .sc-game (rendered only by scopa.js). The shared
+   .tl- rules are untouched; other games do not have .sc-game on their root.
+   Mirrors the completeness of the .cu-game (Cuarenta) theme above.
+============================================================================= */
+
+/* ── The table: deep Italian card-felt with weave, vignette & inset frame ── */
+.sc-game {
+  position: relative;
+  background:
+    radial-gradient(ellipse at 50% 58%, rgba(0,0,0,0) 46%, rgba(4,28,14,0.55) 100%),
+    radial-gradient(ellipse at 50% 12%, rgba(232,200,120,0.10) 0%, rgba(232,200,120,0) 52%),
+    repeating-linear-gradient(90deg,
+      rgba(255,255,255,0.018) 0px, rgba(255,255,255,0.018) 1px,
+      rgba(0,0,0,0) 1px, rgba(0,0,0,0) 5px),
+    repeating-linear-gradient(0deg,
+      rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px,
+      rgba(0,0,0,0) 1px, rgba(0,0,0,0) 5px),
+    linear-gradient(180deg, #1a5a35 0%, #124426 46%, #0a311b 100%);
+  border-top: 2px solid #0a2614;
+  box-shadow: inset 0 0 0 1px rgba(200,155,60,0.18), inset 0 0 40px rgba(0,0,0,0.38);
+}
+
+/* A narrow antique-gold filigree band along the top edge (Italian card ornament) */
+.sc-game::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 8px; pointer-events: none;
+  background:
+    repeating-linear-gradient(90deg,
+      #8a6a22 0px,  #8a6a22 3px,
+      #C89B3C 3px,  #C89B3C 9px,
+      #e8c878 9px,  #e8c878 11px,
+      #C89B3C 11px, #C89B3C 17px,
+      #8a6a22 17px, #8a6a22 20px,
+      #5c3a1a 20px, #5c3a1a 24px);
+  border-bottom: 1px solid rgba(8,30,16,0.7);
+  opacity: 0.92;
+}
+
+/* ── Chrome: cream on deep green, gold accents ── */
+.sc-game .tl-status-bar {
+  background: rgba(6,30,16,0.55);
+  border-color: rgba(200,155,60,0.24);
+  color: #ecdfc0;
+}
+.sc-game .tl-status-bar.your-turn {
+  background: rgba(20,80,46,0.55);
+  border-color: rgba(232,200,120,0.5);
+  color: #f6ecce;
+}
+
+.sc-game .tl-zone__name        { color: rgba(236,223,192,0.5); }
+.sc-game .tl-zone__name.active { color: #ffd75e; }
+.sc-game .tl-zone__count       { color: rgba(236,223,192,0.42); }
+
+.sc-game .tl-play-area {
+  background: rgba(4,26,13,0.34);
+  border-color: rgba(236,223,192,0.12);
+}
+.sc-game .tl-play-area.has-cards { border-color: rgba(200,155,60,0.30); }
+.sc-game .tl-play-area-empty     { color: rgba(236,223,192,0.3); }
+
+.sc-game .tl-hand {
+  background: rgba(4,26,13,0.30);
+  border-color: rgba(236,223,192,0.08);
+}
+
+.sc-game .tl-hint       { color: rgba(236,223,192,0.55); }
+.sc-game .tl-hint.valid { color: #ffd75e; }
+
+.sc-game .tl-btn--play {
+  background: #9a6b1e;
+  border-color: #d6a93f;
+}
+.sc-game .tl-btn--play:not(:disabled):hover {
+  background: #b07f28;
+  border-color: #f0d27a;
+}
+.sc-game .tl-btn--ghost {
+  background: rgba(236,223,192,0.06);
+  color: rgba(236,223,192,0.82);
+  border-color: rgba(236,223,192,0.32);
+}
+.sc-game .tl-btn--ghost:hover {
+  background: rgba(236,223,192,0.12);
+  border-color: rgba(236,223,192,0.6);
+  color: #f6ecce;
+}
+
+.sc-game .tl-log {
+  background: rgba(4,26,13,0.4);
+  border-color: rgba(236,223,192,0.08);
+}
+.sc-game .tl-log__title  { color: rgba(236,223,192,0.42); }
+.sc-game .tl-log__entry  { color: rgba(236,223,192,0.56); border-bottom-color: rgba(236,223,192,0.06); }
+.sc-game .tl-log__entry.you { color: #f0c46a; }
+.sc-game .tl-log__entry.sys { color: rgba(236,223,192,0.42); }
+
+.sc-game .tl-gameover h2 { color: #ffd75e; }
+.sc-game .tl-gameover p  { color: rgba(236,223,192,0.72); }
+.sc-game .sc-win-phrase {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: #f6ecce;
+  margin-bottom: var(--space-2);
+}
+
+/* ── Cards: cream stock; gold selected / hover lift ── */
+.sc-game .tl-card {
+  background: #FDFBF7;
+  border-color: rgba(43,35,32,0.35);
+  box-shadow: 0 3px 8px rgba(2,16,8,0.55);
+  overflow: hidden;
+}
+.sc-game .tl-card svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
+.sc-game .tl-card.selected {
+  border-color: #E8C878;
+  box-shadow: 0 8px 20px rgba(200,155,60,0.5);
+}
+.sc-game .tl-card.clickable:hover:not(.selected) {
+  border-color: #d6a93f;
+  box-shadow: 0 6px 14px rgba(200,155,60,0.35);
+}
+
+/* ── Card backs: green & gold Italian filigree ── */
+.sc-game .tl-card-back {
+  background:
+    repeating-linear-gradient(45deg,
+      rgba(232,200,120,0.20) 0px, rgba(232,200,120,0.20) 1px,
+      rgba(0,0,0,0) 1px, rgba(0,0,0,0) 6px),
+    repeating-linear-gradient(-45deg,
+      rgba(232,200,120,0.20) 0px, rgba(232,200,120,0.20) 1px,
+      rgba(0,0,0,0) 1px, rgba(0,0,0,0) 6px),
+    linear-gradient(150deg, #1f6b40, #114227);
+  border: 1px solid rgba(232,200,120,0.55);
+  box-shadow:
+    inset 0 0 0 2px #15512f,
+    inset 0 0 0 3px rgba(232,200,120,0.5),
+    0 2px 5px rgba(0,0,0,0.5);
+}
