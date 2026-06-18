@@ -50,6 +50,18 @@
     return _adb;
   }
 
+  // Call an atomic-mutator RPC (migration 015). Returns true on success, false
+  // if the function is absent (pre-migration) or errors — callers then fall back
+  // to the legacy read-modify-write path. This lets 015 be applied independently
+  // of the client: before it's applied every call returns false and behaviour is
+  // unchanged; after, the same calls become race-free server-side appends.
+  async function tryRpc(name, args) {
+    try {
+      var r = await authDb().rpc(name, args);
+      return !(r && r.error);
+    } catch (e) { return false; }
+  }
+
   // ── Player identity ────────────────────────────────────────────────────────
   function getPlayerId() {
     // Authenticated users always get their Supabase auth UUID as their room
@@ -301,6 +313,7 @@
 
     setPlayerReady: async function (ready) {
       if (!_room) return;
+      if (await tryRpc('room_set_ready', { p_room: _room.id, p_pid: getPlayerId(), p_ready: !!ready })) return;
       var rdyMap = Object.assign({}, _room.player_ready || {});
       rdyMap[getPlayerId()] = !!ready;
       await authDb().from('rooms').update({ player_ready: rdyMap }).eq('id', _room.id);
@@ -308,13 +321,16 @@
 
     suggestGame: async function (gameKey) {
       if (!_room || !VALID_GAME_KEYS[gameKey]) return;
+      var sugg = { game: gameKey, suggested_by: getPlayerId(), name: getPlayerName(), ts: Date.now() };
+      if (await tryRpc('room_add_suggestion', { p_room: _room.id, p_sugg: sugg })) return;
       var list = (_room.suggestions || []).slice();
-      list.push({ game: gameKey, suggested_by: getPlayerId(), name: getPlayerName(), ts: Date.now() });
+      list.push(sugg);
       await authDb().from('rooms').update({ suggestions: list }).eq('id', _room.id);
     },
 
     removeSuggestion: async function (idx) {
       if (!_room) return;
+      if (await tryRpc('room_remove_suggestion', { p_room: _room.id, p_idx: idx })) return;
       var list = (_room.suggestions || []).slice();
       list.splice(idx, 1);
       await authDb().from('rooms').update({ suggestions: list }).eq('id', _room.id);
@@ -336,8 +352,10 @@
     sendChatMessage: async function (text) {
       if (!_room || !text || !text.trim()) return;
       var safe = text.trim().slice(0, 500); // hard cap — prevents JSONB bloat
+      var msg = { pid: getPlayerId(), name: getPlayerName(), text: safe, ts: Date.now() };
+      if (await tryRpc('room_append_chat', { p_room: _room.id, p_msg: msg })) return;
       var msgs = (_room.chat_messages || []).slice(-199);
-      msgs.push({ pid: getPlayerId(), name: getPlayerName(), text: safe, ts: Date.now() });
+      msgs.push(msg);
       await authDb().from('rooms').update({ chat_messages: msgs }).eq('id', _room.id);
     },
 
