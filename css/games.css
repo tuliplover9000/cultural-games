@@ -6496,3 +6496,336 @@ html[data-theme="light"] .pu-game-wrap {
     inset 0 0 0 3px rgba(232,200,120,0.5),
     0 2px 5px rgba(0,0,0,0.5);
 }
+
+/* =============================================================================
+   DURAK THEME — deep lacquer oxblood + antique-gold khokhloma ornament (Russia)
+   Scope: EVERY rule lives under .dk-game (rendered only by durak.js). The shared
+   .tl- rules are untouched; other games do not have .dk-game on their root.
+   Mirrors the completeness of the .sc-game (Scopa) theme above.
+============================================================================= */
+
+/* ── The table: deep lacquer oxblood with vignette, warm bloom & inset ring ── */
+.dk-game {
+  position: relative;
+  background:
+    radial-gradient(ellipse at 50% 56%, rgba(0,0,0,0) 42%, rgba(8,4,5,0.62) 100%),
+    radial-gradient(ellipse at 50% 14%, rgba(232,200,120,0.12) 0%, rgba(232,200,120,0) 50%),
+    repeating-linear-gradient(0deg,
+      rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px,
+      rgba(0,0,0,0) 1px, rgba(0,0,0,0) 6px),
+    linear-gradient(180deg, #3a141a 0%, #280f12 48%, #1b0c0e 100%);
+  border-top: 2px solid #150708;
+  box-shadow: inset 0 0 0 1px rgba(200,155,60,0.20), inset 0 0 44px rgba(0,0,0,0.46);
+}
+
+/* A gold khokhloma-style filigree band along the top edge */
+.dk-game::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 8px; pointer-events: none;
+  background:
+    repeating-linear-gradient(90deg,
+      #6e4a16 0px,  #6e4a16 3px,
+      #C89B3C 3px,  #C89B3C 9px,
+      #e8c878 9px,  #e8c878 11px,
+      #C89B3C 11px, #C89B3C 17px,
+      #6e4a16 17px, #6e4a16 20px,
+      #4a2410 20px, #4a2410 24px);
+  border-bottom: 1px solid rgba(20,7,8,0.8);
+  opacity: 0.94;
+}
+
+/* A warm gold inset ring just inside the table edge */
+.dk-game::after {
+  content: "";
+  position: absolute; inset: 12px; pointer-events: none;
+  border: 1px solid rgba(200,155,60,0.14);
+  border-radius: var(--radius-lg);
+}
+
+/* ── Chrome: cream/gold on deep lacquer ── */
+.dk-game .tl-status-bar {
+  background: rgba(20,7,8,0.6);
+  border-color: rgba(200,155,60,0.26);
+  color: #ecdfc0;
+}
+.dk-game .tl-status-bar.your-turn {
+  background: rgba(96,22,28,0.55);
+  border-color: rgba(232,200,120,0.5);
+  color: #f6ecce;
+}
+.dk-game .tl-status-bar.dk-flash {
+  color: #e8c878;
+  font-weight: 600;
+  animation: dk-flash-in 600ms ease both;
+}
+@keyframes dk-flash-in {
+  from { opacity: 0; transform: scale(1.06); }
+  to   { opacity: 1; transform: none; }
+}
+
+.dk-game .tl-zone__name        { color: rgba(236,223,192,0.5); }
+.dk-game .tl-zone__name.active { color: #f0c46a; }
+.dk-game .tl-zone__count       { color: rgba(236,223,192,0.42); }
+
+.dk-game .tl-hand {
+  background: rgba(18,7,8,0.34);
+  border-color: rgba(236,223,192,0.08);
+}
+
+.dk-game .tl-hint       { color: rgba(236,223,192,0.55); }
+.dk-game .tl-hint.valid { color: #f0c46a; }
+
+.dk-game .tl-btn--play {
+  background: #9a2630;
+  border-color: #d6a93f;
+}
+.dk-game .tl-btn--play:not(:disabled):hover {
+  background: #b22e3a;
+  border-color: #f0d27a;
+}
+.dk-game .tl-btn--ghost {
+  background: rgba(236,223,192,0.06);
+  color: rgba(236,223,192,0.82);
+  border-color: rgba(236,223,192,0.32);
+}
+.dk-game .tl-btn--ghost:hover {
+  background: rgba(236,223,192,0.12);
+  border-color: rgba(236,223,192,0.6);
+  color: #f6ecce;
+}
+
+.dk-game .tl-log {
+  background: rgba(18,7,8,0.42);
+  border-color: rgba(236,223,192,0.08);
+}
+.dk-game .tl-log__title  { color: rgba(236,223,192,0.42); }
+.dk-game .tl-log__entry  { color: rgba(236,223,192,0.56); border-bottom-color: rgba(236,223,192,0.06); }
+.dk-game .tl-log__entry.you { color: #f0c46a; }
+.dk-game .tl-log__entry.sys { color: rgba(236,223,192,0.42); }
+
+.dk-game .tl-gameover h2 { color: #f0c46a; }
+.dk-game .tl-gameover p  { color: rgba(236,223,192,0.72); }
+.dk-game .dk-win-phrase {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: #f6ecce;
+  margin-bottom: var(--space-2);
+}
+
+/* ── Cards: cream stock; gold selected / hover lift ── */
+.dk-game .tl-card {
+  background: #FDFBF7;
+  border-color: rgba(43,35,32,0.35);
+  box-shadow: 0 3px 8px rgba(8,2,3,0.6);
+  overflow: hidden;
+}
+.dk-game .tl-card svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
+.dk-game .tl-card.selected {
+  border-color: #e8c878;
+  box-shadow: 0 8px 20px rgba(200,155,60,0.55);
+  transform: translateY(-6px);
+}
+.dk-game .tl-card.clickable:hover:not(.selected) {
+  border-color: #d6a93f;
+  box-shadow: 0 6px 14px rgba(200,155,60,0.4);
+}
+
+/* ── Card backs: ornate gold-on-dark-red khokhloma weave ── */
+.dk-game .tl-card-back {
+  background:
+    repeating-linear-gradient(45deg,
+      rgba(232,200,120,0.22) 0px, rgba(232,200,120,0.22) 1px,
+      rgba(0,0,0,0) 1px, rgba(0,0,0,0) 6px),
+    repeating-linear-gradient(-45deg,
+      rgba(232,200,120,0.22) 0px, rgba(232,200,120,0.22) 1px,
+      rgba(0,0,0,0) 1px, rgba(0,0,0,0) 6px),
+    radial-gradient(circle at 50% 50%, rgba(232,200,120,0.18) 0%, rgba(232,200,120,0) 60%),
+    linear-gradient(150deg, #8e2323, #5a1418);
+  border: 1px solid rgba(232,200,120,0.55);
+  box-shadow:
+    inset 0 0 0 2px #6a1a1e,
+    inset 0 0 0 3px rgba(232,200,120,0.5),
+    0 2px 5px rgba(0,0,0,0.55);
+}
+
+/* ── Centre row: deck+trump | battlefield | bita ── */
+.dk-center {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  position: relative;
+}
+
+/* Deck + crosswise trump card display (left) */
+.dk-deckzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.dk-deckzone__label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #e8c878;
+  font-weight: 600;
+}
+.dk-deckzone__cards {
+  position: relative;
+  width: 78px;
+  height: 76px;
+}
+/* The trump card lies crosswise (rotated) behind the stock */
+.dk-trump {
+  position: absolute;
+  left: -4px; top: 22px;
+  transform: rotate(90deg);
+}
+.dk-trump .tl-card { width: 40px; height: 56px; }
+/* The face-down stock sits over the trump card's inner end */
+.dk-deck-stack {
+  position: absolute;
+  left: 22px; top: 2px;
+  width: 48px; height: 68px;
+}
+.dk-deck-back {
+  width: 48px; height: 68px;
+  border-radius: 7px;
+}
+.dk-deck-count {
+  position: absolute;
+  left: 50%; bottom: -4px;
+  transform: translateX(-50%);
+  font-size: 12px;
+  font-weight: 700;
+  color: #1b0c0e;
+  background: #e8c878;
+  border-radius: var(--radius-full);
+  padding: 1px 7px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+.dk-deck-empty {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(236,223,192,0.4);
+  text-align: center;
+  width: 78px;
+  padding-top: 28px;
+}
+
+/* Battlefield: attack/defence pairs (middle) */
+.dk-field-wrap {
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+.dk-battlefield {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px 18px;
+  min-height: 96px;
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  background: rgba(12,5,6,0.4);
+  border: 2px dashed rgba(236,223,192,0.1);
+  border-radius: var(--radius-xl);
+  transition: border-color 300ms;
+}
+.dk-battlefield.has-cards { border-color: rgba(200,155,60,0.3); }
+.dk-battlefield .tl-play-area-empty {
+  color: rgba(236,223,192,0.3);
+  align-self: center;
+}
+
+/* A single attack/defence column. The defence overlaps down-right. */
+.dk-pair {
+  position: relative;
+  width: 48px;
+  height: 84px;
+  cursor: default;
+}
+.dk-pair .dk-atk {
+  position: absolute;
+  left: 0; top: 0;
+}
+.dk-pair .dk-def {
+  position: absolute;
+  left: 16px; top: 18px;
+  z-index: 2;
+  box-shadow: 0 4px 11px rgba(8,2,3,0.7);
+}
+/* Unbeaten attacks glow gold — the defender must answer them. */
+.dk-pair--open .dk-atk {
+  outline: 2px solid #C89B3C;
+  box-shadow: 0 0 12px rgba(200,155,60,0.6);
+  border-radius: 7px;
+}
+/* A legal target while the defender has a card selected. */
+.dk-pair--target { cursor: pointer; }
+.dk-pair--target .dk-atk {
+  outline: 3px solid #6fd28a;
+  box-shadow: 0 0 16px rgba(111,210,138,0.75);
+}
+
+/* Bita / discard indicator (right) */
+.dk-bitazone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.dk-bitazone__label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(236,223,192,0.5);
+  font-weight: 600;
+}
+.dk-bita {
+  width: 48px; height: 68px;
+  border-radius: 7px;
+  border: 1px dashed rgba(236,223,192,0.22);
+  background: rgba(12,5,6,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dk-bita.has-cards {
+  border-style: solid;
+  border-color: rgba(200,155,60,0.4);
+  background:
+    repeating-linear-gradient(45deg,
+      rgba(232,200,120,0.12) 0px, rgba(232,200,120,0.12) 1px,
+      rgba(0,0,0,0) 1px, rgba(0,0,0,0) 6px),
+    rgba(20,7,8,0.7);
+}
+.dk-bita__count {
+  font-size: 14px;
+  font-weight: 700;
+  color: #e8c878;
+}
+
+/* Zones padding */
+.dk-cpu-zone { padding-bottom: var(--space-2); }
+
+/* Card-back deal animation (AI hand) */
+.dk-game .tl-card-back.dealing {
+  animation: tl-deal 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--deal-i, 0) * 70ms);
+}
+
+@media (max-width: 600px) {
+  .dk-center { gap: var(--space-2); padding: var(--space-2); }
+  .dk-deckzone__cards { width: 64px; height: 64px; }
+  .dk-deck-stack { width: 38px; height: 54px; left: 18px; }
+  .dk-deck-back { width: 38px; height: 54px; }
+  .dk-trump .tl-card { width: 32px; height: 46px; }
+  .dk-pair { width: 38px; height: 70px; }
+  .dk-pair .dk-def { left: 13px; top: 15px; }
+  .dk-bita { width: 38px; height: 54px; }
+}

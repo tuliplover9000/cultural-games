@@ -131,6 +131,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://playculturalgames.com/pages/games/durak.html</loc>
+    <lastmod>2026-06-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://playculturalgames.com/cachos/</loc>
     <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
@@ -254,6 +260,12 @@
   </url>
   <url>
     <loc>https://playculturalgames.com/how-to-play/scopa/</loc>
+    <lastmod>2026-06-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://playculturalgames.com/how-to-play/durak/</loc>
     <lastmod>2026-06-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

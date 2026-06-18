@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="canonical" href="https://playculturalgames.com/pages/games/durak.html" />
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VWXNSYLPZE"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VWXNSYLPZE');</script>
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="description" content="Play Durak online — Russia's most popular card game. Attack and defend with a trump suit; don't be the last one stuck with cards. Free to play in your browser." />
+  <meta property="og:title" content="Play Durak Online Free — Russia's Classic Attack-and-Defend Card Game | Cultural Games" />
+  <meta property="og:description" content="Play Durak online — Russia's most popular card game. Attack and defend with a trump suit; the last player holding cards is the 'fool'. Free to play in your browser." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://playculturalgames.com/pages/games/durak.html" />
+  <meta property="og:image" content="https://playculturalgames.com/assets/og-image.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Play Durak Online Free — Russia's Classic Attack-and-Defend Card Game | Cultural Games" />
+  <meta name="twitter:description" content="Play Durak online — Russia's most popular card game. Attack and defend with a trump suit; the last player holding cards is the 'fool'. Free to play in your browser." />
+  <meta name="twitter:image" content="https://playculturalgames.com/assets/og-image.jpg" />
+  <meta name="keywords" content="durak online, Russian card game online, play durak free, durak rules, podkidnoy durak, throw-in durak, trump suit card game, 36 card game, fool card game" />
+  <title>Play Durak Online Free — Russia's Classic Attack-and-Defend Card Game | Cultural Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="../../shared/theme.js"></script>
+  <script src="../../js/rooms/room-mode.js"></script>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../shared/theme.css" />
+  <link rel="stylesheet" href="../../css/components.css" />
+  <link rel="stylesheet" href="../../shared/toggle.css" />
+  <link rel="stylesheet" href="../../shared/tutorial.css" />
+  <link rel="stylesheet" href="../../css/auth.css" />
+  <link rel="stylesheet" href="../../css/games.css" />
+  <link rel="stylesheet" href="../../shared/achievements.css" />
+  <link rel="stylesheet" href="../../shared/fullscreen.css" />
+  <link rel="stylesheet" href="../../shared/play-with-friend.css" />
+  <link rel="stylesheet" href="../../shared/mobile.css">
+  <link rel="stylesheet" href="../../shared/mobile-nav.css">
+  <link rel="stylesheet" href="../../shared/cookie-consent.css">
+  <link rel="stylesheet" href="../../shared/mobile-landscape.css">
+  <script src="../../shared/mobile.js"></script>
+  <script src="../../shared/mobile-nav.js"></script>
+  <script src="../../shared/mobile-zoom.js"></script>
+  <script src="../../shared/sfx.js"></script>
+  <script src="../../shared/orientation-lock.js"></script>
+
+  <style>
+    /* ── Durak — French-deck suit colors (SVG faces self-color; these keep
+           any inherited text in suit color). Most chrome lives in the
+           .dk-game theme block in games.css. ── */
+    .dk-card--oros    { color: #C03A2B; }   /* diamonds */
+    .dk-card--copas   { color: #C03A2B; }   /* hearts */
+    .dk-card--espadas { color: #26221E; }   /* spades */
+    .dk-card--bastos  { color: #26221E; }   /* clubs */
+  </style>
+</head>
+<body>
+<button id="tt-trigger" class="tt-trigger" type="button" aria-label="How to play">
+    <span class="tt-trigger__icon" aria-hidden="true">?</span>
+    <span class="tt-trigger__badge" id="tt-badge" hidden>New</span>
+  </button>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../../index.html" class="nav-logo" aria-label="Cultural Games - Home">
+        <img src="../../favicon.svg" width="32" height="32" alt="" class="nav-logo-icon" aria-hidden="true">
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="../browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="../rooms.html"  class="nav-link nav-link--rooms">Rooms</a></li>
+        <li><a href="../about.html"  class="nav-link">About</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+
+      <div class="game-nav-bar">
+        <a href="../browse.html" class="back-link">Back to Browse</a>
+      </div>
+
+      <header class="game-header">
+        <div class="game-header__icon" aria-hidden="true">
+          <img src="../../assets/icons/durak.svg" alt="" />
+        </div>
+        <h1 class="game-header__title">Durak</h1>
+        <p class="game-header__origin">
+          Russia &nbsp;&middot;&nbsp; Card
+          <span class="badge badge--card" style="display:inline-flex;vertical-align:middle;margin-left:4px;">Card</span>
+        </p>
+      </header>
+
+      <!-- Game Container -->
+      <div id="fs-game-wrap" class="fs-game-wrap">
+        <button id="fs-toggle" class="fs-toggle" aria-label="Enter fullscreen" title="Enter fullscreen">
+          <svg class="fs-toggle__icon fs-toggle__icon--enter" viewBox="0 0 18 18" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round">
+            <path d="M1 6V1h5M12 1h5v5M17 12v5h-5M6 17H1v-5"/>
+          </svg>
+          <svg class="fs-toggle__icon fs-toggle__icon--exit" viewBox="0 0 18 18" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" style="display:none">
+            <path d="M6 1v5H1M17 6h-5V1M12 17v-5h5M1 12h5v5"/>
+          </svg>
+        </button>
+        <div class="fs-sr-only" id="fs-announce" aria-live="polite"></div>
+
+        <div class="game-container" id="game-container" aria-label="Game area">
+          <div class="game-placeholder">
+            <div class="game-placeholder__icon" aria-hidden="true">🃏</div>
+            <h3>Loading…</h3>
+            <p>Durak is loading.</p>
+          </div>
+        </div>
+      </div><!-- /#fs-game-wrap -->
+
+      <!-- Disclaimer -->
+      <div class="game-disclaimer" role="note">
+        🃏 This game uses <strong>virtual cards only</strong>. No real money is involved.
+      </div>
+
+      <!-- Play with a Friend -->
+      <div id="pwf-mount"></div>
+
+      <!-- How to Play -->
+      <details class="accordion" open>
+        <summary class="accordion__trigger">
+          <span class="accordion__title">How to Play</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Durak (<em>"fool"</em>) is played with a <strong>36-card deck</strong> — ranks
+            6, 7, 8, 9, 10, J, Q, K, A in four suits (no 2–5). One suit is the <strong>trump</strong>,
+            and the goal is simple: <strong>don't be the last player left holding cards.</strong>
+            That player is the <em>durak</em> — the fool.
+          </p>
+          <ol>
+            <li><strong>Setup:</strong> each player is dealt 6 cards. The next card is turned face-up — its suit is <strong>trump for the whole game</strong> — and slid under the stock, so it is the <em>last</em> card drawn. The player holding the lowest trump attacks first.</li>
+            <li><strong>Attack:</strong> the attacker plays a card. The defender must <strong>beat</strong> it.</li>
+            <li><strong>Beating:</strong> a card beats another if it is the <strong>same suit and higher</strong>, or if it is <strong>any trump</strong> (a non-trump can never beat a trump; a trump must be beaten by a higher trump).</li>
+            <li><strong>Throw-ins:</strong> once a card is beaten, the attacker may add more attacks — but only of a <strong>rank already on the table</strong>. The defender must beat each. Attacks are capped at <strong>six</strong>, and never more than the defender's hand size at the start of the bout.</li>
+            <li><strong>Taking vs. beating:</strong> if the defender can't (or won't) beat everything, they press <strong>Take</strong> and pick up all the cards on the table. If every attack is beaten, the attacker presses <strong>Done (Бита)</strong> and all those cards are discarded face-down to the <em>bita</em>.</li>
+            <li><strong>Drawing:</strong> after each bout both players refill to 6 from the stock — the <strong>attacker draws first</strong>, then the defender. No one draws once the stock is empty.</li>
+            <li><strong>Roles:</strong> if the defence held, the defender becomes the new attacker; if the defender took the cards, the same attacker attacks again.</li>
+            <li><strong>Winning:</strong> once the deck is empty, a player who runs out of cards is safe. The <strong>last player still holding cards is the durak</strong>. (If both empty their hands on the same bout, it's a draw.)</li>
+          </ol>
+        </div>
+      </details>
+
+      <!-- Cultural Context -->
+      <details class="accordion">
+        <summary class="accordion__trigger">
+          <span class="accordion__title">Cultural Context</span>
+          <span class="accordion__icon" aria-hidden="true">▼</span>
+        </summary>
+        <div class="accordion__body">
+          <p>
+            Durak — the name means <em>"fool"</em> — is, by common account, the most popular card game
+            in Russia and across much of the former Soviet Union. It is an old folk game with no recorded
+            inventor or date, learned at kitchen tables and passed between generations rather than published.
+            Unusually, there is no winner's prize: play simply continues until one player is left holding
+            cards, and that player carries the gentle, sociable shame of being the <em>durak</em>.
+          </p>
+          <p>
+            The form shown here is the standard <strong>podkidnoy</strong> ("throw-in") durak, in which
+            other players may pile extra cards of matching rank onto the defender. A common variant,
+            <strong>perevodnoy</strong> ("transfer"), lets the defender bounce the attack onto the next
+            player by adding a card of the same rank; it is not implemented in this version.
+          </p>
+          <p>
+            Much of Durak's character comes from its trump suit and its tension between attack and
+            defence: when to spend a precious trump, when to take cards and rebuild, and how to read an
+            opponent's reserves as the stock dwindles. The cards are learned in minutes; the judgement
+            takes much longer.
+          </p>
+        </div>
+      </details>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <span class="footer-brand">Cultural Games</span>
+      <p class="footer-mission">Preserving cultural heritage through play - one game at a time.</p>
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links" role="list">
+          <li><a href="../browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="../about.html"  class="footer-link">About</a></li>
+          <li><a href="../terms.html"   class="footer-link">Terms</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy</a></li>
+        </ul>
+      </nav>
+      <div class="footer-divider"></div>
+      <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../../js/utils/helpers.js"></script>
+  <script src="../../js/utils/navigation.js"></script>
+  <script src="../../js/utils/auth.js"></script>
+  <script src="../../shared/achievement-queue.js"></script>
+  <script src="../../shared/achievements.js"></script>
+  <script src="../../js/utils/multiplayer.js"></script>
+  <script src="../../js/rooms/game-bridge.js"></script>
+  <script src="../../shared/tutorial.js"></script>
+  <script src="../../shared/fullscreen.js"></script>
+  <script src="../../js/games/durak.js"></script>
+  <script src="../../shared/play-with-friend.js"></script>
+  <script>if (window.PWF) PWF.init("durak");</script>
+  <script src="../../shared/cookie-consent.js"></script>
+</body>
+</html>

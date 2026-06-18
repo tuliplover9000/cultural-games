@@ -168,4 +168,11 @@ window.GAMES_DATA = [
     didYouKnow: "The name means \"broom\" — for sweeping the table clean — and the single most contested card is the settebello, the 7 of coins, worth a guaranteed point and the heart of the primiera.",
     complexity: 2, players: '2',
   },
+  {
+    key: 'durak', name: 'Durak', culture: 'Russia', type: 'Card', maxPlayers: 2,
+    region: 'eastern-europe', path: 'games/durak.html', howToPlay: 'how-to-play/durak/',
+    description: "Durak is, by common account, the most popular card game in Russia and across the former Soviet Union — the name means \"fool\" and refers to the loser, the last player left holding cards. Played with a 36-card deck and a trump suit, it is an attack-and-defend game: the attacker throws cards down, the defender must beat them or pick them all up. An old folk game with no recorded inventor, it is played at kitchen tables wherever Russian is spoken.",
+    didYouKnow: "By tradition there is no winner's prize in Durak — only the gentle, sociable shame of being left holding the cards as the \"durak.\"",
+    complexity: 3, players: '2',
+  },
 ];
