@@ -252,7 +252,7 @@
       state.phase  = 'gameover';
       state.winner = state.scores[PLAYER] > state.scores[AI] ? PLAYER
                    : state.scores[AI] > state.scores[PLAYER] ? AI : 2;
-      if (window.Auth && Auth.isLoggedIn())
+      if (!vsRoom && window.Auth && Auth.isLoggedIn())
         Auth.recordResult('oware', state.winner === PLAYER ? 'win' : state.winner === 2 ? 'draw' : 'loss');
       const gp1 = mode === 'vs-human' ? 'Player 1 wins!' : 'you win!';
       const gp2 = mode === 'vs-human' ? 'Player 2 wins.' : 'opponent wins.';
@@ -337,7 +337,7 @@
     state.lastSown = -1;
     state.winner  = state.scores[PLAYER] > state.scores[AI] ? PLAYER
                   : state.scores[AI] > state.scores[PLAYER] ? AI : 2;
-    if (window.Auth && Auth.isLoggedIn())
+    if (!vsRoom && window.Auth && Auth.isLoggedIn())
       Auth.recordResult('oware', state.winner === PLAYER ? 'win' : state.winner === 2 ? 'draw' : 'loss');
     const gp1 = mode === 'vs-human' ? 'Player 1 wins!' : 'you win!';
     const gp2 = mode === 'vs-human' ? 'Player 2 wins.' : 'opponent wins.';
@@ -584,7 +584,7 @@
       log:        (state.log || []).slice(),
       last_actor: 'room:' + myRoomSeat,
     });
-    if (state.winner >= 0) RoomBridge.reportWin(state.winner === 2 ? 0 : state.winner);
+    if (state.winner >= 0) RoomBridge.reportWin(state.winner === 2 ? -1 : state.winner);
   }
 
   function receiveRoomState(data) {

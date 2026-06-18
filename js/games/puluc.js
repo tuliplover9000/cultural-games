@@ -222,7 +222,7 @@
 
   function gameOver(winner) {
     state.phase = 'over';
-    if (window.Auth && Auth.isLoggedIn())
+    if (!vsRoom && window.Auth && Auth.isLoggedIn())
       Auth.recordResult('puluc', winner === PLAYER ? 'win' : 'loss');
     elRollBtn.disabled = true;
     setStatus('🎉 ' + playerName(winner) + ' wins! All ' + PIECES + ' sticks reached the field.');
@@ -453,6 +453,7 @@
       addLog(playerName(curTurn) + ' has no valid moves.');
       setStatus(playerName(curTurn) + ' has no valid moves - passing turn.');
       render();
+      if (vsRoom) syncRoomState();
       setTimeout(function () { endTurn(curTurn); }, 800);
       return;
     }
@@ -461,6 +462,7 @@
     state.phase       = 'choosingMove';
     elRollBtn.disabled = true;
     render();   // re-render with highlights
+    if (vsRoom) syncRoomState();
 
     // Auto-move if only one option
     if (moves.length === 1) {
@@ -539,6 +541,7 @@
       turn:     state.turn,
       phase:    state.phase,
       roll:     state.roll,
+      stickDetail: (state.stickDetail || []).slice(),
       log:      (state.log || []).slice(),
       last_actor: 'room:' + myRoomSeat,
     });
@@ -552,6 +555,7 @@
     if (data.offBoard) state.offBoard = { 0: data.offBoard[0], 1: data.offBoard[1] };
     if (data.captured) state.captured = { 0: data.captured[0], 1: data.captured[1] };
     state.animating = false;
+    renderDice();
     render();
   }
 

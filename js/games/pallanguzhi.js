@@ -449,7 +449,16 @@
 
   // ── Turn management ───────────────────────────────────────────────────
   async function endTurn() {
-    if (checkGameOver()) return;
+    if (checkGameOver()) {
+      if (vsRoom && window.RoomBridge) {
+        RoomBridge.sendState(Object.assign({}, state, {
+          cups:   state.cups.slice(),
+          last_actor: 'room:' + myRoomSeat,
+        }));
+        RoomBridge.reportWin(state.stores[PLAYER] >= state.stores[AI] ? 0 : 1);
+      }
+      return;
+    }
 
     state.turn  = 1 - state.turn;
     state.phase = 'idle';
@@ -489,7 +498,7 @@
     for (var b = 7; b < 14; b++) { state.stores[PLAYER] += state.cups[b]; state.cups[b] = 0; }
 
     state.phase = 'over';
-    if (window.Auth && Auth.isLoggedIn()) {
+    if (!vsRoom && window.Auth && Auth.isLoggedIn()) {
       var _ps = state.stores[PLAYER], _as = state.stores[AI];
       Auth.recordResult('pallanguzhi', _ps > _as ? 'win' : _as > _ps ? 'loss' : 'draw');
     }

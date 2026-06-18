@@ -987,14 +987,17 @@
     if (ended) { showOverlay(winner); return; }
     ended = true;
     var outcome = (winner === myPlayer) ? 'win' : 'loss';
-    if (window.Achievements) {
+    // Spectators run endGame too (via receiveRoomState) but must never record
+    // achievements/results for a game they only watched.
+    var spectating = !!(vsRoom && window.RoomBridge && RoomBridge.isSpectator && RoomBridge.isSpectator());
+    if (window.Achievements && !spectating) {
       // se_no_water_win: won without any of the local player's pieces drowning.
       if (outcome === 'win' && !localWater) Achievements.checkAction('se_no_water_win');
     }
     if (vsRoom) {
       // Room stats/coins flow through RoomBridge.reportWin (fired in syncRoom);
       // only evaluate online achievements locally here.
-      if (window.Achievements) {
+      if (window.Achievements && !spectating) {
         Achievements.evaluate({
           gameId: 'senet', result: outcome, isOnline: true,
           isHost: !!(window.RoomBridge && RoomBridge.isRoomHost && RoomBridge.isRoomHost()),

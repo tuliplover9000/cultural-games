@@ -38,6 +38,7 @@
     moveCount: 0,
     humanColor: BLACK,
     aiEnabled: true,
+    vsRoom: false,
     animating: false,
     cellSize: 80,
     padX: PADDING,
@@ -46,6 +47,9 @@
 
   var canvas, ctx;
   var aiTimeout = null;
+  var vsRoom = false;       // true only inside an active room (multiplayer)
+  var roomSeat = -1;        // this client's 0-based seat in room mode
+  var winReported = false;  // guard so reportWin fires at most once
 
   // ── Colour bridge (window.CGTheme) — "oasis bazaar" palette ────────
   // Light = warm midday teahouse; dark = lamplit evening (dimmer wood,
@@ -297,9 +301,10 @@
   }
 
   function finalizeTurn() {
-    if (checkWinConditions()) return;
+    if (checkWinConditions()) { syncRoom(); return; }
     state.currentTurn = getOpponent(state.currentTurn);
     render();
+    syncRoom();
     if (state.aiEnabled && state.currentTurn !== state.humanColor) {
       aiTimeout = setTimeout(aiTakeTurn, 400 + Math.floor(Math.random() * 300));
     }
@@ -475,7 +480,7 @@
 
     // Hover ghost piece + saffron legal-spot ring
     if (state.hoverCell && !state.gameOver && !state.animating) {
-      if (!state.aiEnabled || state.currentTurn === state.humanColor) {
+      if (!(state.aiEnabled || state.vsRoom) || state.currentTurn === state.humanColor) {
         var hxy = getCellXY(state.hoverCell.row, state.hoverCell.col);
         ctx.fillStyle = state.currentTurn === BLACK ? C.p1Ghost : C.p2Ghost;
         ctx.beginPath();
@@ -492,7 +497,7 @@
 
   function renderSquareIndicators() {
     if (!state.hoverCell) return;
-    if (state.aiEnabled && state.currentTurn !== state.humanColor) return;
+    if ((state.aiEnabled || state.vsRoom) && state.currentTurn !== state.humanColor) return;
     if (state.gameOver || state.animating) return;
 
     var row = state.hoverCell.row;
@@ -685,7 +690,8 @@
     if (state.gameOver) return;
     if (state.animating) return;
     if (window.CGTutorial && CGTutorial.isActive) return;
-    if (state.aiEnabled && state.currentTurn !== state.humanColor) return;
+    if (window.RoomBridge && RoomBridge.isActive() && RoomBridge.isSpectator()) return;
+    if ((state.aiEnabled || state.vsRoom) && state.currentTurn !== state.humanColor) return;
 
     var row = cell.row, col = cell.col;
     if (!isValidPlacement(row, col)) return;
@@ -775,12 +781,27 @@
       moveCount: state.moveCount,
       gameOver: state.gameOver,
       winner: state.winner,
-      selectedCell: state.selectedCell
+      selectedCell: state.selectedCell,
+      last_actor: 'room:' + roomSeat
     };
+  }
+
+  // Broadcast the current authoritative state to the opponent and, on
+  // game-over, report the global winner to the room (once). No-op in
+  // solo/vs-AI so solo behaviour is byte-for-byte unchanged.
+  function syncRoom() {
+    if (!vsRoom || !window.RoomBridge) return;
+    RoomBridge.sendState(stateForSync());
+    if (state.gameOver && state.winner !== 'draw' && !winReported && RoomBridge.reportWin) {
+      winReported = true;
+      RoomBridge.reportWin(state.winner === BLACK ? 0 : 1);
+    }
   }
 
   function applyRemoteState(blob) {
     if (!blob) return;
+    // Ignore our own echo relayed back by the parent.
+    if (blob.last_actor === 'room:' + roomSeat) return;
     state.board          = blob.board || state.board;
     state.currentTurn    = blob.currentTurn   !== undefined ? blob.currentTurn   : state.currentTurn;
     state.blackRemaining = blob.blackRemaining !== undefined ? blob.blackRemaining: state.blackRemaining;
@@ -848,8 +869,10 @@
     // Room/multiplayer setup
     if (window.RoomBridge && RoomBridge.isActive()) {
       state.aiEnabled  = false;
-      var seat = RoomBridge.getSeat();
-      state.humanColor = (seat === 0) ? BLACK : WHITE;
+      vsRoom           = true;
+      state.vsRoom     = true;
+      roomSeat         = RoomBridge.getSeat();
+      state.humanColor = (roomSeat === 0) ? BLACK : WHITE;
       RoomBridge.onState(function(blob) { applyRemoteState(blob); });
     }
 
@@ -874,6 +897,7 @@
     if (resignBtn) resignBtn.addEventListener('click', function() {
       if (state.gameOver) return;
       triggerGameOver(getOpponent(state.humanColor));
+      syncRoom();
     });
 
     // Play Again from overlay
@@ -887,7 +911,7 @@
 
     // Canvas hover
     canvas.addEventListener('mousemove', function(e) {
-      if (state.gameOver || state.animating || (state.aiEnabled && state.currentTurn !== state.humanColor)) {
+      if (state.gameOver || state.animating || ((state.aiEnabled || state.vsRoom) && state.currentTurn !== state.humanColor)) {
         if (state.hoverCell) { state.hoverCell = null; render(); }
         return;
       }

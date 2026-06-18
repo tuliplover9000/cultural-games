@@ -817,7 +817,7 @@
       log:               state.log.slice(),
       last_actor:        'room:' + myRoomSeat,
     });
-    if (state.gameOver) {
+    if (state.gameOver && state.winner !== 'draw') {
       RoomBridge.reportWin(state.winner === 'attacker' ? 0 : 1);
     }
   }
@@ -898,6 +898,7 @@
 
     var aiToggle = document.getElementById('ht-ai-toggle');
     aiToggle.addEventListener('change', function() {
+      if (vsRoom) return;
       vsAI = this.checked;
       if (vsAI && !state.gameOver && state.turn !== humanSide) {
         aiTimer = setTimeout(aiTakeTurn, 400);
@@ -906,6 +907,7 @@
 
     var sideToggle = document.getElementById('ht-side-toggle');
     sideToggle.addEventListener('change', function() {
+      if (vsRoom) return;
       humanSide = this.value === 'defender' ? DEFENDER : ATTACKER;
       newGame();
     });

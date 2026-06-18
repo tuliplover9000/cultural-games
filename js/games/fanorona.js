@@ -568,8 +568,9 @@
       setStatus(winner === BLACK ? '🎉 You win! All white pieces captured.' : 'AI wins. Better luck next time!');
       updateScore();
       render();
-      if (window.Auth && Auth.isLoggedIn())
+      if (!vsRoom && window.Auth && Auth.isLoggedIn())
         Auth.recordResult('fanorona', winner === BLACK ? 'win' : 'loss');
+      if (vsRoom) syncRoomState();
       return;
     }
 
@@ -586,8 +587,9 @@
         ? '🎉 You win! Opponent has no legal moves.'
         : 'AI wins. You have no legal moves.');
       updateScore(); render();
-      if (window.Auth && Auth.isLoggedIn())
+      if (!vsRoom && window.Auth && Auth.isLoggedIn())
         Auth.recordResult('fanorona', blockWinner === BLACK ? 'win' : 'loss');
+      if (vsRoom) syncRoomState();
       return;
     }
 
@@ -729,6 +731,7 @@
   }
 
   function undo() {
+    if (vsRoom) return;
     if (!state.history.length) return;
     if (state.capturing !== null) return;
     if (state.aiThinking) return;
@@ -807,6 +810,7 @@
     if (myRoomSeat === 0) syncRoomState();
     // Hide non-room UI
     if (elNewBtn)   elNewBtn.style.display   = 'none';
+    if (elUndoBtn)  elUndoBtn.style.display  = 'none';
     if (elAiToggle) {
       var aiToggleWrap = elAiToggle.closest('.fn-ai-toggle-wrap') || elAiToggle.parentElement;
       if (aiToggleWrap) aiToggleWrap.style.display = 'none';

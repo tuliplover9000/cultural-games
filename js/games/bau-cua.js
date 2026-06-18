@@ -44,8 +44,9 @@
   }
 
   // ── Room / group-play mode ──────────────────────────────────────────────────
-  var vsRoom   = !!(window.RoomBridge && window.RoomBridge.isActive());
-  var roomHost = vsRoom && window.RoomBridge.isRoomHost();
+  var vsRoom      = !!(window.RoomBridge && window.RoomBridge.isActive());
+  var roomHost    = vsRoom && window.RoomBridge.isRoomHost();
+  var isSpectator = vsRoom && window.RoomBridge.isSpectator();
 
   // Per-seat color palette (up to 8 players)
   var SEAT_COLORS = ['#60a5fa','#4ade80','#f472b6','#fb923c','#a78bfa','#34d399','#fbbf24','#f87171'];
@@ -534,7 +535,7 @@
 
   function showGameOver() {
     state.phase = 'gameover';
-    if (window.Auth && Auth.isLoggedIn()) Auth.recordResult('bau-cua', 'loss');
+    if (!vsRoom && window.Auth && Auth.isLoggedIn()) Auth.recordResult('bau-cua', 'loss');
     refresh();
     els.gameover.classList.add('visible');
 
@@ -616,8 +617,9 @@
     els.betInput.max = state.wallet;
 
     if (vsRoom && !roomHost) {
-      // Guests: freely bet during betting phase; host controls rolling
-      var canBet = (state.phase === 'betting');
+      // Guests: freely bet during betting phase; host controls rolling.
+      // Spectators (seat -1) can never bet.
+      var canBet = (state.phase === 'betting') && !isSpectator;
       els.clearBtn.disabled  = !(canBet && hasBets);
       els.betInput.disabled  = !canBet;
       document.querySelectorAll('.bc-quick').forEach(function(b){ b.disabled = !canBet; });
@@ -642,7 +644,8 @@
   function initRoomMode() {
     mySeat = RoomBridge.getSeat();
     myName = getLocalPlayerName();
-    peerStates[mySeat] = { name: myName, wallet: state.wallet, bets: {} };
+    // Only real players (seat >= 0) get a leaderboard row; spectators are seat -1.
+    if (mySeat >= 0) peerStates[mySeat] = { name: myName, wallet: state.wallet, bets: {} };
 
     // Insert leaderboard panel after the wallet bar
     var bcGame    = document.getElementById('bc-game');
@@ -666,7 +669,7 @@
 
     RoomBridge.onState(receiveGroupState);
     renderLeaderboard();
-    syncMyState();
+    if (!isSpectator) syncMyState();
   }
 
   function syncMyState() {
@@ -674,10 +677,14 @@
     peerStates[mySeat] = { name: myName, wallet: state.wallet, bets: Object.assign({}, state.bets) };
     clearTimeout(_syncTimer);
     _syncTimer = setTimeout(function() {
-      // Send ALL known player states so every recipient can update their full leaderboard.
+      // Each seat is the sole authority over its own row; broadcasting only our
+      // own seat avoids clobbering third-party seats with our stale snapshot.
       RoomBridge.sendState({
-        type:    'groupstate',
-        players: peerStates,
+        type:   'playerstate',
+        seat:   mySeat,
+        name:   myName,
+        wallet: state.wallet,
+        bets:   Object.assign({}, state.bets),
       });
     }, 150);
   }

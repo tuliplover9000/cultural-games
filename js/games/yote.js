@@ -459,18 +459,22 @@
     ctx.fillStyle = 'rgba(0,0,0,0.28)';
     ctx.fill();
     // body
+    // Colour by LOCAL perspective: the local player (myPlayer) always renders
+    // in the light "you" style, the opponent in the terracotta style. In solo
+    // myPlayer===P1, so this is byte-identical to the old who===P1 branching.
+    var mine = who === myPlayer;
     ctx.beginPath();
     ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fillStyle = who === P1 ? C.p1 : C.p2;
+    ctx.fillStyle = mine ? C.p1 : C.p2;
     ctx.fill();
     // ring
     ctx.lineWidth = Math.max(1.4, r * 0.14);
-    ctx.strokeStyle = who === P1 ? C.p1Ring : C.p2Ring;
+    ctx.strokeStyle = mine ? C.p1Ring : C.p2Ring;
     ctx.stroke();
     // shine
     ctx.beginPath();
     ctx.arc(x - r * 0.3, y - r * 0.3, r * 0.4, 0, Math.PI * 2);
-    ctx.fillStyle = who === P1 ? C.p1Shine : C.p2Shine;
+    ctx.fillStyle = mine ? C.p1Shine : C.p2Shine;
     ctx.fill();
   }
 
@@ -507,9 +511,11 @@
 
     var active = state ? state.turn : P1;
 
-    // Opponent tray (top = P2), your tray (bottom = P1)
-    drawTray(geo.topTrayY, P2, state ? state.hand.P2 : HAND_START, active === P2);
-    drawTray(geo.botTrayY, P1, state ? state.hand.P1 : HAND_START, active === P1);
+    // Trays drawn by LOCAL perspective: opponent on top, you on the bottom.
+    // In solo myPlayer===P1 so me=P1/opp=P2 -> identical to the old layout.
+    var me = myPlayer, opp = other(myPlayer);
+    drawTray(geo.topTrayY, opp, state ? state.hand[opp] : HAND_START, active === opp);
+    drawTray(geo.botTrayY, me,  state ? state.hand[me]  : HAND_START, active === me);
 
     // Board body
     var cs = geo.cell;

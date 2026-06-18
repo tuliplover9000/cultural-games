@@ -1414,6 +1414,10 @@
 
     /* If room mode: subscribe to peer state, learn our seat, disable AI. */
     initRoomMode();
+    /* Rematch/new game: re-arm the win guard so the next game can report. */
+    if (vsRoom && window.RoomBridge && window.RoomBridge.resetWin) window.RoomBridge.resetWin();
+    /* Broadcast the fresh authoritative state from ANY seat so rematch syncs. */
+    if (vsRoom) broadcastState();
 
     updateHUD();
     setStatus('\ud300 A\uc758 \ucc28\ub840 (Team A\u2019s turn) \u2014 \uc737 \ub358\uc9c0\uae30!');

@@ -300,7 +300,7 @@
 
       state.phase = 'gameover';
       addLog(0, 'Game over! Seeds claimed.');
-      if (window.Auth && Auth.isLoggedIn()) {
+      if (!vsRoom && window.Auth && Auth.isLoggedIn()) {
         var _oaq = state.board[Q1] > state.board[Q2] ? 'win' : state.board[Q2] > state.board[Q1] ? 'loss' : 'draw';
         Auth.recordResult('o-an-quan', _oaq);
       }

@@ -404,6 +404,7 @@
     state.phase = 'choosingPiece';
     elRollBtn.disabled = true;
     setStatus('Choose a piece to move ' + result.value + ' space' + (result.value !== 1 ? 's' : '') + '.');
+    if (vsRoom) syncRoomState();
     render();
   }
 
@@ -454,6 +455,7 @@
           : 'Roll again!';
         setStatus(rollAgainMsg);
         render();
+        if (vsRoom) syncRoomState();
       } else {
         endTurn(curTurn);
       }
@@ -558,7 +560,7 @@
 
   function gameOver(winner) {
     state.phase = 'over';
-    if (window.Auth && Auth.isLoggedIn())
+    if (!vsRoom && window.Auth && Auth.isLoggedIn())
       Auth.recordResult('patolli', winner === PLAYER ? 'win' : 'loss');
     elRollBtn.disabled = true;
     var p1coins = state.coins[PLAYER], p2coins = state.coins[AI];

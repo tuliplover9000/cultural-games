@@ -305,6 +305,12 @@
     state.validMoves = [];
     state.selected  = null;
 
+    if (window.RoomBridge && RoomBridge.isActive()) {
+      RoomBridge.sendState(stateForSync());
+      var winnerSeat = (winner === 'draw') ? null : (winner === LIGHT ? 0 : 1);
+      if (winnerSeat !== null) RoomBridge.reportWin(winnerSeat);
+    }
+
     if (state.aiEnabled) {
       if (winner === state.humanColor) {
         if (window.Auth) Auth.recordResult('filipino-dama', 'win');
@@ -337,7 +343,7 @@
     render();
 
     if (window.RoomBridge && RoomBridge.isActive()) {
-      RoomBridge.pushState(stateForSync());
+      RoomBridge.sendState(stateForSync());
     }
 
     if (state.aiEnabled && state.currentTurn !== state.humanColor) {

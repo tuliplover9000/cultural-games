@@ -1297,6 +1297,7 @@
       state.gameOver = true;
       state.winner = win;
       setStatus((win.charAt(0).toUpperCase() + win.slice(1)) + ' wins!');
+      sendRoomWin();
       redraw();
       updateHUD();
       recordSoloResult(win);
@@ -1410,6 +1411,7 @@
           state.gameOver = true;
           state.winner = win;
           setStatus((win.charAt(0).toUpperCase() + win.slice(1)) + ' wins!');
+          sendRoomWin();
           redraw();
           updateHUD();
           recordSoloResult(win);
@@ -1508,6 +1510,7 @@
 
   function newGame() {
     if (!state) return;
+    if (window.RoomBridge && RoomBridge.isActive()) RoomBridge.resetWin();
     var mode = state.mode;
     state = freshState(mode, true);
     _hoveredPiece = null;
@@ -1534,7 +1537,19 @@
       mode:          state.mode,
       players:       state.players,
       teams:         state.teams,
+      last_actor:    'room:' + state.humanSeat,
     });
+  }
+
+  // Report the GLOBAL winning seat to the room (so the endscreen fires and the
+  // result is recorded per-seat). Maps state.winner, not the local perspective.
+  function sendRoomWin() {
+    if (!RoomBridge || !RoomBridge.isActive()) return;
+    if (!state || !state.winner) return;
+    var winnerSeat;
+    if (state.mode === '2player') winnerSeat = PLAYER_SEAT[state.winner]; // 'yellow'→0, 'red'→1
+    else winnerSeat = (state.winner === 'Team A') ? 0 : 1;                // representative human seat
+    RoomBridge.reportWin(winnerSeat);
   }
 
   function initRoomMode() {
@@ -1568,6 +1583,8 @@
     // Receive state updates from other players and apply them locally
     RoomBridge.onState(function (blob) {
       if (!blob || !blob.pieces || !state) return;
+      // Ignore our own echoed broadcast (the bridge round-trips state back to us)
+      if (blob.last_actor === 'room:' + state.humanSeat) return;
       var humanSeat = state.humanSeat;
       var aiSeats   = state.aiSeats;
 

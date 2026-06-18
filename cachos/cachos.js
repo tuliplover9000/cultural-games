@@ -44,6 +44,7 @@
 
   // Room-mode vars
   var _inRoom                = false;
+  var _isAiDriver            = true;   // in room mode, only one client (the host) drives AI seats
   var _roomGen               = '0';
   var _roomInstance          = '0';
   var _lastAppliedVersion    = -1;
@@ -528,9 +529,12 @@
     } else if (player.isRemote) {
       setControlsEnabled(false);
       // Wait - their iframe will broadcast next state
-    } else {
+    } else if (!_inRoom || _isAiDriver) {
       setControlsEnabled(false);
       aiTimeout = setTimeout(function () { aiTakeTurn(player); }, 800 + Math.random() * 700);
+    } else {
+      // Room mode, non-driver: wait for the driver's broadcast (treat like a remote seat)
+      setControlsEnabled(false);
     }
   }
 
@@ -556,6 +560,8 @@
       })
     };
     window.parent.postMessage({ type: 'game-sync', instance: _roomInstance, gen: _roomGen, data: data }, '*');
+    // Seed the applied version so our own echo (bounced back via Supabase/parent) is suppressed.
+    _lastAppliedVersion = stateVersion(state);
   }
 
   function continueTurnFromState() {
@@ -566,9 +572,12 @@
       setControlsEnabled(true);
     } else if (player.isRemote) {
       setControlsEnabled(false);
-    } else {
+    } else if (!_inRoom || _isAiDriver) {
       setControlsEnabled(false);
       aiTimeout = setTimeout(function () { aiTakeTurn(player); }, 800 + Math.random() * 700);
+    } else {
+      // Room mode, non-driver: wait for the driver's broadcast (treat like a remote seat)
+      setControlsEnabled(false);
     }
   }
 
@@ -579,6 +588,9 @@
     // Buffer incoming state during reveal animations
     if (state.animating) { _pendingRoomState = data; return; }
     _lastAppliedVersion = ver;
+
+    // Non-driver clients must never run AI locally; clear any transient schedule.
+    if (_inRoom && !_isAiDriver) clearTimeout(aiTimeout);
 
     var prevPhase = state.phase;
     var prevRound = state.round;
@@ -1087,6 +1099,8 @@
       var aiSeatsStr  = urlParams.get('aiSeats') || '';
       var aiSeatsArr  = aiSeatsStr ? aiSeatsStr.split(',').map(Number).filter(function (n) { return !isNaN(n); }) : [];
       _inRoom         = true;
+      // Exactly one client (the room host) drives the AI seats; non-hosts wait for its broadcast.
+      _isAiDriver     = (urlParams.get('isHost') === '1');
       _roomGen        = urlParams.get('gen') || '0';
       _roomInstance   = urlParams.get('instance') || '0';
 

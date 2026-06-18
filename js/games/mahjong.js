@@ -1251,7 +1251,7 @@
 
     addLog(`${seatName(winningSeat)} wins! ${fan} fan → ${payout}pt.`);
 
-    if (window.Auth && Auth.isLoggedIn())
+    if (!vsOnline && window.Auth && Auth.isLoggedIn())
       Auth.recordResult('mahjong', winningSeat === myPS() ? 'win' : 'loss');
 
     // Build the hand display for overlay
@@ -1300,6 +1300,7 @@
     state.overlayContent = `<h2>Game Over</h2><p>Final Scores</p>${rows}`;
     addLog('Game over!');
     render();
+    if (vsOnline) syncOnlineState();
   }
 
   /* ── AI logic ────────────────────────────────────────────────────────────── */

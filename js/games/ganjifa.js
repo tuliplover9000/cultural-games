@@ -840,6 +840,7 @@
   }
 
   function drawNorthHand() {
+    if (mySeat === 'north') return;
     var hand = state.hands.north;
     var n = hand.length;
     if (n === 0) return;
@@ -853,6 +854,7 @@
   }
 
   function drawWestHand() {
+    if (mySeat === 'west') return;
     var hand = state.hands.west;
     var n = hand.length;
     if (n === 0) return;
@@ -866,6 +868,7 @@
   }
 
   function drawEastHand() {
+    if (mySeat === 'east') return;
     var hand = state.hands.east;
     var n = hand.length;
     if (n === 0) return;
@@ -964,11 +967,11 @@
   }
 
   function drawSouthHand() {
-    var hand = state.hands.south;
+    var hand = state.hands[mySeat];
     var n = hand.length;
     if (n === 0) return;
 
-    var isTurn = state.currentTurn === 'south' && state.phase === 'play';
+    var isTurn = state.currentTurn === mySeat && state.phase === 'play';
     var legal  = getLegalPlays(hand, state.ledSuit, isTurn && !state.ledSuit);
     var legalSet = {};
     legal.forEach(function (c) { legalSet[c.id] = true; });
@@ -1361,7 +1364,7 @@
   }
 
   function getCardFromClick(x, y) {
-    var hand = state.hands.south;
+    var hand = state.hands[mySeat];
     var n    = hand.length;
     // Check front row (row2) first, then back row (row1), each in reverse render order
     var row2 = hand.slice(Math.ceil(n / 2));
@@ -1441,7 +1444,7 @@
 
     state.currentTrick[seat] = card;
 
-    if (seat === 'south') {
+    if (seat === mySeat) {
       state.selectedCard = null;
     }
 
