@@ -36,6 +36,20 @@
     return s;
   }
 
+  // Apply a freshly-seen room row: fire onReady once on start, deliver state.
+  function handleRoomRow(u) {
+    if (!u) return;
+    _room = u;
+    if (u.status === 'playing' && _cbs.onReady) {
+      var cb = _cbs.onReady;
+      _cbs.onReady = null; // fire once
+      cb(u);
+    }
+    if (u.board_state && _cbs.onRemoteState) {
+      _cbs.onRemoteState(u.board_state);
+    }
+  }
+
   function subscribe(roomId) {
     if (_channel) db().removeChannel(_channel);
     _channel = db()
@@ -44,18 +58,19 @@
         event: 'UPDATE', schema: 'public', table: 'rooms',
         filter: 'id=eq.' + roomId,
       }, function (payload) {
-        var u = payload.new;
-        _room = u;
-        if (u.status === 'playing' && _cbs.onReady) {
-          var cb = _cbs.onReady;
-          _cbs.onReady = null; // fire once
-          cb(u);
-        }
-        if (u.board_state && _cbs.onRemoteState) {
-          _cbs.onRemoteState(u.board_state);
-        }
+        handleRoomRow(payload.new);
       })
-      .subscribe();
+      .subscribe(function (status) {
+        // Realtime only delivers UPDATEs that land AFTER the channel is live.
+        // Re-fetch once on SUBSCRIBED to catch a guest who joined (or a state
+        // push that arrived) during the subscribe gap — otherwise the host
+        // can sit forever waiting for an onReady that already fired.
+        if (status === 'SUBSCRIBED') {
+          db().from('rooms').select().eq('id', roomId).single().then(function (res) {
+            if (!res.error) handleRoomRow(res.data);
+          });
+        }
+      });
   }
 
   window.Multiplayer = {
@@ -99,15 +114,23 @@
         if (_cbs.onError) _cbs.onError('That room has already started or ended. Ask the host to create a new room.');
         return null;
       }
+      // Claim the seat atomically: only flip to 'playing' if the row is STILL
+      // 'waiting'. Without this guard two guests racing the same code both pass
+      // the check above and both "join" (TOCTOU) — the second silently
+      // overwrites the first's guest_id. Detect 0 rows updated = lost the race.
       var res2 = await db().from('rooms')
         .update({ guest_id: getPlayerId(), status: 'playing' })
-        .eq('id', res.data[0].id).select().single();
+        .eq('id', res.data[0].id).eq('status', 'waiting').select();
       if (res2.error) {
         if (_cbs.onError) _cbs.onError('Failed to join. Try again.');
         return null;
       }
-      _room = res2.data;
-      subscribe(res2.data.id);
+      if (!res2.data || !res2.data.length) {
+        if (_cbs.onError) _cbs.onError('That room was just taken. Ask the host to create a new room.');
+        return null;
+      }
+      _room = res2.data[0];
+      subscribe(res2.data[0].id);
       return { code: code, role: 'guest' };
     },
 

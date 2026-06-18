@@ -279,9 +279,15 @@
       var pid  = getPlayerId();
       var ids  = (_room.player_ids || []).filter(function(p){ return p !== pid; });
 
-      // If host leaves, close the room; otherwise just remove from list
+      // If the host leaves: hand the room to the next remaining player (host
+      // migration) rather than killing an in-progress room for everyone. Only
+      // close the room when the host was the last one out.
       if (_room.host_id === pid) {
-        await authDb().from('rooms').update({ status: 'finished' }).eq('id', _room.id);
+        if (ids.length > 0) {
+          await authDb().from('rooms').update({ host_id: ids[0], player_ids: ids }).eq('id', _room.id);
+        } else {
+          await authDb().from('rooms').update({ status: 'finished', player_ids: ids }).eq('id', _room.id);
+        }
       } else {
         await authDb().from('rooms').update({ player_ids: ids }).eq('id', _room.id);
       }
