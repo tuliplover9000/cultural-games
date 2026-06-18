@@ -59,6 +59,10 @@
       ]},
     { key: 'cuarenta',    name: 'Cuarenta',            culture: 'Ecuador',               type: 'Card',     icon: '🃏', svg: '../assets/icons/cuarenta.svg',   badge: 'Card · 2P',    maxPlayers: 2,
       rules: ['Play one card per turn. Match a table card\'s rank to capture (pairs), or form a run of 3+ consecutive ranks (sequence).', '¡Caída! bonus: counter your opponent\'s rank immediately after they capture. ¡Mesa! bonus: clear the table entirely.', 'Score Ases, 7 de Oros, Sota de Oros, and Mesa bonuses. First to 40 pts wins.'] },
+    { key: 'scopa',       name: 'Scopa',               culture: 'Italian',               type: 'Card',     icon: '🃏', svg: '../assets/icons/scopa.svg',     badge: 'Card · 2P',    maxPlayers: 2,
+      rules: ['Play one card per turn. Capture table cards whose values sum to your card\'s value (A=1 … 7=7, Fante=8, Cavallo=9, Re=10).', 'Clear the whole table to score a Scopa (sweep). The last player to capture takes any cards left on the table.', 'Score points for most cards, most coins (oros), the Sette Bello (7 of oros), best Primiera, plus each Scopa. First to 11 wins.'] },
+    { key: 'durak',       name: 'Durak',               culture: 'Russian',               type: 'Card',     icon: '🃏', svg: '../assets/icons/durak.svg',     badge: 'Card · 2P',    maxPlayers: 2,
+      rules: ['One suit is trump. The attacker plays a card; the defender must beat it with a higher card of the same suit, or any trump.', 'Attackers may pile on more cards matching ranks already in play. The defender beats them all or Takes the cards into hand.', 'Draw back up to six after each bout. Shed all your cards — the last player still holding cards is the durak (fool).'] },
     { key: 'yut-nori',   name: 'Yut Nori',            culture: 'Korean',                type: 'Board',    icon: '🎴', svg: '../assets/icons/yut-nori.svg',   badge: 'Race Game',    maxPlayers: 4,
       seatRoles: ['team-a-1', 'team-a-2', 'team-b-1', 'team-b-2'],
       gameModes: [

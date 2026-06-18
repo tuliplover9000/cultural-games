@@ -145,6 +145,18 @@
   var aiThinkTimer = null;
   var gameLog      = [];
 
+  // ── Multiplayer (RoomBridge) flags ──────────────────────────────────────────
+  // vsRoom: this instance is running inside a room iframe (remote human opponent).
+  // mySeat: 0 or 1 — this client's seat. The render is ALWAYS local-perspective
+  // (my hand at the bottom = G.playerHand, opponent = G.aiHand, turn 'player' =
+  // my turn). Seat↔perspective mapping happens only at the sync boundary in
+  // serializeState()/receiveRoomState(). Seat 0 seeds the opening deal.
+  var vsRoom      = false;
+  var mySeat      = 0;
+  var vsAI        = true;     // local AI scheduler runs only when true (never in a room)
+  var winReported = false;
+  var roomEnded   = false;    // online end-screen achievements fired once guard
+
   // Animation / flash flags — consumed once per render
   var anim = {
     dealHand:    false,
@@ -171,6 +183,41 @@
   // ── New game ─────────────────────────────────────────────────────────────────
   function newGame() {
     if (aiThinkTimer) { clearTimeout(aiThinkTimer); aiThinkTimer = null; }
+    winReported = false;
+    roomEnded   = false;
+    if (vsRoom && window.RoomBridge && RoomBridge.resetWin) RoomBridge.resetWin();
+
+    // In a room, only seat 0 builds the authoritative deck + opening deal and
+    // broadcasts it; seat 1 waits for that first state (renders an empty board
+    // until receiveRoomState() arrives). Out of a room this is the normal solo
+    // deal — byte-for-byte the same behaviour as before.
+    if (vsRoom && mySeat !== 0) {
+      gameLog = [];
+      G = {
+        deck:         [],
+        playerHand:   [],
+        aiHand:       [],
+        table:        [],
+        playerPile:   [],
+        aiPile:       [],
+        playerScope:  0,
+        aiScope:      0,
+        playerScore:  0,
+        aiScore:      0,
+        lastCapturer: null,
+        turn:         'ai',         // seat 0 (opponent) opens
+        phase:        'playing',
+        pendingCard:  null,
+        pendingOptions: [],
+        pendingWho:   null,
+        selectedTable: [],
+        roundBreakdown: null,
+      };
+      selectedIdx = null;
+      render();
+      return;
+    }
+
     gameLog = [];
     G = {
       deck:         [],
@@ -188,6 +235,7 @@
       phase:        'playing',      // 'playing' | 'select-capture' | 'round-end' | 'game-end'
       pendingCard:  null,
       pendingOptions: [],
+      pendingWho:   null,
       selectedTable: [],
       roundBreakdown: null,
     };
@@ -195,6 +243,7 @@
     startDeal();
     addLog('system', 'New game — first to ' + TARGET + ' wins.');
     render();
+    if (vsRoom) syncRoom();   // seat 0 broadcasts the opening deal
   }
 
   // Begin a fresh deal: build/shuffle deck, 3+3 to hands, 4 to the table (once).
@@ -210,6 +259,7 @@
     G.lastCapturer = null;
     G.pendingCard  = null;
     G.pendingOptions = [];
+    G.pendingWho   = null;
     G.selectedTable  = [];
     G.roundBreakdown = null;
     for (var i = 0; i < 4 && G.deck.length; i++) G.table.push(G.deck.pop());
@@ -273,7 +323,7 @@
       anim.callout  = 'SCOPA!';
       anim.flashMsg = '✦ Scopa! ' + name + ' swept the table (+1)';
       addLog(who, '✦ Scopa! ' + name + ' swept the table (+1)');
-      if (who === 'player' && window.Achievements) Achievements.track('sc_scopa');
+      if (who === 'player' && !vsRoom && window.Achievements) Achievements.track('sc_scopa');
     }
   }
 
@@ -306,6 +356,7 @@
     // Human must choose via the select-capture UI.
     G.pendingCard    = card;
     G.pendingOptions = lc.sets;
+    G.pendingWho     = 'player';
     G.selectedTable  = [];
     G.phase          = 'select-capture';
     return true;          // pending — do not advance
@@ -318,6 +369,7 @@
     applyCapture('player', card, sel.slice());
     G.pendingCard    = null;
     G.pendingOptions = [];
+    G.pendingWho     = null;
     G.selectedTable  = [];
     G.phase          = 'playing';
     afterPlay('player');
@@ -328,10 +380,12 @@
     if (G.pendingCard) G.playerHand.push(G.pendingCard);
     G.pendingCard    = null;
     G.pendingOptions = [];
+    G.pendingWho     = null;
     G.selectedTable  = [];
     G.phase          = 'playing';
     selectedIdx      = null;
     render();
+    if (vsRoom) syncRoom();   // broadcast the un-pend so the opponent's view clears
   }
 
   // Does selectedTable exactly equal one of the legal option sets?
@@ -359,6 +413,7 @@
         G.turn = who === 'player' ? 'ai' : 'player';
         addLog('system', 'Dealt 3 more cards each (' + G.deck.length + ' left in stock).');
         render();
+        if (vsRoom) { syncRoom(); return; }
         if (G.turn === 'ai') scheduleAI();
         return;
       }
@@ -368,6 +423,7 @@
     // Switch turn.
     G.turn = who === 'player' ? 'ai' : 'player';
     render();
+    if (vsRoom) { syncRoom(); return; }   // broadcast; the remote human replies
     if (G.turn === 'ai') scheduleAI();
   }
 
@@ -387,6 +443,7 @@
     if (G.playerScore >= TARGET || G.aiScore >= TARGET) G.phase = 'game-end';
     else G.phase = 'round-end';
     render();
+    if (vsRoom) syncRoom();   // broadcast deal-end / game-end state
   }
 
   // ── Scoring ───────────────────────────────────────────────────────────────────
@@ -497,6 +554,7 @@
   }
 
   function scheduleAI() {
+    if (vsRoom || !vsAI) return;   // in a room the opponent is a remote human
     if (aiThinkTimer) clearTimeout(aiThinkTimer);
     aiThinkTimer = setTimeout(function () {
       aiThinkTimer = null;
@@ -513,7 +571,11 @@
     var idx = selectedIdx;
     selectedIdx = null;
     var pending = playCard('player', idx);
-    if (pending) { render(); return; }     // select-capture UI
+    if (pending) {                          // select-capture UI
+      render();
+      if (vsRoom) syncRoom();   // broadcast the pending choice so the opponent sees it locked to me
+      return;
+    }
     afterPlay('player');
   }
 
@@ -539,7 +601,12 @@
   }
 
   function buildUI() {
-    var selecting = G.phase === 'select-capture';
+    // select-capture is interactive ONLY for the player who is actually choosing.
+    // Solo: always me. Room: only when the pending choice belongs to my seat
+    // (G.pendingWho === 'player'); the opponent's choice renders as a wait state.
+    var mySelect  = G.phase === 'select-capture' && (!vsRoom || G.pendingWho !== 'ai');
+    var oppSelect = G.phase === 'select-capture' && vsRoom && G.pendingWho === 'ai';
+    var selecting = mySelect;
     var isYT = G.turn === 'player' && G.phase === 'playing';
     var card = (!selecting && selectedIdx !== null) ? G.playerHand[selectedIdx] : null;
     var lc   = card ? legalCaptures(card) : null;
@@ -549,6 +616,8 @@
     var statusInner, statusCls = '';
     if (flash) {
       statusInner = flash; statusCls = 'sc-flash';
+    } else if (oppSelect) {
+      statusInner = 'Opponent is choosing a capture <span class="tl-thinking-dots"><span></span><span></span><span></span></span>';
     } else if (selecting) {
       var v = value(G.pendingCard.rank);
       var singleOpts = G.pendingOptions.length && G.pendingOptions[0].length === 1;
@@ -557,7 +626,8 @@
         : 'Choose table cards that sum to ' + v;
       statusCls = 'your-turn';
     } else if (G.turn === 'ai') {
-      statusInner = 'CPU is thinking <span class="tl-thinking-dots"><span></span><span></span><span></span></span>';
+      statusInner = (vsRoom ? 'Opponent is playing ' : 'CPU is thinking ')
+        + '<span class="tl-thinking-dots"><span></span><span></span><span></span></span>';
     } else if (isYT) {
       if (selectedIdx !== null) {
         if (lc && lc.forced)            statusInner = 'Must take the ' + RANK_NAMES[card.rank] + (lc.sets.length > 1 ? ' — pick which' : '');
@@ -583,7 +653,8 @@
 
   function cpuZone() {
     var n      = G.aiHand.length;
-    var active = G.turn === 'ai' && G.phase === 'playing';
+    var active = G.turn === 'ai' && (G.phase === 'playing'
+      || (vsRoom && G.phase === 'select-capture' && G.pendingWho === 'ai'));
     var dealing = anim.dealAI; anim.dealAI = false;
     var backs = '';
     for (var i = 0; i < n; i++) {
@@ -591,8 +662,9 @@
       var dsty = dealing ? ' style="--deal-i:' + i + '"' : '';
       backs += '<div class="tl-card-back tl-card-back--sm' + dcls + '"' + dsty + '></div>';
     }
+    var oppName = vsRoom ? 'Opponent' : 'CPU';
     return '<div class="tl-zone tl-zone--top sc-cpu-zone">'
-      + '<div class="tl-zone__name' + (active ? ' active' : '') + '">CPU' + (active ? ' ●' : '') + '</div>'
+      + '<div class="tl-zone__name' + (active ? ' active' : '') + '">' + oppName + (active ? ' ●' : '') + '</div>'
       + '<div class="tl-opp-cards--top">' + backs + '</div>'
       + '<div class="tl-zone__count">' + n + ' card' + (n !== 1 ? 's' : '')
       + ' &nbsp;·&nbsp; ' + G.aiPile.length + ' captured &nbsp;·&nbsp; ' + G.aiScope + ' scopa</div>'
@@ -763,9 +835,10 @@
       + '</div>';
     var btn = el.querySelector('#sc-next-round');
     if (btn) btn.addEventListener('click', function () {
-      startDeal();
+      startDeal();              // keeps cumulative scores; reshuffles + re-deals
       addLog('system', 'New deal.');
       render();
+      if (vsRoom) syncRoom();   // broadcast the fresh deal to the opponent
     });
   }
 
@@ -799,6 +872,15 @@
       + '</div>';
     var btn = el.querySelector('#sc-play-again');
     if (btn) btn.addEventListener('click', newGame);
+
+    if (vsRoom) {
+      // Room mode: stats/coins are recorded per-seat by the room end-screen via
+      // RoomBridge.reportWin (fired in syncRoom). Do NOT record solo achievements
+      // or win counts here — that would double-record. Report the outcome once.
+      reportRoomWin();
+      return;
+    }
+
     if (won && window.Achievements) {
       Achievements.track('sc_first_win');
       Achievements.increment('scopa', 'wins');
@@ -817,7 +899,11 @@
 
   // ── Wire events ──────────────────────────────────────────────────────────────
   function wireEvents(el) {
-    if (G.phase === 'select-capture') {
+    // Only the player who is actually choosing gets the select-capture controls.
+    // In a room, the opponent's select-capture renders as a non-interactive wait
+    // state (no data-idx cards, no buttons), so fall through to normal wiring.
+    var mySelect = G.phase === 'select-capture' && (!vsRoom || G.pendingWho !== 'ai');
+    if (mySelect) {
       // Tap table cards (that are part of an option) to build the selection.
       el.querySelectorAll('.sc-table-area .tl-card[data-idx]').forEach(function (card) {
         card.addEventListener('click', function () {
@@ -858,8 +944,190 @@
     });
   }
 
+  // ── Multiplayer (RoomBridge) ─────────────────────────────────────────────────
+  // The blob is SEAT-relative (hands/piles/scope/scores by seat, turnSeat, who-by-
+  // seat) so both clients share one canonical state regardless of which seat each
+  // sits in. The local G is always PERSPECTIVE-relative (playerHand = mine, turn
+  // 'player' = mine). serializeState() maps perspective→seat on send;
+  // receiveRoomState() maps seat→perspective on receive. The full state (both
+  // hands, table, deck, piles, scope counts, scores, turn, phase, lastCapturer,
+  // and the interactive select-capture choice) travels in the blob — same accepted
+  // trust model as truc/cuarenta (each client only renders its own hand; the
+  // opponent's hand is shown face-down).
+  //
+  // SELECT-CAPTURE: pendingCard/pendingOptions/selectedTable reference objects in
+  // G.table, so they are serialized as TABLE INDICES (resolved back to refs on
+  // receive). pendingSeat names the acting seat; only that seat's client renders
+  // the interactive chooser — the other client shows a "choosing capture" wait.
+
+  // 'player'/'ai' refer to the LOCAL perspective. Convert local side ↔ absolute seat.
+  function sideToSeat(who) { return who === 'player' ? mySeat : (1 - mySeat); }
+  function seatToSide(seat) { return seat === mySeat ? 'player' : 'ai'; }
+
+  // Map a list of table-card object refs → their indices in G.table.
+  function tableIdxOf(cards) {
+    return (cards || []).map(function (c) { return G.table.indexOf(c); })
+                        .filter(function (i) { return i !== -1; });
+  }
+  // Map a list of indices → object refs from a (freshly rebuilt) table array.
+  function idxToCards(idxs, table) {
+    return (idxs || []).map(function (i) { return table[i]; })
+                       .filter(function (c) { return !!c; });
+  }
+
+  function serializeState() {
+    var hands = [];
+    hands[mySeat]     = G.playerHand.slice();
+    hands[1 - mySeat] = G.aiHand.slice();
+    var piles = [];
+    piles[mySeat]     = G.playerPile.slice();
+    piles[1 - mySeat] = G.aiPile.slice();
+    var scope = [];
+    scope[mySeat]     = G.playerScope;
+    scope[1 - mySeat] = G.aiScope;
+    var scores = [];
+    scores[mySeat]     = G.playerScore;
+    scores[1 - mySeat] = G.aiScore;
+
+    // select-capture choice (by table index), gated to its acting seat.
+    var pendingCard    = G.pendingCard ? { suit: G.pendingCard.suit, rank: G.pendingCard.rank } : null;
+    var pendingOptions = (G.pendingOptions || []).map(tableIdxOf);
+    var selectedTable  = tableIdxOf(G.selectedTable);
+    var pendingSeat    = G.pendingWho ? sideToSeat(G.pendingWho) : null;
+
+    // roundBreakdown carries the deal scorecard by seat (p0/p1) for the end screen.
+    var rb = null;
+    if (G.roundBreakdown) {
+      rb = {};
+      rb[mySeat]     = G.roundBreakdown.player;
+      rb[1 - mySeat] = G.roundBreakdown.ai;
+    }
+
+    return {
+      hands:        hands,                                  // by seat
+      deck:         G.deck.slice(),
+      table:        G.table.slice(),
+      piles:        piles,                                  // by seat
+      scope:        scope,                                  // by seat
+      scores:       scores,                                 // by seat
+      turnSeat:     G.turn === 'player' ? mySeat : (1 - mySeat),
+      phase:        G.phase,
+      lastCapturerSeat: G.lastCapturer ? sideToSeat(G.lastCapturer) : null,
+      pendingCard:  pendingCard,
+      pendingOptions: pendingOptions,
+      selectedTable:  selectedTable,
+      pendingSeat:    pendingSeat,
+      roundBreakdown: rb,
+      last_actor:   'room:' + mySeat,
+    };
+  }
+
+  function syncRoom() {
+    if (!vsRoom || !window.RoomBridge) return;
+    RoomBridge.sendState(serializeState());
+    reportRoomWin();
+  }
+
+  // Compute the room outcome from current G (used by all callers).
+  function roomOutcome() {
+    var p = G.playerScore, a = G.aiScore;
+    var draw = (p >= TARGET && a >= TARGET && p === a);
+    var iWon;
+    if (p >= TARGET && a >= TARGET) iWon = p > a;
+    else iWon = p >= TARGET;
+    return { draw: draw, iWon: iWon };
+  }
+
+  // Report the winner's SEAT exactly once (room end-screen records per-seat). On a
+  // genuine draw, report this seat as a fallback winner so the room can settle.
+  function reportRoomWin() {
+    if (!vsRoom || !window.RoomBridge || winReported) return;
+    if (G.phase !== 'game-end') return;
+    winReported = true;
+    var o = roomOutcome();
+    var winnerSeat = o.draw ? mySeat : (o.iWon ? mySeat : (1 - mySeat));
+    RoomBridge.reportWin(winnerSeat);
+    if (!roomEnded) {
+      roomEnded = true;
+      if (window.Achievements && Achievements.evaluate) {
+        Achievements.evaluate({
+          gameId: 'scopa',
+          result: o.draw ? 'draw' : (o.iWon ? 'win' : 'loss'),
+          isOnline: true,
+          isHost: !!(window.RoomBridge && RoomBridge.isRoomHost && RoomBridge.isRoomHost()),
+        });
+      }
+    }
+  }
+
+  function receiveRoomState(data) {
+    if (!data || !vsRoom) return;
+    if (data.last_actor === 'room:' + mySeat) return;       // ignore our own echo
+    if (aiThinkTimer) { clearTimeout(aiThinkTimer); aiThinkTimer = null; }
+
+    var hands  = data.hands  || [];
+    var piles  = data.piles  || [];
+    var scope  = data.scope  || [];
+    var scores = data.scores || [];
+
+    G.playerHand  = (hands[mySeat]     || []).slice();
+    G.aiHand      = (hands[1 - mySeat] || []).slice();
+    G.deck        = (data.deck  || []).slice();
+    G.table       = (data.table || []).slice();
+    G.playerPile  = (piles[mySeat]     || []).slice();
+    G.aiPile      = (piles[1 - mySeat] || []).slice();
+    G.playerScope = scope[mySeat]     || 0;
+    G.aiScope     = scope[1 - mySeat] || 0;
+    G.playerScore = scores[mySeat]     || 0;
+    G.aiScore     = scores[1 - mySeat] || 0;
+    G.turn        = (data.turnSeat === mySeat) ? 'player' : 'ai';
+    G.phase       = data.phase || 'playing';
+    G.lastCapturer = (data.lastCapturerSeat === null || data.lastCapturerSeat === undefined)
+      ? null : seatToSide(data.lastCapturerSeat);
+
+    // Rebuild the select-capture choice from indices against the fresh table.
+    if (data.phase === 'select-capture' && data.pendingCard) {
+      G.pendingCard    = { suit: data.pendingCard.suit, rank: data.pendingCard.rank };
+      G.pendingOptions = (data.pendingOptions || []).map(function (idxs) { return idxToCards(idxs, G.table); });
+      G.selectedTable  = idxToCards(data.selectedTable, G.table);
+      G.pendingWho     = (data.pendingSeat === null || data.pendingSeat === undefined)
+        ? null : seatToSide(data.pendingSeat);
+    } else {
+      G.pendingCard    = null;
+      G.pendingOptions = [];
+      G.selectedTable  = [];
+      G.pendingWho     = null;
+    }
+
+    G.roundBreakdown = null;
+    if (data.roundBreakdown) {
+      G.roundBreakdown = {
+        player: data.roundBreakdown[mySeat]     || null,
+        ai:     data.roundBreakdown[1 - mySeat] || null,
+      };
+    }
+
+    selectedIdx = null;
+    render();
+    if (G.phase === 'game-end') reportRoomWin();   // loser also reports (no-op after first)
+  }
+
+  function initRoom() {
+    if (!window.RoomBridge || !RoomBridge.isActive || !RoomBridge.isActive()) return;
+    vsRoom = true;
+    vsAI   = false;                                  // disable the local AI scheduler
+    mySeat = RoomBridge.getSeat();
+    RoomBridge.onState(receiveRoomState);            // also signals 'ready' → parent pushes latest state
+    newGame();                                       // seat 0 seeds + broadcasts; seat 1 waits for state
+  }
+
   // ── Bootstrap ────────────────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', function () {
-    if (document.getElementById('game-container')) newGame();
+    if (!document.getElementById('game-container')) return;
+    if (window.RoomBridge && RoomBridge.isActive && RoomBridge.isActive()) {
+      initRoom();
+    } else {
+      newGame();
+    }
   });
 })();

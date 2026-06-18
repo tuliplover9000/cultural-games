@@ -143,6 +143,19 @@
   var aiThinkTimer = null;
   var gameLog      = [];
 
+  // ── Multiplayer (RoomBridge) flags ──────────────────────────────────────────
+  // vsRoom: this instance is running inside a room iframe (remote human opponent).
+  // mySeat: 0 or 1 — this client's seat. The render is ALWAYS local-perspective
+  // (my hand = G.playerHand, opponent = G.aiHand, attacker 'player' = ME attacks).
+  // Durak has ROLES: G.attacker is the LOCAL side ('player'/'ai') that is on the
+  // offence; the defender is the other side. These map to seats only at the sync
+  // boundary in serializeState()/receiveRoomState(). Seat 0 seeds the deal+trump.
+  var vsRoom      = false;
+  var mySeat      = 0;
+  var vsAI        = true;     // local AI scheduler runs only when true (never in a room)
+  var winReported = false;
+  var roomEnded   = false;    // online end-screen achievements fired once guard
+
   var anim = {
     dealHand: false,
     dealAI:   false,
@@ -169,6 +182,24 @@
   function newGame() {
     if (aiThinkTimer) { clearTimeout(aiThinkTimer); aiThinkTimer = null; }
     gameLog = [];
+    winReported = false;
+    roomEnded   = false;
+    if (vsRoom && window.RoomBridge && RoomBridge.resetWin) RoomBridge.resetWin();
+
+    // In a room, only seat 0 builds the authoritative deck + opening deal and
+    // broadcasts it; seat 1 waits for that first state (renders an empty board
+    // until receiveRoomState() arrives). Out of a room this is the normal solo
+    // deal — byte-for-byte the same behaviour as before.
+    if (vsRoom && mySeat !== 0) {
+      G = {
+        deck: [], trumpSuit: 'oros', trumpCard: { suit: 'oros', rank: 6 },
+        playerHand: [], aiHand: [], table: [], discard: 0,
+        attacker: 'ai', boutDefHandSize: HAND_TARGET, phase: 'attack', winner: null,
+      };
+      selectedIdx = null;
+      render();
+      return;
+    }
 
     var deck = buildDeck();
     // The trump card is the bottom card of the stock — i.e. the LAST one drawn.
@@ -205,10 +236,14 @@
     G.phase = 'attack';
 
     addLog('system', 'New game. Trump is ' + SUIT_SYM[G.trumpSuit] + '. '
-      + (G.attacker === 'player' ? 'You attack first.' : 'CPU attacks first.'));
+      + (G.attacker === 'player' ? 'You attack first.' : oppWord() + ' attacks first.'));
     render();
+    if (vsRoom) { syncRoom(); return; }   // seat 0 broadcasts the opening deal; no local AI
     if (G.attacker === 'ai') scheduleAI();
   }
+
+  // Opponent label: a remote human in a room, otherwise the CPU.
+  function oppWord() { return vsRoom ? 'Opponent' : 'CPU'; }
 
   // Sort a hand: non-trumps first (by rank), then trumps (by rank). Readability.
   function sortHand(hand) {
@@ -343,12 +378,16 @@
       var pEmpty = G.playerHand.length === 0;
       var aEmpty = G.aiHand.length === 0;
       if (pEmpty && aEmpty) {
-        G.winner = 'draw'; G.phase = 'game-end'; render(); return;
+        G.winner = 'draw'; G.phase = 'game-end'; render();
+        if (vsRoom) syncRoom();
+        return;
       }
       if (pEmpty || aEmpty) {
         // The player still holding cards is the durak (loser).
         G.winner = pEmpty ? 'player' : 'ai';
-        G.phase = 'game-end'; render(); return;
+        G.phase = 'game-end'; render();
+        if (vsRoom) syncRoom();   // syncRoom also fires reportWin once
+        return;
       }
     }
 
@@ -361,6 +400,7 @@
     G.phase = 'attack';
     selectedIdx = null;
     render();
+    if (vsRoom) { syncRoom(); return; }   // broadcast the replenish + role change
     if (G.attacker === 'ai') scheduleAI();
   }
 
@@ -375,6 +415,7 @@
   // The AI may need several sequential actions in one bout (attack → throw-ins →
   // finish; or beat each attack). We drive them with chained guarded setTimeouts.
   function scheduleAI() {
+    if (vsRoom || !vsAI) return;   // in a room the opponent is a remote human
     if (aiThinkTimer) clearTimeout(aiThinkTimer);
     aiThinkTimer = setTimeout(aiStep, 850);
   }
@@ -533,6 +574,7 @@
     if (!canAttackWith(card)) return;
     attackerPlay('player', card);
     render();
+    if (vsRoom) { syncRoom(); return; }   // broadcast; the remote defender replies
     // Defender is AI → schedule its defence.
     scheduleAI();
   }
@@ -560,6 +602,7 @@
     if (!defenderBeat('player', card, pairIdx)) return;
     selectedIdx = null;
     render();
+    if (vsRoom) { syncRoom(); return; }   // broadcast each beat; remote attacker continues
 
     if (allBeaten()) {
       // Defence complete — control returns to the AI attacker (throw-in or finish).
@@ -596,6 +639,10 @@
     wireEvents(el);
   }
 
+  function thinking() {
+    return oppWord() + ' is thinking <span class="tl-thinking-dots"><span></span><span></span><span></span></span>';
+  }
+
   function buildUI() {
     var youAttack  = G.attacker === 'player';
     var youDefend  = G.attacker === 'ai';
@@ -605,14 +652,14 @@
     if (flash) {
       statusInner = flash; statusCls = 'dk-flash';
     } else if (aiThinkTimer || (youDefend && G.phase === 'attack')) {
-      statusInner = 'CPU is thinking <span class="tl-thinking-dots"><span></span><span></span><span></span></span>';
+      statusInner = thinking();
     } else if (youAttack) {
       if (G.table.length === 0) {
         statusInner = 'You attack — play a card'; statusCls = 'your-turn';
       } else if (allBeaten()) {
         statusInner = 'Throw in a matching rank, or press Done (Бита)'; statusCls = 'your-turn';
       } else {
-        statusInner = 'CPU is thinking <span class="tl-thinking-dots"><span></span><span></span><span></span></span>';
+        statusInner = thinking();
       }
     } else { // youDefend
       if (unbeatenPairs().length > 0) {
@@ -621,7 +668,7 @@
           : 'Defend — select a card to beat with, or Take';
         statusCls = 'your-turn';
       } else {
-        statusInner = 'CPU is thinking <span class="tl-thinking-dots"><span></span><span></span><span></span></span>';
+        statusInner = thinking();
       }
     }
 
@@ -646,7 +693,7 @@
     }
     var roleTag = G.attacker === 'ai' ? 'Attacking ●' : 'Defending';
     return '<div class="tl-zone tl-zone--top dk-cpu-zone">'
-      + '<div class="tl-zone__name' + (active ? ' active' : '') + '">CPU &middot; ' + roleTag + '</div>'
+      + '<div class="tl-zone__name' + (active ? ' active' : '') + '">' + oppWord() + ' &middot; ' + roleTag + '</div>'
       + '<div class="tl-opp-cards--top">' + backs + '</div>'
       + '<div class="tl-zone__count">' + n + ' card' + (n !== 1 ? 's' : '') + '</div>'
       + '</div>';
@@ -741,13 +788,13 @@
     if (youAttack) {
       if (G.table.length === 0) hint = 'Play any card to open the attack.';
       else if (allBeaten()) { hint = 'Add a card of a rank already on the table, or finish.'; hintCls = 'valid'; }
-      else hint = 'Wait — CPU is defending.';
+      else hint = 'Wait — ' + oppWord() + ' is defending.';
     } else {
       if (unbeatenPairs().length > 0) {
         hint = selectedIdx !== null ? 'Now click the attack you want to beat.' : 'Pick a card, then the attack to beat — or Take.';
         if (selectedIdx !== null) hintCls = 'valid';
       } else {
-        hint = 'Wait — CPU is attacking.';
+        hint = 'Wait — ' + oppWord() + ' is attacking.';
       }
     }
 
@@ -794,7 +841,7 @@
       phrase = 'Both hands empty at once — nobody is the fool today.';
     } else if (youWon) {
       icon = '🏆'; head = 'You win!';
-      phrase = 'You shed your last card — the CPU is the durak.';
+      phrase = 'You shed your last card — the ' + oppWord().toLowerCase() + ' is the durak.';
     } else {
       icon = '🃏'; head = 'You are the durak';
       phrase = 'Left holding the cards — the gentle shame of the fool.';
@@ -809,6 +856,15 @@
       + '</div>';
     var btn = el.querySelector('#dk-play-again');
     if (btn) btn.addEventListener('click', newGame);
+
+    if (vsRoom) {
+      // Room mode: stats/coins are recorded per-seat by the room end-screen via
+      // RoomBridge.reportWin (fired in syncRoom). Do NOT record solo achievements
+      // or win counts here — that would double-record. Report the winner once.
+      reportRoomWin();
+      return;
+    }
+
     if (youWon && window.Achievements) {
       Achievements.track('dk_first_win');
       Achievements.increment('durak', 'wins');
@@ -852,8 +908,133 @@
     });
   }
 
+  // ── Multiplayer (RoomBridge) ─────────────────────────────────────────────────
+  // The blob is SEAT-relative (hands[seat], attackerSeat, winnerSeat) so both
+  // clients share one canonical state regardless of which seat each sits in. The
+  // local G is always PERSPECTIVE-relative (playerHand = mine, attacker 'player'
+  // = ME on the offence). serializeState() maps perspective→seat on send;
+  // receiveRoomState() maps seat→perspective on receive. The full state (both
+  // hands, the battlefield attack/defence pairs, deck, trump, discard count, the
+  // attacker SEAT, the bout phase, boutDefHandSize, winner) travels in the blob —
+  // same accepted trust model as truc/cuarenta (each client only renders its own
+  // hand; the opponent's hand is shown face-down).
+  //
+  // ROLE MAPPING (the riskiest part): Durak's G.attacker is a LOCAL side. On the
+  // wire it becomes attackerSeat (an absolute seat). On receive, the local player
+  // is the attacker iff attackerSeat === mySeat → G.attacker = 'player', else the
+  // defender → G.attacker = 'ai'. The defender is implicit (the other side), so
+  // it follows automatically. The battlefield pairs are seat-neutral cards and
+  // need no mapping. Turn-gating: the existing humanAttackClick/humanDone require
+  // G.attacker==='player'; humanDefSelect/humanDefTarget/humanTake require
+  // G.attacker!=='player' — both already gate the LOCAL seat correctly because
+  // the render is always local-perspective. The opponent's moves arrive via
+  // receiveRoomState and never run any local handler.
+
+  // 'player'/'ai' are the LOCAL perspective. Convert a local side to its absolute
+  // seat, and an absolute seat back to a local side.
+  function sideToSeat(who) { return who === 'player' ? mySeat : (1 - mySeat); }
+  function seatToSide(seat) { return seat === mySeat ? 'player' : 'ai'; }
+
+  function serializeState() {
+    var hands = [];
+    hands[mySeat]     = G.playerHand.slice();
+    hands[1 - mySeat] = G.aiHand.slice();
+    // Battlefield pairs are seat-neutral cards — copy verbatim.
+    var table = G.table.map(function (p) {
+      return { attack: p.attack, defence: p.defence || null };
+    });
+    var winnerSeat = null;
+    if (G.winner === 'draw') winnerSeat = 'draw';
+    else if (G.winner === 'player' || G.winner === 'ai') winnerSeat = sideToSeat(G.winner);
+    return {
+      hands:           hands,                       // by seat: [seat0Hand, seat1Hand]
+      deck:            G.deck.slice(),
+      trumpSuit:       G.trumpSuit,
+      trumpCard:       G.trumpCard,
+      table:           table,                       // [{attack, defence|null}]
+      discard:         G.discard,
+      attackerSeat:    sideToSeat(G.attacker),      // absolute seat of the attacker
+      boutDefHandSize: G.boutDefHandSize,
+      phase:           G.phase,                     // 'attack' | 'defend' | 'game-end'
+      winner:          winnerSeat,                  // seat index, 'draw', or null
+      last_actor:      'room:' + mySeat,
+    };
+  }
+
+  function syncRoom() {
+    if (!vsRoom || !window.RoomBridge) return;
+    RoomBridge.sendState(serializeState());
+    reportRoomWin();
+  }
+
+  // Report the winner's SEAT exactly once (room end-screen records per-seat). A
+  // draw reports no winner — reportWin is skipped, the end-screen still shows.
+  function reportRoomWin() {
+    if (!vsRoom || !window.RoomBridge || winReported) return;
+    if (G.phase !== 'game-end') return;
+    winReported = true;
+    var youWon = (G.winner === 'player');
+    if (G.winner !== 'draw') {
+      var winnerSeat = (G.winner === 'player') ? mySeat : (1 - mySeat);
+      RoomBridge.reportWin(winnerSeat);
+    }
+    if (!roomEnded) {
+      roomEnded = true;
+      if (window.Achievements && Achievements.evaluate) {
+        Achievements.evaluate({
+          gameId: 'durak',
+          result: (G.winner === 'draw') ? 'draw' : (youWon ? 'win' : 'loss'),
+          isOnline: true,
+          isHost: !!(window.RoomBridge && RoomBridge.isRoomHost && RoomBridge.isRoomHost()),
+        });
+      }
+    }
+  }
+
+  function receiveRoomState(data) {
+    if (!data || !vsRoom) return;
+    if (data.last_actor === 'room:' + mySeat) return;     // ignore our own echo
+    if (aiThinkTimer) { clearTimeout(aiThinkTimer); aiThinkTimer = null; }
+
+    var hands = data.hands || [];
+    G.playerHand = (hands[mySeat]     || []).slice();
+    G.aiHand     = (hands[1 - mySeat] || []).slice();
+    G.deck       = (data.deck || []).slice();
+    G.trumpSuit  = data.trumpSuit;
+    G.trumpCard  = data.trumpCard;
+    G.table      = (data.table || []).map(function (p) {
+      return { attack: p.attack, defence: p.defence || null };
+    });
+    G.discard         = data.discard || 0;
+    // Local player is the attacker iff the attacker seat is mine.
+    G.attacker        = (data.attackerSeat === mySeat) ? 'player' : 'ai';
+    G.boutDefHandSize = data.boutDefHandSize != null ? data.boutDefHandSize : HAND_TARGET;
+    G.phase           = data.phase || 'attack';
+    if (data.winner === 'draw')      G.winner = 'draw';
+    else if (data.winner === 0 || data.winner === 1) G.winner = seatToSide(data.winner);
+    else                             G.winner = null;
+
+    selectedIdx = null;
+    render();
+    if (G.phase === 'game-end') reportRoomWin();   // loser/draw also fire (no-op after first)
+  }
+
+  function initRoom() {
+    if (!window.RoomBridge || !RoomBridge.isActive || !RoomBridge.isActive()) return;
+    vsRoom = true;
+    vsAI   = false;                                  // disable the local AI scheduler
+    mySeat = RoomBridge.getSeat();
+    RoomBridge.onState(receiveRoomState);            // also signals 'ready' → parent pushes latest state
+    newGame();                                       // seat 0 seeds + broadcasts; seat 1 waits for state
+  }
+
   // ── Bootstrap ────────────────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', function () {
-    if (document.getElementById('game-container')) newGame();
+    if (!document.getElementById('game-container')) return;
+    if (window.RoomBridge && RoomBridge.isActive && RoomBridge.isActive()) {
+      initRoom();
+    } else {
+      newGame();
+    }
   });
 })();
