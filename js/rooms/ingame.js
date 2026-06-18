@@ -187,11 +187,14 @@
     if (e.data.type === 'game-ready') {
       if (String(e.data.gen) !== String(_launchGen)) return;
       var readyInst = e.data.instance || '0';
-      var readyIdx  = parseInt(readyInst, 10);
       var readyRoom = Room.currentRoom();
       if (readyRoom) {
         var insts = readyRoom.game_instances || [];
-        var inst  = insts[readyIdx];
+        // Look up by instance_id, NOT array position: updateGameInstance() pushes
+        // instances in sync-arrival order, so in a dual-instance match the array
+        // index need not equal the instance id — indexing by position could hand
+        // a reconnecting iframe the OTHER board's state.
+        var inst = insts.find(function(x){ return String(x.instance_id) === String(readyInst); });
         if (inst && inst.board_state && inst.status !== 'finished' && e.source) {
           e.source.postMessage({ type: 'room-state', data: inst.board_state }, window.location.origin);
         }
