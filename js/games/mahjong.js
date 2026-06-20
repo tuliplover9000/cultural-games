@@ -149,8 +149,14 @@
     return String(s)
       .replace(/&/g, '&amp;')
       .replace(/</g,  '&lt;')
-      .replace(/>/g,  '&gt;');
+      .replace(/>/g,  '&gt;')
+      .replace(/"/g,  '&quot;')
+      .replace(/'/g,  '&#39;');
   }
+  // Tile cls is rendered into a class attribute from a synced (attacker-
+  // controllable) tile; restrict it to a safe class-name charset so a forged
+  // tile cannot break out of the attribute or inject markup.
+  function safeCls(s) { return String(s == null ? '' : s).replace(/[^a-z0-9-]/gi, ''); }
 
   function setStatus(msg) {
     state.statusMsg = msg;
@@ -501,7 +507,7 @@
     if (tile.suit === 'o') return circleSVG(tile.num);
     if (tile.id === 'dW') return whiteDragonSVG();
     // Winds and dragons
-    return `<span class="mj-hon mj-hon--${tile.cls}">${tile.symbol}</span>`;
+    return `<span class="mj-hon mj-hon--${safeCls(tile.cls)}">${esc(tile.symbol)}</span>`;
   }
 
   // ── tileHTML ────────────────────────────────────────────────────────────
@@ -510,7 +516,7 @@
     opts = opts || {};
     const cls = [
       'mj-tile',
-      opts.back        ? 'mj-tile--back'         : `mj-tile--${tile.cls}`,
+      opts.back        ? 'mj-tile--back'         : `mj-tile--${safeCls(tile.cls)}`,
       opts.selectable  ? 'mj-tile--selectable'   : '',
       opts.selected    ? 'mj-tile--selected'      : '',
       opts.latest      ? 'mj-tile--latest'        : '',
@@ -524,7 +530,7 @@
     const ariaLabel = opts.back ? 'Face-down tile' : tile.name;
     const draggable = opts.draggable ? ' draggable="true"' : '';
 
-    return `<div class="${cls}" data-uid="${tile.uid}" aria-label="${esc(ariaLabel)}" role="img"${draggable}>${content}</div>`;
+    return `<div class="${cls}" data-uid="${esc(tile.uid)}" aria-label="${esc(ariaLabel)}" role="img"${draggable}>${content}</div>`;
   }
 
   function meldHTML(meld) {

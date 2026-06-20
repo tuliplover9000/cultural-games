@@ -940,6 +940,22 @@
     Multiplayer.sendState(blob);
   }
 
+  // Security: an online-state blob is attacker-controlled (a peer can run a
+  // modified client). A card's rank and suit are interpolated straight into
+  // innerHTML as element text (faceCard), so coerce every incoming card to a
+  // whitelisted rank (RANKS) and suit (SUITS) before it can reach the DOM.
+  // Honest peers only send valid cards (no-op for normal play); a forged
+  // rank/suit becomes a safe known value, preventing HTML/script injection.
+  function cleanCard(c) {
+    if (!c || typeof c !== 'object') return { rank: RANKS[0], suit: SUITS[0] };
+    return {
+      rank: RANKS.indexOf(c.rank) >= 0 ? c.rank : RANKS[0],
+      suit: SUITS.indexOf(c.suit) >= 0 ? c.suit : SUITS[0],
+    };
+  }
+  const cleanHand  = arr   => (Array.isArray(arr)   ? arr   : []).map(cleanCard);
+  const cleanHands = hands => (Array.isArray(hands) ? hands : []).map(cleanHand);
+
   function receiveOnlineState(data) {
     if (!data || !vsOnline) return;
     // Echo suppression - works for both Multiplayer and RoomBridge paths
@@ -949,10 +965,10 @@
       if (data.last_actor === Multiplayer.getPlayerId()) return;
     }
 
-    state.hands          = data.hands;
+    state.hands          = cleanHands(data.hands);
     state.current        = data.current;
     state.leader         = data.leader;
-    state.pile           = data.pile;
+    state.pile           = cleanHand(data.pile);
     state.pileOwner      = data.pileOwner;
     state.pileType       = data.pileType;
     state.passes         = data.passes;

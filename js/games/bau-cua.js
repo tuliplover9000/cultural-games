@@ -704,7 +704,9 @@
         if (ps.bets && ps.bets[key]) {
           var color   = SEAT_COLORS[seat % SEAT_COLORS.length];
           var initial = (ps.name || 'P')[0].toUpperCase();
-          chips.push('<span class="bc-peer-chip" style="background:' + color + '" title="' + ps.name + ': ' + ps.bets[key] + ' coins">' + initial + '</span>');
+          // ps.name / ps.bets are attacker-controllable (synced from a peer); esc
+          // the name and coerce the bet to a number before the title attribute.
+          chips.push('<span class="bc-peer-chip" style="background:' + color + '" title="' + esc(ps.name || 'Player') + ': ' + (+ps.bets[key] || 0) + ' coins">' + initial + '</span>');
         }
       });
 
