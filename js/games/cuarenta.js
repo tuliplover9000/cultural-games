@@ -813,6 +813,21 @@
     }
   }
 
+  // Security: a room-state blob is attacker-controlled (a peer can run a
+  // modified client). A card's suit is concatenated into an innerHTML class
+  // (cu-card--<suit>), so coerce every incoming card to a whitelisted suit/rank
+  // before it can reach the DOM. Honest peers only send valid cards (no-op for
+  // normal play); a forged suit/rank becomes a safe known value, preventing
+  // HTML/script injection (and render crashes on bad ranks).
+  function cleanCard(c) {
+    if (!c || typeof c !== 'object') return { suit: SUITS[0], rank: RANK_ORDER[0] };
+    return {
+      suit: SUITS.indexOf(c.suit) >= 0 ? c.suit : SUITS[0],
+      rank: RANK_ORDER.indexOf(c.rank) >= 0 ? c.rank : RANK_ORDER[0],
+    };
+  }
+  function cleanHand(arr) { return (arr || []).map(cleanCard); }
+
   function receiveRoomState(data) {
     if (!data || !vsRoom) return;
     if (data.last_actor === 'room:' + mySeat) return;       // ignore our own echo
@@ -823,12 +838,12 @@
     var mesas    = data.mesas    || [];
     var scores   = data.scores   || [];
 
-    G.playerHand     = (hands[mySeat]     || []).slice();
-    G.aiHand         = (hands[1 - mySeat] || []).slice();
-    G.deck           = (data.deck  || []).slice();
-    G.table          = (data.table || []).slice();
-    G.playerCaptured = (captured[mySeat]     || []).slice();
-    G.aiCaptured     = (captured[1 - mySeat] || []).slice();
+    G.playerHand     = cleanHand(hands[mySeat]);
+    G.aiHand         = cleanHand(hands[1 - mySeat]);
+    G.deck           = cleanHand(data.deck);
+    G.table          = cleanHand(data.table);
+    G.playerCaptured = cleanHand(captured[mySeat]);
+    G.aiCaptured     = cleanHand(captured[1 - mySeat]);
     G.playerMesas    = mesas[mySeat]     || 0;
     G.aiMesas        = mesas[1 - mySeat] || 0;
     G.playerScore    = scores[mySeat]     || 0;

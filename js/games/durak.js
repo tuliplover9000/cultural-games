@@ -991,19 +991,34 @@
     }
   }
 
+  // Security: a room-state blob is attacker-controlled (a peer can run a
+  // modified client). A card's suit is concatenated into an innerHTML class
+  // (dk-card--<suit>), so coerce every incoming card to a whitelisted suit/rank
+  // before it can reach the DOM. Honest peers only ever send valid cards, so
+  // this is a no-op for normal play; a forged suit/rank becomes a safe known
+  // value, preventing HTML/script injection (and render crashes on bad ranks).
+  function cleanCard(c) {
+    if (!c || typeof c !== 'object') return { suit: SUITS[0], rank: RANK_ORDER[0] };
+    return {
+      suit: SUITS.indexOf(c.suit) >= 0 ? c.suit : SUITS[0],
+      rank: RANK_ORDER.indexOf(c.rank) >= 0 ? c.rank : RANK_ORDER[0],
+    };
+  }
+  function cleanHand(arr) { return (arr || []).map(cleanCard); }
+
   function receiveRoomState(data) {
     if (!data || !vsRoom) return;
     if (data.last_actor === 'room:' + mySeat) return;     // ignore our own echo
     if (aiThinkTimer) { clearTimeout(aiThinkTimer); aiThinkTimer = null; }
 
     var hands = data.hands || [];
-    G.playerHand = (hands[mySeat]     || []).slice();
-    G.aiHand     = (hands[1 - mySeat] || []).slice();
-    G.deck       = (data.deck || []).slice();
-    G.trumpSuit  = data.trumpSuit;
-    G.trumpCard  = data.trumpCard;
+    G.playerHand = cleanHand(hands[mySeat]);
+    G.aiHand     = cleanHand(hands[1 - mySeat]);
+    G.deck       = cleanHand(data.deck);
+    G.trumpSuit  = SUITS.indexOf(data.trumpSuit) >= 0 ? data.trumpSuit : SUITS[0];
+    G.trumpCard  = data.trumpCard ? cleanCard(data.trumpCard) : null;
     G.table      = (data.table || []).map(function (p) {
-      return { attack: p.attack, defence: p.defence || null };
+      return { attack: cleanCard(p.attack), defence: p.defence ? cleanCard(p.defence) : null };
     });
     G.discard         = data.discard || 0;
     // Local player is the attacker iff the attacker seat is mine.

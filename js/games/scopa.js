@@ -1060,6 +1060,21 @@
     }
   }
 
+  // Security: a room-state blob is attacker-controlled (a peer can run a
+  // modified client). A card's suit is concatenated into an innerHTML class
+  // (sc-card--<suit>), so coerce every incoming card to a whitelisted suit/rank
+  // before it can reach the DOM. Honest peers only send valid cards (no-op for
+  // normal play); a forged suit/rank becomes a safe known value, preventing
+  // HTML/script injection (and render crashes on bad ranks).
+  function cleanCard(c) {
+    if (!c || typeof c !== 'object') return { suit: SUITS[0], rank: RANK_ORDER[0] };
+    return {
+      suit: SUITS.indexOf(c.suit) >= 0 ? c.suit : SUITS[0],
+      rank: RANK_ORDER.indexOf(c.rank) >= 0 ? c.rank : RANK_ORDER[0],
+    };
+  }
+  function cleanHand(arr) { return (arr || []).map(cleanCard); }
+
   function receiveRoomState(data) {
     if (!data || !vsRoom) return;
     if (data.last_actor === 'room:' + mySeat) return;       // ignore our own echo
@@ -1070,12 +1085,12 @@
     var scope  = data.scope  || [];
     var scores = data.scores || [];
 
-    G.playerHand  = (hands[mySeat]     || []).slice();
-    G.aiHand      = (hands[1 - mySeat] || []).slice();
-    G.deck        = (data.deck  || []).slice();
-    G.table       = (data.table || []).slice();
-    G.playerPile  = (piles[mySeat]     || []).slice();
-    G.aiPile      = (piles[1 - mySeat] || []).slice();
+    G.playerHand  = cleanHand(hands[mySeat]);
+    G.aiHand      = cleanHand(hands[1 - mySeat]);
+    G.deck        = cleanHand(data.deck);
+    G.table       = cleanHand(data.table);
+    G.playerPile  = cleanHand(piles[mySeat]);
+    G.aiPile      = cleanHand(piles[1 - mySeat]);
     G.playerScope = scope[mySeat]     || 0;
     G.aiScope     = scope[1 - mySeat] || 0;
     G.playerScore = scores[mySeat]     || 0;
@@ -1087,7 +1102,7 @@
 
     // Rebuild the select-capture choice from indices against the fresh table.
     if (data.phase === 'select-capture' && data.pendingCard) {
-      G.pendingCard    = { suit: data.pendingCard.suit, rank: data.pendingCard.rank };
+      G.pendingCard    = cleanCard(data.pendingCard);
       G.pendingOptions = (data.pendingOptions || []).map(function (idxs) { return idxToCards(idxs, G.table); });
       G.selectedTable  = idxToCards(data.selectedTable, G.table);
       G.pendingWho     = (data.pendingSeat === null || data.pendingSeat === undefined)
