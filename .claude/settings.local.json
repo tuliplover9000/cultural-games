@@ -71,7 +71,8 @@
       "Bash(venv/Scripts/python.exe -c ' *)",
       "Bash(venv/Scripts/python.exe -m pip install demucs)",
       "Bash(/c/Users/zhrui/lyrics-video-app/venv/Scripts/python.exe -c ' *)",
-      "Bash(./lune-bin/lune.exe run *)"
+      "Bash(./lune-bin/lune.exe run *)",
+      "Bash(cd /c/Users/zhrui/OneDrive/Desktop/Multipaths *)"
     ]
   }
 }

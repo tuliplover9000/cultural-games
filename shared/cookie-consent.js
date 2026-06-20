@@ -1,23 +1,30 @@
 /**
- * cookie-consent.js — bottom banner shown once on first visit.
+ * cookie-consent.js — first-visit analytics consent gate.
  *
- * Checks localStorage for 'cookie_consent_accepted' on DOMContentLoaded.
- * If not set, injects the banner. Dismissal sets the key and removes the banner.
- * No external dependencies. Pure vanilla JS. IIFE pattern.
+ * Google Analytics is loaded in each page's <head> with Consent Mode defaulting
+ * analytics_storage to 'denied' (see consent-mode-ga.js). This banner lets the
+ * visitor make an explicit choice; only on Accept do we grant analytics consent.
+ * Essential cookies (login session) are exempt and always allowed.
+ *
+ * Choice is stored in localStorage under 'cg_analytics_consent' ('granted' |
+ * 'denied'). The banner only appears until a choice is made. No dependencies.
  */
 (function () {
   'use strict';
 
-  var STORAGE_KEY = 'cookie_consent_accepted';
+  var STORAGE_KEY = 'cg_analytics_consent';
+
+  function setConsent(value) {
+    try { localStorage.setItem(STORAGE_KEY, value); } catch (e) {}
+    if (value === 'granted' && typeof window.gtag === 'function') {
+      window.gtag('consent', 'update', { analytics_storage: 'granted' });
+    }
+  }
 
   function getPrivacyPath() {
-    /* Resolve the path to privacy.html relative to the current page.
-       Works for pages at any nesting depth by counting path segments. */
+    /* Resolve privacy.html relative to the current page (any nesting depth). */
     var path = window.location.pathname.replace(/\\/g, '/');
-    /* Strip trailing filename — keep only the directory */
     var dir  = path.replace(/\/[^/]*$/, '') || '/';
-    /* Count how many segments deep we are below the site root.
-       Each segment needs one '../' to climb back. */
     var depth = dir.replace(/^\//, '').split('/').filter(Boolean).length;
     var prefix = depth > 0 ? (new Array(depth + 1).join('../')) : '';
     return prefix + 'pages/privacy.html';
@@ -30,30 +37,49 @@
     banner.setAttribute('aria-label', 'Cookie consent');
 
     var p = document.createElement('p');
-    p.innerHTML = 'We use cookies for login sessions and anonymous analytics. '
-      + 'By continuing to use this site, you agree to our '
+    p.innerHTML = 'We use essential cookies to keep you logged in, and — only with '
+      + 'your consent — anonymous analytics to improve the site. See our '
       + '<a href="' + getPrivacyPath() + '">Privacy Policy</a>.';
 
-    var btn = document.createElement('button');
-    btn.id = 'cookie-consent-btn';
-    btn.type = 'button';
-    btn.textContent = 'Got it';
+    var actions = document.createElement('div');
+    actions.id = 'cookie-consent-actions';
 
-    btn.addEventListener('click', function () {
-      try { localStorage.setItem(STORAGE_KEY, '1'); } catch (e) {}
-      if (banner.parentNode) banner.parentNode.removeChild(banner);
-    });
+    var decline = document.createElement('button');
+    decline.id = 'cookie-consent-decline';
+    decline.type = 'button';
+    decline.textContent = 'Decline';
 
+    var accept = document.createElement('button');
+    accept.id = 'cookie-consent-btn';   // keep id for existing CSS styling
+    accept.type = 'button';
+    accept.textContent = 'Accept';
+
+    function close() { if (banner.parentNode) banner.parentNode.removeChild(banner); }
+    accept.addEventListener('click', function ()  { setConsent('granted'); close(); });
+    decline.addEventListener('click', function () { setConsent('denied');  close(); });
+
+    actions.appendChild(decline);
+    actions.appendChild(accept);
     banner.appendChild(p);
-    banner.appendChild(btn);
+    banner.appendChild(actions);
     document.body.appendChild(banner);
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    try {
-      if (localStorage.getItem(STORAGE_KEY)) return;
-    } catch (e) {}
+    var choice = null;
+    try { choice = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+    // Re-apply a prior 'granted' choice in case the head snippet ran before the
+    // value was readable (defensive; the inline snippet also does this).
+    if (choice === 'granted') { setConsent('granted'); return; }
+    if (choice === 'denied') return;
     inject();
   });
+
+  // Public API so a "Manage cookie preferences" control (e.g. on the Privacy
+  // page) can let the visitor change or withdraw their analytics consent.
+  window.CookieConsent = {
+    open: function () { if (!document.getElementById('cookie-consent')) inject(); },
+    current: function () { try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; } },
+  };
 
 }());
