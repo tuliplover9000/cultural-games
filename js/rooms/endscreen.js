@@ -35,6 +35,36 @@
       .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
   }
 
+  // Advance a tournament match's winner, retrying transient failures. Safe to
+  // call from BOTH participants: advance_winner is idempotent and validates the
+  // claimed winner server-side, so duplicate/loser calls are harmless. Retries
+  // cover a not-yet-propagated room result and network blips, so the bracket
+  // doesn't stall on a single dropped request.
+  function advanceWinner(matchId, winnerPid, tries) {
+    var sbUrl = 'https://pnyvlqgllrpslhgimgve.supabase.co';
+    var sbKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBueXZscWdsbHJwc2xoZ2ltZ3ZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwMjQ3OTMsImV4cCI6MjA4ODYwMDc5M30.7MwZTEJuYGSLaOjfs0EP4wFAi3CanDzSRMbTvPiIasw';
+    var token = window.Auth && Auth.getToken ? Auth.getToken() : null;
+    function attempt(n) {
+      fetch(sbUrl + '/rest/v1/rpc/advance_winner', {
+        method: 'POST',
+        headers: {
+          'apikey': sbKey,
+          'Authorization': token ? 'Bearer ' + token : 'Bearer ' + sbKey,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ p_match_id: matchId, p_winner_id: winnerPid }),
+      }).then(function (r) { return r.json(); }).then(function (res) {
+        if (res && res.success) return;                       // advanced or already-completed
+        // result_not_recorded/confirmed = the room result hasn't synced here yet.
+        if (n > 1) { setTimeout(function () { attempt(n - 1); }, 1500); }
+        else if (res && res.error) { console.warn('advance_winner gave up:', res.error); }
+      }).catch(function () {
+        if (n > 1) setTimeout(function () { attempt(n - 1); }, 1500);
+      });
+    }
+    attempt(tries || 1);
+  }
+
   // Build a winner block HTML (used for both single and dual)
   function winnerHTML(name) {
     var nm = String(name == null ? '' : name);
@@ -119,26 +149,16 @@
         var isWinner  = myPid === winnerPid;
         Auth.recordResult(gameId, isWinner ? 'win' : 'loss', roomId);
 
-        // Tournament bracket advancement: if I won, advance myself to the next round.
-        // Only the winner calls advance_winner (avoids race conditions).
+        // Tournament bracket advancement. BOTH participants call advance_winner
+        // (it is idempotent and the server validates the claimed winner against
+        // the room's recorded result), so a single dropped request from the
+        // winner no longer stalls the whole bracket — the loser's client covers
+        // it. The winner reported is the room-recorded winner_pid, not "me".
         var matchId = room.tournament_match_id;
         var myUid   = window.Auth && Auth.getUserId ? Auth.getUserId() : null;
-        if (matchId && isWinner && myUid) {
-          var token = window.Auth && Auth.getToken ? Auth.getToken() : null;
-          var sbUrl = 'https://pnyvlqgllrpslhgimgve.supabase.co';
-          var sbKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBueXZscWdsbHJwc2xoZ2ltZ3ZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwMjQ3OTMsImV4cCI6MjA4ODYwMDc5M30.7MwZTEJuYGSLaOjfs0EP4wFAi3CanDzSRMbTvPiIasw';
-          fetch(sbUrl + '/rest/v1/rpc/advance_winner', {
-            method: 'POST',
-            headers: {
-              'apikey': sbKey,
-              'Authorization': token ? 'Bearer ' + token : 'Bearer ' + sbKey,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ p_match_id: matchId, p_winner_id: myUid }),
-          }).then(function(r) { return r.json(); }).then(function(res) {
-            if (res && res.error) console.warn('advance_winner error:', res.error);
-            if (window.Achievements) Achievements.checkAction('tn_match_won');
-          });
+        if (matchId && myUid && winnerPid) {
+          advanceWinner(matchId, winnerPid, 4);
+          if (isWinner && window.Achievements) Achievements.checkAction('tn_match_won');
         }
       } else {
         // Dual instance: check if current player won either of the two sub-games
