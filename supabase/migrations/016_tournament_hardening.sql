@@ -59,6 +59,14 @@ BEGIN
   SELECT * INTO v_match FROM tournament_matches WHERE id = p_match_id;
   SELECT * INTO v_tour  FROM tournaments        WHERE id = v_match.tournament_id;
 
+  -- Defense in depth: never finalize a match without a real winner or with a
+  -- half-filled slot. The callers guard this too, but a NULL winner or an
+  -- unpopulated player slot would corrupt the bracket (NULL advanced into a
+  -- parent), so refuse it here unconditionally.
+  IF p_winner_id IS NULL OR v_match.player1_id IS NULL OR v_match.player2_id IS NULL THEN
+    RETURN;
+  END IF;
+
   v_loser_id := CASE WHEN v_match.player1_id = p_winner_id THEN v_match.player2_id
                      ELSE v_match.player1_id END;
 
@@ -184,8 +192,12 @@ BEGIN
   IF v_caller <> v_match.player1_id AND v_caller <> v_match.player2_id THEN
     RETURN jsonb_build_object('success', false, 'error', 'not_a_player');
   END IF;
-  -- Claimed winner must be a participant.
-  IF p_winner_id <> v_match.player1_id AND p_winner_id <> v_match.player2_id THEN
+  -- Claimed winner must be a participant. The `IS NULL OR` is REQUIRED: without
+  -- it, a NULL p_winner_id makes `NULL <> p1 AND NULL <> p2` evaluate to NULL
+  -- (not TRUE) under SQL 3-valued logic, so the guard wouldn't fire and a NULL
+  -- winner could reach finalize and corrupt the bracket.
+  IF p_winner_id IS NULL
+     OR (p_winner_id <> v_match.player1_id AND p_winner_id <> v_match.player2_id) THEN
     RETURN jsonb_build_object('success', false, 'error', 'invalid_winner');
   END IF;
 
@@ -253,6 +265,13 @@ BEGIN
 
   IF v_match.status = 'completed' THEN
     RETURN jsonb_build_object('success', true, 'already_completed', true);
+  END IF;
+  -- Only a fully-populated, contested match can be forfeited. A bye-fed parent
+  -- slot is 'pending' with one NULL player; force-resolving it would crown a
+  -- player who skipped an undetermined opponent (or strand a live match). Require
+  -- both slots filled — equivalently status IN ('ready','in_progress').
+  IF v_match.player1_id IS NULL OR v_match.player2_id IS NULL THEN
+    RETURN jsonb_build_object('success', false, 'error', 'match_not_contested');
   END IF;
   -- Winner must be one of the two assigned participants.
   IF p_winner_id IS NULL
