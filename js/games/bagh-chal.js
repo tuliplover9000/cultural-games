@@ -15,7 +15,9 @@
   var CORNERS = [0, 4, 20, 24];
   var GOATS_TOTAL = 20;
   var CAPTURE_TO_WIN = 5;        // tigers win at 5 goats captured
-  var DRAW_NOPROGRESS = 30;      // plies without a capture (post-placement) → draw
+  var DRAW_NOPROGRESS = 60;      // plies (30 full rounds) without a capture post-placement → draw.
+                                 // Generous so a legitimate goat squeeze toward a trap (which makes
+                                 // no captures) is never cut short by a premature draw.
   var PAD = 44;                  // default padding to first point
 
   // ── Board helpers ────────────────────────────────────────────────────────
@@ -583,7 +585,7 @@
     var humanWon = (winner === 'goats' && humanSide === GOAT) ||
                    (winner === 'tigers' && humanSide === TIGER);
     if (winner === 'draw') {
-      setStatus('Draw — 30 moves passed with no capture. The herd holds, the tigers cannot break through.');
+      setStatus('Draw — 60 moves passed with no capture. The herd holds, the tigers cannot break through.');
     } else if (winner === 'tigers') {
       setStatus(humanSide === TIGER
         ? '🎉 Tigers win! Five goats devoured.'
