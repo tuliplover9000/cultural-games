@@ -175,4 +175,11 @@ window.GAMES_DATA = [
     didYouKnow: "By tradition there is no winner's prize in Durak — only the gentle, sociable shame of being left holding the cards as the \"durak.\"",
     complexity: 3, players: '2',
   },
+  {
+    key: 'bagh-chal', name: 'Bagh-Chal', culture: 'Nepal', type: 'Strategy', maxPlayers: 2,
+    region: 'south-asia', path: 'games/bagh-chal.html', howToPlay: 'how-to-play/bagh-chal/',
+    description: "Bagh-Chal — \"moving tigers\" — is widely regarded as Nepal's national board game, a centuries-old contest kept alive largely by oral tradition. Four powerful tigers hunt by leaping while twenty weak but numerous goats win only through collective encirclement, cluttering the board until the tigers cannot move — a theme of \"few-but-strong versus many-but-weak\" likely shaped by Nepal's pastoral, herding life. Traditionally played in community rest-houses and parks, at its simplest scratched into the dirt with pebbles, it is now considered endangered, kept alive mostly by older players.",
+    didYouKnow: "Authentic Bagh-Chal sets are handcrafted in brass-on-wood in Kathmandu and Patan, with the playing lines etched into the board.",
+    complexity: 3, players: '2',
+  },
 ];

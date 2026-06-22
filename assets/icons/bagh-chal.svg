@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Bagh-Chal — brass-on-wood 5x5 board with a tiger and a goat -->
+  <!-- Wood board plate -->
+  <rect x="4" y="6" width="56" height="52" rx="6" fill="#7A5024" stroke="#3A2616" stroke-width="2"/>
+  <rect x="6" y="8" width="52" height="10" rx="3" fill="#9A6A34" opacity="0.35"/>
+  <!-- Brass grid lines (5x5 points => 4 gaps, from 12..52) -->
+  <g stroke="#D9A441" stroke-width="1.4">
+    <line x1="12" y1="12" x2="52" y2="12"/>
+    <line x1="12" y1="22" x2="52" y2="22"/>
+    <line x1="12" y1="32" x2="52" y2="32"/>
+    <line x1="12" y1="42" x2="52" y2="42"/>
+    <line x1="12" y1="52" x2="52" y2="52"/>
+    <line x1="12" y1="12" x2="12" y2="52"/>
+    <line x1="22" y1="12" x2="22" y2="52"/>
+    <line x1="32" y1="12" x2="32" y2="52"/>
+    <line x1="42" y1="12" x2="42" y2="52"/>
+    <line x1="52" y1="12" x2="52" y2="52"/>
+  </g>
+  <!-- A couple of diagonals (strong-point X's) -->
+  <g stroke="#D9A441" stroke-width="0.9" opacity="0.75">
+    <line x1="12" y1="12" x2="52" y2="52"/>
+    <line x1="52" y1="12" x2="12" y2="52"/>
+  </g>
+  <!-- Tiger (corner, larger, tawny + stripes) -->
+  <g>
+    <circle cx="12" cy="12" r="6" fill="#C8822C" stroke="#7A4818" stroke-width="1.2"/>
+    <circle cx="8.7" cy="8.3" r="2" fill="#C8822C" stroke="#7A4818" stroke-width="0.8"/>
+    <circle cx="15.3" cy="8.3" r="2" fill="#C8822C" stroke="#7A4818" stroke-width="0.8"/>
+    <path d="M9 7 L10 17 M12 7 L12 17 M15 7 L14 17" stroke="#3A2410" stroke-width="1.1" fill="none"/>
+  </g>
+  <!-- Tiger (opposite corner) -->
+  <g>
+    <circle cx="52" cy="52" r="6" fill="#C8822C" stroke="#7A4818" stroke-width="1.2"/>
+    <path d="M49 47 L50 57 M52 47 L52 57 M55 47 L54 57" stroke="#3A2410" stroke-width="1.1" fill="none"/>
+  </g>
+  <!-- Goats (cream, smaller, numerous) -->
+  <circle cx="32" cy="32" r="4.6" fill="#EDE3C8" stroke="#A98C58" stroke-width="1"/>
+  <circle cx="22" cy="42" r="4.6" fill="#EDE3C8" stroke="#A98C58" stroke-width="1"/>
+  <circle cx="42" cy="22" r="4.6" fill="#EDE3C8" stroke="#A98C58" stroke-width="1"/>
+  <circle cx="42" cy="42" r="4.6" fill="#EDE3C8" stroke="#A98C58" stroke-width="1"/>
+  <circle cx="22" cy="22" r="4.6" fill="#EDE3C8" stroke="#A98C58" stroke-width="1"/>
+</svg>

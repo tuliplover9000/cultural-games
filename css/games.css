@@ -6829,3 +6829,90 @@ html[data-theme="light"] .pu-game-wrap {
   .dk-pair .dk-def { left: 13px; top: 15px; }
   .dk-bita { width: 38px; height: 54px; }
 }
+
+/* =============================================================================
+   BAGH-CHAL — bg- namespace (Nepal · tigers & goats)
+   Canvas (bg-canvas) carries the brass-on-wood board; all HUD/control chrome
+   below uses var(--color-*) so it reads correctly in both light and dark themes
+   (new-game checklist #5).
+============================================================================= */
+.bg-game-container {
+  background:
+    repeating-linear-gradient(0deg, rgba(217,164,65,0.08) 0 2px, rgba(0,0,0,0) 2px 9px),
+    var(--color-surface-alt, var(--color-surface));
+  border-radius: var(--radius-xl);
+  padding: var(--space-6) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-block: var(--space-2);
+}
+
+/* HUD — score + status */
+.bg-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  min-height: 40px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.bg-score {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+}
+.bg-score__tigers { color: var(--color-accent-gold, #C8822C); }
+.bg-score__goats  { color: var(--color-text); }
+
+.bg-status {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+  flex: 1;
+  text-align: right;
+  min-width: 180px;
+}
+
+/* Board canvas */
+.bg-board-wrap {
+  width: 100%;
+  max-width: 620px;
+  margin-inline: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35), 0 0 0 2px rgba(217,164,65,0.40);
+  cursor: pointer;
+}
+#bg-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  touch-action: none;
+}
+
+/* Controls */
+.bg-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+/* Banner color for Bagh-Chal cards */
+.game-card__banner--bagh {
+  background: linear-gradient(135deg, #3A2616 0%, #8B5E2C 100%);
+}
+
+@media (max-width: 480px) {
+  .bg-hud    { flex-direction: column; align-items: flex-start; }
+  .bg-status { text-align: left; }
+}
