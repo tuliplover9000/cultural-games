@@ -57,7 +57,7 @@
 
     <!-- Sign-out state -->
     <div id="prof-locked" class="prof-locked">
-      <div class="prof-locked__icon" aria-hidden="true">&#128274;</div>
+      <div class="prof-locked__icon" aria-hidden="true"><span data-icon="lock" data-icon-size="40"></span></div>
       <h1>Sign in to view your profile</h1>
       <p>Track your wins, unlock achievements, and see your game history.</p>
       <button class="btn btn-primary btn-lg" id="prof-signin-btn">Sign In</button>
@@ -82,27 +82,27 @@
 
           <div class="prof-summary" aria-label="Profile summary">
             <div class="prof-stat">
-              <span class="prof-stat__icon" aria-hidden="true">&#127918;</span>
+              <span class="prof-stat__icon" aria-hidden="true" data-icon="gamepad" data-icon-size="26"></span>
               <span class="prof-stat__num" id="prof-stat-played">-</span>
               <span class="prof-stat__label">Games Played</span>
             </div>
             <div class="prof-stat">
-              <span class="prof-stat__icon" aria-hidden="true">&#127942;</span>
+              <span class="prof-stat__icon" aria-hidden="true" data-icon="trophy" data-icon-size="26"></span>
               <span class="prof-stat__num" id="prof-stat-winrate">-</span>
               <span class="prof-stat__label">Win Rate</span>
             </div>
             <div class="prof-stat">
-              <span class="prof-stat__icon" aria-hidden="true">&#127758;</span>
+              <span class="prof-stat__icon" aria-hidden="true" data-icon="globe" data-icon-size="26"></span>
               <span class="prof-stat__num" id="prof-stat-cultures">-</span>
               <span class="prof-stat__label">Cultures</span>
             </div>
             <div class="prof-stat">
-              <span class="prof-stat__icon" aria-hidden="true">&#128176;</span>
+              <span class="prof-stat__icon" aria-hidden="true" data-icon="coins" data-icon-size="26"></span>
               <span class="prof-stat__num" id="prof-stat-coins">-</span>
               <span class="prof-stat__label">Coins</span>
             </div>
             <div class="prof-stat">
-              <span class="prof-stat__icon" aria-hidden="true">&#11088;</span>
+              <span class="prof-stat__icon" aria-hidden="true" data-icon="star" data-icon-size="26"></span>
               <span class="prof-stat__num" id="prof-stat-achievements">-</span>
               <span class="prof-stat__label">Achievements</span>
             </div>
@@ -115,12 +115,12 @@
         <!-- Avatar customizer / shop -->
         <section id="prof-avatar-section">
           <div class="container prof-section">
-            <p class="prof-section__label">&#127917; Avatar</p>
+            <p class="prof-section__label"><span data-icon="palette"></span> Avatar</p>
             <div class="avatar-customizer">
               <div class="avatar-customizer__preview">
                 <div class="avatar-preview" id="avatar-preview" aria-hidden="true"></div>
                 <p class="avatar-coin-readout">
-                  <span aria-hidden="true">&#128176;</span>
+                  <span aria-hidden="true" data-icon="coins"></span>
                   <span id="avatar-coin-balance">0</span> coins
                 </p>
               </div>
@@ -135,7 +135,7 @@
         <!-- Achievements -->
         <section>
           <div class="container prof-section">
-            <p class="prof-section__label">&#11088; Achievements</p>
+            <p class="prof-section__label"><span data-icon="star"></span> Achievements</p>
 
             <!-- Progress -->
             <div class="ach-progress-row">
@@ -175,7 +175,7 @@
         <!-- Game Stats (hidden until at least one game has been played) -->
         <section id="prof-stats-section" hidden>
           <div class="container prof-section">
-            <p class="prof-section__label">&#127918; Game Stats</p>
+            <p class="prof-section__label"><span data-icon="gamepad"></span> Game Stats</p>
             <div class="prof-gsc-grid" id="prof-stats-grid"></div>
           </div>
         </section>
@@ -204,6 +204,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="../js/utils/games-data.js"></script>
   <script src="../js/utils/navigation.js"></script>
+  <script src="../shared/icons.js"></script>
   <script src="../js/utils/avatar.js"></script>
   <script src="../js/utils/auth.js"></script>
   <script src="../shared/achievement-queue.js"></script>

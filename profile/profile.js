@@ -137,22 +137,26 @@
   }
 
   /* ── render achievements ── */
-  var CATEGORY_LABELS = { combat: '⚔️ Combat', explorer: '🧭 Explorer', social: '🤝 Social', milestone: '🏆 Milestone' };
+  var CATEGORY_NAMES  = { combat: 'Combat', explorer: 'Explorer', social: 'Social', milestone: 'Milestone' };
+  var CATEGORY_ICONS  = { combat: 'swords', explorer: 'compass', social: 'users', milestone: 'flag' };
   var CATEGORY_ORDER  = ['combat', 'explorer', 'social', 'milestone'];
   var TIER_COLORS     = { bronze: '#CD7F32', silver: '#A8A9AD', gold: '#D4A017' };
-  var TIER_ICONS      = { bronze: '🥉', silver: '🥈', gold: '🥇' };
+
+  // Inline-icon helper (icons.js); returns '' if the icon set isn't loaded.
+  function ico(name, size) { return (window.Icon && Icon.svg) ? Icon.svg(name, size) : ''; }
+  function catLabel(cat) { return ico(CATEGORY_ICONS[cat]) + ' ' + (CATEGORY_NAMES[cat] || cat); }
 
   function achCard(a, isUnlocked) {
     var tierColor  = TIER_COLORS[a.tier] || '#CD7F32';
     var stateClass = isUnlocked ? 'ach-card--unlocked' : 'ach-card--locked';
     return '<div class="ach-card ach-card--' + esc(a.tier) + ' ' + stateClass + ' prof-reveal" role="listitem">' +
       '<div class="ach-card__header">' +
-        '<div class="ach-card__icon" aria-hidden="true" style="color:' + tierColor + '">' + (TIER_ICONS[a.tier] || '🏅') + '</div>' +
+        '<div class="ach-card__icon" aria-hidden="true" style="color:' + tierColor + '">' + ico('medal', 22) + '</div>' +
         '<div class="ach-card__meta">' +
           '<p class="ach-card__title">' + esc(a.title) + '</p>' +
           '<p class="ach-card__tier">' + esc(a.tier) + '</p>' +
         '</div>' +
-        (isUnlocked ? '<span class="ach-card__check" aria-label="Unlocked">&#10003;</span>' : '') +
+        (isUnlocked ? '<span class="ach-card__check" aria-label="Unlocked">' + ico('check', 14) + '</span>' : '') +
       '</div>' +
       '<p class="ach-card__desc' + (isUnlocked ? '' : ' ach-card__desc--locked') + '">' + esc(a.description) + '</p>' +
     '</div>';
@@ -207,7 +211,7 @@
     var html = CATEGORY_ORDER.filter(function (cat) { return groups[cat] && groups[cat].length; }).map(function (cat) {
       var items       = groups[cat];
       var catUnlocked = items.filter(function (a) { return unlockedSet[a.id]; }).length;
-      var label       = CATEGORY_LABELS[cat] || cat;
+      var label       = catLabel(cat);
       var cards       = items.map(function (a) { return achCard(a, !!unlockedSet[a.id]); }).join('');
 
       return '<details class="ach-group">' +

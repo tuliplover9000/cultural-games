@@ -782,6 +782,12 @@
     return init;
   }
 
+  // Coin glyph for the nav chip: inline SVG when icons.js is loaded, else the
+  // emoji as a graceful fallback until it lazy-loads.
+  function _coinIcon() {
+    return (window.Icon && Icon.svg) ? Icon.svg('coins', 16) : '💰';
+  }
+
   // Ensure avatar.js is loaded on every page (the nav appears site-wide but
   // avatar.js is only <script>-included on a few pages). Derive its URL from
   // auth.js's own script src so the relative path is correct at any depth.
@@ -794,6 +800,21 @@
     var sc = document.createElement('script');
     sc.src = src;
     sc.setAttribute('data-cg-avatar', '1');
+    sc.onload = function () { _renderNavWidget(); };
+    document.head.appendChild(sc);
+  }
+
+  // Same idea for icons.js (in shared/, so the path swap is js/utils/auth.js →
+  // shared/icons.js). Re-renders the nav so the coin glyph upgrades to SVG.
+  function _ensureIconsJs() {
+    if (window.Icon) { _renderNavWidget(); return; }
+    if (document.querySelector('script[data-cg-icons]')) return;
+    var s   = document.querySelector('script[src*="js/utils/auth.js"]');
+    var src = (s && s.src) ? s.src.replace(/js\/utils\/auth\.js(\?.*)?$/, 'shared/icons.js') : null;
+    if (!src) return;
+    var sc = document.createElement('script');
+    sc.src = src;
+    sc.setAttribute('data-cg-icons', '1');
     sc.onload = function () { _renderNavWidget(); };
     document.head.appendChild(sc);
   }
@@ -811,7 +832,7 @@
 
       container.innerHTML =
         '<div class="nav-auth">' +
-          '<span class="nav-coins" aria-label="Coin balance" title="Your coins">💰 ' + _coins.toLocaleString() + '</span>' +
+          '<span class="nav-coins" aria-label="Coin balance" title="Your coins">' + _coinIcon() + ' ' + _coins.toLocaleString() + '</span>' +
           '<button class="nav-auth__trigger" id="nav-auth-trigger" aria-haspopup="true" aria-expanded="false">' +
             '<span class="nav-auth__avatar" aria-hidden="true">' + _navAvatarInner(init) + '</span>' +
             '<span class="nav-auth__name">' + uname + '</span>' +
@@ -870,6 +891,7 @@
 
     _renderNavWidget();
     _ensureAvatarJs();
+    _ensureIconsJs();
 
     document.addEventListener('click', function (e) {
       var dd  = document.getElementById('nav-auth-dropdown');
