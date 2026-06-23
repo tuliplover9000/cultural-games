@@ -653,6 +653,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
+  overflow: hidden;
   background: var(--color-primary);
   color: var(--color-accent-gold);
   font-family: var(--font-display);
@@ -662,6 +663,12 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+}
+/* When populated with a rendered avatar SVG, let it fill the circular box. */
+.lobby-player__avatar svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .lobby-player__info { flex: 1; min-width: 0; }
 .lobby-player__name {

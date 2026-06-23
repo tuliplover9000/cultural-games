@@ -74,6 +74,8 @@
   var _stats        = {};    // { gameId: { wins, losses, played } }
   var _favorites    = new Set(); // Set of favorited game keys
   var _coins        = 0;         // coin balance
+  var _avatar       = null;      // equipped avatar config (jsonb) or null
+  var _ownedItems   = [];        // owned avatar item ids
   var _refreshTimer = null;  // proactive token refresh timer
   var _listeners    = [];
 
@@ -174,6 +176,7 @@
       } else {
         _clearSession();
         _setUser(null); _profile = null; _stats = {}; _favorites = new Set(); _coins = 0;
+        _avatar = null; _ownedItems = [];
         _emit();
       }
     }, msUntilRefresh);
@@ -305,6 +308,36 @@
     return _user ? _user.id : null;
   }
 
+  /* ── Avatars ── */
+  function getAvatar() { return _avatar; }
+
+  function getOwnedItems() { return _ownedItems.slice(); }
+
+  async function buyAvatarItem(itemId) {
+    if (!_user || !_accessToken) return { ok: false, error: 'not_authenticated' };
+    var resp = await _rpcFetch('buy_avatar_item', { p_item_id: itemId });
+    var d = resp.ok ? await resp.json() : null;
+    if (d && d.success) {
+      if (typeof d.new_balance === 'number') { _coins = d.new_balance; }
+      if (Array.isArray(d.owned)) { _ownedItems = d.owned; }
+      _emit();
+      return { ok: true, already: !!d.already };
+    }
+    return { ok: false, error: (d && d.error) || 'failed', new_balance: d && d.new_balance };
+  }
+
+  async function setAvatar(cfg) {
+    if (!_user || !_accessToken) return { ok: false, error: 'not_authenticated' };
+    var resp = await _rpcFetch('set_avatar', { p_config: cfg });
+    var d = resp.ok ? await resp.json() : null;
+    if (d && d.success) {
+      _avatar = cfg;
+      _emit();
+      return { ok: true };
+    }
+    return { ok: false, error: (d && d.error) || 'failed', item: d && d.item };
+  }
+
   async function toggleFavorite(gameKey) {
     if (!_user || !_accessToken) return false;
     if (_favorites.has(gameKey)) {
@@ -324,11 +357,21 @@
   /* ── Load profile + stats from DB after auth ── */
   async function _loadUserData(user) {
     _setUser(user);
-    if (!user) { _profile = null; _stats = {}; _favorites = new Set(); _coins = 0; return; }
+    if (!user) { _profile = null; _stats = {}; _favorites = new Set(); _coins = 0; _avatar = null; _ownedItems = []; return; }
 
-    var pRes = await getSB().from('profiles').select('username,created_at,coins').eq('id', user.id).single();
+    var pRes = await getSB().from('profiles').select('username,created_at,coins,equipped_avatar,owned_avatar_items').eq('id', user.id).single();
+    // Deploy-order resilience: the avatar columns (equipped_avatar/owned_avatar_items)
+    // only exist after migration 017. If the code ships before 017 is applied, the
+    // select above errors and pRes.data is null — which would wrongly zero out coins
+    // and the username for every logged-in user. Detect that and retry with the
+    // legacy column set so existing profile/coin loading never regresses.
+    if (pRes.error || !pRes.data) {
+      pRes = await getSB().from('profiles').select('username,created_at,coins').eq('id', user.id).single();
+    }
     _profile = pRes.data || { username: user.email.split('@')[0], created_at: user.created_at };
     _coins   = (pRes.data && pRes.data.coins) || 0;
+    _avatar     = (pRes.data && pRes.data.equipped_avatar) || null;
+    _ownedItems = (pRes.data && pRes.data.owned_avatar_items) || [];
     // Cache the real username into the stored session for instant correct boot.
     if (pRes.data) _persistUsername();
 
@@ -433,6 +476,7 @@
     if (_user) { try { localStorage.removeItem(_favCacheKey(_user.id)); } catch (e) {} }
     _clearSession();
     _setUser(null); _profile = null; _stats = {}; _favorites = new Set(); _coins = 0;
+    _avatar = null; _ownedItems = [];
     _emit();
   }
 
@@ -911,6 +955,10 @@
     getCoins:       getCoins,
     // addCoins / persistCoins intentionally not exposed — coins are server-authoritative
     // via record_game_result. Exposing them allowed console-based balance manipulation.
+    getAvatar:      getAvatar,
+    getOwnedItems:  getOwnedItems,
+    buyAvatarItem:  buyAvatarItem,
+    setAvatar:      setAvatar,
     getToken:       function () { return _accessToken; },
     getUserId:      getUserId,
     GAMES:          GAMES,

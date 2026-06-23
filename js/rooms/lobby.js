@@ -167,6 +167,18 @@
     return GAMES.find(function(g){ return g.key === key; }) || { key: key, name: key, icon: '🎮', badge: '', maxPlayers: 2 };
   }
 
+  // Render a player's avatar SVG. Uses the room's stored config when present,
+  // otherwise a deterministic default keyed off the player id. Falls back to the
+  // name's first letter if Avatar (avatar.js) is unavailable. ids passed to
+  // Avatar.render are whitelisted by Avatar.clean, so this is XSS-safe.
+  function avatarHTML(room, pid, size, name) {
+    if (window.Avatar) {
+      var cfg = (room.player_avatars && room.player_avatars[pid]) || Avatar.defaultConfig(pid);
+      return Avatar.render(cfg, size);
+    }
+    return esc((name && name[0]) ? name[0].toUpperCase() : '?');
+  }
+
   // ── Filter ─────────────────────────────────────────────────────────────────
   function applyFilter() {
     var q = _filterQ.toLowerCase();
@@ -198,7 +210,7 @@
       var isMe  = pid === myPid;
       var isTop = showTrophy && w === maxW;
       return '<li class="lobby-player' + (isMe ? ' lobby-player--me' : '') + '" data-pid="' + esc(pid) + '">' +
-        '<div class="lobby-player__avatar" aria-hidden="true">' + name[0].toUpperCase() + '</div>' +
+        '<div class="lobby-player__avatar" aria-hidden="true">' + avatarHTML(room, pid, 44, name) + '</div>' +
         '<div class="lobby-player__info">' +
           '<span class="lobby-player__name">' + name + (isMe ? ' <em style="font-weight:400;color:var(--color-text-muted)">(you)</em>' : '') + '</span>' +
           '<span class="lobby-player__wins">' + w + ' win' + (w !== 1 ? 's' : '') + '</span>' +
@@ -504,7 +516,7 @@
                '" data-pid="' + esc(pid) + '" data-role="' + esc(r) + '">' + label + '</button>';
       }).join('');
       return '<li class="assign-player-row" data-pid="' + esc(pid) + '">' +
-        '<div class="lobby-player__avatar" style="width:30px;height:30px;font-size:var(--text-base)">' + esc(name[0].toUpperCase()) + '</div>' +
+        '<div class="lobby-player__avatar" style="width:30px;height:30px;font-size:var(--text-base)">' + avatarHTML(room, pid, 30, name) + '</div>' +
         '<span class="assign-player-name">' + esc(name) + (pid === myPid ? ' (you)' : '') + '</span>' +
         '<div class="assign-role-toggle" role="group" aria-label="Role for ' + esc(name) + '">' + btns + '</div>' +
       '</li>';

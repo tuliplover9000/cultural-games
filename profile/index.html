@@ -152,6 +152,26 @@
           </div>
         </section>
 
+        <!-- Avatar customizer / shop -->
+        <section id="prof-avatar-section">
+          <div class="container prof-section">
+            <p class="prof-section__label">&#127917; Avatar</p>
+            <div class="avatar-customizer">
+              <div class="avatar-customizer__preview">
+                <div class="avatar-preview" id="avatar-preview" aria-hidden="true"></div>
+                <p class="avatar-coin-readout">
+                  <span aria-hidden="true">&#128176;</span>
+                  <span id="avatar-coin-balance">0</span> coins
+                </p>
+              </div>
+              <div class="avatar-customizer__picker">
+                <div class="avatar-tabs" id="avatar-tabs" role="tablist" aria-label="Avatar categories"></div>
+                <div class="avatar-items" id="avatar-items" role="list"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <!-- Game Stats -->
         <section>
           <div class="container prof-section">
@@ -184,10 +204,12 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="../js/utils/games-data.js"></script>
   <script src="../js/utils/navigation.js"></script>
+  <script src="../js/utils/avatar.js"></script>
   <script src="../js/utils/auth.js"></script>
   <script src="../shared/achievement-queue.js"></script>
   <script src="../shared/achievements.js"></script>
   <script src="profile.js"></script>
+  <script src="profile-avatar.js"></script>
   <link rel="stylesheet" href="../shared/cookie-consent.css">
   <script src="../shared/cookie-consent.js"></script>
 

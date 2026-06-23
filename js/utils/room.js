@@ -93,6 +93,13 @@
     localStorage.setItem('cg_name', safe);
   }
 
+  // Cosmetic only — the equipped avatar config (jsonb) for authenticated users,
+  // or null for guests. Never part of game/board state.
+  function getPlayerAvatar() {
+    try { return (window.Auth && Auth.getAvatar && Auth.getAvatar()) || null; }
+    catch (e) { return null; }
+  }
+
   // ── Valid game key whitelist ───────────────────────────────────────────────
   // Used to reject arbitrary strings from suggestGame/selectGame before they
   // reach the DB and potentially get rendered unescaped in the lobby.
@@ -204,6 +211,7 @@
       _cbs = cbs || {};
       var pid     = getPlayerId();
       var name    = getPlayerName();
+      var avatar  = getPlayerAvatar();
       var max     = (opts && opts.maxPlayers) || 4;
       var preGame = (opts && opts.game) || null;
       var rawRoomName = (opts && opts.roomName) || null;
@@ -222,6 +230,7 @@
           board_state:  null,                          // legacy field
           player_ids:   [pid],
           player_names: { [pid]: name },
+          player_avatars: avatar ? { [pid]: avatar } : {},
           player_wins:  {},
           player_roles: { [pid]: 'player' },
           player_ready: { [pid]: false },
@@ -251,9 +260,10 @@
     joinRoom: async function (code, cbs) {
       _cbs = cbs || {};
       if (!code || !String(code).trim()) return err('Please enter a room code.');
-      var c    = String(code).toUpperCase().trim();
-      var pid  = getPlayerId();
-      var name = getPlayerName();
+      var c      = String(code).toUpperCase().trim();
+      var pid    = getPlayerId();
+      var name   = getPlayerName();
+      var avatar = getPlayerAvatar();
 
       // Look up room by code
       var res = await db().from('rooms')
@@ -272,11 +282,13 @@
 
       // Add this player
       if (!ids.includes(pid)) ids.push(pid);
-      var names  = Object.assign({}, r.player_names  || {});
-      var wins   = Object.assign({}, r.player_wins   || {});
-      var roles  = Object.assign({}, r.player_roles  || {});
-      var rdyMap = Object.assign({}, r.player_ready  || {});
+      var names   = Object.assign({}, r.player_names   || {});
+      var avatars = Object.assign({}, r.player_avatars || {});
+      var wins    = Object.assign({}, r.player_wins    || {});
+      var roles   = Object.assign({}, r.player_roles   || {});
+      var rdyMap  = Object.assign({}, r.player_ready   || {});
       names[pid]  = name;
+      if (avatar) avatars[pid] = avatar;   // guests (null) keep any existing entry
       if (!wins[pid])   wins[pid]   = 0;
       if (!roles[pid])  roles[pid]  = 'player';
       if (rdyMap[pid] === undefined) rdyMap[pid] = false;
@@ -284,6 +296,7 @@
       var res2 = await authDb().from('rooms').update({
         player_ids:   ids,
         player_names: names,
+        player_avatars: avatars,
         player_wins:  wins,
         player_roles: roles,
         player_ready: rdyMap,
@@ -483,15 +496,19 @@
       if (!ids.includes(pid)) {
         // Enforce max_players — rejoinRoom previously skipped this check
         if (ids.length >= (_room.max_players || 4)) return err('Room is full.');
-        var name   = getPlayerName() || 'Player';
-        var names  = Object.assign({}, _room.player_names  || {}, { [pid]: name });
-        var wins   = Object.assign({}, _room.player_wins   || {}, { [pid]: 0 });
-        var roles  = Object.assign({}, _room.player_roles  || {}, { [pid]: 'player' });
-        var rdyMap = Object.assign({}, _room.player_ready  || {}, { [pid]: false });
+        var name    = getPlayerName() || 'Player';
+        var avatar  = getPlayerAvatar();
+        var names   = Object.assign({}, _room.player_names   || {}, { [pid]: name });
+        var avatars = Object.assign({}, _room.player_avatars || {});
+        if (avatar) avatars[pid] = avatar;   // guests (null) leave the map untouched
+        var wins    = Object.assign({}, _room.player_wins    || {}, { [pid]: 0 });
+        var roles   = Object.assign({}, _room.player_roles   || {}, { [pid]: 'player' });
+        var rdyMap  = Object.assign({}, _room.player_ready   || {}, { [pid]: false });
         ids.push(pid);
         var res2 = await authDb().from('rooms').update({
           player_ids:   ids,
           player_names: names,
+          player_avatars: avatars,
           player_wins:  wins,
           player_roles: roles,
           player_ready: rdyMap,
