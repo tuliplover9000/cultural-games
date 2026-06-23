@@ -997,7 +997,7 @@
       capturedBlack:  state.capturedBlack,
       noCaptureMoves: state.noCaptureMoves,
       gameOver:       state.gameOver,
-      winner:         state.winner,
+      winner:         (state.gameOver && !state.winner) ? 'draw' : state.winner,
       mode:           state.mode,
       last_actor:     'room:' + mySeat,
     });

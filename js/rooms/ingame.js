@@ -227,7 +227,14 @@
       var winnerRole = seatRolesList[winnerSeat];
       winnerPid = instancePlayers.find(function(p) { return roles[p] === winnerRole; }) || null;
     } else {
-      winnerPid = instancePlayers[winnerSeat] || null;
+      // 1v1 mode: the guest is launched with game seat 2 (twoPlayer convention,
+      // mirroring buildSrc), but instancePlayers is the dense [host, guest] array.
+      // Remap game seat 2 back to dense index 1 before indexing, so a guest win
+      // resolves to the guest pid instead of undefined → null (dropped win).
+      var mode = room.game_mode || 'normal';
+      var idx  = winnerSeat;
+      if (mode === '1v1' && idx === 2) idx = 1;
+      winnerPid = instancePlayers[idx] || null;
     }
 
     Room.endGameWithWin(instanceId, winnerPid);

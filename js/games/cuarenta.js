@@ -798,14 +798,28 @@
     if (!vsRoom || !window.RoomBridge || winReported) return;
     if (G.phase !== 'game-end') return;
     winReported = true;
-    var winnerSeat = (G.playerScore >= TARGET) ? mySeat : (1 - mySeat);
+    // Both clients derive the winner from the SAME absolute (p0,p1) seat scores
+    // so they report the identical seat — or both report a draw — even when a
+    // single round simultaneously pushes both seats past TARGET. A true tie
+    // reports no winner (reportWin(-1)) so the room settles to the endscreen
+    // with no false win credited (mirrors oware's draw handling).
+    var p0 = (mySeat === 0) ? G.playerScore : G.aiScore;
+    var p1 = (mySeat === 0) ? G.aiScore : G.playerScore;
+    var winnerSeat;
+    if (p0 >= TARGET && p1 >= TARGET) {
+      winnerSeat = (p0 > p1) ? 0 : (p1 > p0) ? 1 : -1;   // -1 = true draw
+    } else {
+      winnerSeat = (G.playerScore >= TARGET) ? mySeat : (1 - mySeat);
+    }
     RoomBridge.reportWin(winnerSeat);
     if (!roomEnded) {
       roomEnded = true;
       if (window.Achievements && Achievements.evaluate) {
+        // mySeat won iff winnerSeat is this seat; a draw (-1) is neither win nor loss.
+        var myResult = (winnerSeat === -1) ? 'draw' : (winnerSeat === mySeat ? 'win' : 'loss');
         Achievements.evaluate({
           gameId: 'cuarenta',
-          result: (G.playerScore >= TARGET) ? 'win' : 'loss',
+          result: myResult,
           isOnline: true,
           isHost: !!(window.RoomBridge && RoomBridge.isRoomHost && RoomBridge.isRoomHost()),
         });

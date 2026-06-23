@@ -1449,11 +1449,15 @@
     if (window.RoomBridge && RoomBridge.isActive()) {
       blob.last_actor = 'room:' + RoomBridge.getSeat();
       RoomBridge.sendState(blob);
-      // Report win when the game reaches its final phase
+      // Report win when the game reaches its final phase.
+      // Restrict the winner to real (non-AI) human seats so the room end
+      // screen always resolves to a real player - an AI seat would map to an
+      // undefined instancePlayers entry (null winnerPid).
       if (state.phase === 'game-over') {
-        var seats  = [0, 1, 2, 3];
-        var winner = seats.sort(function(a, b) { return (state.scores[b] || 0) - (state.scores[a] || 0); })[0];
-        RoomBridge.reportWin(winner);
+        var aiSeats    = (RoomBridge.getAiSeats) ? RoomBridge.getAiSeats() : [];
+        var humanSeats = [0, 1, 2, 3].filter(function (s) { return aiSeats.indexOf(s) === -1; });
+        var winner     = humanSeats.sort(function(a, b) { return (state.scores[b] || 0) - (state.scores[a] || 0); })[0];
+        if (winner !== undefined) RoomBridge.reportWin(winner, state.scores[winner]);
       }
       return;
     }

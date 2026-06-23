@@ -798,6 +798,13 @@
     state.visitedThisTurn = [];
     state.aiThinking = false;
     render();
+    // Converge the loser's client on the terminal result: report the win
+    // (idempotent — deduped by the bridge) and show the end banner/score.
+    if (state.phase === 'over' && state.winner !== null && state.winner !== undefined) {
+      if (window.RoomBridge) RoomBridge.reportWin(state.winner === BLACK ? 0 : 1);
+      setStatus(state.winner === myFanColor ? '🎉 You win!' : 'You lose. Better luck next time!');
+      updateScore();
+    }
   }
 
   function initRoomMode() {

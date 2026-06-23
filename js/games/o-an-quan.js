@@ -307,7 +307,7 @@
       if (vsRoom && window.RoomBridge && !_isSowingAsReplay) {
         RoomBridge.sendState(Object.assign({}, state, { last_actor: 'room:' + myRoomSeat }));
         var winner = state.board[Q1] > state.board[Q2] ? 0 : state.board[Q2] > state.board[Q1] ? 1 : -1;
-        if (winner >= 0) RoomBridge.reportWin(winner);
+        RoomBridge.reportWin(winner); // -1 on a draw => no winner credited, room still settles to endscreen
       }
       refresh();
       return;
@@ -324,7 +324,7 @@
         if (vsRoom && window.RoomBridge && !_isSowingAsReplay) {
           RoomBridge.sendState(Object.assign({}, state, { last_actor: 'room:' + myRoomSeat }));
           var noMoveWinner = state.board[Q1] > state.board[Q2] ? 0 : state.board[Q2] > state.board[Q1] ? 1 : -1;
-          if (noMoveWinner >= 0) RoomBridge.reportWin(noMoveWinner);
+          RoomBridge.reportWin(noMoveWinner); // -1 on a draw => no winner credited, room still settles to endscreen
         }
         refresh();
         return;

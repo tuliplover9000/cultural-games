@@ -455,7 +455,11 @@
           cups:   state.cups.slice(),
           last_actor: 'room:' + myRoomSeat,
         }));
-        RoomBridge.reportWin(state.stores[PLAYER] >= state.stores[AI] ? 0 : 1);
+        if (state.stores[PLAYER] === state.stores[AI]) {
+          RoomBridge.reportWin(-1);   // draw -> instancePlayers[-1] -> null -> no winner credited
+        } else {
+          RoomBridge.reportWin(state.stores[PLAYER] > state.stores[AI] ? 0 : 1);
+        }
       }
       return;
     }
@@ -483,7 +487,11 @@
         last_actor: 'room:' + myRoomSeat,
       }));
       if (state.phase === 'over') {
-        RoomBridge.reportWin(state.stores[PLAYER] >= state.stores[AI] ? 0 : 1);
+        if (state.stores[PLAYER] === state.stores[AI]) {
+          RoomBridge.reportWin(-1);   // draw -> instancePlayers[-1] -> null -> no winner credited
+        } else {
+          RoomBridge.reportWin(state.stores[PLAYER] > state.stores[AI] ? 0 : 1);
+        }
       }
     }
   }
