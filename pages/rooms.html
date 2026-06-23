@@ -79,7 +79,7 @@
 
           <!-- Create card -->
           <div class="rooms-entry-card">
-            <div class="rooms-entry-card__icon" aria-hidden="true">🎲</div>
+            <div class="rooms-entry-card__icon" aria-hidden="true"><span data-icon="dice" data-icon-size="40"></span></div>
             <h2 class="rooms-entry-card__title">Create Room</h2>
             <p class="rooms-entry-card__desc">
               Start a new room and invite friends with a short code.
@@ -105,7 +105,7 @@
                 <button class="rooms-player-btn" data-n="2" aria-pressed="false">2</button>
                 <button class="rooms-player-btn active" data-n="4" aria-pressed="true">4</button>
                 <button class="rooms-player-btn" data-n="6" aria-pressed="false">6</button>
-                <button class="rooms-player-btn" data-n="8" aria-pressed="false">8 🎲</button>
+                <button class="rooms-player-btn" data-n="8" aria-pressed="false">8 <span data-icon="dice" data-icon-size="13"></span></button>
               </div>
             </div>
 
@@ -122,7 +122,7 @@
 
           <!-- Join card -->
           <div class="rooms-entry-card">
-            <div class="rooms-entry-card__icon" aria-hidden="true">🚪</div>
+            <div class="rooms-entry-card__icon" aria-hidden="true"><span data-icon="door" data-icon-size="40"></span></div>
             <h2 class="rooms-entry-card__title">Join Room</h2>
             <p class="rooms-entry-card__desc">
               Enter the 6-character code shared by your host.
@@ -147,7 +147,7 @@
 
           <!-- Tournament card -->
           <div class="rooms-entry-card rooms-entry-card--tournament">
-            <div class="rooms-entry-card__icon" aria-hidden="true">🏆</div>
+            <div class="rooms-entry-card__icon" aria-hidden="true"><span data-icon="trophy" data-icon-size="40"></span></div>
             <h2 class="rooms-entry-card__title">Tournaments</h2>
             <p class="rooms-entry-card__desc">
               Host or join a bracketed tournament with prizes, entry fees, and real-time brackets.
@@ -197,14 +197,14 @@
             <div class="rm-empty-state">
               <div class="rm-empty-state__paths">
                 <div class="rm-empty-state__path">
-                  <div class="rm-empty-state__path-icon" aria-hidden="true">🎮</div>
+                  <div class="rm-empty-state__path-icon" aria-hidden="true"><span data-icon="gamepad" data-icon-size="30"></span></div>
                   <h3>Play Solo</h3>
                   <p>Play Tiến Lên, Oware, or any of the 24 games against the AI. No account, no waiting.</p>
                   <a href="browse.html" class="btn btn-primary">Browse Games</a>
                 </div>
                 <div class="rm-empty-state__divider" aria-hidden="true">or</div>
                 <div class="rm-empty-state__path">
-                  <div class="rm-empty-state__path-icon" aria-hidden="true">🚪</div>
+                  <div class="rm-empty-state__path-icon" aria-hidden="true"><span data-icon="door" data-icon-size="30"></span></div>
                   <h3>Start a room</h3>
                   <p>Create a room, share the link, and play with anyone in the world.</p>
                   <button class="btn btn-primary" id="rm-empty-create-btn">Create a Room</button>
@@ -323,9 +323,9 @@
             </label>
             <div class="tn-form__prize-preview">
               <p class="tn-prize-preview__title">Estimated Prize Pool (if full)</p>
-              <div class="tn-prize-preview__row"><span>🥇 1st place (60%)</span><span id="tn-prize-1st">-</span></div>
-              <div class="tn-prize-preview__row"><span>🥈 2nd place (30%)</span><span id="tn-prize-2nd">-</span></div>
-              <div class="tn-prize-preview__row"><span>🥉 3rd place (10%)</span><span id="tn-prize-3rd">-</span></div>
+              <div class="tn-prize-preview__row"><span><span data-icon="medal" data-icon-size="16" style="color:#D4A017"></span> 1st place (60%)</span><span id="tn-prize-1st">-</span></div>
+              <div class="tn-prize-preview__row"><span><span data-icon="medal" data-icon-size="16" style="color:#A8A9AD"></span> 2nd place (30%)</span><span id="tn-prize-2nd">-</span></div>
+              <div class="tn-prize-preview__row"><span><span data-icon="medal" data-icon-size="16" style="color:#CD7F32"></span> 3rd place (10%)</span><span id="tn-prize-3rd">-</span></div>
             </div>
             <p class="tn-form__cost-summary">
               Cost to you: <strong id="tn-total-cost">-</strong> &nbsp;·&nbsp; Balance: <span id="tn-coin-balance">-</span>
@@ -516,6 +516,7 @@
   <script src="../js/utils/auth.js"></script>
   <script src="../shared/achievement-queue.js"></script>
   <script src="../shared/achievements.js"></script>
+  <script src="../shared/icons.js"></script>
   <script src="../js/utils/avatar.js"></script>
   <script src="../js/utils/room.js"></script>
   <script src="../js/rooms/entry.js"></script>

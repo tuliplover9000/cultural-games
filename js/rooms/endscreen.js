@@ -93,7 +93,7 @@
         '<div class="lobby-player__avatar" style="width:28px;height:28px;font-size:var(--text-sm);flex-shrink:0">' + esc(name[0].toUpperCase()) + '</div>' +
         '<span class="endscreen-lb-name">' + esc(name) + '</span>' +
         '<span class="endscreen-lb-wins">' + w + ' win' + (w !== 1 ? 's' : '') + '</span>' +
-        (top ? '<span class="endscreen-lb-trophy">🏆</span>' : '') +
+        (top ? '<span class="endscreen-lb-trophy">' + (window.Icon ? Icon.svg('trophy', 16) : '🏆') + '</span>' : '') +
       '</li>';
     }).join('');
   }

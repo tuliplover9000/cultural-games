@@ -215,7 +215,7 @@
           '<span class="lobby-player__name">' + name + (isMe ? ' <em style="font-weight:400;color:var(--color-text-muted)">(you)</em>' : '') + '</span>' +
           '<span class="lobby-player__wins">' + w + ' win' + (w !== 1 ? 's' : '') + '</span>' +
         '</div>' +
-        (isTop ? '<span class="lobby-player__trophy" title="Leading!">🏆</span>' : '') +
+        (isTop ? '<span class="lobby-player__trophy" title="Leading!">' + (window.Icon ? Icon.svg('trophy', 16) : '🏆') + '</span>' : '') +
       '</li>';
     }).join('');
 
