@@ -1007,6 +1007,7 @@
 
   <script src="../js/utils/navigation.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../shared/icons.js"></script>
   <script src="../js/utils/auth.js"></script>
   <script src="../shared/email-capture.js"></script>
   <script>
@@ -1085,7 +1086,7 @@
       btn.className = 'fav-btn';
       btn.setAttribute('aria-label', 'Add to favorites');
       btn.setAttribute('data-game-key', gameKey);
-      btn.textContent = '☆';
+      btn.innerHTML = (window.Icon ? Icon.svg('star', 18) : '☆');
       btn.addEventListener('click', async function (e) {
         e.preventDefault();
         if (!window.Auth || !Auth.isLoggedIn()) { Auth.openModal('signin'); return; }
@@ -1102,7 +1103,7 @@
       grid.querySelectorAll('.fav-btn').forEach(function (btn) {
         var key = btn.getAttribute('data-game-key');
         var fav = loggedIn && Auth.isFavorite(key);
-        btn.textContent = fav ? '★' : '☆';
+        btn.innerHTML = (window.Icon ? Icon.svg(fav ? 'star-fill' : 'star', 18) : (fav ? '★' : '☆'));
         btn.classList.toggle('fav-active', fav);
         btn.setAttribute('aria-label', fav ? 'Remove from favorites' : 'Add to favorites');
       });

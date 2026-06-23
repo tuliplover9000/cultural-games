@@ -379,7 +379,7 @@
 
     <!-- ── Signed-out state ── -->
     <div id="account-placeholder" class="acc-locked">
-      <div class="acc-locked__icon" aria-hidden="true">🔒</div>
+      <div class="acc-locked__icon" aria-hidden="true"><span data-icon="lock" data-icon-size="40"></span></div>
       <h1>Sign in to view your account</h1>
       <p>Track your wins, explore cultures, and see your game history.</p>
       <button class="btn btn-primary btn-lg" id="placeholder-signin-btn">Sign In</button>
@@ -405,27 +405,27 @@
 
           <div class="acc-summary" aria-label="Account summary">
             <div class="acc-stat">
-              <span class="acc-stat__icon" aria-hidden="true">🎮</span>
+              <span class="acc-stat__icon" aria-hidden="true" data-icon="gamepad" data-icon-size="26"></span>
               <span class="acc-stat__num" id="stat-played">-</span>
               <span class="acc-stat__label">Games Played</span>
             </div>
             <div class="acc-stat">
-              <span class="acc-stat__icon" aria-hidden="true">🏆</span>
+              <span class="acc-stat__icon" aria-hidden="true" data-icon="trophy" data-icon-size="26"></span>
               <span class="acc-stat__num" id="stat-winrate">-</span>
               <span class="acc-stat__label">Win Rate</span>
             </div>
             <div class="acc-stat">
-              <span class="acc-stat__icon" aria-hidden="true">🌍</span>
+              <span class="acc-stat__icon" aria-hidden="true" data-icon="globe" data-icon-size="26"></span>
               <span class="acc-stat__num" id="stat-cultures">-</span>
               <span class="acc-stat__label">Cultures Explored</span>
             </div>
             <div class="acc-stat">
-              <span class="acc-stat__icon" aria-hidden="true">★</span>
+              <span class="acc-stat__icon" aria-hidden="true" data-icon="star" data-icon-size="26"></span>
               <span class="acc-stat__num" id="stat-favs">-</span>
               <span class="acc-stat__label">Favorites</span>
             </div>
             <div class="acc-stat">
-              <span class="acc-stat__icon" aria-hidden="true">💰</span>
+              <span class="acc-stat__icon" aria-hidden="true" data-icon="coins" data-icon-size="26"></span>
               <span class="acc-stat__num" id="stat-coins">-</span>
               <span class="acc-stat__label">Coins</span>
             </div>
@@ -438,7 +438,7 @@
         <!-- Favorites -->
         <section id="favorites-section" hidden>
           <div class="container acc-section">
-            <p class="acc-section__label">★ Favorites</p>
+            <p class="acc-section__label"><span data-icon="star"></span> Favorites</p>
             <div class="fav-grid" id="favorites-grid"></div>
           </div>
         </section>
@@ -466,7 +466,7 @@
             <input class="form-input" type="email" id="notify-email" placeholder="your@email.com" required />
             <button class="btn btn-primary" type="submit">Notify Me</button>
           </form>
-          <p class="notify-success" id="notify-success">✓ You're on the list - we'll be in touch!</p>
+          <p class="notify-success" id="notify-success"><span data-icon="check"></span> You're on the list - we'll be in touch!</p>
         </div>
       </section>
 
@@ -495,6 +495,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="../js/utils/games-data.js"></script>
   <script src="../js/utils/navigation.js"></script>
+  <script src="../shared/icons.js"></script>
   <script src="../js/utils/auth.js"></script>
   <script>
   (function () {
@@ -567,7 +568,7 @@
         var href = (data && data.path) || (game && game.href) || ('games/' + key + '.html');
         if (href.indexOf('pages/') === 0) href = href.slice(6);
         return '<a href="' + href + '" class="fav-card">' +
-          '<span class="fav-card__star" aria-hidden="true">★</span>' +
+          '<span class="fav-card__star" aria-hidden="true">' + (window.Icon ? Icon.svg('star-fill', 16) : '★') + '</span>' +
           '<span class="fav-card__name">' + name + '</span>' +
           '<span class="fav-card__arrow" aria-hidden="true">→</span>' +
         '</a>';
@@ -605,7 +606,7 @@
           '<div class="gsc__header">' +
             (game.iconPath
               ? '<img src="../' + game.iconPath + '" class="gsc__icon" aria-hidden="true" alt="" />'
-              : '<span class="gsc__icon" style="font-size:1.6rem;display:flex;align-items:center;justify-content:center;" aria-hidden="true">🎮</span>') +
+              : '<span class="gsc__icon" style="display:flex;align-items:center;justify-content:center;" aria-hidden="true">' + (window.Icon ? Icon.svg('gamepad', 24) : '🎮') + '</span>') +
             '<span class="gsc__name">' + game.name + '</span>' +
           '</div>' +
           '<div class="gsc__body">' + body +

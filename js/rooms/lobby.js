@@ -252,7 +252,7 @@
           '</div>'
         : '';
       return '<div class="lobby-game-card" role="listitem" data-name="' + esc(g.name) + '" data-culture="' + esc(g.culture || '') + '" data-type="' + esc(g.type || '') + '" data-max-players="' + (g.maxPlayers || '') + '">' +
-        '<button class="lobby-star-btn' + (isFav ? ' lobby-star-btn--on' : '') + '" data-game="' + g.key + '" type="button" aria-label="' + (isFav ? 'Remove from favorites' : 'Add to favorites') + '">' + (isFav ? '★' : '☆') + '</button>' +
+        '<button class="lobby-star-btn' + (isFav ? ' lobby-star-btn--on' : '') + '" data-game="' + g.key + '" type="button" aria-label="' + (isFav ? 'Remove from favorites' : 'Add to favorites') + '">' + (window.Icon ? Icon.svg(isFav ? 'star-fill' : 'star', 16) : (isFav ? '★' : '☆')) + '</button>' +
         '<span class="lobby-game-card__icon" aria-hidden="true">' + iconInner + '</span>' +
         '<div class="lobby-game-card__info">' +
           '<span class="lobby-game-card__name">' + esc(g.name) + '</span>' +
@@ -307,7 +307,7 @@
     elGameGrid.querySelectorAll('.lobby-suggest-btn').forEach(function(btn) {
       btn.addEventListener('click', function() {
         btn.disabled = true;
-        btn.textContent = '✓';
+        btn.innerHTML = (window.Icon ? Icon.svg('check', 15) : '✓');
         setTimeout(function(){ btn.disabled = false; btn.textContent = 'Suggest'; }, 1500);
         Room.suggestGame(btn.dataset.game);
       });
@@ -351,7 +351,7 @@
           '<span class="lobby-suggestion__by">suggested by ' + esc(s.name || 'someone') + '</span>' +
         '</div>' +
         (canPlay ? '<button class="btn btn-primary btn-sm lobby-play-btn" data-game="' + esc(s.game) + '" data-idx="' + idx + '">Play this</button>' : '') +
-        ((isOwn || isHost) ? '<button class="btn btn-ghost btn-sm lobby-remove-btn" data-idx="' + idx + '" aria-label="Remove suggestion">✕</button>' : '') +
+        ((isOwn || isHost) ? '<button class="btn btn-ghost btn-sm lobby-remove-btn" data-idx="' + idx + '" aria-label="Remove suggestion">' + (window.Icon ? Icon.svg('x', 14) : '✕') + '</button>' : '') +
       '</li>';
     }).join('');
 
