@@ -72,7 +72,10 @@
       { id: 'hat-party', label: 'Party', price: 80 },
       { id: 'hat-band',  label: 'Band',  price: 60 },
       { id: 'hat-top',   label: 'Top',   price: 150 },
-      { id: 'hat-crown', label: 'Crown', price: 200 }
+      { id: 'hat-crown', label: 'Crown', price: 200 },
+      // Exclusive — not buyable. `unlock` is the achievement id that grants it
+      // (gated client-side; price 0 so the server's set_avatar accepts it).
+      { id: 'hat-tl-lord', label: 'Lord of the South', price: 0, unlock: 'tl_wins_50' }
     ],
     accessory: [
       { id: 'acc-none',    label: 'None',    price: 0 },
@@ -80,7 +83,10 @@
       { id: 'acc-shades',  label: 'Shades',  price: 80 },
       { id: 'acc-earring', label: 'Earring', price: 40 },
       { id: 'acc-flower',  label: 'Flower',  price: 100 },
-      { id: 'acc-monocle', label: 'Monocle', price: 120 }
+      { id: 'acc-monocle', label: 'Monocle', price: 120 },
+      // Exclusive — not buyable. `unlock` is the achievement id that grants it
+      // (gated client-side; price 0 so the server's set_avatar accepts it).
+      { id: 'acc-tl-card', label: 'Card Shark', price: 0, unlock: 'tl_wins_10' }
     ]
   };
 
@@ -257,6 +263,15 @@
       '<g fill="none" stroke="#9A6E1A" stroke-width="2.2">' +
         '<circle cx="61" cy="47" r="8.5" fill="rgba(255,255,255,0.16)"/>' +
         '<line x1="61" y1="55.5" x2="59" y2="70" stroke-width="1.4"/>' +
+      '</g>',
+    // Exclusive (Tiến Lên "Saigon Shark"): a small playing-card emblem tucked by
+    // the cheek, in the cluster style of acc-flower. A tilted ace with a red pip.
+    'acc-tl-card':
+      '<g transform="translate(25,32) rotate(-12)">' +
+        '<rect x="-7" y="-9" width="14" height="18" rx="2" fill="#FBF5E6" stroke="#5A3010" stroke-width="1.2"/>' +
+        '<path d="M0 -5 L3.4 0.5 L0 4 L-3.4 0.5 Z" fill="#C0392B"/>' +
+        '<text x="-4.6" y="-3.4" font-family="serif" font-size="4.2" font-weight="700" fill="#C0392B">A</text>' +
+        '<text x="2.2" y="7.6" font-family="serif" font-size="4.2" font-weight="700" fill="#C0392B" transform="rotate(180 3.4 6)">A</text>' +
       '</g>'
   };
 
@@ -295,6 +310,24 @@
         '<circle cx="50" cy="8" r="2.8" fill="#56A8E0"/>' +
         '<circle cx="69" cy="12" r="2.4" fill="#6FCF97"/>' +
         '<rect x="30" y="28" width="40" height="3" fill="#D89A2A"/>' +
+      '</g>',
+    // Exclusive (Tiến Lên "Lord of the South"): an ornate gold crown — five tall
+    // jewel-tipped points and a gem-studded band, visibly fancier than hat-crown.
+    'hat-tl-lord':
+      '<g>' +
+        '<path d="M24 31 L27 8 L36 22 L43 4 L50 18 L57 4 L64 22 L73 8 L76 31 Q50 24 24 31 Z" fill="#F7C948" stroke="#8A5A12" stroke-width="1.5" stroke-linejoin="round"/>' +
+        '<path d="M24 31 L27 8 L36 22 L43 4 L50 18 L57 4 L64 22 L73 8 L76 31" fill="none" stroke="#FCE3A0" stroke-width="0.9" stroke-linejoin="round"/>' +
+        '<circle cx="27" cy="8"  r="2.6" fill="#6FCF97" stroke="#2E6F4A" stroke-width="0.6"/>' +
+        '<circle cx="43" cy="4"  r="3"   fill="#E8607A" stroke="#8A2440" stroke-width="0.6"/>' +
+        '<circle cx="50" cy="18" r="2.2" fill="#FFFFFF" stroke="#9A6E1A" stroke-width="0.6"/>' +
+        '<circle cx="57" cy="4"  r="3"   fill="#56A8E0" stroke="#1E4F78" stroke-width="0.6"/>' +
+        '<circle cx="73" cy="8"  r="2.6" fill="#9B59B6" stroke="#5A2E70" stroke-width="0.6"/>' +
+        '<rect x="26" y="27" width="48" height="5" rx="1.5" fill="#E0A82E" stroke="#8A5A12" stroke-width="0.8"/>' +
+        '<circle cx="34" cy="29.5" r="1.6" fill="#E8607A"/>' +
+        '<circle cx="43" cy="29.5" r="1.6" fill="#56A8E0"/>' +
+        '<circle cx="50" cy="29.5" r="1.6" fill="#6FCF97"/>' +
+        '<circle cx="57" cy="29.5" r="1.6" fill="#9B59B6"/>' +
+        '<circle cx="66" cy="29.5" r="1.6" fill="#F4D335"/>' +
       '</g>'
   };
 

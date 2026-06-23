@@ -651,3 +651,93 @@
   font-size: 0.72rem;
   opacity: 0.55;
 }
+
+/* ── Achievement-gated exclusive items (distinct from the coin-locked look) ── */
+.avatar-item--achievement-locked {
+  cursor: default;
+  border-style: dashed;
+  border-color: var(--color-accent-gold);
+  background: linear-gradient(135deg, var(--color-surface) 0%, rgba(212,160,23,0.05) 100%);
+}
+.avatar-item--achievement-locked .avatar-item__art { opacity: 0.4; filter: grayscale(0.6); }
+.avatar-item--achievement-locked:hover { transform: none; box-shadow: none; }
+.avatar-item--achievement-locked::after { content: none; }
+.avatar-item__badge--achievement {
+  background: rgba(212,160,23,0.14);
+  color: var(--color-accent-gold);
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1.3;
+  text-align: center;
+}
+.avatar-item__badge--earned {
+  background: var(--color-accent-gold);
+  color: #1A0E06;
+}
+
+/* ════════════════════════════════
+   TITLES — hero badge + picker
+════════════════════════════════ */
+.prof-title-badge {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-accent-gold);
+  margin: 0 0 5px;
+  line-height: 1.2;
+}
+
+.prof-titles-current {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-4);
+}
+.prof-titles-current strong { color: var(--color-accent-gold); }
+
+.prof-titles-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.prof-titles-empty {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.prof-title-chip {
+  --chip-tier: var(--color-accent-gold);
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.prof-title-chip:hover {
+  border-color: var(--chip-tier);
+  box-shadow: var(--shadow-sm);
+}
+.prof-title-chip--active {
+  border-color: var(--chip-tier);
+  background: var(--chip-tier);
+  color: #1A0E06;
+}
+.prof-title-chip--none { --chip-tier: var(--color-text-muted); }
+.prof-title-chip--none.prof-title-chip--active {
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+  border-color: var(--color-text-muted);
+}
+/* Tier accent dot before the title text */
+.prof-title-chip--bronze:not(.prof-title-chip--active),
+.prof-title-chip--silver:not(.prof-title-chip--active),
+.prof-title-chip--gold:not(.prof-title-chip--active) {
+  color: var(--chip-tier);
+}

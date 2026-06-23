@@ -76,6 +76,7 @@
             <div class="prof-avatar" id="prof-initial" aria-hidden="true"></div>
             <div class="prof-info">
               <h1 class="prof-username" id="prof-username"></h1>
+              <p class="prof-title-badge" id="prof-title" hidden></p>
               <p class="prof-meta" id="prof-joined"></p>
             </div>
           </div>
@@ -129,6 +130,15 @@
                 <div class="avatar-items" id="avatar-items" role="list"></div>
               </div>
             </div>
+          </div>
+        </section>
+
+        <!-- Titles -->
+        <section id="prof-titles-section">
+          <div class="container prof-section">
+            <p class="prof-section__label"><span data-icon="medal"></span> Titles</p>
+            <p class="prof-titles-current" id="prof-titles-current"></p>
+            <div class="prof-titles-grid" id="prof-titles-grid" role="list"></div>
           </div>
         </section>
 
@@ -211,6 +221,7 @@
   <script src="../shared/achievements.js"></script>
   <script src="profile.js"></script>
   <script src="profile-avatar.js"></script>
+  <script src="profile-titles.js"></script>
   <link rel="stylesheet" href="../shared/cookie-consent.css">
   <script src="../shared/cookie-consent.js"></script>
 

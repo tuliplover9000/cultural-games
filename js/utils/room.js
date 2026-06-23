@@ -100,6 +100,13 @@
     catch (e) { return null; }
   }
 
+  // Cosmetic only — the equipped wearable title (free text) for authenticated
+  // users, or null for guests. Untrusted: consumers MUST escape it on render.
+  function getPlayerTitle() {
+    try { return (window.Auth && Auth.getTitle && Auth.getTitle()) || null; }
+    catch (e) { return null; }
+  }
+
   // ── Valid game key whitelist ───────────────────────────────────────────────
   // Used to reject arbitrary strings from suggestGame/selectGame before they
   // reach the DB and potentially get rendered unescaped in the lobby.
@@ -212,6 +219,7 @@
       var pid     = getPlayerId();
       var name    = getPlayerName();
       var avatar  = getPlayerAvatar();
+      var title   = getPlayerTitle();
       var max     = (opts && opts.maxPlayers) || 4;
       var preGame = (opts && opts.game) || null;
       var rawRoomName = (opts && opts.roomName) || null;
@@ -231,6 +239,7 @@
           player_ids:   [pid],
           player_names: { [pid]: name },
           player_avatars: avatar ? { [pid]: avatar } : {},
+          player_titles: title ? { [pid]: title } : {},
           player_wins:  {},
           player_roles: { [pid]: 'player' },
           player_ready: { [pid]: false },
@@ -264,6 +273,7 @@
       var pid    = getPlayerId();
       var name   = getPlayerName();
       var avatar = getPlayerAvatar();
+      var title  = getPlayerTitle();
 
       // Look up room by code
       var res = await db().from('rooms')
@@ -284,11 +294,13 @@
       if (!ids.includes(pid)) ids.push(pid);
       var names   = Object.assign({}, r.player_names   || {});
       var avatars = Object.assign({}, r.player_avatars || {});
+      var titles  = Object.assign({}, r.player_titles  || {});
       var wins    = Object.assign({}, r.player_wins    || {});
       var roles   = Object.assign({}, r.player_roles   || {});
       var rdyMap  = Object.assign({}, r.player_ready   || {});
       names[pid]  = name;
       if (avatar) avatars[pid] = avatar;   // guests (null) keep any existing entry
+      if (title)  titles[pid]  = title;    // guests (null) keep any existing entry
       if (!wins[pid])   wins[pid]   = 0;
       if (!roles[pid])  roles[pid]  = 'player';
       if (rdyMap[pid] === undefined) rdyMap[pid] = false;
@@ -297,6 +309,7 @@
         player_ids:   ids,
         player_names: names,
         player_avatars: avatars,
+        player_titles: titles,
         player_wins:  wins,
         player_roles: roles,
         player_ready: rdyMap,
@@ -498,9 +511,12 @@
         if (ids.length >= (_room.max_players || 4)) return err('Room is full.');
         var name    = getPlayerName() || 'Player';
         var avatar  = getPlayerAvatar();
+        var title   = getPlayerTitle();
         var names   = Object.assign({}, _room.player_names   || {}, { [pid]: name });
         var avatars = Object.assign({}, _room.player_avatars || {});
         if (avatar) avatars[pid] = avatar;   // guests (null) leave the map untouched
+        var titles  = Object.assign({}, _room.player_titles  || {});
+        if (title)  titles[pid]  = title;    // guests (null) leave the map untouched
         var wins    = Object.assign({}, _room.player_wins    || {}, { [pid]: 0 });
         var roles   = Object.assign({}, _room.player_roles   || {}, { [pid]: 'player' });
         var rdyMap  = Object.assign({}, _room.player_ready   || {}, { [pid]: false });
@@ -509,6 +525,7 @@
           player_ids:   ids,
           player_names: names,
           player_avatars: avatars,
+          player_titles: titles,
           player_wins:  wins,
           player_roles: roles,
           player_ready: rdyMap,

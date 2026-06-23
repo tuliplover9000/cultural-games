@@ -96,8 +96,16 @@
       var isEquipped = current === item.id;
       var canAfford  = bal >= item.price;
 
-      var stateClass = isEquipped ? ' avatar-item--equipped'
-                     : isOwned    ? ' avatar-item--owned'
+      // Achievement-gated exclusive items (e.g. the Tiến Lên accessories). These
+      // are price 0 but NOT freely available — they require an unlocked
+      // achievement. When not yet earned they render locked and non-equippable.
+      var isUnlockItem = !!item.unlock;
+      var earned       = unlockEarned(item);
+      var achLocked    = isUnlockItem && !earned;
+
+      var stateClass = achLocked   ? ' avatar-item--achievement-locked'
+                     : isEquipped  ? ' avatar-item--equipped'
+                     : isOwned     ? ' avatar-item--owned'
                      : ' avatar-item--locked';
 
       // Skin is a colour picker: show a solid swatch box (not a mini face), and
@@ -105,7 +113,15 @@
       var isSkin = slot === 'skin';
 
       var badge;
-      if (isEquipped) {
+      if (achLocked) {
+        // Not equippable yet — show how to earn it (achievement title escaped).
+        badge = '<span class="avatar-item__badge avatar-item__badge--achievement">&#128274; Earn: ' + escLabel(unlockTitle(item.unlock)) + '</span>';
+      } else if (isUnlockItem) {
+        // Earned exclusive — equippable. Distinguish from bought items.
+        badge = isEquipped
+          ? '<span class="avatar-item__badge avatar-item__badge--equipped">Equipped</span>'
+          : '<span class="avatar-item__badge avatar-item__badge--earned">Earned</span>';
+      } else if (isEquipped) {
         badge = '<span class="avatar-item__badge avatar-item__badge--equipped">Equipped</span>';
       } else if (isSkin) {
         badge = '';
@@ -124,6 +140,7 @@
 
       return '<button class="avatar-item' + stateClass + (isSkin ? ' avatar-item--swatch' : '') +
         '" role="listitem" data-id="' + item.id + '" type="button"' +
+        (achLocked ? ' aria-disabled="true"' : '') +
         (isEquipped ? ' aria-pressed="true"' : '') +
         '>' +
           '<span class="avatar-item__art">' + art + '</span>' +
@@ -139,6 +156,24 @@
 
   // tiny helper to make a one-key object literal in ES5
   function defObj(k, v) { var o = {}; o[k] = v; return o; }
+
+  // Has the player earned the achievement that gates this item? (Items without
+  // an `unlock` field are always available.)
+  function unlockEarned(item) {
+    if (!item || !item.unlock) return true;
+    return !!(window.Achievements && Achievements.getUnlocked &&
+              Achievements.getUnlocked().indexOf(item.unlock) !== -1);
+  }
+
+  // The human title of the achievement that grants an `unlock` item, for the
+  // "Earn: <title>" badge. Comes from the trusted ACHIEVEMENTS array.
+  function unlockTitle(unlockId) {
+    var list = (window.Achievements && Achievements.ACHIEVEMENTS) || [];
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].id === unlockId) return list[i].title || unlockId;
+    }
+    return unlockId;
+  }
 
   // The labels come from CATALOG (trusted), but escape defensively anyway.
   function escLabel(s) {
@@ -167,6 +202,10 @@
   function onItemClick(id) {
     var item = findItem(id);
     if (!item) return;
+
+    // Achievement-gated item the player hasn't earned → not equippable; ignore.
+    if (item.unlock && !unlockEarned(item)) return;
+
     var owned = ownedSet();
     var isOwnedOrFree = item.price === 0 || owned[id];
 

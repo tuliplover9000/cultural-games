@@ -685,6 +685,24 @@
   font-size: var(--text-xs);
   color: var(--color-text-muted);
 }
+.lobby-player__title {
+  display: inline-block;
+  margin-top: 2px;
+  max-width: 100%;
+  padding: 1px 8px;
+  border-radius: var(--radius-full);
+  background: rgba(200,155,60,0.12);
+  border: 1px solid rgba(200,155,60,0.35);
+  color: var(--color-accent-gold);
+  font-size: 0.66rem;
+  font-weight: var(--weight-semibold);
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
 .lobby-player__trophy { font-size: 1rem; line-height: 1; }
 .lobby-player__ready  { font-size: var(--text-lg); line-height: 1; flex-shrink: 0; }
 .ready--yes { color: var(--color-accent-teal); }

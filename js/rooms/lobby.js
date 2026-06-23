@@ -209,11 +209,14 @@
       var w     = wins[pid] || 0;
       var isMe  = pid === myPid;
       var isTop = showTrophy && w === maxW;
+      // Untrusted free text from another player's equipped_title — MUST esc().
+      var title = room.player_titles && room.player_titles[pid];
       return '<li class="lobby-player' + (isMe ? ' lobby-player--me' : '') + '" data-pid="' + esc(pid) + '">' +
         '<div class="lobby-player__avatar" aria-hidden="true">' + avatarHTML(room, pid, 44, name) + '</div>' +
         '<div class="lobby-player__info">' +
           '<span class="lobby-player__name">' + name + (isMe ? ' <em style="font-weight:400;color:var(--color-text-muted)">(you)</em>' : '') + '</span>' +
           '<span class="lobby-player__wins">' + w + ' win' + (w !== 1 ? 's' : '') + '</span>' +
+          (title ? '<span class="lobby-player__title">' + esc(title) + '</span>' : '') +
         '</div>' +
         (isTop ? '<span class="lobby-player__trophy" title="Leading!">' + (window.Icon ? Icon.svg('trophy', 16) : '🏆') + '</span>' : '') +
       '</li>';

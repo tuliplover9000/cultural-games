@@ -76,6 +76,7 @@
   var _coins        = 0;         // coin balance
   var _avatar       = null;      // equipped avatar config (jsonb) or null
   var _ownedItems   = [];        // owned avatar item ids
+  var _title        = null;      // equipped wearable title (migration 018) or null
   var _refreshTimer = null;  // proactive token refresh timer
   var _listeners    = [];
 
@@ -176,7 +177,7 @@
       } else {
         _clearSession();
         _setUser(null); _profile = null; _stats = {}; _favorites = new Set(); _coins = 0;
-        _avatar = null; _ownedItems = [];
+        _avatar = null; _ownedItems = []; _title = null;
         _emit();
       }
     }, msUntilRefresh);
@@ -338,6 +339,24 @@
     return { ok: false, error: (d && d.error) || 'failed', item: d && d.item };
   }
 
+  /* ── Titles (migration 018) ── */
+  // equipped_title is a non-frozen column: the client writes it directly. Titles
+  // are cosmetic and gated client-side by unlocked achievements; every render
+  // path escapes them, so this is XSS-safe at the consumer.
+  function getTitle() { return _title; }
+
+  async function setTitle(t) {
+    if (!_user || !_accessToken) return { ok: false };
+    var prev = _title;            // for rollback if the server write fails
+    _title = t || null;
+    _emit();
+    try {
+      var r = await _authedSB().from('profiles').update({ equipped_title: _title }).eq('id', _user.id);
+      if (r && r.error) { _title = prev; _emit(); return { ok: false }; }
+      return { ok: true };
+    } catch (e) { _title = prev; _emit(); return { ok: false }; }
+  }
+
   async function toggleFavorite(gameKey) {
     if (!_user || !_accessToken) return false;
     if (_favorites.has(gameKey)) {
@@ -357,7 +376,7 @@
   /* ── Load profile + stats from DB after auth ── */
   async function _loadUserData(user) {
     _setUser(user);
-    if (!user) { _profile = null; _stats = {}; _favorites = new Set(); _coins = 0; _avatar = null; _ownedItems = []; return; }
+    if (!user) { _profile = null; _stats = {}; _favorites = new Set(); _coins = 0; _avatar = null; _ownedItems = []; _title = null; return; }
 
     var pRes = await getSB().from('profiles').select('username,created_at,coins,equipped_avatar,owned_avatar_items').eq('id', user.id).single();
     // Deploy-order resilience: the avatar columns (equipped_avatar/owned_avatar_items)
@@ -374,6 +393,13 @@
     _ownedItems = (pRes.data && pRes.data.owned_avatar_items) || [];
     // Cache the real username into the stored session for instant correct boot.
     if (pRes.data) _persistUsername();
+
+    // equipped_title lives in migration 018; load it separately so a missing
+    // column (pre-018) can never break the avatar/coins load above.
+    try {
+      var tRes = await getSB().from('profiles').select('equipped_title').eq('id', user.id).single();
+      _title = (tRes && !tRes.error && tRes.data) ? (tRes.data.equipped_title || null) : null;
+    } catch (e) { _title = null; }
 
     var sRes = await getSB().from('stats').select('game_id,wins,losses,played').eq('user_id', user.id);
     _stats = {};
@@ -476,7 +502,7 @@
     if (_user) { try { localStorage.removeItem(_favCacheKey(_user.id)); } catch (e) {} }
     _clearSession();
     _setUser(null); _profile = null; _stats = {}; _favorites = new Set(); _coins = 0;
-    _avatar = null; _ownedItems = [];
+    _avatar = null; _ownedItems = []; _title = null;
     _emit();
   }
 
@@ -1011,6 +1037,8 @@
     getOwnedItems:  getOwnedItems,
     buyAvatarItem:  buyAvatarItem,
     setAvatar:      setAvatar,
+    getTitle:       getTitle,
+    setTitle:       setTitle,
     getToken:       function () { return _accessToken; },
     getUserId:      getUserId,
     GAMES:          GAMES,
