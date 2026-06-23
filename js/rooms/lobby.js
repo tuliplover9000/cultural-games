@@ -39,6 +39,7 @@
     { key: 'ganjifa',     name: 'Ganjifa',             culture: 'Mughal India',         type: 'Card',     icon: '🃏', svg: '../assets/icons/ganjifa.svg',    badge: 'Card · 4P',    maxPlayers: 4,
       rules: ['Circular hand-painted cards organised into suits with a trump suit each round.', 'Lead any card; others must follow suit if able. Highest card of the led suit (or trump) wins the trick.', 'Most tricks at the end of the hand wins.'] },
     { key: 'latrunculi',  name: 'Ludus Latrunculorum', culture: 'Ancient Rome',         type: 'Strategy', icon: '⚔️', svg: '../assets/icons/latrunculi.svg', badge: 'Strategy · 2P', maxPlayers: 2,
+      seatRoles: ['white', 'black'],
       rules: ['Move any piece orthogonally any number of squares (like a rook in chess).', 'Capture an opponent\'s piece by sandwiching it between two of yours on a row or column.', 'Player who captures the most pieces, or leaves the opponent with no legal moves, wins.'] },
     { key: 'pachisi',     name: 'Pachisi',             culture: 'Indian Subcontinent',  type: 'Dice',     icon: '🎯', svg: '../assets/icons/pachisi.svg',    badge: 'Dice · 4P',    maxPlayers: 4,
       rules: ['Race 4 pieces around a cross-shaped board back to the centre using cowrie-shell dice.', 'Land on an opponent\'s piece (not on a safe square) to send it back to start.', 'First player to move all 4 pieces home wins.'],

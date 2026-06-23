@@ -56,6 +56,13 @@
     positionHistory: []
   };
 
+  // ── Online room multiplayer ──────────────────────────────────────────────
+  var vsRoom = false;          // true inside a room iframe (remote opponent)
+  var mySeat = 0;              // 0 = White (moves first), 1 = Black
+  var winReported = false;
+  function seatColor(seat) { return seat === 0 ? 'white' : 'black'; }
+  function mySideColor() { return seatColor(mySeat); }
+
   // ── Board helpers ──────────────────────────────────────────────────────────
 
   function inBounds(r, c) {
@@ -267,12 +274,13 @@
     state.gameOver = true;
     state.winner = winner;
 
-    // Record result
+    // Record result (vs-AI only — human plays White; online results are recorded
+    // per-seat by the room end screen, so skip the solo write there).
     var isWinner = winner === 'white';
-    if (window.Auth && Auth.isLoggedIn()) {
+    if (!vsRoom && window.Auth && Auth.isLoggedIn()) {
       Auth.recordResult('latrunculi', isWinner ? 'win' : 'loss');
     }
-    if (window.Achievements) {
+    if (!vsRoom && window.Achievements) {
       Achievements.evaluate({
         gameId: 'latrunculi',
         result: isWinner ? 'win' : 'loss',
@@ -358,6 +366,8 @@
     checkWinConditions();
     updateUI();
     render();
+
+    if (vsRoom) { syncRoomState(); return; }   // online: broadcast the move; no AI
 
     // AI turn
     if (!state.gameOver && state.aiEnabled && state.currentTurn === 'black') {
@@ -485,6 +495,7 @@
   function onBoardClick(e) {
     if (state.gameOver || state.aiThinking) return;
     if (state.currentTurn === 'black' && state.aiEnabled) return;
+    if (vsRoom && state.currentTurn !== mySideColor()) return;   // online: only on my turn
 
     var cell = getCellFromEvent(e);
     if (!cell) return;
@@ -968,11 +979,82 @@
     });
   }
 
+  // ── Online room sync (RoomBridge) ──────────────────────────────────────────
+  // Board cells arrive from a peer (untrusted); coerce each to a valid piece value.
+  function cleanBoard(b) {
+    if (!Array.isArray(b)) return null;
+    return b.map(function (row) {
+      return (Array.isArray(row) ? row : []).map(function (v) { return (v >= 0 && v <= 4) ? v : 0; });
+    });
+  }
+
+  function syncRoomState() {
+    if (!vsRoom || !window.RoomBridge) return;
+    RoomBridge.sendState({
+      board:          state.board.map(function (row) { return row.slice(); }),
+      currentTurn:    state.currentTurn,
+      capturedWhite:  state.capturedWhite,
+      capturedBlack:  state.capturedBlack,
+      noCaptureMoves: state.noCaptureMoves,
+      gameOver:       state.gameOver,
+      winner:         state.winner,
+      mode:           state.mode,
+      last_actor:     'room:' + mySeat,
+    });
+    if (state.gameOver) reportRoomWin();
+  }
+
+  function reportRoomWin() {
+    if (!vsRoom || !window.RoomBridge || winReported) return;
+    winReported = true;
+    if (state.winner !== 'white' && state.winner !== 'black') return;   // draw / no winner
+    RoomBridge.reportWin(state.winner === 'white' ? 0 : 1);             // seat 0 white, seat 1 black
+  }
+
+  function receiveRoomState(data) {
+    if (!data || data.last_actor === 'room:' + mySeat) return;          // ignore our own echo
+    var b = cleanBoard(data.board);
+    if (b) state.board = b;
+    state.currentTurn    = (data.currentTurn === 'white' || data.currentTurn === 'black') ? data.currentTurn : state.currentTurn;
+    state.capturedWhite  = typeof data.capturedWhite  === 'number' ? data.capturedWhite  : state.capturedWhite;
+    state.capturedBlack  = typeof data.capturedBlack  === 'number' ? data.capturedBlack  : state.capturedBlack;
+    state.noCaptureMoves = typeof data.noCaptureMoves === 'number' ? data.noCaptureMoves : state.noCaptureMoves;
+    state.selectedCell   = null;
+    state.validMoves     = [];
+    state.aiThinking     = false;
+    if (data.gameOver && (data.winner === 'white' || data.winner === 'black' || data.winner === 'draw')) {
+      state.gameOver = true; state.winner = data.winner;
+    }
+    updateUI();
+    render();
+    if (state.gameOver) reportRoomWin();
+  }
+
+  function initRoomMode() {
+    if (!window.RoomBridge || !RoomBridge.isActive || !RoomBridge.isActive()) return;
+    vsRoom = true;
+    mySeat = RoomBridge.getSeat();
+    initGame('8x8');                 // deterministic start — both seats build the same board
+    state.aiEnabled = false;         // no AI online
+    if (lobbyEl) lobbyEl.style.display = 'none';
+    if (gcEl)    gcEl.style.display    = '';
+    // Hide single-player controls.
+    [newBtn, forfeitBtn].forEach(function (el) { if (el) el.style.display = 'none'; });
+    if (aiToggle) { var w = aiToggle.closest('label') || aiToggle.parentElement; if (w) w.style.display = 'none'; }
+    RoomBridge.onState(receiveRoomState);
+    if (mySeat === 0) syncRoomState();   // seat 0 broadcasts the opening
+    updateUI();
+  }
+
   // ── Boot ───────────────────────────────────────────────────────────────────
 
   function boot() {
     wireEvents();
-    showLobby();
+    if (window.RoomBridge && RoomBridge.isActive && RoomBridge.isActive()) {
+      initRoomMode();
+    } else {
+      showLobby();
+    }
   }
 
   if (document.readyState === 'loading') {
