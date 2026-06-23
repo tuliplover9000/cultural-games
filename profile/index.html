@@ -126,19 +126,25 @@
                 </p>
               </div>
               <div class="avatar-customizer__picker">
-                <div class="avatar-tabs" id="avatar-tabs" role="tablist" aria-label="Avatar categories"></div>
-                <div class="avatar-items" id="avatar-items" role="list"></div>
+                <div class="avatar-items" id="avatar-items"></div>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- Titles -->
+        <!-- Titles (collapsible) -->
         <section id="prof-titles-section">
           <div class="container prof-section">
-            <p class="prof-section__label"><span data-icon="medal"></span> Titles</p>
-            <p class="prof-titles-current" id="prof-titles-current"></p>
-            <div class="prof-titles-grid" id="prof-titles-grid" role="list"></div>
+            <details class="prof-fold" open>
+              <summary class="prof-fold__summary">
+                <span class="prof-section__label prof-fold__label"><span data-icon="medal"></span> Titles</span>
+                <span class="prof-fold__chevron" aria-hidden="true">&#9662;</span>
+              </summary>
+              <div class="prof-fold__body">
+                <p class="prof-titles-current" id="prof-titles-current"></p>
+                <div class="prof-titles-grid" id="prof-titles-grid" role="list"></div>
+              </div>
+            </details>
           </div>
         </section>
 

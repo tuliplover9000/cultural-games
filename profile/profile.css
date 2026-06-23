@@ -598,6 +598,44 @@
 }
 .avatar-item__art svg { display: block; width: 100%; height: 100%; }
 
+/* Avatar customizer — collapsible category accordion */
+.avatar-cat {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-2);
+  overflow: hidden;
+  background: var(--color-surface);
+}
+.avatar-cat__summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--color-surface-alt);
+  user-select: none;
+}
+.avatar-cat__summary::-webkit-details-marker { display: none; }
+.avatar-cat__name {
+  flex: 1;
+  font-weight: 600;
+  font-size: var(--text-sm);
+  letter-spacing: 0.04em;
+  color: var(--color-text);
+}
+.avatar-cat__chevron {
+  color: var(--color-text-muted);
+  transition: transform 0.2s ease;
+}
+.avatar-cat[open] .avatar-cat__chevron { transform: rotate(180deg); }
+.avatar-cat__items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: var(--space-2);
+  padding: var(--space-3);
+}
+
 /* Skin colour swatch (fills the art box with a solid colour) */
 .avatar-item__swatch {
   display: block;

@@ -25,7 +25,7 @@
 
   /* ── state ── */
   var _cfg        = null;   // working config (always cleaned)
-  var _activeSlot = 'skin';
+  var _openSlots  = { skin: true };  // which avatar categories are expanded (accordion)
 
   /* ── el refs ── */
   function $(id) { return document.getElementById(id); }
@@ -60,97 +60,93 @@
     if (bal) bal.textContent = coins().toLocaleString();
   }
 
-  function renderTabs() {
-    var tabs = $('avatar-tabs');
-    if (!tabs) return;
-    tabs.innerHTML = Avatar.SLOTS.map(function (slot) {
-      var active = slot === _activeSlot;
-      return '<button class="avatar-tab' + (active ? ' avatar-tab--active' : '') +
-        '" role="tab" aria-selected="' + (active ? 'true' : 'false') +
-        '" data-slot="' + slot + '" type="button">' + SLOT_LABELS[slot] + '</button>';
-    }).join('');
-    tabs.querySelectorAll('.avatar-tab').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        _activeSlot = btn.dataset.slot;
-        renderTabs();
-        renderItems();
-      });
-    });
+  // One grid cell (button) for a single catalog item in a slot.
+  function itemCell(slot, item, current, owned, bal) {
+    // Mini preview that swaps only this slot so the change shows in context.
+    // ids come straight from CATALOG so they're safe.
+    var previewCfg = Avatar.clean(Object.assign({}, _cfg, defObj(slot, item.id)));
+    var isFree     = item.price === 0;
+    var isOwned    = isFree || owned[item.id];
+    var isEquipped = current === item.id;
+    var canAfford  = bal >= item.price;
+
+    // Achievement-gated exclusive items: price 0 but NOT freely available —
+    // they require an unlocked achievement. Locked & non-equippable until earned.
+    var isUnlockItem = !!item.unlock;
+    var earned       = unlockEarned(item);
+    var achLocked    = isUnlockItem && !earned;
+
+    var stateClass = achLocked   ? ' avatar-item--achievement-locked'
+                   : isEquipped  ? ' avatar-item--equipped'
+                   : isOwned     ? ' avatar-item--owned'
+                   : ' avatar-item--locked';
+
+    // Skin is a colour picker: show a solid swatch (not a mini face), and since
+    // every colour is free, skip the noisy "Owned" tag.
+    var isSkin = slot === 'skin';
+
+    var badge;
+    if (achLocked) {
+      badge = '<span class="avatar-item__badge avatar-item__badge--achievement">&#128274; Earn: ' + escLabel(unlockTitle(item.unlock)) + '</span>';
+    } else if (isUnlockItem) {
+      badge = isEquipped
+        ? '<span class="avatar-item__badge avatar-item__badge--equipped">Equipped</span>'
+        : '<span class="avatar-item__badge avatar-item__badge--earned">Earned</span>';
+    } else if (isEquipped) {
+      badge = '<span class="avatar-item__badge avatar-item__badge--equipped">Equipped</span>';
+    } else if (isSkin) {
+      badge = '';
+    } else if (isOwned) {
+      badge = '<span class="avatar-item__badge avatar-item__badge--owned">Owned</span>';
+    } else if (canAfford) {
+      badge = '<span class="avatar-item__price">&#128176; ' + item.price + '</span>';
+    } else {
+      badge = '<span class="avatar-item__price avatar-item__price--short">Need ' + item.price + '</span>';
+    }
+
+    // colorOf() returns a hex straight from the trusted CATALOG (never user input).
+    var art = isSkin
+      ? '<span class="avatar-item__swatch" style="background:' + (Avatar.colorOf(item.id) || '#cccccc') + '"></span>'
+      : Avatar.render(previewCfg, 56);
+
+    return '<button class="avatar-item' + stateClass + (isSkin ? ' avatar-item--swatch' : '') +
+      '" role="listitem" data-id="' + item.id + '" data-slot="' + slot + '" type="button"' +
+      (achLocked ? ' aria-disabled="true"' : '') +
+      (isEquipped ? ' aria-pressed="true"' : '') +
+      '>' +
+        '<span class="avatar-item__art">' + art + '</span>' +
+        '<span class="avatar-item__label">' + escLabel(item.label) + '</span>' +
+        badge +
+      '</button>';
   }
 
+  // Render every slot as a COLLAPSIBLE category (accordion). Open/closed state is
+  // kept in _openSlots so it survives re-renders (e.g. after equipping).
   function renderItems() {
     var grid = $('avatar-items');
     if (!grid) return;
-    var slot   = _activeSlot;
-    var items  = Avatar.CATALOG[slot] || [];
-    var owned  = ownedSet();
-    var bal    = coins();
-    var current = _cfg[slot];
+    var owned = ownedSet();
+    var bal   = coins();
 
-    grid.innerHTML = items.map(function (item) {
-      // Build a mini preview that swaps only this slot so the player sees the
-      // change in context. ids come straight from CATALOG so they're safe.
-      var previewCfg = Avatar.clean(Object.assign({}, _cfg, defObj(slot, item.id)));
-      var isFree     = item.price === 0;
-      var isOwned    = isFree || owned[item.id];
-      var isEquipped = current === item.id;
-      var canAfford  = bal >= item.price;
-
-      // Achievement-gated exclusive items (e.g. the Tiến Lên accessories). These
-      // are price 0 but NOT freely available — they require an unlocked
-      // achievement. When not yet earned they render locked and non-equippable.
-      var isUnlockItem = !!item.unlock;
-      var earned       = unlockEarned(item);
-      var achLocked    = isUnlockItem && !earned;
-
-      var stateClass = achLocked   ? ' avatar-item--achievement-locked'
-                     : isEquipped  ? ' avatar-item--equipped'
-                     : isOwned     ? ' avatar-item--owned'
-                     : ' avatar-item--locked';
-
-      // Skin is a colour picker: show a solid swatch box (not a mini face), and
-      // since every colour is free, skip the noisy "Owned" tag.
-      var isSkin = slot === 'skin';
-
-      var badge;
-      if (achLocked) {
-        // Not equippable yet — show how to earn it (achievement title escaped).
-        badge = '<span class="avatar-item__badge avatar-item__badge--achievement">&#128274; Earn: ' + escLabel(unlockTitle(item.unlock)) + '</span>';
-      } else if (isUnlockItem) {
-        // Earned exclusive — equippable. Distinguish from bought items.
-        badge = isEquipped
-          ? '<span class="avatar-item__badge avatar-item__badge--equipped">Equipped</span>'
-          : '<span class="avatar-item__badge avatar-item__badge--earned">Earned</span>';
-      } else if (isEquipped) {
-        badge = '<span class="avatar-item__badge avatar-item__badge--equipped">Equipped</span>';
-      } else if (isSkin) {
-        badge = '';
-      } else if (isOwned) {
-        badge = '<span class="avatar-item__badge avatar-item__badge--owned">Owned</span>';
-      } else if (canAfford) {
-        badge = '<span class="avatar-item__price">&#128176; ' + item.price + '</span>';
-      } else {
-        badge = '<span class="avatar-item__price avatar-item__price--short">Need ' + item.price + '</span>';
-      }
-
-      // colorOf() returns a hex straight from the trusted CATALOG (never user input).
-      var art = isSkin
-        ? '<span class="avatar-item__swatch" style="background:' + (Avatar.colorOf(item.id) || '#cccccc') + '"></span>'
-        : Avatar.render(previewCfg, 56);
-
-      return '<button class="avatar-item' + stateClass + (isSkin ? ' avatar-item--swatch' : '') +
-        '" role="listitem" data-id="' + item.id + '" type="button"' +
-        (achLocked ? ' aria-disabled="true"' : '') +
-        (isEquipped ? ' aria-pressed="true"' : '') +
-        '>' +
-          '<span class="avatar-item__art">' + art + '</span>' +
-          '<span class="avatar-item__label">' + escLabel(item.label) + '</span>' +
-          badge +
-        '</button>';
+    grid.innerHTML = Avatar.SLOTS.map(function (slot) {
+      var items   = Avatar.CATALOG[slot] || [];
+      var current = _cfg[slot];
+      var cells   = items.map(function (item) { return itemCell(slot, item, current, owned, bal); }).join('');
+      var open    = _openSlots[slot] ? ' open' : '';
+      return '<details class="avatar-cat" data-slot="' + slot + '"' + open + '>' +
+        '<summary class="avatar-cat__summary">' +
+          '<span class="avatar-cat__name">' + SLOT_LABELS[slot] + '</span>' +
+          '<span class="avatar-cat__chevron" aria-hidden="true">&#9662;</span>' +
+        '</summary>' +
+        '<div class="avatar-cat__items" role="list">' + cells + '</div>' +
+      '</details>';
     }).join('');
 
+    grid.querySelectorAll('.avatar-cat').forEach(function (d) {
+      d.addEventListener('toggle', function () { _openSlots[d.dataset.slot] = d.open; });
+    });
     grid.querySelectorAll('.avatar-item').forEach(function (btn) {
-      btn.addEventListener('click', function () { onItemClick(btn.dataset.id); });
+      btn.addEventListener('click', function () { onItemClick(btn.dataset.id, btn.dataset.slot); });
     });
   }
 
@@ -182,8 +178,7 @@
   }
 
   /* ── interactions ── */
-  function equip(id) {
-    var slot = _activeSlot;
+  function equip(id, slot) {
     _cfg = Avatar.clean(Object.assign({}, _cfg, defObj(slot, id)));
     renderPreview();
     renderItems();
@@ -199,8 +194,8 @@
     }
   }
 
-  function onItemClick(id) {
-    var item = findItem(id);
+  function onItemClick(id, slot) {
+    var item = findItem(id, slot);
     if (!item) return;
 
     // Achievement-gated item the player hasn't earned → not equippable; ignore.
@@ -210,7 +205,7 @@
     var isOwnedOrFree = item.price === 0 || owned[id];
 
     if (isOwnedOrFree) {
-      equip(id);
+      equip(id, slot);
       return;
     }
 
@@ -222,7 +217,7 @@
     if (!(window.Auth && Auth.buyAvatarItem)) return;
     Auth.buyAvatarItem(id).then(function (res) {
       if (res && res.ok) {
-        equip(id);
+        equip(id, slot);
       } else {
         renderPreview();
         renderItems();
@@ -230,8 +225,8 @@
     });
   }
 
-  function findItem(id) {
-    var items = Avatar.CATALOG[_activeSlot] || [];
+  function findItem(id, slot) {
+    var items = Avatar.CATALOG[slot] || [];
     for (var i = 0; i < items.length; i++) {
       if (items[i].id === id) return items[i];
     }
@@ -248,7 +243,6 @@
     }
     if (section) section.hidden = false;
     _cfg = buildCfg();
-    renderTabs();
     renderItems();
     renderPreview();
   }
