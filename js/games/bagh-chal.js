@@ -68,10 +68,27 @@
   }
 
   // ── State ────────────────────────────────────────────────────────────────
-  var vsAI = true;
-  var humanSide = GOAT;          // human plays goats by default
+  var vsAI = true;               // vs-AI (default). false = local 2-player hotseat.
+  var humanSide = GOAT;          // human's side in vs-AI mode
+  var vsRoom = false;            // online room multiplayer
+  var mySeat = 0;                // online seat: 0 = goats (move first), 1 = tigers
+  var winReported = false;       // online: reportWin fired once
   var gameVersion = 0;
   var state;
+
+  // Online seat → side. Seat 0 plays goats (they move first), seat 1 plays tigers.
+  function seatSide(seat) { return seat === 0 ? GOAT : TIGER; }
+  function mySide() { return seatSide(mySeat); }
+
+  // Can the LOCAL player act on the current turn right now?
+  //   vs-AI  → only on the human's side
+  //   online → only on this seat's side (turn-gating)
+  //   hotseat→ always (whoever's turn it is shares the device)
+  function canActNow() {
+    if (vsRoom) return state.turn === mySide();
+    if (vsAI)   return state.turn === humanSide;
+    return true;
+  }
 
   function freshState() {
     return {
@@ -455,7 +472,7 @@
   }
 
   // ── UI helpers ───────────────────────────────────────────────────────────
-  var elStatus, elScore, elNewBtn, elUndoBtn;
+  var elStatus, elScore, elNewBtn, elUndoBtn, elModeToggle, elModeWrap;
 
   function setStatus(msg) { if (elStatus) elStatus.textContent = msg; }
 
@@ -480,12 +497,12 @@
   function humanClick(point) {
     if (state.winner || state.phase === 'over') return;
     if (state.aiThinking) return;
-    if (vsAI && state.turn !== humanSide) return;
+    if (!canActNow()) return;     // gates vs-AI side, online turn, hotseat passthrough
     if (window.CGTutorial && CGTutorial.isActive) return;
 
     var b = state.board;
 
-    if (state.turn === GOAT && humanSide === GOAT) {
+    if (state.turn === GOAT) {
       if (state.phase === 'placement') {
         if (b[point] === EMPTY) commitMove({ from: -1, to: point, cap: -1 });
         return;
@@ -509,7 +526,7 @@
       return;
     }
 
-    if (state.turn === TIGER && humanSide === TIGER) {
+    if (state.turn === TIGER) {
       if (state.selected === null) {
         if (b[point] === TIGER && tigerMoves(b, point).length > 0) {
           state.selected = point; render();
@@ -546,32 +563,46 @@
     afterMove();
   }
 
+  // Status line for the side to move, adapted to the mode.
+  function turnStatus() {
+    var sideName = state.turn === GOAT ? 'Goats' : 'Tigers';
+    var hint = state.turn === GOAT ? phaseHint() : 'Tap a tiger, then a point to move or jump.';
+    if (vsRoom) {
+      return state.turn === mySide()
+        ? 'Your turn (' + sideName + '). ' + hint
+        : 'Opponent’s turn (' + sideName + ')…';
+    }
+    if (!vsAI) { // hotseat
+      return (state.turn === GOAT ? 'Goats’ turn (Player 1). ' : 'Tigers’ turn (Player 2). ') + hint;
+    }
+    return (state.turn === GOAT ? 'Your turn. ' : 'Your turn (Tigers). ') + hint;
+  }
+
   function afterMove() {
     updateScore();
     render();
     var winner = checkWinnerState(state);
-    if (winner) { endGame(winner); return; }
-
-    // flip turn
-    state.turn = state.turn === GOAT ? TIGER : GOAT;
-
-    // If the side to move has no legal move:
-    var legal = legalForState(state);
-    if (legal.length === 0) {
-      // Tigers with no move → goats win (already caught by checkWinnerState before
-      // flip via allTigerMoves, but guard here too). Goats with no move → draw
-      // (effectively never; never freeze).
-      if (state.turn === TIGER) { endGame('goats'); return; }
-      endGame('draw'); return;
+    if (!winner) {
+      state.turn = state.turn === GOAT ? TIGER : GOAT;   // flip turn
+      // If the side to move has no legal move: tigers→goats win, goats→draw (never freeze).
+      var legal = legalForState(state);
+      if (legal.length === 0) winner = (state.turn === TIGER) ? 'goats' : 'draw';
     }
+
+    if (winner) {
+      endGame(winner);
+      if (vsRoom) syncRoomState();   // broadcast terminal state (incl. winner) to peer
+      return;
+    }
+
+    if (vsRoom) syncRoomState();     // broadcast the new turn state
 
     if (vsAI && state.turn !== humanSide) {
       state.aiThinking = true;
       setStatus(state.turn === TIGER ? 'Tigers are prowling…' : 'Goats are thinking…');
       scheduleAIMove();
     } else {
-      setStatus((state.turn === GOAT ? 'Your turn. ' : 'Your turn (Tigers). ') +
-        (state.turn === GOAT ? phaseHint() : 'Tap a tiger, then a point to move or jump.'));
+      setStatus(turnStatus());
     }
   }
 
@@ -582,25 +613,34 @@
     state.selected = null;
     updateScore();
     render();
-    var humanWon = (winner === 'goats' && humanSide === GOAT) ||
-                   (winner === 'tigers' && humanSide === TIGER);
+    // localSide = the side this viewer controls: online → seat side; vs-AI → human
+    // side; hotseat → null (both players share the screen, so announce neutrally).
+    var localSide = vsRoom ? mySide() : (vsAI ? humanSide : null);
+    var localWon = localSide !== null &&
+      ((winner === 'goats' && localSide === GOAT) || (winner === 'tigers' && localSide === TIGER));
     if (winner === 'draw') {
       setStatus('Draw — 60 moves passed with no capture. The herd holds, the tigers cannot break through.');
+    } else if (localSide === null) { // hotseat — neutral announcement
+      setStatus(winner === 'tigers'
+        ? '🐯 Tigers win! Five goats devoured — Player 2 prevails.'
+        : '🐐 Goats win! Every tiger is trapped — Player 1 prevails.');
     } else if (winner === 'tigers') {
-      setStatus(humanSide === TIGER
+      setStatus(localWon
         ? '🎉 Tigers win! Five goats devoured.'
         : 'Tigers win — five goats were captured. Try walling them in sooner.');
     } else { // goats
-      setStatus(humanSide === GOAT
+      setStatus(localWon
         ? '🎉 Goats win! Every tiger is trapped — strength in numbers.'
         : 'Goats win — the tigers are all trapped.');
     }
+    // Only vs-AI records to the player's account; hotseat is local, and online
+    // results are recorded per-seat by the room end screen.
     if (vsAI && window.Auth && Auth.isLoggedIn && Auth.isLoggedIn()) {
-      Auth.recordResult('bagh-chal', winner === 'draw' ? 'draw' : (humanWon ? 'win' : 'loss'));
+      Auth.recordResult('bagh-chal', winner === 'draw' ? 'draw' : (localWon ? 'win' : 'loss'));
     }
-    if (window.Achievements && Achievements.evaluate) {
+    if (vsAI && window.Achievements && Achievements.evaluate) {
       Achievements.evaluate({ gameId: 'bagh-chal',
-        result: winner === 'draw' ? 'draw' : (humanWon ? 'win' : 'loss') });
+        result: winner === 'draw' ? 'draw' : (localWon ? 'win' : 'loss') });
     }
   }
 
@@ -726,14 +766,16 @@
   // ── Controls ─────────────────────────────────────────────────────────────
   function newGame() {
     gameVersion++;
+    winReported = false;
     state = freshState();
     state.cellSize = state.cellSize || (cnv ? (cnv.width - PAD * 2) / (COLS - 1) : 80);
     state.padX = state.padX || PAD;
     state.padY = state.padY || PAD;
     updateScore();
-    setStatus('Your turn (Goats). ' + phaseHint());
+    setStatus(turnStatus());
     render();
     if (vsAI && state.turn !== humanSide) { state.aiThinking = true; scheduleAIMove(); }
+    else if (vsRoom && mySeat === 0) syncRoomState();   // seat 0 seeds the fresh game
   }
 
   function undo() {
@@ -767,6 +809,68 @@
     state.lastMove      = snap.lastMove;
   }
 
+  // ── Online room sync (RoomBridge) ──────────────────────────────────────────
+  // Board values arrive from a peer (untrusted); coerce each cell to a valid piece.
+  function cleanBoard(arr) {
+    if (!Array.isArray(arr) || arr.length !== COLS * ROWS) return null;
+    return arr.map(function (v) { return (v === TIGER || v === GOAT) ? v : EMPTY; });
+  }
+
+  function syncRoomState() {
+    if (!vsRoom || !window.RoomBridge) return;
+    RoomBridge.sendState({
+      board:         state.board.slice(),
+      turn:          state.turn,
+      phase:         state.phase,
+      goatsInHand:   state.goatsInHand,
+      goatsCaptured: state.goatsCaptured,
+      noProgress:    state.noProgress,
+      lastMove:      state.lastMove,
+      winner:        state.winner,
+      last_actor:    'room:' + mySeat,
+    });
+    if (state.winner) reportRoomWin();
+  }
+
+  function reportRoomWin() {
+    if (!vsRoom || !window.RoomBridge || winReported) return;
+    winReported = true;
+    if (state.winner === 'draw') return;                 // no winner seat on a draw
+    RoomBridge.reportWin(state.winner === 'goats' ? 0 : 1);  // seat 0 goats, seat 1 tigers
+  }
+
+  function receiveRoomState(data) {
+    if (!data || data.last_actor === 'room:' + mySeat) return;   // ignore our own echo
+    var b = cleanBoard(data.board);
+    if (b) state.board = b;
+    state.turn          = (data.turn === TIGER || data.turn === GOAT) ? data.turn : state.turn;
+    state.phase         = data.phase || state.phase;
+    state.goatsInHand   = typeof data.goatsInHand   === 'number' ? data.goatsInHand   : state.goatsInHand;
+    state.goatsCaptured = typeof data.goatsCaptured === 'number' ? data.goatsCaptured : state.goatsCaptured;
+    state.noProgress    = typeof data.noProgress    === 'number' ? data.noProgress    : 0;
+    state.lastMove      = data.lastMove || null;
+    state.selected      = null;
+    state.aiThinking    = false;
+    updateScore();
+    render();
+    if (data.winner) { endGame(data.winner); reportRoomWin(); return; }  // display end (no re-broadcast)
+    setStatus(turnStatus());
+  }
+
+  function initRoomMode() {
+    if (!window.RoomBridge || !RoomBridge.isActive || !RoomBridge.isActive()) return;
+    vsRoom = true;
+    vsAI   = false;
+    mySeat = RoomBridge.getSeat();
+    RoomBridge.onState(receiveRoomState);
+    newGame();   // deterministic opening — both seats compute the same board; seat 0 broadcasts.
+    setStatus(turnStatus());
+    // Hide single-player controls in a room.
+    if (elNewBtn)   elNewBtn.style.display   = 'none';
+    if (elUndoBtn)  elUndoBtn.style.display  = 'none';
+    if (elModeWrap) elModeWrap.style.display = 'none';
+  }
+
   // ── Init / resize ──────────────────────────────────────────────────────────
   function sizeToWrap() {
     if (window.FSMode && window.FSMode.isActive && window.FSMode.isActive()) return;
@@ -786,10 +890,12 @@
     if (!cnv) return;
     ctx = cnv.getContext('2d');
 
-    elStatus  = document.getElementById('bg-status');
-    elScore   = document.getElementById('bg-score');
-    elNewBtn  = document.getElementById('bg-new-btn');
-    elUndoBtn = document.getElementById('bg-undo-btn');
+    elStatus     = document.getElementById('bg-status');
+    elScore      = document.getElementById('bg-score');
+    elNewBtn     = document.getElementById('bg-new-btn');
+    elUndoBtn    = document.getElementById('bg-undo-btn');
+    elModeToggle = document.getElementById('bg-ai-toggle');
+    elModeWrap   = document.getElementById('bg-mode-label');
 
     state = freshState();
     state.cellSize = 80; state.padX = PAD; state.padY = PAD;
@@ -806,6 +912,14 @@
 
     if (elNewBtn)  elNewBtn.addEventListener('click', newGame);
     if (elUndoBtn) elUndoBtn.addEventListener('click', undo);
+    if (elModeToggle) {
+      elModeToggle.addEventListener('change', function () {
+        vsAI = elModeToggle.checked;             // checked = vs Computer; unchecked = 2 players
+        var span = elModeWrap && elModeWrap.querySelector('span');
+        if (span) span.textContent = vsAI ? 'vs Computer' : '2 Players';
+        newGame();                                // restart in the chosen mode
+      });
+    }
 
     window.addEventListener('resize', sizeToWrap);
     window.cgMobileResize = sizeToWrap;
@@ -816,7 +930,8 @@
 
     sizeToWrap();
     updateScore();
-    setStatus('Your turn (Goats). ' + phaseHint());
+    setStatus(turnStatus());
+    initRoomMode();   // activates online sync + hides single-player controls if in a room
   }
 
   if (document.readyState === 'loading') {

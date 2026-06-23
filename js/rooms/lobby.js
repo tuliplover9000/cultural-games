@@ -48,6 +48,9 @@
       ]},
     { key: 'xinjiang-fangqi', name: 'Xinjiang Fangqi',  culture: 'Xinjiang, China',      type: 'Strategy', icon: '⬜', svg: '../assets/icons/xinjiang-fangqi.svg', badge: 'Strategy · 2P', maxPlayers: 2,
       rules: ['Place one stone per turn on any empty intersection of the 7x7 grid.', 'When your 4 stones form a 2x2 square, enemy stones adjacent to that square are captured.', 'Eliminate all opponent stones (with none left in hand) to win.'] },
+    { key: 'bagh-chal',   name: 'Bagh-Chal',           culture: 'Nepal',                 type: 'Strategy', icon: '🐯', svg: '../assets/icons/bagh-chal.svg', badge: 'Strategy · 2P', maxPlayers: 2,
+      seatRoles: ['goats', 'tigers'],
+      rules: ['Asymmetric hunt on a 5×5 board: seat 1 plays the 20 Goats (move first), seat 2 plays the 4 Tigers.', 'Goats place one per turn (no moving yet); once all 20 are down they move one step along a line. Tigers move or jump a single goat to capture it.', 'Tigers win by capturing 5 goats. Goats win by trapping every tiger so none can move.'] },
     { key: 'cachos',      name: 'Cachos',              culture: 'Latin America',         type: 'Dice',     icon: '🎲', svg: '../assets/icons/cachos.svg',     badge: 'Dice · Bluffing', maxPlayers: 6,
       rules: ['Everyone rolls 5 dice secretly under a cup. Only you see your own.', 'Bid how many of a face you think exist across ALL cups combined. Each bid must go higher.', 'Call \u00a1Dudo! to challenge. If the bid was wrong, the bidder loses a die - if right, the challenger does. Last dice standing wins.'],
       gameModes: [

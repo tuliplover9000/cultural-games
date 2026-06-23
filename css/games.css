@@ -6907,6 +6907,23 @@ html[data-theme="light"] .pu-game-wrap {
   flex-wrap: wrap;
 }
 
+.bg-mode-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+.bg-mode-label input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--color-accent-gold, #C89B3C);
+  cursor: pointer;
+}
+
 /* Banner color for Bagh-Chal cards */
 .game-card__banner--bagh {
   background: linear-gradient(135deg, #3A2616 0%, #8B5E2C 100%);
