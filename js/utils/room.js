@@ -132,7 +132,19 @@
         _room = r;
         dispatch(r);
       })
-      .subscribe();
+      .subscribe(function (status) {
+        // Realtime only delivers UPDATEs that land AFTER the channel is actually
+        // receiving — there is a gap between this SUBSCRIBED callback and live
+        // delivery. A peer's opening game-state write can fall in that gap and be
+        // missed, leaving a joiner stuck with no board. Re-fetch the row once on
+        // SUBSCRIBED so we always converge on the current state.
+        if (status !== 'SUBSCRIBED') return;
+        db().from('rooms').select().eq('id', roomId).single().then(function (res) {
+          if (ch !== _channel || res.error || !res.data) return;
+          _room = res.data;
+          dispatch(res.data);
+        });
+      });
     _channel = ch;
   }
 
