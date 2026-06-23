@@ -543,6 +543,19 @@
   gap: 6px;
 }
 
+/* Mobile preview overrides — placed AFTER the base rules above so they win
+   without !important. On phones the sticky preview floats over the scrolling
+   item list; make it a static, compact horizontal header instead. */
+@media (max-width: 640px) {
+  .avatar-customizer__preview {
+    position: static;
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--space-4);
+  }
+  .avatar-preview { width: 92px; height: 92px; }
+}
+
 /* Picker column */
 .avatar-tabs {
   display: flex;
@@ -569,11 +582,9 @@
   color: #fff;
 }
 
-.avatar-items {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
-  gap: var(--space-3);
-}
+/* Container for the category accordion — categories stack full-width.
+   (The actual item grid lives inside each category: .avatar-cat__items.) */
+.avatar-items { display: block; }
 
 .avatar-item {
   position: relative;
@@ -631,7 +642,7 @@
 .avatar-cat[open] .avatar-cat__chevron { transform: rotate(180deg); }
 .avatar-cat__items {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
   gap: var(--space-2);
   padding: var(--space-3);
 }
