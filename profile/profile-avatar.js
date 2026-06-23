@@ -100,9 +100,15 @@
                      : isOwned    ? ' avatar-item--owned'
                      : ' avatar-item--locked';
 
+      // Skin is a colour picker: show a solid swatch box (not a mini face), and
+      // since every colour is free, skip the noisy "Owned" tag.
+      var isSkin = slot === 'skin';
+
       var badge;
       if (isEquipped) {
         badge = '<span class="avatar-item__badge avatar-item__badge--equipped">Equipped</span>';
+      } else if (isSkin) {
+        badge = '';
       } else if (isOwned) {
         badge = '<span class="avatar-item__badge avatar-item__badge--owned">Owned</span>';
       } else if (canAfford) {
@@ -111,11 +117,16 @@
         badge = '<span class="avatar-item__price avatar-item__price--short">Need ' + item.price + '</span>';
       }
 
-      return '<button class="avatar-item' + stateClass +
+      // colorOf() returns a hex straight from the trusted CATALOG (never user input).
+      var art = isSkin
+        ? '<span class="avatar-item__swatch" style="background:' + (Avatar.colorOf(item.id) || '#cccccc') + '"></span>'
+        : Avatar.render(previewCfg, 56);
+
+      return '<button class="avatar-item' + stateClass + (isSkin ? ' avatar-item--swatch' : '') +
         '" role="listitem" data-id="' + item.id + '" type="button"' +
         (isEquipped ? ' aria-pressed="true"' : '') +
         '>' +
-          '<span class="avatar-item__art">' + Avatar.render(previewCfg, 56) + '</span>' +
+          '<span class="avatar-item__art">' + art + '</span>' +
           '<span class="avatar-item__label">' + escLabel(item.label) + '</span>' +
           badge +
         '</button>';

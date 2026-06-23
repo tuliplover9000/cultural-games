@@ -21,13 +21,34 @@
      skin = face base colour (all free); eyes/mouth always render something;
      hat/accessory optional with a free *-none sentinel that renders nothing. */
   var CATALOG = {
+    // skin = face fill colour. All free. `color` is the swatch/fill hex.
     skin: [
-      { id: 'skin-light', label: 'Light',    price: 0 },
-      { id: 'skin-tan',   label: 'Tan',      price: 0 },
-      { id: 'skin-brown', label: 'Brown',    price: 0 },
-      { id: 'skin-deep',  label: 'Deep',     price: 0 },
-      { id: 'skin-olive', label: 'Olive',    price: 0 },
-      { id: 'skin-mint',  label: 'Mint',     price: 0 }
+      { id: 'skin-light',  label: 'Light',  price: 0, color: '#F3C9A0' },
+      { id: 'skin-tan',    label: 'Tan',    price: 0, color: '#E0A878' },
+      { id: 'skin-brown',  label: 'Brown',  price: 0, color: '#B57A50' },
+      { id: 'skin-deep',   label: 'Deep',   price: 0, color: '#7A4A30' },
+      { id: 'skin-olive',  label: 'Olive',  price: 0, color: '#C9A66B' },
+      { id: 'skin-mint',   label: 'Mint',   price: 0, color: '#A8D5BA' },
+      { id: 'skin-red',    label: 'Red',    price: 0, color: '#E2574C' },
+      { id: 'skin-coral',  label: 'Coral',  price: 0, color: '#F0816A' },
+      { id: 'skin-orange', label: 'Orange', price: 0, color: '#EF8E3B' },
+      { id: 'skin-amber',  label: 'Amber',  price: 0, color: '#F4B63E' },
+      { id: 'skin-yellow', label: 'Yellow', price: 0, color: '#F4D335' },
+      { id: 'skin-lime',   label: 'Lime',   price: 0, color: '#A7D957' },
+      { id: 'skin-green',  label: 'Green',  price: 0, color: '#5FB85A' },
+      { id: 'skin-teal',   label: 'Teal',   price: 0, color: '#3FBFA8' },
+      { id: 'skin-cyan',   label: 'Cyan',   price: 0, color: '#4FC3D9' },
+      { id: 'skin-sky',    label: 'Sky',    price: 0, color: '#56A8E0' },
+      { id: 'skin-blue',   label: 'Blue',   price: 0, color: '#5B8DEF' },
+      { id: 'skin-indigo', label: 'Indigo', price: 0, color: '#6C5CE7' },
+      { id: 'skin-purple', label: 'Purple', price: 0, color: '#9B59B6' },
+      { id: 'skin-violet', label: 'Violet', price: 0, color: '#B57EDC' },
+      { id: 'skin-pink',   label: 'Pink',   price: 0, color: '#EC6FA8' },
+      { id: 'skin-rose',   label: 'Rose',   price: 0, color: '#F291B0' },
+      { id: 'skin-gray',   label: 'Gray',   price: 0, color: '#9AA3AD' },
+      { id: 'skin-slate',  label: 'Slate',  price: 0, color: '#5D6B7A' },
+      { id: 'skin-white',  label: 'White',  price: 0, color: '#ECECEC' },
+      { id: 'skin-black',  label: 'Black',  price: 0, color: '#3A3A3A' }
     ],
     eyes: [
       { id: 'eyes-dot',    label: 'Dots',    price: 0 },
@@ -82,15 +103,14 @@
     return priceOf(id) === 0;
   }
 
-  /* ── Skin id → fill colour ── */
-  var SKIN_COLORS = {
-    'skin-light': '#F3C9A0',
-    'skin-tan':   '#E0A878',
-    'skin-brown': '#B57A50',
-    'skin-deep':  '#7A4A30',
-    'skin-olive': '#C9A66B',
-    'skin-mint':  '#A8D5BA'
-  };
+  /* ── Skin id → fill colour (derived from CATALOG so there's one source) ── */
+  var SKIN_COLORS = {};
+  CATALOG.skin.forEach(function (it) { SKIN_COLORS[it.id] = it.color; });
+
+  // colorOf(id) → the skin swatch/fill hex, or null for non-skin ids.
+  function colorOf(id) {
+    return SKIN_COLORS[id] || null;
+  }
 
   /* ── Validity helper: is `id` a real id for `slot`? ── */
   function _validFor(slot, id) {
@@ -320,6 +340,7 @@
     SLOTS:         SLOTS,
     priceOf:       priceOf,
     isFree:        isFree,
+    colorOf:       colorOf,
     clean:         clean,
     defaultConfig: defaultConfig,
     render:        render,

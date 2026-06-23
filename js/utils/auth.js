@@ -769,6 +769,35 @@
      NAV WIDGET
   ══════════════════════════════════════════ */
 
+  // Inner markup for the nav avatar chip: the rendered avatar SVG when avatar.js
+  // is available, otherwise the username initial. Wrapped in try/catch so a
+  // render hiccup can never break the nav.
+  function _navAvatarInner(init) {
+    if (window.Avatar && window.Avatar.render) {
+      try {
+        var cfg = _avatar || Avatar.defaultConfig((_profile && _profile.username) || 'guest');
+        return Avatar.render(cfg, 30);
+      } catch (e) { /* fall through to initial */ }
+    }
+    return init;
+  }
+
+  // Ensure avatar.js is loaded on every page (the nav appears site-wide but
+  // avatar.js is only <script>-included on a few pages). Derive its URL from
+  // auth.js's own script src so the relative path is correct at any depth.
+  function _ensureAvatarJs() {
+    if (window.Avatar) { _renderNavWidget(); return; }
+    if (document.querySelector('script[data-cg-avatar]')) return; // already loading
+    var s   = document.querySelector('script[src*="js/utils/auth.js"]');
+    var src = (s && s.src) ? s.src.replace(/auth\.js(\?.*)?$/, 'avatar.js') : null;
+    if (!src) return;
+    var sc = document.createElement('script');
+    sc.src = src;
+    sc.setAttribute('data-cg-avatar', '1');
+    sc.onload = function () { _renderNavWidget(); };
+    document.head.appendChild(sc);
+  }
+
   function _renderNavWidget() {
     var container  = document.getElementById('nav-auth');
     var mobileItem = document.getElementById('nav-auth-mobile');
@@ -784,7 +813,7 @@
         '<div class="nav-auth">' +
           '<span class="nav-coins" aria-label="Coin balance" title="Your coins">💰 ' + _coins.toLocaleString() + '</span>' +
           '<button class="nav-auth__trigger" id="nav-auth-trigger" aria-haspopup="true" aria-expanded="false">' +
-            '<span class="nav-auth__avatar" aria-hidden="true">' + init + '</span>' +
+            '<span class="nav-auth__avatar" aria-hidden="true">' + _navAvatarInner(init) + '</span>' +
             '<span class="nav-auth__name">' + uname + '</span>' +
             '<span class="nav-auth__caret" aria-hidden="true">▾</span>' +
           '</button>' +
@@ -840,6 +869,7 @@
     navLinks.appendChild(mobileItem);
 
     _renderNavWidget();
+    _ensureAvatarJs();
 
     document.addEventListener('click', function (e) {
       var dd  = document.getElementById('nav-auth-dropdown');
