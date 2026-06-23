@@ -132,51 +132,43 @@
           </div>
         </section>
 
-        <!-- Achievements (folded by default) -->
+        <!-- Achievements -->
         <section>
           <div class="container prof-section">
-            <details class="prof-fold" id="ach-fold">
-              <summary class="prof-fold__summary">
-                <span class="prof-section__label prof-fold__label">&#11088; Achievements</span>
-                <span class="prof-fold__hint" id="ach-count-mini"></span>
-                <span class="prof-fold__chevron" aria-hidden="true">&#9662;</span>
-              </summary>
-              <div class="prof-fold__body">
+            <p class="prof-section__label">&#11088; Achievements</p>
 
-                <!-- Progress -->
-                <div class="ach-progress-row">
-                  <span class="ach-progress-count" id="ach-count">0 / 0 unlocked</span>
-                  <div class="ach-progress-bar-wrap" role="progressbar" aria-label="Achievement progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-                    <div class="ach-progress-bar" id="ach-progress-bar" style="width:0%"></div>
-                  </div>
-                </div>
-
-                <!-- Filters -->
-                <div class="ach-filters" role="group" aria-label="Filter achievements">
-                  <select class="ach-filter-select" id="ach-filter-category" aria-label="Filter by category">
-                    <option value="">All Categories</option>
-                    <option value="combat">Combat</option>
-                    <option value="explorer">Explorer</option>
-                    <option value="social">Social</option>
-                    <option value="milestone">Milestone</option>
-                  </select>
-                  <select class="ach-filter-select" id="ach-filter-tier" aria-label="Filter by tier">
-                    <option value="">All Tiers</option>
-                    <option value="bronze">Bronze</option>
-                    <option value="silver">Silver</option>
-                    <option value="gold">Gold</option>
-                  </select>
-                  <select class="ach-filter-select" id="ach-filter-status" aria-label="Filter by status">
-                    <option value="">All Status</option>
-                    <option value="unlocked">Unlocked</option>
-                    <option value="locked">Locked</option>
-                  </select>
-                </div>
-
-                <!-- Grid -->
-                <div class="ach-grid" id="ach-grid" role="list" aria-label="Achievements"></div>
+            <!-- Progress -->
+            <div class="ach-progress-row">
+              <span class="ach-progress-count" id="ach-count">0 / 0 unlocked</span>
+              <div class="ach-progress-bar-wrap" role="progressbar" aria-label="Achievement progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div class="ach-progress-bar" id="ach-progress-bar" style="width:0%"></div>
               </div>
-            </details>
+            </div>
+
+            <!-- Filters -->
+            <div class="ach-filters" role="group" aria-label="Filter achievements">
+              <select class="ach-filter-select" id="ach-filter-category" aria-label="Filter by category">
+                <option value="">All Categories</option>
+                <option value="combat">Combat</option>
+                <option value="explorer">Explorer</option>
+                <option value="social">Social</option>
+                <option value="milestone">Milestone</option>
+              </select>
+              <select class="ach-filter-select" id="ach-filter-tier" aria-label="Filter by tier">
+                <option value="">All Tiers</option>
+                <option value="bronze">Bronze</option>
+                <option value="silver">Silver</option>
+                <option value="gold">Gold</option>
+              </select>
+              <select class="ach-filter-select" id="ach-filter-status" aria-label="Filter by status">
+                <option value="">All Status</option>
+                <option value="unlocked">Unlocked</option>
+                <option value="locked">Locked</option>
+              </select>
+            </div>
+
+            <!-- Grid -->
+            <div class="ach-grid" id="ach-grid" role="list" aria-label="Achievements"></div>
           </div>
         </section>
 

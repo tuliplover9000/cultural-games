@@ -172,9 +172,6 @@
     var pct = total > 0 ? Math.round(unlocked / total * 100) : 0;
     var countEl = document.getElementById('ach-count');
     if (countEl) countEl.textContent = unlocked + ' / ' + total + ' unlocked';
-    // Mirror the count into the folded-section summary so progress shows collapsed.
-    var miniEl = document.getElementById('ach-count-mini');
-    if (miniEl) miniEl.textContent = unlocked + ' / ' + total + ' unlocked';
     var bar = document.getElementById('ach-progress-bar');
     if (bar) {
       var barWrap = bar.closest('.ach-progress-bar-wrap');
@@ -213,7 +210,7 @@
       var label       = CATEGORY_LABELS[cat] || cat;
       var cards       = items.map(function (a) { return achCard(a, !!unlockedSet[a.id]); }).join('');
 
-      return '<details class="ach-group" open>' +
+      return '<details class="ach-group">' +
         '<summary class="ach-group__summary">' +
           '<span class="ach-group__label">' + label + '</span>' +
           '<span class="ach-group__count">' + catUnlocked + ' / ' + items.length + '</span>' +
