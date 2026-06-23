@@ -77,9 +77,18 @@
     var grid = document.getElementById('prof-stats-grid');
     if (!grid) return;
 
+    // Only show games that have actually been played; hide the whole section
+    // until there's at least one. (No empty "0 played" cards.)
     var allGames = window.GAMES_DATA || [];
+    var played   = allGames.filter(function (game) {
+      return Auth.getStats(game.key || game.id).played > 0;
+    });
 
-    grid.innerHTML = allGames.map(function (game) {
+    var section = document.getElementById('prof-stats-section');
+    if (section) section.hidden = played.length === 0;
+    if (!played.length) { grid.innerHTML = ''; return; }
+
+    grid.innerHTML = played.map(function (game) {
       var id   = game.key || game.id;
       var s    = Auth.getStats(id);
       var rate = s.played > 0 ? Math.round(s.wins / s.played * 100) : 0;
@@ -163,6 +172,9 @@
     var pct = total > 0 ? Math.round(unlocked / total * 100) : 0;
     var countEl = document.getElementById('ach-count');
     if (countEl) countEl.textContent = unlocked + ' / ' + total + ' unlocked';
+    // Mirror the count into the folded-section summary so progress shows collapsed.
+    var miniEl = document.getElementById('ach-count-mini');
+    if (miniEl) miniEl.textContent = unlocked + ' / ' + total + ' unlocked';
     var bar = document.getElementById('ach-progress-bar');
     if (bar) {
       var barWrap = bar.closest('.ach-progress-bar-wrap');

@@ -310,8 +310,9 @@
     var hat = HAT[cfg.hat] || '';
 
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="' + px + '" height="' + px + '" role="img" aria-label="Avatar">' +
-      // (1) soft background circle — neutral semi-transparent so it reads on light & dark
-      '<circle cx="50" cy="50" r="50" fill="rgba(120,120,120,0.16)"/>' +
+      // (1) solid background circle — a muted charcoal "tile" so the face reads
+      // as a proper icon (swap to a light value for a white icon backdrop).
+      '<circle cx="50" cy="50" r="50" fill="#2A2A2E"/>' +
       // (2) face circle filled by skin colour
       '<circle cx="50" cy="52" r="34" fill="' + skinColor + '"/>' +
       // subtle ear nubs for a friendlier silhouette
