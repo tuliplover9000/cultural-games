@@ -182,4 +182,11 @@ window.GAMES_DATA = [
     didYouKnow: "Authentic Bagh-Chal sets are handcrafted in brass-on-wood in Kathmandu and Patan, with the playing lines etched into the board.",
     complexity: 3, players: '2',
   },
+  {
+    key: 'morabaraba', name: 'Morabaraba', culture: 'Southern Africa', type: 'Strategy', maxPlayers: 2,
+    region: 'southern-africa', path: 'games/morabaraba.html', howToPlay: 'how-to-play/morabaraba/',
+    description: "Morabaraba — \"the mill\" in Sesotho, and Mmela in Setswana — is a strategy game of the Sotho and Tswana peoples of Southern Africa, where each player commands twelve \"cows\" on a 24-point board of three nested squares plus four corner diagonals. It is said to have been played by herdboys who scratched the board into the ground and used stones as cattle, the great symbol of wealth across the region. Today it is a recognised competitive mind sport, governed in South Africa by Mind Sports South Africa.",
+    didYouKnow: "Morabaraba's four corner diagonals — absent from ordinary Twelve Men's Morris — are its signature, giving the outer corners extra mills and making them prized squares.",
+    complexity: 3, players: '2',
+  },
 ];

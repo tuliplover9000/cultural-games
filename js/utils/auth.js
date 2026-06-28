@@ -61,6 +61,7 @@
     { id: 'cachos',          name: 'Cachos',               iconPath: 'assets/icons/cachos.svg',           href: 'cachos/' },
     { id: 'xinjiang-fangqi', name: 'Xinjiang Fangqi',      iconPath: 'assets/icons/xinjiang-fangqi.svg',  href: 'xinjiang-fangqi/' },
     { id: 'filipino-dama',   name: 'Filipino Dama',        iconPath: 'assets/icons/filipino-dama.svg',    href: 'filipino-dama/' },
+    { id: 'morabaraba',      name: 'Morabaraba',           iconPath: 'assets/icons/morabaraba.svg',       href: 'games/morabaraba.html' },
   ];
 
   /* ── Session storage key (custom - NOT the Supabase internal key) ── */

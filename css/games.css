@@ -6933,3 +6933,108 @@ html[data-theme="light"] .pu-game-wrap {
   .bg-hud    { flex-direction: column; align-items: flex-start; }
   .bg-status { text-align: left; }
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   MORABARABA — Southern African mill game (mirrors the Bagh-Chal block)
+   ════════════════════════════════════════════════════════════════════ */
+.morabaraba-game-container {
+  background:
+    repeating-linear-gradient(0deg, rgba(224,176,90,0.07) 0 2px, rgba(0,0,0,0) 2px 10px),
+    var(--color-surface-alt, var(--color-surface));
+  border-radius: var(--radius-xl);
+  padding: var(--space-6) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-block: var(--space-2);
+}
+
+/* HUD — score + status */
+.mb-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  min-height: 40px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.mb-score {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+}
+.mb-score__light { color: var(--color-text); }
+.mb-score__dark  { color: var(--color-accent-gold, #C8822C); }
+
+.mb-status {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+  flex: 1;
+  text-align: right;
+  min-width: 180px;
+}
+
+/* Board canvas */
+.mb-board-wrap {
+  width: 100%;
+  max-width: 620px;
+  margin-inline: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35), 0 0 0 2px rgba(224,176,90,0.40);
+  cursor: pointer;
+}
+#mb-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  touch-action: none;
+}
+
+/* Controls */
+.mb-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.mb-mode-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+.mb-mode-label input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--color-accent-gold, #C89B3C);
+  cursor: pointer;
+}
+
+/* Banner color for Morabaraba cards */
+.game-card__banner--morabaraba {
+  background: linear-gradient(135deg, #2E1D10 0%, #7A4F22 100%);
+}
+
+@media (max-width: 480px) {
+  /* Compact the HUD so the board gets the vertical space it needs on phones
+     (was leaving the board ~197px; this frees ~80px back to it). */
+  .mb-hud    { flex-direction: column; align-items: flex-start; gap: var(--space-2); padding: 8px var(--space-2); }
+  .mb-status { text-align: left; min-width: 0; }
+  /* Keep the vs-Computer toggle a comfortable 44px touch target. */
+  .mb-mode-label { min-height: 44px; }
+}

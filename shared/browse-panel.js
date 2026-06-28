@@ -36,6 +36,8 @@
     // Afghanistan, Azerbaijan, Armenia, China, Georgia, Iran, Kazakhstan,
     // Kyrgyzstan, Mongolia, Tajikistan, Turkmenistan, Uzbekistan
     'madagascar':      [450],
+    'southern-africa': [710,72,426,748,516,716],
+    // South Africa, Botswana, Lesotho, Eswatini, Namibia, Zimbabwe
   };
 
   /* ── Panel object ─────────────────────────────────────────────────── */
