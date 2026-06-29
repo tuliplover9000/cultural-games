@@ -853,6 +853,8 @@
     // BOTTOM = seat 0; second player = TOP = seat 1.
     if (state.winner === 'top' || state.winner === 'bottom') {
       RoomBridge.reportWin(state.winner === 'bottom' ? 0 : 1);
+    } else if (state.winner === 'draw') {
+      RoomBridge.reportWin(-1); // -1 → null winnerPid in ingame.handleWin → settles as a DRAW
     }
   }
 

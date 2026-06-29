@@ -471,6 +471,8 @@
     RoomBridge.sendState(serializeRoom());
     if (state.winner === 'black' || state.winner === 'white') {
       RoomBridge.reportWin(state.winner === 'black' ? 0 : 1);
+    } else if (state.winner === 'draw') {
+      RoomBridge.reportWin(-1); // -1 → null winnerPid in ingame.handleWin → settles as a DRAW
     }
   }
   function receiveRoomState(blob) {
