@@ -210,4 +210,11 @@ window.GAMES_DATA = [
     didYouKnow: "A recorded anecdote has the Ngāti Hauā chief Wiremu Tāmihana offering to play Governor George Grey a game of mū tōrere for the stakes of the country — an offer Grey is said to have declined.",
     complexity: 2, players: '2',
   },
+  {
+    key: 'dou-shou-qi', name: 'Dou Shou Qi', culture: 'China', type: 'Strategy', maxPlayers: 2,
+    region: 'east-asia', path: 'games/dou-shou-qi.html', howToPlay: 'how-to-play/dou-shou-qi/',
+    description: "Dou Shou Qi (斗兽棋, \"the game of fighting animals,\" also called Jungle or Animal Chess) is a popular Chinese strategy game, beloved by children across the Far East. Eight ranked animals from elephant down to rat cross a 7×9 board split by two rivers — and the game's charm is its exceptions: the rat alone can swim and fell the mighty elephant, while the lion and tiger bound clear across the water. Race your animals past the traps and into the opponent's den to win.",
+    didYouKnow: "The lowliest animal, the rat, is the only piece that can swim — and the only one that can capture the mighty elephant, though the elephant can never capture it back.",
+    complexity: 4, players: '2',
+  },
 ];

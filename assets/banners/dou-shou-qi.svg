@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="dsq-red" cx="38%" cy="34%" r="70%">
+      <stop offset="0" stop-color="#D6614E"/><stop offset="0.55" stop-color="#B23A2E"/><stop offset="1" stop-color="#7A2018"/>
+    </radialGradient>
+    <radialGradient id="dsq-blue" cx="38%" cy="34%" r="70%">
+      <stop offset="0" stop-color="#4C84BC"/><stop offset="0.55" stop-color="#2E5E8C"/><stop offset="1" stop-color="#1A3E5E"/>
+    </radialGradient>
+  </defs>
+
+  <!-- dark jungle surround -->
+  <rect width="640" height="280" fill="#15110A"/>
+
+  <!-- bamboo board plate -->
+  <rect x="150" y="14" width="340" height="252" rx="16" fill="#C9A86A" stroke="#5A401E" stroke-width="4"/>
+
+  <!-- two river ponds (left cols + right cols), dry centre bridge between -->
+  <g fill="#5D9CA8">
+    <rect x="186" y="104" width="92" height="72" rx="4"/>
+    <rect x="362" y="104" width="92" height="72" rx="4"/>
+  </g>
+  <g stroke="#3F7B86" stroke-width="2" opacity="0.8">
+    <line x1="196" y1="128" x2="268" y2="128"/><line x1="196" y1="152" x2="268" y2="152"/>
+    <line x1="372" y1="128" x2="444" y2="128"/><line x1="372" y1="152" x2="444" y2="152"/>
+  </g>
+
+  <!-- faint grid -->
+  <g stroke="#5A401E" stroke-width="1" opacity="0.25">
+    <line x1="194" y1="14" x2="194" y2="266"/><line x1="238" y1="14" x2="238" y2="266"/>
+    <line x1="282" y1="14" x2="282" y2="266"/><line x1="326" y1="14" x2="326" y2="266"/>
+    <line x1="370" y1="14" x2="370" y2="266"/><line x1="414" y1="14" x2="414" y2="266"/>
+  </g>
+
+  <!-- top enemy den -->
+  <rect x="296" y="22" width="48" height="40" rx="5" fill="#8C5A2B" stroke="#3A220E" stroke-width="3"/>
+  <path d="M304 58 L304 38 L320 28 L336 38 L336 58" fill="none" stroke="#3A220E" stroke-width="3"/>
+  <!-- bottom den -->
+  <rect x="296" y="218" width="48" height="40" rx="5" fill="#8C5A2B" stroke="#3A220E" stroke-width="3"/>
+
+  <!-- a few ranked animal discs -->
+  <!-- red lion (7) leaping over the river -->
+  <g>
+    <circle cx="232" cy="68" r="26" fill="url(#dsq-red)" stroke="#5C160F" stroke-width="3"/>
+    <text x="232" y="64" font-family="Outfit, Arial, sans-serif" font-size="26" font-weight="700" text-anchor="middle" fill="#FBF3DE">L</text>
+    <text x="232" y="84" font-family="Outfit, Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#FBF3DE">7</text>
+  </g>
+  <!-- red elephant (8) -->
+  <g>
+    <circle cx="408" cy="78" r="26" fill="url(#dsq-red)" stroke="#5C160F" stroke-width="3"/>
+    <text x="408" y="74" font-family="Outfit, Arial, sans-serif" font-size="26" font-weight="700" text-anchor="middle" fill="#FBF3DE">E</text>
+    <text x="408" y="94" font-family="Outfit, Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#FBF3DE">8</text>
+  </g>
+  <!-- blue rat (1) swimming -->
+  <g>
+    <circle cx="232" cy="140" r="22" fill="url(#dsq-blue)" stroke="#11283F" stroke-width="3"/>
+    <text x="232" y="137" font-family="Outfit, Arial, sans-serif" font-size="22" font-weight="700" text-anchor="middle" fill="#FBF3DE">R</text>
+    <text x="232" y="154" font-family="Outfit, Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#FBF3DE">1</text>
+  </g>
+  <!-- blue tiger (6) -->
+  <g>
+    <circle cx="320" cy="206" r="26" fill="url(#dsq-blue)" stroke="#11283F" stroke-width="3"/>
+    <text x="320" y="202" font-family="Outfit, Arial, sans-serif" font-size="26" font-weight="700" text-anchor="middle" fill="#FBF3DE">T</text>
+    <text x="320" y="222" font-family="Outfit, Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#FBF3DE">6</text>
+  </g>
+
+  <!-- a leap arc from the red lion across the river -->
+  <path d="M232 100 Q232 150 232 176" fill="none" stroke="#E8A013" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="6 7" opacity="0.85"/>
+
+  <!-- loose tokens to the sides -->
+  <g>
+    <circle cx="74" cy="120" r="20" fill="url(#dsq-blue)" stroke="#11283F" stroke-width="2.5"/>
+    <text x="74" y="127" font-family="Outfit, Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#FBF3DE">8</text>
+  </g>
+  <g>
+    <circle cx="566" cy="160" r="20" fill="url(#dsq-red)" stroke="#5C160F" stroke-width="2.5"/>
+    <text x="566" y="167" font-family="Outfit, Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#FBF3DE">1</text>
+  </g>
+</svg>
