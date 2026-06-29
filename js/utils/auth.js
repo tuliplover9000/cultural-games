@@ -64,6 +64,7 @@
     { id: 'morabaraba',      name: 'Morabaraba',           iconPath: 'assets/icons/morabaraba.svg',       href: 'games/morabaraba.html' },
     { id: 'konane',          name: 'Kōnane',               iconPath: 'assets/icons/konane.svg',           href: 'games/konane.html' },
     { id: 'surakarta',       name: 'Surakarta',            iconPath: 'assets/icons/surakarta.svg',        href: 'games/surakarta.html' },
+    { id: 'mu-torere',       name: 'Mū Tōrere',            iconPath: 'assets/icons/mu-torere.svg',        href: 'games/mu-torere.html' },
   ];
 
   /* ── Session storage key (custom - NOT the Supabase internal key) ── */

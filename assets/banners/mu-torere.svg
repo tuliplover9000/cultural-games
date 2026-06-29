@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="mt-black" cx="38%" cy="34%" r="70%">
+      <stop offset="0" stop-color="#4A413B"/><stop offset="0.5" stop-color="#1B1714"/><stop offset="1" stop-color="#0D0A08"/>
+    </radialGradient>
+    <radialGradient id="mt-white" cx="38%" cy="34%" r="70%">
+      <stop offset="0" stop-color="#FFFDF5"/><stop offset="0.55" stop-color="#F2EAD6"/><stop offset="1" stop-color="#D8C8A4"/>
+    </radialGradient>
+    <g id="mt-pb"><circle r="15" fill="url(#mt-black)" stroke="#0B0908" stroke-width="2"/><circle cx="-4.5" cy="-4.5" r="2.6" fill="#ffffff" opacity="0.16"/></g>
+    <g id="mt-pw"><circle r="15" fill="url(#mt-white)" stroke="#B7A579" stroke-width="2"/><circle cx="-4.5" cy="-4.5" r="2.6" fill="#ffffff" opacity="0.7"/></g>
+  </defs>
+
+  <!-- dark bark surround -->
+  <rect width="640" height="280" fill="#14120C"/>
+  <rect y="58" width="640" height="3" fill="#0F0D08" opacity=".7"/>
+  <rect y="216" width="640" height="3" fill="#0F0D08" opacity=".7"/>
+  <rect x="60" y="120" width="150" height="5" rx="2.5" fill="#5C4318" opacity=".5"/>
+  <rect x="455" y="166" width="125" height="5" rx="2.5" fill="#5C4318" opacity=".5"/>
+
+  <!-- carved bark board plate -->
+  <rect x="200" y="15" width="240" height="250" rx="16" fill="#5A4326" stroke="#33260F" stroke-width="4"/>
+  <rect x="206" y="21" width="228" height="40" rx="9" fill="#7A5C34" opacity=".3"/>
+
+  <!-- The eight-pointed star. Centre (320,140), ring radius 96. Outer nodes at
+       k*45° starting from the top (12 o'clock), clockwise. -->
+  <!-- ring edges (octagon) + spokes -->
+  <g stroke="#E2C079" stroke-width="3" stroke-linecap="round" opacity="0.92" fill="none">
+    <polygon points="320,44 387.88,72.12 416,140 387.88,207.88 320,236 252.12,207.88 224,140 252.12,72.12"/>
+    <line x1="320" y1="44"  x2="320" y2="140"/>
+    <line x1="387.88" y1="72.12" x2="320" y2="140"/>
+    <line x1="416" y1="140" x2="320" y2="140"/>
+    <line x1="387.88" y1="207.88" x2="320" y2="140"/>
+    <line x1="320" y1="236" x2="320" y2="140"/>
+    <line x1="252.12" y1="207.88" x2="320" y2="140"/>
+    <line x1="224" y1="140" x2="320" y2="140"/>
+    <line x1="252.12" y1="72.12" x2="320" y2="140"/>
+  </g>
+
+  <!-- empty centre (pūtahi) accent + a couple of empty outer nodes -->
+  <circle cx="320" cy="140" r="7" fill="#2C2110" stroke="#F0CF92" stroke-width="2"/>
+  <g fill="#2C2110" stroke="#D9B05A" stroke-width="1.4">
+    <circle cx="416" cy="140" r="5"/>
+    <circle cx="252.12" cy="207.88" r="5"/>
+  </g>
+
+  <!-- Starting-style position: black on the top arms, white on the bottom arms. -->
+  <use href="#mt-pb" x="320" y="44"/>
+  <use href="#mt-pb" x="387.88" y="72.12"/>
+  <use href="#mt-pb" x="387.88" y="207.88"/>
+  <use href="#mt-pb" x="320" y="236"/>
+  <use href="#mt-pw" x="252.12" y="72.12"/>
+  <use href="#mt-pw" x="224" y="140"/>
+  <use href="#mt-pw" x="320" y="140" />
+
+  <!-- a glowing move arrow: a white piece sliding from an arm into the centre -->
+  <path d="M 224 140 L 300 140" fill="none" stroke="#E8A013" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="5 6" opacity="0.9"/>
+  <use href="#mt-pw" x="252.12" y="207.88"/>
+
+  <!-- loose pieces to the sides -->
+  <use href="#mt-pb" x="120" y="150"/><use href="#mt-pw" x="150" y="172"/><use href="#mt-pb" x="100" y="182"/>
+  <use href="#mt-pw" x="520" y="116"/><use href="#mt-pb" x="548" y="138"/>
+</svg>

@@ -203,4 +203,11 @@ window.GAMES_DATA = [
     didYouKnow: "Surakarta's loop-based capture — a piece curving around the corner arcs to strike — is thought to be unique among traditional board games; you can never capture in a straight line without going around a loop.",
     complexity: 3, players: '2',
   },
+  {
+    key: 'mu-torere', name: 'Mū Tōrere', culture: 'Māori (Aotearoa)', type: 'Strategy', maxPlayers: 2,
+    region: 'new-zealand', path: 'games/mu-torere.html', howToPlay: 'how-to-play/mu-torere/',
+    description: "Mū tōrere is one of the very few board games the Māori are documented to have played before European contact, associated especially with the Ngāti Porou of the East Coast of Aotearoa New Zealand, who played it on a slab of wood, a piece of bark, or marks drawn in the earth. It is played on an eight-pointed star — eight outer arms (the kewai) around a central point (the pūtahi) — with four pieces a side and no capturing at all: you win simply by leaving your opponent with no legal move. The rules here are a standard reconstruction, since the early sources diverge on small points. Deceptively simple, it is mathematically a draw with perfect play.",
+    didYouKnow: "A recorded anecdote has the Ngāti Hauā chief Wiremu Tāmihana offering to play Governor George Grey a game of mū tōrere for the stakes of the country — an offer Grey is said to have declined.",
+    complexity: 2, players: '2',
+  },
 ];

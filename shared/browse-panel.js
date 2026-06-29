@@ -43,6 +43,8 @@
     // so we highlight the United States (ISO 840) — the closest renderable region.
     'indonesia':       [360],
     // Surakarta (Central Java) → highlight Indonesia (ISO 360).
+    'new-zealand':     [554],
+    // Mū tōrere is a Māori game of Aotearoa New Zealand → highlight New Zealand (ISO 554).
   };
 
   /* ── Panel object ─────────────────────────────────────────────────── */

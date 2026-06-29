@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Mū Tōrere — an eight-pointed star (kewai arms + pūtahi centre) with one
+       black and one white piece. Hardcoded hex fills only (no currentColor). -->
+  <!-- Carved bark board plate -->
+  <rect x="3" y="3" width="58" height="58" rx="6" fill="#5A4326" stroke="#33260F" stroke-width="2"/>
+  <rect x="5" y="5" width="54" height="9" rx="3" fill="#7A5C34" opacity="0.35"/>
+
+  <!-- Star lines: 8 ring edges + 8 spokes. Outer nodes on a circle r=24 about
+       (32,32) at k*45° starting from the top. Centre at (32,32). -->
+  <g stroke="#E2C079" stroke-width="1.6" stroke-linecap="round" opacity="0.92" fill="none">
+    <!-- ring edges (octagon) -->
+    <polygon points="32,8 48.97,15.03 56,32 48.97,48.97 32,56 15.03,48.97 8,32 15.03,15.03"/>
+    <!-- spokes to centre -->
+    <line x1="32" y1="8"  x2="32" y2="32"/>
+    <line x1="48.97" y1="15.03" x2="32" y2="32"/>
+    <line x1="56" y1="32" x2="32" y2="32"/>
+    <line x1="48.97" y1="48.97" x2="32" y2="32"/>
+    <line x1="32" y1="56" x2="32" y2="32"/>
+    <line x1="15.03" y1="48.97" x2="32" y2="32"/>
+    <line x1="8" y1="32" x2="32" y2="32"/>
+    <line x1="15.03" y1="15.03" x2="32" y2="32"/>
+  </g>
+
+  <!-- empty node markers (small) -->
+  <g fill="#2C2110" stroke="#D9B05A" stroke-width="0.8">
+    <circle cx="56" cy="32" r="2.2"/>
+    <circle cx="48.97" cy="48.97" r="2.2"/>
+    <circle cx="15.03" cy="48.97" r="2.2"/>
+    <circle cx="8" cy="32" r="2.2"/>
+  </g>
+  <!-- centre node accent (empty pūtahi) -->
+  <circle cx="32" cy="32" r="3" fill="#2C2110" stroke="#F0CF92" stroke-width="1"/>
+
+  <!-- pieces: black on a top arm, white on a bottom arm -->
+  <circle cx="32" cy="8" r="4.4" fill="#1B1714" stroke="#0B0908" stroke-width="0.9"/>
+  <circle cx="30.6" cy="6.6" r="1.2" fill="#4A413B" opacity="0.7"/>
+  <circle cx="48.97" cy="15.03" r="4.4" fill="#1B1714" stroke="#0B0908" stroke-width="0.9"/>
+
+  <circle cx="32" cy="56" r="4.4" fill="#F2EAD6" stroke="#B7A579" stroke-width="0.9"/>
+  <circle cx="30.6" cy="54.6" r="1.4" fill="#FFFDF5" opacity="0.8"/>
+  <circle cx="15.03" cy="15.03" r="4.4" fill="#F2EAD6" stroke="#B7A579" stroke-width="0.9"/>
+</svg>
