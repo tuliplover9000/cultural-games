@@ -63,6 +63,7 @@
     { id: 'filipino-dama',   name: 'Filipino Dama',        iconPath: 'assets/icons/filipino-dama.svg',    href: 'filipino-dama/' },
     { id: 'morabaraba',      name: 'Morabaraba',           iconPath: 'assets/icons/morabaraba.svg',       href: 'games/morabaraba.html' },
     { id: 'konane',          name: 'Kōnane',               iconPath: 'assets/icons/konane.svg',           href: 'games/konane.html' },
+    { id: 'surakarta',       name: 'Surakarta',            iconPath: 'assets/icons/surakarta.svg',        href: 'games/surakarta.html' },
   ];
 
   /* ── Session storage key (custom - NOT the Supabase internal key) ── */

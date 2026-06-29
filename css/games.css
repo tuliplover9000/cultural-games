@@ -7149,3 +7149,112 @@ html[data-theme="light"] .pu-game-wrap {
   .kn-controls { gap: 6px var(--space-2); justify-content: center; font-size: 0.78rem; }
   .kn-mode-label { min-height: 40px; font-size: 0.78rem; gap: 4px; }
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   SURAKARTA — Javanese loop-capture game (mirrors the Morabaraba block)
+   ════════════════════════════════════════════════════════════════════ */
+.surakarta-game-container {
+  background:
+    repeating-linear-gradient(0deg, rgba(240,207,146,0.06) 0 2px, rgba(0,0,0,0) 2px 11px),
+    var(--color-surface-alt, var(--color-surface));
+  border-radius: var(--radius-xl);
+  padding: var(--space-6) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-block: var(--space-2);
+}
+
+/* HUD — score + status */
+.sk-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  min-height: 40px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.sk-score {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+}
+.sk-score__light { color: var(--color-text); }
+.sk-score__dark  { color: var(--color-accent-gold, #C8822C); }
+
+.sk-status {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+  flex: 1;
+  text-align: right;
+  min-width: 180px;
+}
+
+/* Board canvas */
+.sk-board-wrap {
+  width: 100%;
+  max-width: 620px;
+  margin-inline: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.40), 0 0 0 2px rgba(240,207,146,0.34);
+  cursor: pointer;
+}
+#sk-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  touch-action: none;
+}
+
+/* Controls */
+.sk-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.sk-mode-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+.sk-mode-label input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--color-accent-gold, #C89B3C);
+  cursor: pointer;
+}
+
+/* Banner color for Surakarta cards */
+.game-card__banner--surakarta {
+  background: linear-gradient(135deg, #241409 0%, #8A5A2B 100%);
+}
+
+@media (max-width: 480px) {
+  /* Reclaim vertical space for the board on phones (mirrors Kōnane). */
+  .surakarta-game-container { padding: var(--space-3) var(--space-2); gap: var(--space-2); }
+  .sk-hud {
+    flex-direction: row; flex-wrap: wrap; align-items: center;
+    gap: 4px var(--space-2); padding: 6px var(--space-2); min-height: 0;
+  }
+  .sk-score  { font-size: var(--text-xs); gap: var(--space-2); }
+  .sk-status { text-align: left; min-width: 0; flex: 1 1 100%; font-size: var(--text-xs); }
+  .sk-controls { gap: 6px var(--space-2); justify-content: center; font-size: 0.78rem; }
+  .sk-mode-label { min-height: 40px; font-size: 0.78rem; gap: 4px; }
+}

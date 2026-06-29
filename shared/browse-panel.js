@@ -41,6 +41,8 @@
     'hawaii':          [840],
     // Hawaiʻi is a US state, not a country; the world-atlas map is country-level,
     // so we highlight the United States (ISO 840) — the closest renderable region.
+    'indonesia':       [360],
+    // Surakarta (Central Java) → highlight Indonesia (ISO 360).
   };
 
   /* ── Panel object ─────────────────────────────────────────────────── */
@@ -98,6 +100,7 @@
             el.setAttribute('d', d);
             el.setAttribute('class', 'bp-map-land');
             if (region) el.setAttribute('data-region', region);
+            el.setAttribute('data-iso', String(iso)); // for regions that share a country (e.g. Indonesia)
             svg.appendChild(el);
           });
 
@@ -247,6 +250,16 @@
       if (regionKey) {
         var targets = map.querySelectorAll('[data-region="' + regionKey + '"]');
         for (var i = 0; i < targets.length; i++) targets[i].classList.add('bp-region-active');
+        // Fallback for regions that share a country with an earlier-defined region
+        // (e.g. Indonesia → Surakarta, whose ISO 360 also lives in southeast-asia):
+        // match by the region's own ISO country list so the highlight still shows.
+        if (!targets.length && REGION_COUNTRIES[regionKey]) {
+          var isos = REGION_COUNTRIES[regionKey];
+          for (var j = 0; j < isos.length; j++) {
+            var byIso = map.querySelectorAll('[data-iso="' + isos[j] + '"]');
+            for (var k = 0; k < byIso.length; k++) byIso[k].classList.add('bp-region-active');
+          }
+        }
       }
     },
 

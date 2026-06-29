@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Surakarta — a 6×6 grid ringed by the signature corner LOOP arcs, with one
+       light and one dark piece. Hardcoded hex fills only (no currentColor). -->
+  <!-- Carved teak board plate -->
+  <rect x="3" y="3" width="58" height="58" rx="6" fill="#8A5A2B" stroke="#3A2412" stroke-width="2"/>
+  <rect x="5" y="5" width="54" height="9" rx="3" fill="#A9743A" opacity="0.35"/>
+
+  <!-- 6×6 grid (intersections at 14,21.6,29.2,36.8,44.4,52 → 5 gaps of 7.6 over 14..52) -->
+  <g stroke="#F0CF92" stroke-width="0.9" opacity="0.85">
+    <line x1="14" y1="14" x2="52" y2="14"/><line x1="14" y1="21.6" x2="52" y2="21.6"/>
+    <line x1="14" y1="29.2" x2="52" y2="29.2"/><line x1="14" y1="36.8" x2="52" y2="36.8"/>
+    <line x1="14" y1="44.4" x2="52" y2="44.4"/><line x1="14" y1="52" x2="52" y2="52"/>
+    <line x1="14" y1="14" x2="14" y2="52"/><line x1="21.6" y1="14" x2="21.6" y2="52"/>
+    <line x1="29.2" y1="14" x2="29.2" y2="52"/><line x1="36.8" y1="14" x2="36.8" y2="52"/>
+    <line x1="44.4" y1="14" x2="44.4" y2="52"/><line x1="52" y1="14" x2="52" y2="52"/>
+  </g>
+
+  <!-- Corner loop arcs. INNER ring tangent to the 2nd lines (21.6 & 44.4); OUTER
+       ring tangent to the 3rd lines (29.2 & 36.8). Each corner is a quarter arc
+       joining a row line to the perpendicular col line of the same ring. -->
+  <g fill="none" stroke="#F0CF92" stroke-width="1.5" stroke-linecap="round" opacity="0.95">
+    <!-- inner ring (radius 7.6 about each inner corner) -->
+    <path d="M 14 21.6 A 7.6 7.6 0 0 1 21.6 14"/>
+    <path d="M 44.4 14 A 7.6 7.6 0 0 1 52 21.6"/>
+    <path d="M 52 44.4 A 7.6 7.6 0 0 1 44.4 52"/>
+    <path d="M 21.6 52 A 7.6 7.6 0 0 1 14 44.4"/>
+    <!-- outer ring (radius 15.2 about each outer corner) -->
+    <path d="M 14 29.2 A 15.2 15.2 0 0 1 29.2 14"/>
+    <path d="M 36.8 14 A 15.2 15.2 0 0 1 52 29.2"/>
+    <path d="M 52 36.8 A 15.2 15.2 0 0 1 36.8 52"/>
+    <path d="M 29.2 52 A 15.2 15.2 0 0 1 14 36.8"/>
+  </g>
+
+  <!-- pieces: a light one (bottom area) and a dark one (top area) -->
+  <circle cx="29.2" cy="44.4" r="4.2" fill="#F4E9CE" stroke="#B89A63" stroke-width="0.9"/>
+  <circle cx="27.8" cy="43" r="1.4" fill="#FFFBF1" opacity="0.7"/>
+  <circle cx="36.8" cy="21.6" r="4.2" fill="#3A2516" stroke="#1B1009" stroke-width="0.9"/>
+  <circle cx="35.4" cy="20.2" r="1.2" fill="#5E3F24" opacity="0.6"/>
+</svg>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VWXNSYLPZE"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied'});try{if(localStorage.getItem('cg_analytics_consent')==='granted'){gtag('consent','update',{analytics_storage:'granted'});}}catch(e){}gtag('config','G-VWXNSYLPZE');</script>
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>How to Play Surakarta - Javanese Loop-Capture Game Rules | Cultural Games</title>
+  <meta name="description" content="Learn Surakarta, the abstract strategy game from Central Java, Indonesia. Complete rules: the 6×6 board with its corner loop arcs, 8-direction plain moves, the unique loop-capture (clear path around at least one loop), and how to win by capturing all twelve pieces. Play free online." />
+  <meta name="keywords" content="how to play surakarta, surakarta rules, indonesian board game rules, javanese game rules, roundabouts game, loop capture rules, surakarta strategy, central java game" />
+  <meta property="og:title" content="How to Play Surakarta | Cultural Games" />
+  <meta property="og:description" content="Complete Surakarta rules — the Javanese loop-capture game. Step in 8 directions, curl around the corner loops to capture, and win by clearing all twelve enemy pieces." />
+  <meta property="og:image" content="https://playculturalgames.com/assets/og-image.jpg" />
+  <link rel="canonical" href="https://playculturalgames.com/how-to-play/surakarta/" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <script src="../../shared/theme.js"></script>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../shared/theme.css" />
+  <link rel="stylesheet" href="../../css/components.css" />
+  <link rel="stylesheet" href="../../shared/toggle.css" />
+  <link rel="stylesheet" href="../../css/auth.css" />
+  <link rel="stylesheet" href="../how-to-play.css" />
+  <link rel="stylesheet" href="../../shared/mobile.css">
+  <link rel="stylesheet" href="../../shared/mobile-nav.css">
+  <link rel="stylesheet" href="../../shared/cookie-consent.css">
+  <link rel="stylesheet" href="../../shared/mobile-landscape.css">
+  <script src="../../shared/mobile.js"></script>
+  <script src="../../shared/mobile-nav.js"></script>
+</head>
+<body>
+
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../../index.html" class="nav-logo" aria-label="Cultural Games - Home">
+        <img src="../../favicon.svg" width="32" height="32" alt="" class="nav-logo-icon" aria-hidden="true">
+        <span class="nav-logo-text">Cultural Games</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="../../pages/browse.html" class="nav-link">Browse Games</a></li>
+        <li><a href="../../pages/rooms.html"  class="nav-link nav-link--rooms">Rooms</a></li>
+        <li><a href="../../pages/about.html"  class="nav-link">About</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+      <article class="htp-article">
+
+        <nav class="htp-breadcrumb" aria-label="Breadcrumb">
+          <a href="../../index.html">Home</a>
+          <span class="htp-breadcrumb__sep">›</span>
+          <span>How to Play</span>
+          <span class="htp-breadcrumb__sep">›</span>
+          <span>Surakarta</span>
+        </nav>
+
+        <header class="htp-header">
+          <p class="htp-header__eyebrow">Indonesia · Strategy Game · 2 Players</p>
+          <h1>How to Play Surakarta</h1>
+          <p class="htp-header__intro">
+            Surakarta is an abstract strategy game from <strong>Central Java, Indonesia</strong>,
+            famous for one unusual idea: its board is ringed by <strong>looping arcs at the corners</strong>,
+            and a piece captures by sliding along the lines and <strong>curling around a loop</strong> to
+            strike an enemy from a distance. Quiet moves are simple one-step shuffles; the whole game
+            turns on the looping capture.
+          </p>
+        </header>
+
+        <h2>The Board</h2>
+        <p>
+          Surakarta is played on a <strong>6×6 grid</strong> — <strong>36 intersection points</strong>
+          where pieces sit. Around the outside, the lines do not simply stop: at each of the four corners
+          the grid lines curl back on themselves as <strong>loop arcs</strong>. There are two concentric
+          sets of loops — an <strong>inner</strong> circuit (touching the second lines in from each edge)
+          and an <strong>outer</strong> circuit (touching the third lines in). The very outermost lines
+          carry no loop. These loops are the heart of the game.
+        </p>
+
+        <!-- ASCII board representation -->
+        <pre style="font-family: monospace; font-size: 0.8rem; background: var(--color-surface-alt); padding: 1rem; border-radius: 8px; overflow-x: auto; line-height: 1.5;">
+  row 6   ● ● ● ● ● ●     ● = dark piece (Player B / computer)
+  row 5   ● ● ● ● ● ●     ○ = light piece (Player A / you)
+  row 4   · · · · · ·
+  row 3   · · · · · ·     (loops curl around all four corners,
+  row 2   ○ ○ ○ ○ ○ ○      joining the row lines to the column
+  row 1   ○ ○ ○ ○ ○ ○      lines at two concentric depths)
+</pre>
+
+        <h2>Setting Up</h2>
+        <ol>
+          <li>Each player has <strong>12 pieces</strong>.</li>
+          <li><strong>Light (Player A)</strong> fills the <strong>bottom two rows</strong> (rows 1 and 2);
+          <strong>Dark (Player B)</strong> fills the <strong>top two rows</strong> (rows 5 and 6). The two
+          middle rows start empty.</li>
+          <li><strong>Light moves first.</strong> (In this version you play light; the computer plays dark.)</li>
+        </ol>
+
+        <h2>Plain Moves</h2>
+        <p>
+          On an ordinary turn, slide <strong>one piece one step</strong> to an adjacent empty point. You may
+          move in <strong>any of the 8 directions</strong> — orthogonally <em>or</em> diagonally. A plain move
+          <strong>never captures</strong> anything; it just repositions a piece (typically to set up, or escape,
+          a loop attack).
+        </p>
+
+        <h2>The Loop Capture — the Signature Move</h2>
+        <p>
+          To capture, a piece <strong>slides along the grid lines</strong> — straight along its row or its
+          column — and travels through <strong>at least one corner loop arc</strong> before landing on the
+          <strong>first piece it meets</strong>, which must be an <strong>enemy</strong>. That enemy is removed
+          and your piece takes its point.
+        </p>
+        <div class="htp-tips">
+          <p style="margin:0 0 0.4rem; font-weight:600;">Capture rules — read these carefully:</p>
+          <ul>
+            <li><strong>Lines only, never diagonals.</strong> A capturing slide travels along rows and
+            columns and around the loops — it is <strong>never</strong> a free diagonal.</li>
+            <li><strong>At least one loop.</strong> You can <strong>never capture in a straight line</strong>
+            without curving through a loop. The path must pass around at least one corner arc.</li>
+            <li><strong>Clear path.</strong> Every point your piece passes over must be <strong>empty</strong>.
+            You may <strong>not jump</strong> any piece — friend or foe. The first piece you reach must be the
+            enemy you capture.</li>
+            <li><strong>Either way around.</strong> A piece can launch along its row or its column, and in
+            either direction around the loops — so the same enemy may sometimes be attacked from two sides.</li>
+            <li>A piece on the <strong>outermost edge</strong> (the first or last row or column) sits on lines
+            with no loop, so it <strong>cannot start a capture</strong> — though it can still be captured.</li>
+            <li><strong>Capturing is optional</strong> — you are never forced to take.</li>
+          </ul>
+        </div>
+
+        <h2>How to Win</h2>
+        <ol>
+          <li><strong>Capture everything.</strong> You win by <strong>capturing all 12</strong> of your
+          opponent's pieces.</li>
+          <li><strong>Stalemate (digital rule).</strong> To keep the game decisive, if <strong>50 moves pass
+          with no capture</strong> (or a position repeats), the game ends and whoever has <strong>more pieces
+          wins</strong>. If the piece counts are exactly equal, it is a <strong>draw</strong>. This mirrors the
+          traditional "more pieces wins a stalled game" agreement.</li>
+        </ol>
+
+        <h2>Strategy Tips</h2>
+        <div class="htp-tips">
+          <ul>
+            <li><strong>Think around the corner.</strong> A piece that looks safe from a straight-line glance
+            may be wide open to a loop attack coming the long way around. Always trace the loops.</li>
+            <li><strong>Clear paths cut both ways.</strong> Emptying the middle of the board opens loop lanes —
+            for you and for your opponent. Keep blockers where they matter.</li>
+            <li><strong>Use the loops to defend.</strong> Parking a friendly piece on an enemy's loop route
+            breaks the clear path and neutralises the threat.</li>
+            <li><strong>Don't overcommit.</strong> Trading down can hand the opponent the open lanes they need —
+            count the resulting threats before you capture.</li>
+          </ul>
+        </div>
+
+        <h2>Cultural History</h2>
+        <p>
+          Surakarta takes its name from the historic court city of <strong>Surakarta</strong> — also known as
+          <em>Solo</em> — in <strong>Central Java, Indonesia</strong>. Traditionally the board was scratched
+          into the dirt and played with whatever was at hand: stones and cowrie shells.
+        </p>
+        <p>
+          We should be honest about the history: Surakarta's <strong>precise origin and age are not
+          well documented</strong>, and it would be wrong to claim a specific inventor or date. What is
+          recorded is that the game reached the West through a <strong>1970 French publication</strong>, after
+          which it was reprinted commercially under the name <em>"Roundabouts."</em>
+        </p>
+        <p>
+          What has made Surakarta endure among game enthusiasts is its <strong>loop-based capture</strong> —
+          a piece curving around the corner arcs to strike. This mechanic is widely thought to be
+          <strong>unique among traditional board games</strong>, and it gives Surakarta a flavour quite unlike
+          the jump-capture and line-capture games found elsewhere.
+        </p>
+
+        <div class="htp-cta">
+          <div class="htp-cta__text">
+            <p class="htp-cta__title">Play Surakarta Free Online</p>
+            <p class="htp-cta__sub">No download. No account. Play in your browser right now.</p>
+          </div>
+          <a href="../../pages/games/surakarta.html" class="htp-cta__btn">Play Surakarta →</a>
+        </div>
+
+        <div class="htp-related">
+          <p>Explore more traditional games:</p>
+          <div class="htp-related__links">
+            <a href="../konane/">How to play Kōnane</a>
+            <a href="../morabaraba/">How to play Morabaraba</a>
+            <a href="../fanorona/">How to play Fanorona</a>
+            <a href="../../pages/browse.html">Browse all cultural games →</a>
+          </div>
+        </div>
+
+      </article>
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <span class="footer-brand">Cultural Games</span>
+      <p class="footer-mission">Preserving cultural heritage through play - one game at a time.</p>
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links" role="list">
+          <li><a href="../../pages/browse.html" class="footer-link">Browse Games</a></li>
+          <li><a href="../../pages/rooms.html"  class="footer-link">Rooms</a></li>
+          <li><a href="../../pages/about.html"  class="footer-link">About</a></li>
+          <li><a href="../../pages/terms.html"   class="footer-link">Terms</a></li>
+          <li><a href="../../pages/privacy.html" class="footer-link">Privacy</a></li>
+        </ul>
+      </nav>
+      <div class="footer-divider"></div>
+      <p class="footer-copy">&copy; 2025 Cultural Games. Built with care.</p>
+    </div>
+  </footer>
+
+  <script src="../../js/utils/navigation.js"></script>
+  <script src="../../shared/cookie-consent.js"></script>
+</body>
+</html>

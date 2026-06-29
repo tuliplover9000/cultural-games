@@ -196,4 +196,11 @@ window.GAMES_DATA = [
     didYouKnow: "Kōnane isn't won by capturing the most stones — like Nim, the winner is simply whoever makes the last legal jump, leaving the opponent stuck.",
     complexity: 3, players: '2',
   },
+  {
+    key: 'surakarta', name: 'Surakarta', culture: 'Indonesia', type: 'Strategy', maxPlayers: 2,
+    region: 'indonesia', path: 'games/surakarta.html', howToPlay: 'how-to-play/surakarta/',
+    description: "Surakarta is an abstract strategy game from Central Java, Indonesia, named after the historic court city of Surakarta (Solo), where the board was traditionally scratched in the dirt and played with stones and cowrie shells. Each player lines up twelve pieces on a 6×6 grid ringed by distinctive corner loop arcs. Quiet moves are simple one-step shuffles in any of the eight directions, but captures are its own invention: a piece slides along the lines and curls around at least one corner loop to strike an enemy from a distance. Its precise origin and age are not well documented — it reached the West via a 1970 French publication, later reprinted as \"Roundabouts.\"",
+    didYouKnow: "Surakarta's loop-based capture — a piece curving around the corner arcs to strike — is thought to be unique among traditional board games; you can never capture in a straight line without going around a loop.",
+    complexity: 3, players: '2',
+  },
 ];

@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="sk-light" cx="38%" cy="34%" r="70%">
+      <stop offset="0" stop-color="#FFFBF1"/><stop offset="0.55" stop-color="#F4E9CE"/><stop offset="1" stop-color="#D8C8A4"/>
+    </radialGradient>
+    <radialGradient id="sk-dark" cx="38%" cy="34%" r="70%">
+      <stop offset="0" stop-color="#5E3F24"/><stop offset="0.55" stop-color="#3A2516"/><stop offset="1" stop-color="#23150B"/>
+    </radialGradient>
+    <g id="sk-pl"><circle r="14" fill="url(#sk-light)" stroke="#B89A63" stroke-width="2"/><circle cx="-4.5" cy="-4.5" r="2.4" fill="#ffffff" opacity="0.7"/></g>
+    <g id="sk-pd"><circle r="14" fill="url(#sk-dark)" stroke="#1B1009" stroke-width="2"/><circle cx="-4.5" cy="-4.5" r="2.4" fill="#ffffff" opacity="0.14"/></g>
+  </defs>
+
+  <!-- dark teak surround -->
+  <rect width="640" height="280" fill="#241409"/>
+  <rect y="58" width="640" height="3" fill="#1B1009" opacity=".7"/>
+  <rect y="216" width="640" height="3" fill="#1B1009" opacity=".7"/>
+  <rect x="60" y="120" width="160" height="5" rx="2.5" fill="#5C3A18" opacity=".5"/>
+  <rect x="450" y="168" width="130" height="5" rx="2.5" fill="#5C3A18" opacity=".5"/>
+
+  <!-- carved teak board plate -->
+  <rect x="195" y="15" width="250" height="250" rx="16" fill="#8A5A2B" stroke="#3A2412" stroke-width="4"/>
+  <rect x="201" y="21" width="238" height="40" rx="9" fill="#A9743A" opacity=".3"/>
+
+  <!-- 6×6 grid. Intersections from 230..410 (5 gaps of 36 → cell 36), board centred. -->
+  <g stroke="#F0CF92" stroke-width="1.4" opacity="0.85">
+    <line x1="230" y1="60" x2="410" y2="60"/><line x1="230" y1="96" x2="410" y2="96"/>
+    <line x1="230" y1="132" x2="410" y2="132"/><line x1="230" y1="168" x2="410" y2="168"/>
+    <line x1="230" y1="204" x2="410" y2="204"/><line x1="230" y1="240" x2="410" y2="240"/>
+    <line x1="230" y1="60" x2="230" y2="240"/><line x1="266" y1="60" x2="266" y2="240"/>
+    <line x1="302" y1="60" x2="302" y2="240"/><line x1="338" y1="60" x2="338" y2="240"/>
+    <line x1="374" y1="60" x2="374" y2="240"/><line x1="410" y1="60" x2="410" y2="240"/>
+  </g>
+
+  <!-- signature corner loop arcs: inner ring (2nd lines 96/204), outer ring (3rd lines 132/168) -->
+  <g fill="none" stroke="#F0CF92" stroke-width="2.4" stroke-linecap="round" opacity="0.92">
+    <!-- inner ring, radius 36 about inner corners (266,96)(374,96)(374,204)(266,204) -->
+    <path d="M 230 96 A 36 36 0 0 1 266 60"/>
+    <path d="M 374 60 A 36 36 0 0 1 410 96"/>
+    <path d="M 410 204 A 36 36 0 0 1 374 240"/>
+    <path d="M 266 240 A 36 36 0 0 1 230 204"/>
+    <!-- outer ring, radius 72 about outer corners (302,132)(338,132)(338,168)(302,168) -->
+    <path d="M 230 132 A 72 72 0 0 1 302 60"/>
+    <path d="M 338 60 A 72 72 0 0 1 410 132"/>
+    <path d="M 410 168 A 72 72 0 0 1 338 240"/>
+    <path d="M 302 240 A 72 72 0 0 1 230 168"/>
+  </g>
+
+  <!-- pieces: light pieces fill the bottom two rows (y=204,240), dark the top two
+       (y=60,96). A loop capture is being shown: a light piece curls around the
+       bottom-left arc toward a dark piece. -->
+  <g>
+    <!-- dark (top rows) -->
+    <use href="#sk-pd" x="230" y="60"/><use href="#sk-pd" x="266" y="60"/><use href="#sk-pd" x="338" y="60"/><use href="#sk-pd" x="410" y="60"/>
+    <use href="#sk-pd" x="230" y="96"/><use href="#sk-pd" x="302" y="96"/><use href="#sk-pd" x="374" y="96"/>
+    <!-- light (bottom rows) -->
+    <use href="#sk-pl" x="266" y="204"/><use href="#sk-pl" x="338" y="204"/><use href="#sk-pl" x="410" y="204"/>
+    <use href="#sk-pl" x="230" y="240"/><use href="#sk-pl" x="302" y="240"/><use href="#sk-pl" x="374" y="240"/>
+  </g>
+
+  <!-- capture motion: a glowing path from a light piece (302,204) right along its
+       row, around the bottom-right arc, up toward a dark target (374,96). -->
+  <path d="M 302 204 L 410 204 A 36 36 0 0 0 410 168 L 410 96"
+        fill="none" stroke="#E8A013" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="5 6" opacity="0.9"/>
+  <use href="#sk-pl" x="302" y="204"/>
+  <!-- target ring on the dark piece being struck -->
+  <circle cx="374" cy="96" r="18" fill="none" stroke="#C2412A" stroke-width="3" opacity="0.9"/>
+
+  <!-- a few loose pieces to the sides -->
+  <use href="#sk-pl" x="120" y="150"/><use href="#sk-pd" x="150" y="170"/><use href="#sk-pl" x="100" y="180"/>
+  <use href="#sk-pd" x="520" y="118"/><use href="#sk-pl" x="548" y="140"/>
+</svg>
