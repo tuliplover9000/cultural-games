@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="kn-black" cx="38%" cy="34%" r="70%">
+      <stop offset="0" stop-color="#4A413B"/><stop offset="0.5" stop-color="#1C1714"/><stop offset="1" stop-color="#0E0B09"/>
+    </radialGradient>
+    <radialGradient id="kn-white" cx="38%" cy="34%" r="70%">
+      <stop offset="0" stop-color="#FFFDF6"/><stop offset="0.55" stop-color="#F2EAD8"/><stop offset="1" stop-color="#D9CCAC"/>
+    </radialGradient>
+    <g id="kn-pb"><circle r="15" fill="url(#kn-black)" stroke="#0C0A08" stroke-width="2"/><circle cx="-5" cy="-5" r="2.6" fill="#ffffff" opacity="0.18"/></g>
+    <g id="kn-pw"><circle r="15" fill="url(#kn-white)" stroke="#B9A87E" stroke-width="2"/><circle cx="-5" cy="-5" r="2.6" fill="#ffffff" opacity="0.7"/></g>
+  </defs>
+
+  <!-- dark surround -->
+  <rect width="640" height="280" fill="#1A130E"/>
+  <rect y="60" width="640" height="3" fill="#0E0B09" opacity=".7"/>
+  <rect y="214" width="640" height="3" fill="#0E0B09" opacity=".7"/>
+  <rect x="60" y="120" width="170" height="5" rx="2.5" fill="#5E3A1C" opacity=".5"/>
+  <rect x="440" y="170" width="140" height="5" rx="2.5" fill="#5E3A1C" opacity=".5"/>
+
+  <!-- lava-stone papamū plate (6×6 board, cells 40px, board 220..460 → 240px) -->
+  <rect x="200" y="20" width="240" height="240" rx="16" fill="#4A3526" stroke="#1C1208" stroke-width="4"/>
+  <rect x="206" y="26" width="228" height="40" rx="9" fill="#6B4C34" opacity=".3"/>
+
+  <!-- papamū grid -->
+  <g stroke="#E7C48C" stroke-width="1.4" opacity="0.30">
+    <line x1="220" y1="40" x2="220" y2="240"/><line x1="256.7" y1="40" x2="256.7" y2="240"/>
+    <line x1="293.3" y1="40" x2="293.3" y2="240"/><line x1="330" y1="40" x2="330" y2="240"/>
+    <line x1="366.7" y1="40" x2="366.7" y2="240"/><line x1="403.3" y1="40" x2="403.3" y2="240"/>
+    <line x1="440" y1="40" x2="440" y2="240"/>
+    <line x1="220" y1="40" x2="440" y2="40"/><line x1="220" y1="76.7" x2="440" y2="76.7"/>
+    <line x1="220" y1="113.3" x2="440" y2="113.3"/><line x1="220" y1="150" x2="440" y2="150"/>
+    <line x1="220" y1="186.7" x2="440" y2="186.7"/><line x1="220" y1="223.3" x2="440" y2="223.3"/>
+    <line x1="220" y1="240" x2="440" y2="240"/>
+  </g>
+
+  <!-- pebbles: a mostly-filled checkerboard with a couple of gaps and an X to
+       suggest a capture in progress. Cell centres at 238.3 + col*36.7 etc. -->
+  <g>
+    <!-- row 0 (y=58.3) -->
+    <use href="#kn-pb" x="238.3" y="58.3"/><use href="#kn-pw" x="275" y="58.3"/><use href="#kn-pb" x="311.7" y="58.3"/><use href="#kn-pw" x="348.3" y="58.3"/><use href="#kn-pb" x="385" y="58.3"/><use href="#kn-pw" x="421.7" y="58.3"/>
+    <!-- row 1 (y=95) -->
+    <use href="#kn-pw" x="238.3" y="95"/><use href="#kn-pb" x="275" y="95"/><use href="#kn-pw" x="311.7" y="95"/><use href="#kn-pb" x="348.3" y="95"/><use href="#kn-pw" x="385" y="95"/><use href="#kn-pb" x="421.7" y="95"/>
+    <!-- row 2 (y=131.7) — a gap at col2, an X where a stone was jumped -->
+    <use href="#kn-pb" x="238.3" y="131.7"/><use href="#kn-pw" x="275" y="131.7"/><use href="#kn-pb" x="385" y="131.7"/><use href="#kn-pw" x="421.7" y="131.7"/>
+    <!-- row 3 (y=168.3) -->
+    <use href="#kn-pw" x="238.3" y="168.3"/><use href="#kn-pb" x="275" y="168.3"/><use href="#kn-pw" x="311.7" y="168.3"/><use href="#kn-pb" x="348.3" y="168.3"/><use href="#kn-pw" x="385" y="168.3"/><use href="#kn-pb" x="421.7" y="168.3"/>
+    <!-- row 4 (y=205) -->
+    <use href="#kn-pb" x="238.3" y="205"/><use href="#kn-pw" x="275" y="205"/><use href="#kn-pb" x="311.7" y="205"/><use href="#kn-pw" x="348.3" y="205"/><use href="#kn-pb" x="385" y="205"/><use href="#kn-pw" x="421.7" y="205"/>
+  </g>
+  <!-- capture X at the emptied row2 col2 (311.7,131.7) -->
+  <g stroke="#CE5634" stroke-width="3.2" stroke-linecap="round">
+    <line x1="304" y1="124" x2="319.4" y2="139.4"/><line x1="319.4" y1="124" x2="304" y2="139.4"/>
+  </g>
+  <!-- landing ring at row2 col3 (348.3,131.7) -->
+  <circle cx="348.3" cy="131.7" r="19" fill="none" stroke="#E8A013" stroke-width="3" opacity="0.85"/>
+  <use href="#kn-pb" x="348.3" y="131.7"/>
+
+  <!-- a few loose pebbles to the sides -->
+  <use href="#kn-pb" x="120" y="150"/><use href="#kn-pw" x="150" y="170"/><use href="#kn-pw" x="100" y="178"/>
+  <use href="#kn-pw" x="520" y="120"/><use href="#kn-pb" x="546" y="140"/>
+</svg>

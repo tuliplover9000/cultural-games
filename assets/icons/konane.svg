@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Kōnane — a papamū (filled lava-stone grid) with black-lava and
+       white-coral ʻiliʻili pebbles in an alternating checkerboard. Hardcoded
+       hex fills only. -->
+  <!-- Lava-stone board plate -->
+  <rect x="4" y="4" width="56" height="56" rx="6" fill="#4A3526" stroke="#1C1208" stroke-width="2"/>
+  <rect x="6" y="6" width="52" height="9" rx="3" fill="#6B4C34" opacity="0.35"/>
+
+  <!-- papamū grid lines (4×4 of cells over the inner area) -->
+  <g stroke="#E7C48C" stroke-width="0.9" opacity="0.32">
+    <line x1="10" y1="10" x2="10" y2="54"/><line x1="21" y1="10" x2="21" y2="54"/>
+    <line x1="32" y1="10" x2="32" y2="54"/><line x1="43" y1="10" x2="43" y2="54"/>
+    <line x1="54" y1="10" x2="54" y2="54"/>
+    <line x1="10" y1="10" x2="54" y2="10"/><line x1="10" y1="21" x2="54" y2="21"/>
+    <line x1="10" y1="32" x2="54" y2="32"/><line x1="10" y1="43" x2="54" y2="43"/>
+    <line x1="10" y1="54" x2="54" y2="54"/>
+  </g>
+
+  <!-- carved depressions at every cell centre -->
+  <g fill="#352616" stroke="#1C1208" stroke-width="0.8">
+    <circle cx="15.5" cy="15.5" r="4.6"/><circle cx="26.5" cy="15.5" r="4.6"/><circle cx="37.5" cy="15.5" r="4.6"/><circle cx="48.5" cy="15.5" r="4.6"/>
+    <circle cx="15.5" cy="26.5" r="4.6"/><circle cx="26.5" cy="26.5" r="4.6"/><circle cx="37.5" cy="26.5" r="4.6"/><circle cx="48.5" cy="26.5" r="4.6"/>
+    <circle cx="15.5" cy="37.5" r="4.6"/><circle cx="26.5" cy="37.5" r="4.6"/><circle cx="37.5" cy="37.5" r="4.6"/><circle cx="48.5" cy="37.5" r="4.6"/>
+    <circle cx="15.5" cy="48.5" r="4.6"/><circle cx="26.5" cy="48.5" r="4.6"/><circle cx="37.5" cy="48.5" r="4.6"/><circle cx="48.5" cy="48.5" r="4.6"/>
+  </g>
+
+  <!-- black lava pebbles on (r+c) even cells -->
+  <g fill="#1C1714" stroke="#0C0A08" stroke-width="0.8">
+    <circle cx="15.5" cy="15.5" r="3.9"/><circle cx="37.5" cy="15.5" r="3.9"/>
+    <circle cx="26.5" cy="26.5" r="3.9"/><circle cx="48.5" cy="26.5" r="3.9"/>
+    <circle cx="15.5" cy="37.5" r="3.9"/><circle cx="37.5" cy="37.5" r="3.9"/>
+    <circle cx="26.5" cy="48.5" r="3.9"/><circle cx="48.5" cy="48.5" r="3.9"/>
+  </g>
+  <!-- white coral pebbles on (r+c) odd cells -->
+  <g fill="#F2EAD8" stroke="#B9A87E" stroke-width="0.8">
+    <circle cx="26.5" cy="15.5" r="3.9"/><circle cx="48.5" cy="15.5" r="3.9"/>
+    <circle cx="15.5" cy="26.5" r="3.9"/><circle cx="37.5" cy="26.5" r="3.9"/>
+    <circle cx="26.5" cy="37.5" r="3.9"/><circle cx="48.5" cy="37.5" r="3.9"/>
+    <circle cx="15.5" cy="48.5" r="3.9"/><circle cx="37.5" cy="48.5" r="3.9"/>
+  </g>
+</svg>

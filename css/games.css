@@ -7038,3 +7038,114 @@ html[data-theme="light"] .pu-game-wrap {
   /* Keep the vs-Computer toggle a comfortable 44px touch target. */
   .mb-mode-label { min-height: 44px; }
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   KŌNANE — Hawaiian stone-jumping game (mirrors the Morabaraba block)
+   ════════════════════════════════════════════════════════════════════ */
+.konane-game-container {
+  background:
+    repeating-linear-gradient(0deg, rgba(231,196,140,0.06) 0 2px, rgba(0,0,0,0) 2px 11px),
+    var(--color-surface-alt, var(--color-surface));
+  border-radius: var(--radius-xl);
+  padding: var(--space-6) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-block: var(--space-2);
+}
+
+/* HUD — score + status */
+.kn-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  min-height: 40px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.kn-score {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+}
+.kn-score__black { color: var(--color-text); }
+.kn-score__white { color: var(--color-accent-gold, #C8822C); }
+
+.kn-status {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+  flex: 1;
+  text-align: right;
+  min-width: 180px;
+}
+
+/* Board canvas */
+.kn-board-wrap {
+  width: 100%;
+  max-width: 620px;
+  margin-inline: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.40), 0 0 0 2px rgba(231,196,140,0.34);
+  cursor: pointer;
+}
+#kn-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  touch-action: none;
+}
+
+/* Controls */
+.kn-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.kn-mode-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+.kn-mode-label input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--color-accent-gold, #C89B3C);
+  cursor: pointer;
+}
+
+/* Banner color for Kōnane cards */
+.game-card__banner--konane {
+  background: linear-gradient(135deg, #1A130E 0%, #4A3526 100%);
+}
+
+@media (max-width: 480px) {
+  /* Reclaim vertical space for the board on phones — the 8×8 board was
+     height-starved to ~173px (22px cells). Shrink container padding + compact
+     HUD/controls so mobile-zoom grows the board to its full-width cap. */
+  .konane-game-container { padding: var(--space-3) var(--space-2); gap: var(--space-2); }
+  .kn-hud {
+    flex-direction: row; flex-wrap: wrap; align-items: center;
+    gap: 4px var(--space-2); padding: 6px var(--space-2); min-height: 0;
+  }
+  .kn-score  { font-size: var(--text-xs); gap: var(--space-2); }
+  .kn-status { text-align: left; min-width: 0; flex: 1 1 100%; font-size: var(--text-xs); }
+  .kn-controls { gap: 6px var(--space-2); justify-content: center; font-size: 0.78rem; }
+  .kn-mode-label { min-height: 40px; font-size: 0.78rem; gap: 4px; }
+}

@@ -189,4 +189,11 @@ window.GAMES_DATA = [
     didYouKnow: "Morabaraba's four corner diagonals — absent from ordinary Twelve Men's Morris — are its signature, giving the outer corners extra mills and making them prized squares.",
     complexity: 3, players: '2',
   },
+  {
+    key: 'konane', name: 'Kōnane', culture: 'Hawaii', type: 'Strategy', maxPlayers: 2,
+    region: 'hawaii', path: 'games/konane.html', howToPlay: 'how-to-play/konane/',
+    description: "Kōnane is an indigenous Hawaiian strategy game played on a papamū — a grid of small depressions in lava stone — with ʻiliʻili pebbles of black lava and white coral, on a board that starts completely full. Enjoyed by aliʻi (chiefs) and commoners alike and woven into oral tradition, it was dubbed \"Hawaiian checkers\" by Captain Cook's crew in 1778–79 — a loose label, since Kōnane is won by making the last move, not by capturing the most pieces. Discouraged after Western contact, it is being actively revived today.",
+    didYouKnow: "Kōnane isn't won by capturing the most stones — like Nim, the winner is simply whoever makes the last legal jump, leaving the opponent stuck.",
+    complexity: 3, players: '2',
+  },
 ];

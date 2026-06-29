@@ -38,6 +38,9 @@
     'madagascar':      [450],
     'southern-africa': [710,72,426,748,516,716],
     // South Africa, Botswana, Lesotho, Eswatini, Namibia, Zimbabwe
+    'hawaii':          [840],
+    // Hawaiʻi is a US state, not a country; the world-atlas map is country-level,
+    // so we highlight the United States (ISO 840) — the closest renderable region.
   };
 
   /* ── Panel object ─────────────────────────────────────────────────── */
