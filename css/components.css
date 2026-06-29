@@ -1015,6 +1015,24 @@
   transform: scale(1.2);
 }
 
+/* Enlarge carousel pagination-dot TOUCH targets without changing the visual
+   8px dot. The dots sit in a horizontal row, so the hit area is extended
+   vertically (safe — no vertical neighbours) and to ~14px wide (≈ the dot
+   spacing, so adjacent hit areas don't overlap). Fixes the sub-40px mobile
+   tap targets on the homepage carousels. */
+.sp-quote__dot,
+.spotlight__dot { position: relative; }
+.sp-quote__dot::after,
+.spotlight__dot::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 40px;
+}
+
 /* ── Gradient divider ── */
 .gradient-divider {
   height: 3px;
