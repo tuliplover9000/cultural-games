@@ -372,7 +372,15 @@
   var gameVersion = 0;
   var state;
 
+  // ── Online room multiplayer (RoomBridge — yote/tsoro pattern) ────────────────
+  // vsRoom=true only when launched inside a Room iframe (?roomId=). mySeat is
+  // 0-based (seat 0 = first player = BOTTOM; seat 1 = TOP). myPlayer is the side
+  // (TOP|BOTTOM) this client controls. Defaults keep solo/hotseat byte-for-byte
+  // unchanged when RoomBridge is absent.
+  var vsRoom = false, mySeat = -1, myPlayer = BOTTOM;
+
   function canActNow() {
+    if (vsRoom) return state.turn === myPlayer;
     if (vsAI) return state.turn === humanSide;
     return true;
   }
@@ -676,6 +684,9 @@
 
   function turnStatus() {
     var hint = phaseHint();
+    if (vsRoom) {
+      return (state.turn === myPlayer ? 'Your turn. ' : 'Opponent’s turn. ') + hint;
+    }
     if (!vsAI) {
       return (state.turn === BOTTOM ? 'Blue’s turn (Player 1). ' : 'Red’s turn (Player 2). ') + hint;
     }
@@ -688,6 +699,9 @@
     if (!cell) return;
     if (state.winner) return;
     if (state.aiThinking) return;
+    // Online: spectators never act; only the side on turn may act (covers BOTH
+    // the select-piece click and the choose-destination click below).
+    if (vsRoom && window.RoomBridge && RoomBridge.isSpectator && RoomBridge.isSpectator()) return;
     if (!canActNow()) return;
     if (window.CGTutorial && CGTutorial.isActive) return;
 
@@ -744,6 +758,7 @@
     var winner = checkTerminal(state.board, state.turn, state.noProgress);
     if (winner) { endGame(winner); return; }
     render();
+    if (vsRoom) { setStatus(turnStatus()); syncRoom(); return; } // broadcast the move (no AI online)
     if (vsAI && state.turn !== humanSide) {
       state.aiThinking = true;
       setStatus('Computer is thinking…');
@@ -763,6 +778,14 @@
 
     if (winner === 'draw') {
       setStatus('Draw — many moves passed with no capture, and neither side could break through.');
+      if (vsRoom) {
+        syncRoom(); // broadcast the final board (no win to report on a draw)
+        if (window.Achievements && Achievements.evaluate) {
+          Achievements.evaluate({ gameId: 'dou-shou-qi', result: 'draw', isOnline: true,
+            isHost: !!(window.RoomBridge && RoomBridge.isRoomHost && RoomBridge.isRoomHost()) });
+        }
+        return;
+      }
       if (vsAI && window.Auth && Auth.isLoggedIn && Auth.isLoggedIn()) {
         Auth.recordResult('dou-shou-qi', 'draw');
       }
@@ -773,7 +796,7 @@
     }
 
     var winSide = winner === 'top' ? TOP : BOTTOM;
-    var localSide = vsAI ? humanSide : null;
+    var localSide = vsRoom ? myPlayer : (vsAI ? humanSide : null);
     var localWon = localSide !== null && winSide === localSide;
 
     if (localSide === null) { // hotseat
@@ -781,18 +804,104 @@
         ? '🏆 Blue wins! Player 1 has broken through to the den.'
         : '🏆 Red wins! Player 2 has broken through to the den.');
     } else if (localWon) {
-      setStatus('🎉 You win! You stormed the computer’s den.');
+      setStatus(vsRoom ? '🎉 You win! You stormed the enemy den.'
+                       : '🎉 You win! You stormed the computer’s den.');
     } else {
-      setStatus('The computer wins — it reached your den or trapped your animals.');
+      setStatus(vsRoom ? 'Your opponent reached your den or trapped your animals.'
+                       : 'The computer wins — it reached your den or trapped your animals.');
     }
 
     var result = localWon ? 'win' : 'loss';
+    if (vsRoom) {
+      syncRoom(); // broadcast the final board + report the winner seat (RoomBridge records stats/coins)
+      if (window.Achievements && Achievements.evaluate) {
+        Achievements.evaluate({ gameId: 'dou-shou-qi', result: result, isOnline: true,
+          isHost: !!(window.RoomBridge && RoomBridge.isRoomHost && RoomBridge.isRoomHost()) });
+      }
+      return;
+    }
     if (vsAI && window.Auth && Auth.isLoggedIn && Auth.isLoggedIn()) {
       Auth.recordResult('dou-shou-qi', result);
     }
     if (vsAI && window.Achievements && Achievements.evaluate) {
       Achievements.evaluate({ gameId: 'dou-shou-qi', result: result });
     }
+  }
+
+  // ── Online room sync (RoomBridge — full-blob source of truth; yote pattern) ──
+  // The blob carries EVERY field that defines the visible board so a fresh client
+  // can reconstruct the exact position: the full piece array (rank+owner per cell),
+  // whose turn, the winner, and the draw/no-progress clocks. The board is a deep
+  // copy (cloneBoard) — never a shared reference.
+  function serializeRoom() {
+    return {
+      board:      cloneBoard(state.board),   // deep copy: array of {rank,side}|null
+      turn:       state.turn,                 // TOP|BOTTOM — side on turn
+      selected:   null,                       // selection is local-only; never shared
+      lastMove:   state.lastMove ? { from: state.lastMove.from, to: state.lastMove.to } : null,
+      moveCount:  state.moveCount,
+      noProgress: state.noProgress,
+      winner:     state.winner,               // 'top'|'bottom'|'draw'|null
+      last_actor: 'room:' + mySeat
+    };
+  }
+
+  function syncRoom() {
+    if (!vsRoom || !window.RoomBridge) return;
+    RoomBridge.sendState(serializeRoom());
+    // reportWin once when a side has actually won (not on a draw). First player =
+    // BOTTOM = seat 0; second player = TOP = seat 1.
+    if (state.winner === 'top' || state.winner === 'bottom') {
+      RoomBridge.reportWin(state.winner === 'bottom' ? 0 : 1);
+    }
+  }
+
+  function receiveRoomState(blob) {
+    if (!blob) return;
+    if (blob.last_actor === 'room:' + mySeat) return; // suppress our own echoed update
+    // Replace ALL state fields. Deep-copy the board so the two clients never share
+    // piece-object references.
+    state.board      = cloneBoard(blob.board);
+    state.turn       = blob.turn;
+    state.lastMove   = blob.lastMove ? { from: blob.lastMove.from, to: blob.lastMove.to } : null;
+    state.moveCount  = blob.moveCount || 0;
+    state.noProgress = blob.noProgress || 0;
+    state.selected   = null;
+    state.aiThinking = false;
+    state.winner     = blob.winner || null;
+    updateScore();
+    if (state.winner) {
+      var winSide = state.winner === 'top' ? TOP : (state.winner === 'bottom' ? BOTTOM : null);
+      if (state.winner === 'draw') {
+        setStatus('Draw — many moves passed with no capture, and neither side could break through.');
+      } else if (winSide === myPlayer) {
+        setStatus('🎉 You win! You stormed the enemy den.');
+      } else {
+        setStatus('Your opponent reached your den or trapped your animals.');
+      }
+    } else {
+      setStatus(turnStatus());
+    }
+    render();
+  }
+
+  function initRoomMode() {
+    if (!window.RoomBridge || !RoomBridge.isActive || !RoomBridge.isActive()) return;
+    vsRoom = true; vsAI = false;
+    mySeat = RoomBridge.getSeat();
+    myPlayer = (mySeat === 0) ? BOTTOM : TOP;  // seat 0 = first player = BOTTOM
+    // No AI online — kill any pending AI move and never schedule one.
+    gameVersion++;
+    state.aiThinking = false;
+    // Hide solo-only controls; online rematch is driven by the room's Play Again.
+    if (elModeWrap) elModeWrap.style.display = 'none';
+    if (elNewBtn)   elNewBtn.style.display   = 'none';
+    if (elUndoBtn)  elUndoBtn.style.display  = 'none';
+    RoomBridge.onState(receiveRoomState);   // also signals 'ready' → parent pushes latest state
+    if (mySeat === 0) syncRoom();            // host seeds the initial board + first turn
+    updateScore();
+    setStatus(turnStatus());
+    render();
   }
 
   // ── AI (alpha-beta with iterative deepening — roadmap §6) ───────────────────
@@ -1059,7 +1168,36 @@
     updateScore();
     setStatus(turnStatus());
 
+    initRoomMode();   // becomes online if launched inside a Room iframe (?roomId=)
+
     startRenderLoop();
+
+    // Dev-only test seam for the 2-client relay harness (perfect-information game → safe).
+    try {
+      if (new URLSearchParams(location.search).get('roomTest') === '1') {
+        window.__roomSim = {
+          state: function () { return state; },
+          mySeat: function () { return mySeat; },
+          vsRoom: function () { return vsRoom; },
+          myTurn: function () {
+            return !!(vsRoom &&
+              !(window.RoomBridge && RoomBridge.isSpectator && RoomBridge.isSpectator()) &&
+              state.turn === myPlayer && !state.winner);
+          },
+          // Legal move objects { from, to, capture } for the side to move.
+          legal: function () { return legalMoves(state.board, state.turn); },
+          // Apply a move object through the SAME gated commit path a real tap uses:
+          // two taps — select the source cell, then tap the destination.
+          play: function (mv) {
+            if (!mv) return false;
+            humanClick({ c: colOf(mv.from), r: rowOf(mv.from), i: mv.from });
+            if (state.selected !== mv.from) return false; // gate rejected the selection
+            humanClick({ c: colOf(mv.to), r: rowOf(mv.to), i: mv.to });
+            return true;
+          }
+        };
+      }
+    } catch (e) { /* no-op */ }
   }
 
   // ── Animation / refresh loop (rAF + setTimeout fallback — checklist #8) ─────

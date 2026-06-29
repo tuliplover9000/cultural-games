@@ -193,10 +193,16 @@
   var gameVersion = 0;
   var state;
 
+  // Online room state (set by initRoomMode when launched inside a Room iframe).
+  // myPlayer is the side this client controls (seat 0 → BLACK, the first mover).
+  var vsRoom = false, mySeat = -1, myPlayer = BLACK;
+
   // Can the LOCAL player act on the current turn right now?
+  //   online → only on this client's side (myPlayer)
   //   vs-AI  → only on the human's side
   //   hotseat→ always (whoever's turn it is shares the device)
   function canActNow() {
+    if (vsRoom) return state.turn === myPlayer;
     if (vsAI) return state.turn === humanSide;
     return true;
   }
@@ -496,6 +502,9 @@
 
   function turnStatus() {
     var hint = phaseHint();
+    if (vsRoom) {
+      return (state.turn === myPlayer ? 'Your turn. ' : 'Opponent’s turn. ') + hint;
+    }
     if (!vsAI) {
       return (state.turn === BLACK ? 'Black’s turn (Player 1). ' : 'White’s turn (Player 2). ') + hint;
     }
@@ -508,7 +517,8 @@
     if (!cell) return;
     if (state.winner || state.phase === 'over') return;
     if (state.aiThinking) return;
-    if (!canActNow()) return;
+    if (vsRoom && window.RoomBridge && RoomBridge.isSpectator && RoomBridge.isSpectator()) return;
+    if (!canActNow()) return;   // online: blocks input when it is not myPlayer's turn
     if (window.CGTutorial && CGTutorial.isActive) return;
 
     var N = state.N, i = cell.i;
@@ -571,6 +581,7 @@
     state.turn = WHITE;
     updateScore();
     render();
+    if (vsRoom) { setStatus(turnStatus()); syncRoom(); return; } // broadcast → seat 1 makes the white removal
     if (vsAI && state.turn !== humanSide) {
       state.aiThinking = true;
       setStatus('Computer removes a coral stone…');
@@ -606,6 +617,7 @@
     var winner = checkTerminal(state);
     if (winner) { endGame(winner); return; }
     render();
+    if (vsRoom) { setStatus(turnStatus()); syncRoom(); return; } // broadcast the committed move
     if (vsAI && state.turn !== humanSide) {
       state.aiThinking = true;
       setStatus('Computer is thinking…');
@@ -623,7 +635,7 @@
     updateScore();
     render();
 
-    var localSide = vsAI ? humanSide : null;
+    var localSide = vsRoom ? myPlayer : (vsAI ? humanSide : null);
     var localWon = localSide !== null &&
       ((winner === 'black' && localSide === BLACK) || (winner === 'white' && localSide === WHITE));
 
@@ -632,18 +644,98 @@
         ? '🏆 Black wins! White has no legal jump — last to move wins.'
         : '🏆 White wins! Black has no legal jump — last to move wins.');
     } else if (localWon) {
-      setStatus('🎉 You win! The computer has no legal jump left.');
+      setStatus(vsRoom
+        ? '🎉 You win! Your opponent has no legal jump left.'
+        : '🎉 You win! The computer has no legal jump left.');
     } else {
-      setStatus('The computer wins — you have no legal jump. Last to move wins in Kōnane.');
+      setStatus(vsRoom
+        ? 'Your opponent wins — you have no legal jump. Last to move wins in Kōnane.'
+        : 'The computer wins — you have no legal jump. Last to move wins in Kōnane.');
     }
 
     var result = localWon ? 'win' : 'loss';
+    if (vsRoom) {
+      syncRoom(); // broadcast the final board + report the winner seat (RoomBridge records stats/coins)
+      if (window.Achievements && Achievements.evaluate) {
+        Achievements.evaluate({ gameId: 'konane', result: result, isOnline: true,
+          isHost: !!(window.RoomBridge && RoomBridge.isRoomHost && RoomBridge.isRoomHost()) });
+      }
+      return;
+    }
     if (vsAI && window.Auth && Auth.isLoggedIn && Auth.isLoggedIn()) {
       Auth.recordResult('konane', result);
     }
     if (vsAI && window.Achievements && Achievements.evaluate) {
       Achievements.evaluate({ gameId: 'konane', result: result });
     }
+  }
+
+  // ── Online room sync (RoomBridge — full-blob source of truth; yote pattern) ──
+  // The blob carries EVERY field that defines the visible board + whose turn +
+  // phase + opening-empty cell + last-move highlight + winner. selected /
+  // aiThinking / history are local-only and intentionally NOT synced.
+  function serializeRoom() {
+    return {
+      N:          state.N,
+      board:      state.board.slice(),
+      turn:       state.turn,
+      phase:      state.phase,
+      openEmpty:  state.openEmpty,
+      lastMove:   state.lastMove,
+      winner:     state.winner,
+      last_actor: 'room:' + mySeat
+    };
+  }
+
+  function syncRoom() {
+    if (!vsRoom || !window.RoomBridge) return;
+    RoomBridge.sendState(serializeRoom());
+    if (state.winner === 'black' || state.winner === 'white') {
+      RoomBridge.reportWin(state.winner === 'black' ? 0 : 1); // seat 0 = black (first), 1 = white
+    }
+  }
+
+  function receiveRoomState(blob) {
+    if (!blob) return;
+    if (blob.last_actor === 'room:' + mySeat) return; // suppress our own echoed update
+    if (blob.N && blob.N !== state.N) { state.N = blob.N; layoutFromCanvas(); }
+    state.board     = blob.board.slice();
+    state.turn      = blob.turn;
+    state.phase     = blob.phase;
+    state.openEmpty = (blob.openEmpty != null) ? blob.openEmpty : null;
+    state.lastMove  = blob.lastMove || null;
+    state.selected  = null;
+    state.aiThinking = false;
+    state.winner    = blob.winner || null;
+    updateScore();
+    if (state.winner) {
+      state.phase = 'over';
+      var localWon = (state.winner === 'black' && myPlayer === BLACK) ||
+                     (state.winner === 'white' && myPlayer === WHITE);
+      if (localWon) setStatus('🎉 You win! Your opponent has no legal jump left.');
+      else setStatus('Your opponent wins — you have no legal jump. Last to move wins in Kōnane.');
+    } else {
+      setStatus(turnStatus());
+    }
+    render();
+  }
+
+  function initRoomMode() {
+    if (!window.RoomBridge || !RoomBridge.isActive || !RoomBridge.isActive()) return;
+    vsRoom = true;
+    vsAI = false;
+    mySeat = RoomBridge.getSeat();
+    myPlayer = (mySeat === 0) ? BLACK : WHITE; // seat 0 moves first (black)
+    gameVersion++;                              // invalidate any pending AI timer
+    state.aiThinking = false;
+    // Hide solo-only controls; online rematch is driven by the room's Play Again.
+    if (elModeWrap)  elModeWrap.style.display  = 'none';
+    if (elSizeWrap)  elSizeWrap.style.display  = 'none';
+    if (elNewBtn)    elNewBtn.style.display    = 'none';
+    RoomBridge.onState(receiveRoomState);   // also signals 'ready' → parent pushes latest state
+    if (mySeat === 0) syncRoom();            // host seeds the initial full board + black's opening turn
+    updateScore();
+    setStatus(turnStatus());
   }
 
   // ── AI (mobility-dominant minimax / alpha-beta — §5) ────────────────────────
@@ -899,7 +991,63 @@
     updateScore();
     setStatus(turnStatus());
 
+    initRoomMode();   // becomes online if launched inside a Room iframe (?roomId=)
     startRenderLoop();
+
+    // Dev-only test seam for the 2-client relay harness (perfect-information game → safe).
+    try {
+      if (new URLSearchParams(location.search).get('roomTest') === '1') {
+        window.__roomSim = {
+          state: function () { return state; },
+          mySeat: function () { return mySeat; },
+          vsRoom: function () { return vsRoom; },
+          myTurn: function () {
+            return !!(vsRoom &&
+              !(window.RoomBridge && RoomBridge.isSpectator && RoomBridge.isSpectator()) &&
+              state.turn === myPlayer && !state.winner);
+          },
+          // Legal move objects for the side to move, by phase.
+          legal: function () {
+            if (state.winner || state.phase === 'over') return [];
+            var N = state.N;
+            if (state.phase === 'open-black') {
+              return openingBlackRemovals(N, state.board).map(function (i) { return { remove: i }; });
+            }
+            if (state.phase === 'open-white') {
+              return openingWhiteRemovals(N, state.board, state.openEmpty).map(function (i) { return { remove: i }; });
+            }
+            if (state.phase === 'play') {
+              return allJumpMoves(N, state.board, state.turn);
+            }
+            return [];
+          },
+          // Apply a move object through the SAME gated commit path a real tap uses.
+          play: function (mv) {
+            if (!mv) return false;
+            if (state.winner || state.phase === 'over' || state.aiThinking) return false;
+            if (vsRoom && window.RoomBridge && RoomBridge.isSpectator && RoomBridge.isSpectator()) return false;
+            if (!canActNow()) return false; // turn-gating exercised here
+            var N = state.N;
+            if (state.phase === 'open-black') {
+              if (openingBlackRemovals(N, state.board).indexOf(mv.remove) === -1) return false;
+              commitOpenBlack(mv.remove); return true;
+            }
+            if (state.phase === 'open-white') {
+              if (openingWhiteRemovals(N, state.board, state.openEmpty).indexOf(mv.remove) === -1) return false;
+              commitOpenWhite(mv.remove); return true;
+            }
+            if (state.phase === 'play') {
+              var ok = jumpMovesFrom(N, state.board, mv.from, state.turn).some(function (m) {
+                return m.to === mv.to && m.dir === mv.dir && m.hops === mv.hops;
+              });
+              if (!ok) return false;
+              commitPlay(mv); return true;
+            }
+            return false;
+          }
+        };
+      }
+    } catch (e) { /* no-op */ }
   }
 
   // ── Animation / refresh loop (rAF + setTimeout fallback — checklist #8) ─────
