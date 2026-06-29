@@ -9,7 +9,12 @@
 - [About](https://playculturalgames.com/pages/about.html): the project and its mission.
 
 ## Collections (curated themed game lists)
-- [Ancient Board Games](https://playculturalgames.com/collections/ancient-board-games/): the oldest board games in the world, playable free — Senet, Ludus Latrunculorum, Patolli, Puluc, Pachisi and Oware.
+- [All collections](https://playculturalgames.com/collections/): index of themed game collections.
+- [Ancient Board Games](https://playculturalgames.com/collections/ancient-board-games/): the oldest board games in the world — Senet, Ludus Latrunculorum, Patolli, Puluc, Pachisi and Oware.
+- [Traditional African Board Games](https://playculturalgames.com/collections/african-board-games/): Oware, Yoté, Fanorona, Morabaraba, Tsoro Yematatu and Senet.
+- [Traditional Asian Board Games](https://playculturalgames.com/collections/asian-board-games/): Mahjong, Dou Shou Qi, Pachisi, Pallanguzhi, Bagh-Chal, Surakarta, Yut Nori and Xinjiang Fangqi.
+- [Traditional Card Games from Around the World](https://playculturalgames.com/collections/traditional-card-games/): Tiến Lên, Truc, Ganjifa, Cuarenta, Scopa and Durak.
+- [Two-Player Strategy Board Games](https://playculturalgames.com/collections/two-player-strategy-games/): Hnefatafl, Ludus Latrunculorum, Bagh-Chal, Morabaraba, Kōnane, Surakarta, Mū Tōrere and Dou Shou Qi.
 
 ## Games (30 traditional games from 25 cultures)
 - [Tiến Lên — Vietnam, card](https://playculturalgames.com/pages/games/tien-len.html): Vietnam's most beloved climbing/shedding card game; the name means "go forward." [How to play](https://playculturalgames.com/how-to-play/tien-len/)
