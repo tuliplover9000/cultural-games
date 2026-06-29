@@ -4,14 +4,12 @@
  * place → then slide/jump. Form three of your pieces on one of the five drawn
  * lines to win. (Verified reconstruction of the most-cited ruleset.)
  *
- * Canvas-rendered, vs-AI single player + local hotseat. Prefix: ty-  Key: tsoro-yematatu
+ * Canvas-rendered: vs-AI single player, local hotseat, AND online room play
+ * (RoomBridge full-blob sync, yote pattern). Prefix: ty-  Key: tsoro-yematatu
  *
  * Structurally a sibling of js/games/morabaraba.js — mirrors its module shape:
  * canvas setup, graph/adjacency, GameResize (cell/padX/padY via stored node
  * positions), minimax AI, hotseat toggle (canActNow), rAF+setTimeout loop.
- *
- * NOTE: online room multiplayer + server coin rewards are OUT OF SCOPE (deferred);
- * the game runs fully standalone.
  */
 (function () {
   'use strict';
@@ -92,7 +90,11 @@
   var gameVersion = 0;
   var state;
 
+  // Online room state (set by initRoomMode when launched inside a Room iframe).
+  var vsRoom = false, mySeat = -1, mySide = BLACK;
+
   function canActNow() {
+    if (vsRoom) return state.turn === mySide;
     if (vsAI) return state.turn === humanSide;
     return true;
   }
@@ -355,6 +357,7 @@
   }
   function turnStatus() {
     var hint = phaseHint();
+    if (vsRoom) return (state.turn === mySide ? 'Your turn. ' : 'Opponent’s turn. ') + hint;
     if (!vsAI) return (state.turn === BLACK ? 'Black’s turn (Player 1). ' : 'White’s turn (Player 2). ') + hint;
     return (state.turn === humanSide ? 'Your turn (Black). ' : 'Computer’s turn (White). ') + hint;
   }
@@ -362,6 +365,7 @@
   // ── Human interaction ────────────────────────────────────────────────────────
   function humanClick(point) {
     if (state.winner || state.phase === 'over' || state.aiThinking) return;
+    if (vsRoom && window.RoomBridge && RoomBridge.isSpectator && RoomBridge.isSpectator()) return;
     if (!canActNow()) return;
     if (window.CGTutorial && CGTutorial.isActive) return;
 
@@ -417,6 +421,7 @@
     var winner = checkTerminal(state); // catches draw / stuck
     if (winner) { endGame(winner); return; }
     render();
+    if (vsRoom) { setStatus(turnStatus()); syncRoom(); return; } // broadcast the move
     if (vsAI && state.turn !== humanSide) {
       state.aiThinking = true; setStatus('Computer is thinking…'); scheduleAIMove();
     } else {
@@ -427,7 +432,7 @@
   function endGame(winner) {
     state.winner = winner; state.phase = 'over'; state.aiThinking = false; state.selected = null;
     updateScore(); render();
-    var localSide = vsAI ? humanSide : null;
+    var localSide = vsRoom ? mySide : (vsAI ? humanSide : null);
     var localWon = localSide !== null &&
       ((winner === 'black' && localSide === BLACK) || (winner === 'white' && localSide === WHITE));
     if (winner === 'draw') {
@@ -437,11 +442,71 @@
     } else if (localWon) {
       setStatus('🎉 You win — three in a row!');
     } else {
-      setStatus('The computer lines up three and wins. Watch its threats!');
+      setStatus(vsRoom ? 'Your opponent lines up three and wins.' : 'The computer lines up three and wins. Watch its threats!');
     }
     var result = winner === 'draw' ? 'draw' : (localWon ? 'win' : 'loss');
+    if (vsRoom) {
+      syncRoom(); // broadcast the final board + report the winner seat (RoomBridge records stats/coins)
+      if (window.Achievements && Achievements.evaluate) {
+        Achievements.evaluate({ gameId: 'tsoro-yematatu', result: result, isOnline: true,
+          isHost: !!(window.RoomBridge && RoomBridge.isRoomHost && RoomBridge.isRoomHost()) });
+      }
+      return;
+    }
     if (vsAI && window.Auth && Auth.isLoggedIn && Auth.isLoggedIn()) Auth.recordResult('tsoro-yematatu', result);
     if (vsAI && window.Achievements && Achievements.evaluate) Achievements.evaluate({ gameId: 'tsoro-yematatu', result: result });
+  }
+
+  // ── Online room sync (RoomBridge — full-blob source of truth; yote pattern) ──
+  function serializeRoom() {
+    return {
+      board: state.board.slice(), turn: state.turn, phase: state.phase,
+      inHand: { 1: state.inHand[BLACK], 2: state.inHand[WHITE] },
+      drawCounter: state.drawCounter, lastMove: state.lastMove,
+      winner: state.winner, last_actor: 'room:' + mySeat
+    };
+  }
+  function syncRoom() {
+    if (!vsRoom || !window.RoomBridge) return;
+    RoomBridge.sendState(serializeRoom());
+    if (state.winner === 'black' || state.winner === 'white') {
+      RoomBridge.reportWin(state.winner === 'black' ? 0 : 1);
+    }
+  }
+  function receiveRoomState(blob) {
+    if (!blob) return;
+    if (blob.last_actor === 'room:' + mySeat) return; // suppress our own echoed update
+    state.board = blob.board.slice();
+    state.turn = blob.turn; state.phase = blob.phase;
+    state.inHand = { 1: blob.inHand[1], 2: blob.inHand[2] };
+    state.drawCounter = blob.drawCounter || 0;
+    state.lastMove = blob.lastMove || null;
+    state.selected = null; state.aiThinking = false;
+    state.winner = blob.winner || null;
+    updateScore();
+    if (state.winner) {
+      state.phase = 'over';
+      var localWon = (state.winner === 'black' && mySide === BLACK) || (state.winner === 'white' && mySide === WHITE);
+      if (state.winner === 'draw') setStatus('Draw — neither side can line up three.');
+      else if (localWon) setStatus('🎉 You win — three in a row!');
+      else setStatus('Your opponent lines up three and wins.');
+    } else {
+      setStatus(turnStatus());
+    }
+    render();
+  }
+  function initRoomMode() {
+    if (!window.RoomBridge || !RoomBridge.isActive || !RoomBridge.isActive()) return;
+    vsRoom = true; vsAI = false;
+    mySeat = RoomBridge.getSeat();
+    mySide = (mySeat === 0) ? BLACK : WHITE;
+    // Hide solo-only controls; online rematch is driven by the room's Play Again.
+    if (elModeWrap) elModeWrap.style.display = 'none';
+    if (elNewBtn)   elNewBtn.style.display   = 'none';
+    if (elUndoBtn)  elUndoBtn.style.display  = 'none';
+    RoomBridge.onState(receiveRoomState);   // also signals 'ready' → parent pushes latest state
+    if (mySeat === 0) syncRoom();            // host seeds the initial empty board + first turn
+    updateScore(); setStatus(turnStatus());
   }
 
   // ── AI (minimax / alpha-beta — small tree, search deep) ──────────────────────
@@ -646,7 +711,16 @@
     if (window.PWF) try { PWF.init('tsoro-yematatu'); } catch (e) {}
 
     sizeToWrap(); updateScore(); setStatus(turnStatus());
+    initRoomMode();   // becomes online if launched inside a Room iframe (?roomId=)
     startRenderLoop();
+
+    // Dev-only test seam for the 2-client relay harness (perfect-information game → safe).
+    try {
+      if (new URLSearchParams(location.search).get('roomTest') === '1') {
+        window.__tySim = { state: function () { return state; }, click: humanClick,
+                           mySeat: function () { return mySeat; }, vsRoom: function () { return vsRoom; } };
+      }
+    } catch (e) { /* no-op */ }
   }
 
   // ── Animation loop (rAF + setTimeout fallback — checklist #8) ────────────────
