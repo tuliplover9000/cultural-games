@@ -254,3 +254,23 @@
     justify-content: center;
   }
 }
+
+/* FAQ section — visible Q&A paired with FAQPage schema (AI Overviews / answer engines) */
+.htp-faq { margin-top: 2.5rem; }
+.htp-faq > h2 { margin-bottom: 0.5rem; }
+.htp-faq__item {
+  padding: 1rem 0;
+  border-top: 1px solid var(--color-border, rgba(255, 255, 255, 0.12));
+}
+.htp-faq__item:last-child {
+  border-bottom: 1px solid var(--color-border, rgba(255, 255, 255, 0.12));
+}
+.htp-faq__item h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+.htp-faq__item p {
+  margin: 0;
+  color: var(--color-text-muted, inherit);
+}
