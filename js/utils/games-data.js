@@ -217,4 +217,11 @@ window.GAMES_DATA = [
     didYouKnow: "The lowliest animal, the rat, is the only piece that can swim — and the only one that can capture the mighty elephant, though the elephant can never capture it back.",
     complexity: 4, players: '2',
   },
+  {
+    key: 'tsoro-yematatu', name: 'Tsoro Yematatu', culture: 'Zimbabwe', type: 'Strategy', maxPlayers: 2,
+    region: 'southern-africa', path: 'games/tsoro-yematatu.html', howToPlay: 'how-to-play/tsoro-yematatu/',
+    description: "Among the Shona of Zimbabwe, \"tsoro\" names a whole family of traditional board games, and \"yematatu\" means \"of three\" — for the three seeds each player commands. On a seven-point triangular board you place three seeds, then slide and jump to line up three on one of the five drawn lines. Deceptively simple, sharply tactical.",
+    didYouKnow: "The jump never captures — you hop over a neighbouring seed, friend or foe, purely to reposition; the only way to win is three in a row.",
+    complexity: 2, players: '2',
+  },
 ];

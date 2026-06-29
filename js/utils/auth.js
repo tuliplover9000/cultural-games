@@ -66,6 +66,7 @@
     { id: 'surakarta',       name: 'Surakarta',            iconPath: 'assets/icons/surakarta.svg',        href: 'games/surakarta.html' },
     { id: 'mu-torere',       name: 'Mū Tōrere',            iconPath: 'assets/icons/mu-torere.svg',        href: 'games/mu-torere.html' },
     { id: 'dou-shou-qi',     name: 'Dou Shou Qi',          iconPath: 'assets/icons/dou-shou-qi.svg',      href: 'games/dou-shou-qi.html' },
+    { id: 'tsoro-yematatu',  name: 'Tsoro Yematatu',       iconPath: 'assets/icons/tsoro-yematatu.svg',   href: 'games/tsoro-yematatu.html' },
   ];
 
   /* ── Session storage key (custom - NOT the Supabase internal key) ── */

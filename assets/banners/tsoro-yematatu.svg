@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-label="Tsoro Yematatu">
+  <defs>
+    <linearGradient id="tyb" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1E140C"/>
+      <stop offset="1" stop-color="#6E4A24"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="280" fill="url(#tyb)"/>
+  <g opacity="0.10" fill="none" stroke="#E3B65E" stroke-width="2">
+    <path d="M-40 60 H680 M-40 130 H680 M-40 200 H680"/>
+  </g>
+  <!-- central triangle board motif -->
+  <g transform="translate(320,142)">
+    <g fill="none" stroke="#E3B65E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M0 -84 L-84 84 L84 84 Z"/>
+      <path d="M0 -84 L0 84"/>
+      <path d="M-42 0 L42 0"/>
+    </g>
+    <g stroke="#1C1006" stroke-width="2">
+      <circle cx="0" cy="-84" r="14" fill="#3A2616"/>
+      <circle cx="0" cy="0" r="15" fill="#F0E5CC" stroke="#B49B66"/>
+      <circle cx="84" cy="84" r="14" fill="#3A2616"/>
+      <circle cx="-84" cy="84" r="14" fill="#F0E5CC" stroke="#B49B66"/>
+      <circle cx="-42" cy="0" r="9" fill="#33210F" stroke="#D9A441"/>
+      <circle cx="42" cy="0" r="9" fill="#33210F" stroke="#D9A441"/>
+      <circle cx="0" cy="84" r="9" fill="#33210F" stroke="#D9A441"/>
+    </g>
+  </g>
+</svg>

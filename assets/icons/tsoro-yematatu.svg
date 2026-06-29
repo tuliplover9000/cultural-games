@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Tsoro Yematatu">
+  <rect x="2" y="2" width="60" height="60" rx="12" fill="#6E4A24"/>
+  <rect x="2" y="2" width="60" height="30" rx="12" fill="#8E6230" opacity="0.35"/>
+  <!-- triangle + the 5 lines (apex 32,9 ; base 9,53 .. 55,53 ; mids) -->
+  <g fill="none" stroke="#E3B65E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 9 L9 53 L55 53 Z"/>
+    <path d="M32 9 L32 53"/>
+    <path d="M20.5 31 L43.5 31"/>
+  </g>
+  <!-- nodes -->
+  <g fill="#33210F" stroke="#D9A441" stroke-width="1.4">
+    <circle cx="20.5" cy="31" r="2.4"/>
+    <circle cx="43.5" cy="31" r="2.4"/>
+    <circle cx="9" cy="53" r="2.4"/>
+  </g>
+  <!-- seeds: one dark (player), one light (foe) + centre -->
+  <circle cx="32" cy="9" r="5.2" fill="#3A2616" stroke="#1C1006" stroke-width="1.4"/>
+  <circle cx="32" cy="31" r="5.6" fill="#F0E5CC" stroke="#B49B66" stroke-width="1.4"/>
+  <circle cx="55" cy="53" r="5.2" fill="#3A2616" stroke="#1C1006" stroke-width="1.4"/>
+</svg>
