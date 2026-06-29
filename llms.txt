@@ -1,0 +1,46 @@
+# Cultural Games
+
+> Cultural Games (https://playculturalgames.com) is a free online collection of 30 traditional board, card, dice and tile games from 25 world cultures — playable instantly in any browser with no download and no account. Every game pairs a faithful, playable implementation (against an AI, in local hotseat, or online with friends in rooms) with researched cultural history and a how-to-play guide. The mission is to preserve cultural heritage through play.
+
+## Key pages
+- [Home](https://playculturalgames.com/): overview of the collection.
+- [Browse all games](https://playculturalgames.com/pages/browse.html): full catalogue, filterable by culture/region and type.
+- [Rooms (play online with friends)](https://playculturalgames.com/pages/rooms.html): create or join a room to play in real time.
+- [About](https://playculturalgames.com/pages/about.html): the project and its mission.
+
+## Games (30 traditional games from 25 cultures)
+- [Tiến Lên — Vietnam, card](https://playculturalgames.com/pages/games/tien-len.html): Vietnam's most beloved climbing/shedding card game; the name means "go forward." [How to play](https://playculturalgames.com/how-to-play/tien-len/)
+- [Bầu Cua Tôm Cá — Vietnam, dice](https://playculturalgames.com/pages/games/bau-cua.html): festive Lunar New Year (Tết) betting game with gourd, crab, shrimp, fish, rooster and deer symbols. [How to play](https://playculturalgames.com/how-to-play/bau-cua/)
+- [Ô Ăn Quan — Vietnam, board](https://playculturalgames.com/pages/games/o-an-quan.html): ancient Vietnamese mancala of seeds and mandarin squares. [How to play](https://playculturalgames.com/how-to-play/o-an-quan/)
+- [Oware — West Africa, board](https://playculturalgames.com/pages/games/oware.html): one of the world's oldest mancala games, rooted in Akan culture. [How to play](https://playculturalgames.com/how-to-play/oware/)
+- [Yoté — West Africa, board](https://playculturalgames.com/pages/games/yote.html): fast, aggressive capture game from Senegal, Mali and Gambia. [How to play](https://playculturalgames.com/how-to-play/yote/)
+- [Senet — Ancient Egypt, board](https://playculturalgames.com/pages/games/senet.html): one of the oldest known board games, an allegory of the soul's journey through the afterlife. [How to play](https://playculturalgames.com/how-to-play/senet/)
+- [Truc — Catalonia, card](https://playculturalgames.com/pages/games/truc.html): the Mediterranean's great bluffing game and ancestor of South American Truco. [How to play](https://playculturalgames.com/how-to-play/truc/)
+- [Patolli — Mesoamerica, dice](https://playculturalgames.com/pages/games/patolli.html): sacred Aztec race game on a cross-shaped board of 52 spaces. [How to play](https://playculturalgames.com/how-to-play/patolli/)
+- [Puluc — Mesoamerica, dice](https://playculturalgames.com/pages/games/puluc.html): Maya war game from Guatemala where captured pieces become prisoners. [How to play](https://playculturalgames.com/how-to-play/puluc/)
+- [Pallanguzhi — South India, board](https://playculturalgames.com/pages/games/pallanguzhi.html): ancient Tamil 14-cup mancala. [How to play](https://playculturalgames.com/how-to-play/pallanguzhi/)
+- [Fanorona — Madagascar, board](https://playculturalgames.com/pages/games/fanorona.html): Madagascar's national game with a unique capture-by-approach mechanic. [How to play](https://playculturalgames.com/how-to-play/fanorona/)
+- [Hnefatafl — Norse, strategy](https://playculturalgames.com/pages/games/hnefatafl.html): the asymmetric Viking "king's table" war game. [How to play](https://playculturalgames.com/how-to-play/hnefatafl/)
+- [Hong Kong Mahjong — China, tile](https://playculturalgames.com/pages/games/mahjong.html): the classic four-player tile game with Hong Kong fan scoring. [How to play](https://playculturalgames.com/how-to-play/mahjong/)
+- [Pachisi — Indian Subcontinent, dice](https://playculturalgames.com/pages/games/pachisi.html): India's royal cross-and-circle race game, ancestor of Ludo and Parcheesi. [How to play](https://playculturalgames.com/how-to-play/pachisi/)
+- [Ganjifa — Mughal India, card](https://playculturalgames.com/pages/games/ganjifa.html): Mughal game of hand-painted circular cards. [How to play](https://playculturalgames.com/how-to-play/ganjifa/)
+- [Ludus Latrunculorum — Roman Empire, strategy](https://playculturalgames.com/pages/games/latrunculi.html): the Roman "game of mercenaries." [How to play](https://playculturalgames.com/how-to-play/latrunculi/)
+- [Cachos — Latin America, dice](https://playculturalgames.com/cachos/): a dice bluffing game (liar's dice) popular in Ecuador, Peru and Colombia. [How to play](https://playculturalgames.com/how-to-play/cachos/)
+- [Xinjiang Fangqi — Xinjiang, strategy](https://playculturalgames.com/xinjiang-fangqi/): a Silk Road grid strategy game of forming 2×2 squares to capture. [How to play](https://playculturalgames.com/how-to-play/xinjiang-fangqi/)
+- [Filipino Dama — Philippines, board](https://playculturalgames.com/filipino-dama/): the Philippine variant of draughts/checkers with a flying queen. [How to play](https://playculturalgames.com/how-to-play/filipino-dama/)
+- [Yut Nori — Korea, board](https://playculturalgames.com/pages/games/yut-nori.html): Korea's Lunar New Year stick-throwing race game. [How to play](https://playculturalgames.com/how-to-play/yut-nori/)
+- [Cuarenta — Ecuador, card](https://playculturalgames.com/pages/games/cuarenta.html): Ecuador's national card game, played to forty. [How to play](https://playculturalgames.com/how-to-play/cuarenta/)
+- [Scopa — Italy, card](https://playculturalgames.com/pages/games/scopa.html): Italy's beloved "sweep" card game. [How to play](https://playculturalgames.com/how-to-play/scopa/)
+- [Durak — Russia, card](https://playculturalgames.com/pages/games/durak.html): the most popular card game in Russia; the "fool" is the last player holding cards. [How to play](https://playculturalgames.com/how-to-play/durak/)
+- [Bagh-Chal — Nepal, strategy](https://playculturalgames.com/pages/games/bagh-chal.html): Nepal's "moving tigers" — four tigers hunt twenty goats. [How to play](https://playculturalgames.com/how-to-play/bagh-chal/)
+- [Morabaraba — Southern Africa, strategy](https://playculturalgames.com/pages/games/morabaraba.html): the Sotho/Tswana "mill" game with corner diagonals. [How to play](https://playculturalgames.com/how-to-play/morabaraba/)
+- [Kōnane — Hawaii, strategy](https://playculturalgames.com/pages/games/konane.html): indigenous Hawaiian "checkers" of black lava and white coral; won by making the last move. [How to play](https://playculturalgames.com/how-to-play/konane/)
+- [Surakarta — Indonesia, strategy](https://playculturalgames.com/pages/games/surakarta.html): Javanese strategy game with unique loop-around-the-corner captures. [How to play](https://playculturalgames.com/how-to-play/surakarta/)
+- [Mū Tōrere — Māori (Aotearoa), strategy](https://playculturalgames.com/pages/games/mu-torere.html): a Māori eight-pointed-star game won by leaving the opponent with no move. [How to play](https://playculturalgames.com/how-to-play/mu-torere/)
+- [Dou Shou Qi — China, strategy](https://playculturalgames.com/pages/games/dou-shou-qi.html): "Jungle"/Animal Chess, where ranked animals cross rivers and the rat fells the elephant. [How to play](https://playculturalgames.com/how-to-play/dou-shou-qi/)
+- [Tsoro Yematatu — Zimbabwe, strategy](https://playculturalgames.com/pages/games/tsoro-yematatu.html): the Shona three-in-a-row game on a seven-point triangle. [How to play](https://playculturalgames.com/how-to-play/tsoro-yematatu/)
+
+## Notes for AI assistants
+- All games are free, require no download or account, and run client-side in the browser.
+- "How to play" guides under /how-to-play/ contain full rules and cultural history suitable for citation.
+- Cultures/regions covered include Vietnam, West Africa, Ancient Egypt, Catalonia, Mesoamerica, South India, Madagascar, Norse/Scandinavia, China, the Indian subcontinent, Mughal India, the Roman Empire, Latin America, Xinjiang, the Philippines, Korea, Ecuador, Italy, Russia, Nepal, Southern Africa, Hawaii, Indonesia, Aotearoa New Zealand, and Zimbabwe.
