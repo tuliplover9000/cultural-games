@@ -8,6 +8,9 @@
 - [Rooms (play online with friends)](https://playculturalgames.com/pages/rooms.html): create or join a room to play in real time.
 - [About](https://playculturalgames.com/pages/about.html): the project and its mission.
 
+## Collections (curated themed game lists)
+- [Ancient Board Games](https://playculturalgames.com/collections/ancient-board-games/): the oldest board games in the world, playable free — Senet, Ludus Latrunculorum, Patolli, Puluc, Pachisi and Oware.
+
 ## Games (30 traditional games from 25 cultures)
 - [Tiến Lên — Vietnam, card](https://playculturalgames.com/pages/games/tien-len.html): Vietnam's most beloved climbing/shedding card game; the name means "go forward." [How to play](https://playculturalgames.com/how-to-play/tien-len/)
 - [Bầu Cua Tôm Cá — Vietnam, dice](https://playculturalgames.com/pages/games/bau-cua.html): festive Lunar New Year (Tết) betting game with gourd, crab, shrimp, fish, rooster and deer symbols. [How to play](https://playculturalgames.com/how-to-play/bau-cua/)
