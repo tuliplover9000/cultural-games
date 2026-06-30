@@ -976,6 +976,10 @@ canvas {
     align-items: center;
     justify-content: center;
     z-index: 2;
+    /* Drop the desktop --colour-class gradient here: it's a full-card opaque
+       layer at z-index 2 that would hide the flag ::before backdrop. The board
+       art <img> inside still renders; the flag now shows around/behind it. */
+    background: none;
   }
 
   /* ── Dark gradient behind game name ──────────────────────── */
