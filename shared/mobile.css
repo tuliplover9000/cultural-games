@@ -887,45 +887,67 @@ canvas {
     transform: none !important;
   }
 
-  /* Fill each tile with a blurred, zoomed copy of the game's OWN banner art, so
-     the card shows the exact colours behind its board — no per-colour guessing,
-     no hard seam, and the board stays full size. The ::before pseudo (below) is
-     the blurred backdrop; the crisp board art on top fades into it via the mask.
-     Per-game art URL set here by data-game-key. */
+  /* Fill each tile with the FLAG / national colours of the game's place of
+     origin, so each culture is instantly recognisable. The gradient sits on the
+     ::before backdrop (full card); the crisp board art on top fades into it via
+     the mask, and the dark scrim keeps the name readable. Grouped by culture. */
   .game-card__banner-art {
     -webkit-mask-image: linear-gradient(180deg, #000 66%, transparent 100%);
             mask-image: linear-gradient(180deg, #000 66%, transparent 100%);
   }
-  .game-card-wrapper[data-game-key="bagh-chal"] .game-card::before       { background-image: url(/assets/banners/bagh-chal.svg); }
-  .game-card-wrapper[data-game-key="bau-cua"] .game-card::before         { background-image: url(/assets/banners/bau-cua.svg); }
-  .game-card-wrapper[data-game-key="cachos"] .game-card::before          { background-image: url(/assets/banners/cachos.svg); }
-  .game-card-wrapper[data-game-key="cuarenta"] .game-card::before        { background-image: url(/assets/banners/cuarenta.svg); }
-  .game-card-wrapper[data-game-key="dou-shou-qi"] .game-card::before     { background-image: url(/assets/banners/dou-shou-qi.svg); }
-  .game-card-wrapper[data-game-key="durak"] .game-card::before           { background-image: url(/assets/banners/durak.svg); }
-  .game-card-wrapper[data-game-key="fanorona"] .game-card::before        { background-image: url(/assets/banners/fanorona.svg); }
-  .game-card-wrapper[data-game-key="filipino-dama"] .game-card::before   { background-image: url(/assets/banners/filipino-dama.svg); }
-  .game-card-wrapper[data-game-key="ganjifa"] .game-card::before         { background-image: url(/assets/banners/ganjifa.svg); }
-  .game-card-wrapper[data-game-key="hnefatafl"] .game-card::before       { background-image: url(/assets/banners/hnefatafl.svg); }
-  .game-card-wrapper[data-game-key="konane"] .game-card::before          { background-image: url(/assets/banners/konane.svg); }
-  .game-card-wrapper[data-game-key="latrunculi"] .game-card::before      { background-image: url(/assets/banners/latrunculi.svg); }
-  .game-card-wrapper[data-game-key="mahjong"] .game-card::before         { background-image: url(/assets/banners/mahjong.svg); }
-  .game-card-wrapper[data-game-key="morabaraba"] .game-card::before      { background-image: url(/assets/banners/morabaraba.svg); }
-  .game-card-wrapper[data-game-key="mu-torere"] .game-card::before       { background-image: url(/assets/banners/mu-torere.svg); }
-  .game-card-wrapper[data-game-key="o-an-quan"] .game-card::before       { background-image: url(/assets/banners/o-an-quan.svg); }
-  .game-card-wrapper[data-game-key="oware"] .game-card::before           { background-image: url(/assets/banners/oware.svg); }
-  .game-card-wrapper[data-game-key="pachisi"] .game-card::before         { background-image: url(/assets/banners/pachisi.svg); }
-  .game-card-wrapper[data-game-key="pallanguzhi"] .game-card::before     { background-image: url(/assets/banners/pallanguzhi.svg); }
-  .game-card-wrapper[data-game-key="patolli"] .game-card::before         { background-image: url(/assets/banners/patolli.svg); }
-  .game-card-wrapper[data-game-key="puluc"] .game-card::before           { background-image: url(/assets/banners/puluc.svg); }
-  .game-card-wrapper[data-game-key="scopa"] .game-card::before           { background-image: url(/assets/banners/scopa.svg); }
-  .game-card-wrapper[data-game-key="senet"] .game-card::before           { background-image: url(/assets/banners/senet.svg); }
-  .game-card-wrapper[data-game-key="surakarta"] .game-card::before       { background-image: url(/assets/banners/surakarta.svg); }
-  .game-card-wrapper[data-game-key="tien-len"] .game-card::before        { background-image: url(/assets/banners/tien-len.svg); }
-  .game-card-wrapper[data-game-key="truc"] .game-card::before            { background-image: url(/assets/banners/truc.svg); }
-  .game-card-wrapper[data-game-key="tsoro-yematatu"] .game-card::before  { background-image: url(/assets/banners/tsoro-yematatu.svg); }
-  .game-card-wrapper[data-game-key="xinjiang-fangqi"] .game-card::before { background-image: url(/assets/banners/xinjiang-fangqi.svg); }
-  .game-card-wrapper[data-game-key="yote"] .game-card::before            { background-image: url(/assets/banners/yote.svg); }
-  .game-card-wrapper[data-game-key="yut-nori"] .game-card::before        { background-image: url(/assets/banners/yut-nori.svg); }
+  /* Vietnam — red */
+  .game-card-wrapper[data-game-key="tien-len"] .game-card::before        { background-image: linear-gradient(165deg, #B71C2B 0%, #7a0f18 55%, #2e0509 100%); }
+  .game-card-wrapper[data-game-key="bau-cua"] .game-card::before         { background-image: linear-gradient(165deg, #B71C2B 0%, #7a0f18 55%, #2e0509 100%); }
+  .game-card-wrapper[data-game-key="o-an-quan"] .game-card::before       { background-image: linear-gradient(165deg, #B71C2B 0%, #7a0f18 55%, #2e0509 100%); }
+  /* West Africa — green/gold/red */
+  .game-card-wrapper[data-game-key="oware"] .game-card::before           { background-image: linear-gradient(165deg, #1E7A40 0%, #9c7a1e 55%, #5e1216 100%); }
+  .game-card-wrapper[data-game-key="yote"] .game-card::before            { background-image: linear-gradient(165deg, #1E7A40 0%, #9c7a1e 55%, #5e1216 100%); }
+  /* Ancient Egypt — gold + lapis */
+  .game-card-wrapper[data-game-key="senet"] .game-card::before           { background-image: linear-gradient(165deg, #C2A12E 0%, #1A4A6E 100%); }
+  /* Catalonia — Senyera yellow/red */
+  .game-card-wrapper[data-game-key="truc"] .game-card::before            { background-image: linear-gradient(165deg, #C6A11C 0%, #8a1818 100%); }
+  /* Mesoamerica */
+  .game-card-wrapper[data-game-key="patolli"] .game-card::before         { background-image: linear-gradient(165deg, #1A8276 0%, #8a3a1c 100%); }
+  .game-card-wrapper[data-game-key="puluc"] .game-card::before           { background-image: linear-gradient(165deg, #1A7A58 0%, #7a201a 100%); }
+  /* Indian subcontinent — saffron/green */
+  .game-card-wrapper[data-game-key="pallanguzhi"] .game-card::before     { background-image: linear-gradient(165deg, #C56A1A 0%, #1A6E3A 100%); }
+  .game-card-wrapper[data-game-key="pachisi"] .game-card::before         { background-image: linear-gradient(165deg, #C56A1A 0%, #1A6E3A 100%); }
+  .game-card-wrapper[data-game-key="ganjifa"] .game-card::before         { background-image: linear-gradient(165deg, #1A5E3A 0%, #9c7a1e 100%); }
+  /* Madagascar — red/green */
+  .game-card-wrapper[data-game-key="fanorona"] .game-card::before        { background-image: linear-gradient(165deg, #9E1B28 0%, #1A6E3A 100%); }
+  /* Norse — Nordic blue/steel */
+  .game-card-wrapper[data-game-key="hnefatafl"] .game-card::before       { background-image: linear-gradient(165deg, #1E4E7E 0%, #28323c 100%); }
+  /* China — red/gold */
+  .game-card-wrapper[data-game-key="mahjong"] .game-card::before         { background-image: linear-gradient(165deg, #C41E2A 0%, #9c7a1e 100%); }
+  .game-card-wrapper[data-game-key="dou-shou-qi"] .game-card::before     { background-image: linear-gradient(165deg, #C41E2A 0%, #9c7a1e 100%); }
+  /* Roman Empire — legion red/gold */
+  .game-card-wrapper[data-game-key="latrunculi"] .game-card::before      { background-image: linear-gradient(165deg, #7E1A1A 0%, #9c7a1e 100%); }
+  /* Latin America */
+  .game-card-wrapper[data-game-key="cachos"] .game-card::before          { background-image: linear-gradient(165deg, #C6A11C 0%, #7a1818 100%); }
+  /* Xinjiang / Central Asia — blue */
+  .game-card-wrapper[data-game-key="xinjiang-fangqi"] .game-card::before { background-image: linear-gradient(165deg, #1A6E8C 0%, #1a3340 100%); }
+  /* Philippines — blue/red/gold */
+  .game-card-wrapper[data-game-key="filipino-dama"] .game-card::before   { background-image: linear-gradient(165deg, #16336E 0%, #8a1620 100%); }
+  /* Korea — taeguk red/blue */
+  .game-card-wrapper[data-game-key="yut-nori"] .game-card::before        { background-image: linear-gradient(165deg, #B71C2B 0%, #16336E 100%); }
+  /* Ecuador — yellow/blue/red */
+  .game-card-wrapper[data-game-key="cuarenta"] .game-card::before        { background-image: linear-gradient(165deg, #C6A11C 0%, #16336E 55%, #7a1418 100%); }
+  /* Italy — green/red */
+  .game-card-wrapper[data-game-key="scopa"] .game-card::before           { background-image: linear-gradient(165deg, #1A6E3A 0%, #8a1418 100%); }
+  /* Russia — blue/red */
+  .game-card-wrapper[data-game-key="durak"] .game-card::before           { background-image: linear-gradient(165deg, #16336E 0%, #8a1418 100%); }
+  /* Nepal — crimson/blue */
+  .game-card-wrapper[data-game-key="bagh-chal"] .game-card::before       { background-image: linear-gradient(165deg, #8a1822 0%, #16336E 100%); }
+  /* Southern Africa — green/gold */
+  .game-card-wrapper[data-game-key="morabaraba"] .game-card::before      { background-image: linear-gradient(165deg, #1A6E3A 0%, #9c7a1e 100%); }
+  /* Hawaii — Pacific teal */
+  .game-card-wrapper[data-game-key="konane"] .game-card::before          { background-image: linear-gradient(165deg, #1A7078 0%, #14282c 100%); }
+  /* Indonesia — red/white */
+  .game-card-wrapper[data-game-key="surakarta"] .game-card::before       { background-image: linear-gradient(165deg, #B71C2B 0%, #4e0a12 100%); }
+  /* Māori (Aotearoa) — red/black/white */
+  .game-card-wrapper[data-game-key="mu-torere"] .game-card::before       { background-image: linear-gradient(165deg, #9E1B28 0%, #14110e 100%); }
+  /* Zimbabwe — green/gold/red */
+  .game-card-wrapper[data-game-key="tsoro-yematatu"] .game-card::before  { background-image: linear-gradient(165deg, #1A6E3A 0%, #9c7a1e 55%, #8a1418 100%); }
 
   /* ── Blurred art backdrop — fills the tile with the game's own colours ──── */
   /* z-index: 0 — lowest layer, sits beneath the dark scrim + crisp board art.
@@ -936,11 +958,6 @@ canvas {
     position: absolute;
     inset: 0;
     background-color: transparent;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    transform: scale(1.25);
-    filter: blur(15px) brightness(0.8) saturate(1.18);
     z-index: 0;
     pointer-events: none;
     border-radius: 16px;
