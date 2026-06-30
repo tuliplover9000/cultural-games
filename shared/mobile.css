@@ -891,9 +891,13 @@ canvas {
      origin, so each culture is instantly recognisable. The gradient sits on the
      ::before backdrop (full card); the crisp board art on top fades into it via
      the mask, and the dark scrim keeps the name readable. Grouped by culture. */
-  .game-card__banner-art {
-    -webkit-mask-image: linear-gradient(180deg, #000 66%, transparent 100%);
-            mask-image: linear-gradient(180deg, #000 66%, transparent 100%);
+  /* Board art fills the whole tile (override browse-panel.css `.game-card img
+     { height:auto }`, which otherwise renders it as a small centred strip). */
+  .game-card .game-card__banner .game-card__banner-art {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
   }
   /* Vietnam — red */
   .game-card-wrapper[data-game-key="tien-len"] .game-card::before        { background-image: linear-gradient(160deg, #E11D2A 0%, #B0121F 60%, #3a0509 100%); }
