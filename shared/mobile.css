@@ -896,58 +896,58 @@ canvas {
             mask-image: linear-gradient(180deg, #000 66%, transparent 100%);
   }
   /* Vietnam — red */
-  .game-card-wrapper[data-game-key="tien-len"] .game-card::before        { background-image: linear-gradient(165deg, #B71C2B 0%, #7a0f18 55%, #2e0509 100%); }
-  .game-card-wrapper[data-game-key="bau-cua"] .game-card::before         { background-image: linear-gradient(165deg, #B71C2B 0%, #7a0f18 55%, #2e0509 100%); }
-  .game-card-wrapper[data-game-key="o-an-quan"] .game-card::before       { background-image: linear-gradient(165deg, #B71C2B 0%, #7a0f18 55%, #2e0509 100%); }
+  .game-card-wrapper[data-game-key="tien-len"] .game-card::before        { background-image: linear-gradient(160deg, #E11D2A 0%, #B0121F 60%, #3a0509 100%); }
+  .game-card-wrapper[data-game-key="bau-cua"] .game-card::before         { background-image: linear-gradient(160deg, #E11D2A 0%, #B0121F 60%, #3a0509 100%); }
+  .game-card-wrapper[data-game-key="o-an-quan"] .game-card::before       { background-image: linear-gradient(160deg, #E11D2A 0%, #B0121F 60%, #3a0509 100%); }
   /* West Africa — green/gold/red */
-  .game-card-wrapper[data-game-key="oware"] .game-card::before           { background-image: linear-gradient(165deg, #1E7A40 0%, #9c7a1e 55%, #5e1216 100%); }
-  .game-card-wrapper[data-game-key="yote"] .game-card::before            { background-image: linear-gradient(165deg, #1E7A40 0%, #9c7a1e 55%, #5e1216 100%); }
+  .game-card-wrapper[data-game-key="oware"] .game-card::before           { background-image: linear-gradient(160deg, #16A04A 0%, #F0B81E 50%, #C42A1C 100%); }
+  .game-card-wrapper[data-game-key="yote"] .game-card::before            { background-image: linear-gradient(160deg, #16A04A 0%, #F0B81E 50%, #C42A1C 100%); }
   /* Ancient Egypt — gold + lapis */
-  .game-card-wrapper[data-game-key="senet"] .game-card::before           { background-image: linear-gradient(165deg, #C2A12E 0%, #1A4A6E 100%); }
+  .game-card-wrapper[data-game-key="senet"] .game-card::before           { background-image: linear-gradient(160deg, #E6B73C 0%, #1C6FA8 100%); }
   /* Catalonia — Senyera yellow/red */
-  .game-card-wrapper[data-game-key="truc"] .game-card::before            { background-image: linear-gradient(165deg, #C6A11C 0%, #8a1818 100%); }
-  /* Mesoamerica */
-  .game-card-wrapper[data-game-key="patolli"] .game-card::before         { background-image: linear-gradient(165deg, #1A8276 0%, #8a3a1c 100%); }
-  .game-card-wrapper[data-game-key="puluc"] .game-card::before           { background-image: linear-gradient(165deg, #1A7A58 0%, #7a201a 100%); }
+  .game-card-wrapper[data-game-key="truc"] .game-card::before            { background-image: linear-gradient(160deg, #F2C81E 0%, #C42A1C 100%); }
+  /* Mesoamerica — turquoise/terracotta */
+  .game-card-wrapper[data-game-key="patolli"] .game-card::before         { background-image: linear-gradient(160deg, #14B0A0 0%, #C25A2A 100%); }
+  .game-card-wrapper[data-game-key="puluc"] .game-card::before           { background-image: linear-gradient(160deg, #15A878 0%, #C0301E 100%); }
   /* Indian subcontinent — saffron/green */
-  .game-card-wrapper[data-game-key="pallanguzhi"] .game-card::before     { background-image: linear-gradient(165deg, #C56A1A 0%, #1A6E3A 100%); }
-  .game-card-wrapper[data-game-key="pachisi"] .game-card::before         { background-image: linear-gradient(165deg, #C56A1A 0%, #1A6E3A 100%); }
-  .game-card-wrapper[data-game-key="ganjifa"] .game-card::before         { background-image: linear-gradient(165deg, #1A5E3A 0%, #9c7a1e 100%); }
+  .game-card-wrapper[data-game-key="pallanguzhi"] .game-card::before     { background-image: linear-gradient(160deg, #F2901A 0%, #15A04A 100%); }
+  .game-card-wrapper[data-game-key="pachisi"] .game-card::before         { background-image: linear-gradient(160deg, #F2901A 0%, #15A04A 100%); }
+  .game-card-wrapper[data-game-key="ganjifa"] .game-card::before         { background-image: linear-gradient(160deg, #16944A 0%, #F0C42E 100%); }
   /* Madagascar — red/green */
-  .game-card-wrapper[data-game-key="fanorona"] .game-card::before        { background-image: linear-gradient(165deg, #9E1B28 0%, #1A6E3A 100%); }
+  .game-card-wrapper[data-game-key="fanorona"] .game-card::before        { background-image: linear-gradient(160deg, #E02420 0%, #15A04A 100%); }
   /* Norse — Nordic blue/steel */
-  .game-card-wrapper[data-game-key="hnefatafl"] .game-card::before       { background-image: linear-gradient(165deg, #1E4E7E 0%, #28323c 100%); }
+  .game-card-wrapper[data-game-key="hnefatafl"] .game-card::before       { background-image: linear-gradient(160deg, #2E84C8 0%, #2E3E50 100%); }
   /* China — red/gold */
-  .game-card-wrapper[data-game-key="mahjong"] .game-card::before         { background-image: linear-gradient(165deg, #C41E2A 0%, #9c7a1e 100%); }
-  .game-card-wrapper[data-game-key="dou-shou-qi"] .game-card::before     { background-image: linear-gradient(165deg, #C41E2A 0%, #9c7a1e 100%); }
+  .game-card-wrapper[data-game-key="mahjong"] .game-card::before         { background-image: linear-gradient(160deg, #E8200F 0%, #F0C42E 100%); }
+  .game-card-wrapper[data-game-key="dou-shou-qi"] .game-card::before     { background-image: linear-gradient(160deg, #E8200F 0%, #F0C42E 100%); }
   /* Roman Empire — legion red/gold */
-  .game-card-wrapper[data-game-key="latrunculi"] .game-card::before      { background-image: linear-gradient(165deg, #7E1A1A 0%, #9c7a1e 100%); }
-  /* Latin America */
-  .game-card-wrapper[data-game-key="cachos"] .game-card::before          { background-image: linear-gradient(165deg, #C6A11C 0%, #7a1818 100%); }
+  .game-card-wrapper[data-game-key="latrunculi"] .game-card::before      { background-image: linear-gradient(160deg, #C42020 0%, #F0C42E 100%); }
+  /* Latin America — yellow/red */
+  .game-card-wrapper[data-game-key="cachos"] .game-card::before          { background-image: linear-gradient(160deg, #F2C81E 0%, #C42A1C 100%); }
   /* Xinjiang / Central Asia — blue */
-  .game-card-wrapper[data-game-key="xinjiang-fangqi"] .game-card::before { background-image: linear-gradient(165deg, #1A6E8C 0%, #1a3340 100%); }
-  /* Philippines — blue/red/gold */
-  .game-card-wrapper[data-game-key="filipino-dama"] .game-card::before   { background-image: linear-gradient(165deg, #16336E 0%, #8a1620 100%); }
+  .game-card-wrapper[data-game-key="xinjiang-fangqi"] .game-card::before { background-image: linear-gradient(160deg, #1E9AD0 0%, #163a4e 100%); }
+  /* Philippines — blue/red */
+  .game-card-wrapper[data-game-key="filipino-dama"] .game-card::before   { background-image: linear-gradient(160deg, #2A52C0 0%, #DA1126 100%); }
   /* Korea — taeguk red/blue */
-  .game-card-wrapper[data-game-key="yut-nori"] .game-card::before        { background-image: linear-gradient(165deg, #B71C2B 0%, #16336E 100%); }
+  .game-card-wrapper[data-game-key="yut-nori"] .game-card::before        { background-image: linear-gradient(160deg, #D42E3A 0%, #0050B0 100%); }
   /* Ecuador — yellow/blue/red */
-  .game-card-wrapper[data-game-key="cuarenta"] .game-card::before        { background-image: linear-gradient(165deg, #C6A11C 0%, #16336E 55%, #7a1418 100%); }
+  .game-card-wrapper[data-game-key="cuarenta"] .game-card::before        { background-image: linear-gradient(160deg, #F2C81E 0%, #2A52C0 50%, #D02020 100%); }
   /* Italy — green/red */
-  .game-card-wrapper[data-game-key="scopa"] .game-card::before           { background-image: linear-gradient(165deg, #1A6E3A 0%, #8a1418 100%); }
+  .game-card-wrapper[data-game-key="scopa"] .game-card::before           { background-image: linear-gradient(160deg, #16A04A 0%, #E02B37 100%); }
   /* Russia — blue/red */
-  .game-card-wrapper[data-game-key="durak"] .game-card::before           { background-image: linear-gradient(165deg, #16336E 0%, #8a1418 100%); }
+  .game-card-wrapper[data-game-key="durak"] .game-card::before           { background-image: linear-gradient(160deg, #1040C0 0%, #E02B1E 100%); }
   /* Nepal — crimson/blue */
-  .game-card-wrapper[data-game-key="bagh-chal"] .game-card::before       { background-image: linear-gradient(165deg, #8a1822 0%, #16336E 100%); }
+  .game-card-wrapper[data-game-key="bagh-chal"] .game-card::before       { background-image: linear-gradient(160deg, #E01838 0%, #0048B0 100%); }
   /* Southern Africa — green/gold */
-  .game-card-wrapper[data-game-key="morabaraba"] .game-card::before      { background-image: linear-gradient(165deg, #1A6E3A 0%, #9c7a1e 100%); }
+  .game-card-wrapper[data-game-key="morabaraba"] .game-card::before      { background-image: linear-gradient(160deg, #009A55 0%, #F0B81E 100%); }
   /* Hawaii — Pacific teal */
-  .game-card-wrapper[data-game-key="konane"] .game-card::before          { background-image: linear-gradient(165deg, #1A7078 0%, #14282c 100%); }
+  .game-card-wrapper[data-game-key="konane"] .game-card::before          { background-image: linear-gradient(160deg, #16AAB8 0%, #14363e 100%); }
   /* Indonesia — red/white */
-  .game-card-wrapper[data-game-key="surakarta"] .game-card::before       { background-image: linear-gradient(165deg, #B71C2B 0%, #4e0a12 100%); }
+  .game-card-wrapper[data-game-key="surakarta"] .game-card::before       { background-image: linear-gradient(160deg, #E81E2C 0%, #5a0c14 100%); }
   /* Māori (Aotearoa) — red/black/white */
-  .game-card-wrapper[data-game-key="mu-torere"] .game-card::before       { background-image: linear-gradient(165deg, #9E1B28 0%, #14110e 100%); }
+  .game-card-wrapper[data-game-key="mu-torere"] .game-card::before       { background-image: linear-gradient(160deg, #E0241D 0%, #16110e 100%); }
   /* Zimbabwe — green/gold/red */
-  .game-card-wrapper[data-game-key="tsoro-yematatu"] .game-card::before  { background-image: linear-gradient(165deg, #1A6E3A 0%, #9c7a1e 55%, #8a1418 100%); }
+  .game-card-wrapper[data-game-key="tsoro-yematatu"] .game-card::before  { background-image: linear-gradient(160deg, #16A04A 0%, #F0C42E 50%, #C42A1C 100%); }
 
   /* ── Blurred art backdrop — fills the tile with the game's own colours ──── */
   /* z-index: 0 — lowest layer, sits beneath the dark scrim + crisp board art.
