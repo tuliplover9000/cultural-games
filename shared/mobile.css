@@ -879,12 +879,50 @@ canvas {
     justify-content: center;
     cursor: pointer;
     box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-    background: none;
+    /* Neutral fallback fill (per-game gradients below override this on browse). */
+    background: linear-gradient(180deg, var(--color-surface-alt) 0%, var(--color-surface) 100%);
     border: none;
     isolation: isolate;
     /* Suppress desktop 3D hover lift on mobile */
     transform: none !important;
   }
+
+  /* The banner art is a WIDE strip that only fills the top of the tall portrait
+     tile, leaving the lower half empty. Fill each card with a gradient pulled
+     from that game's OWN banner art (the tone behind the board) so the tile
+     reads as one filled piece. Colours extracted per-game from assets/banners/*.svg
+     (.claude/extract-banner-colors.js); matched by data-game-key so they're exact
+     (e.g. Durak red, not its --gold banner class). */
+  .game-card-wrapper[data-game-key="bagh-chal"] .game-card      { background: linear-gradient(180deg, #3A2616 0%, #1d130b 100%); }
+  .game-card-wrapper[data-game-key="bau-cua"] .game-card        { background: linear-gradient(180deg, #9C5A2E 0%, #4e2d17 100%); }
+  .game-card-wrapper[data-game-key="cachos"] .game-card         { background: linear-gradient(180deg, #54331E 0%, #3B2417 100%); }
+  .game-card-wrapper[data-game-key="cuarenta"] .game-card       { background: linear-gradient(180deg, #5C3A21 0%, #2e1d11 100%); }
+  .game-card-wrapper[data-game-key="dou-shou-qi"] .game-card    { background: linear-gradient(180deg, #1B3550 0%, #0e1118 100%); }
+  .game-card-wrapper[data-game-key="durak"] .game-card          { background: linear-gradient(180deg, #2a1014 0%, #15080a 100%); }
+  .game-card-wrapper[data-game-key="fanorona"] .game-card       { background: linear-gradient(180deg, #3B372F 0%, #1e1c18 100%); }
+  .game-card-wrapper[data-game-key="filipino-dama"] .game-card  { background: linear-gradient(180deg, #6E6A62 0%, #34322e 100%); }
+  .game-card-wrapper[data-game-key="ganjifa"] .game-card        { background: linear-gradient(180deg, #2A1410 0%, #150a08 100%); }
+  .game-card-wrapper[data-game-key="hnefatafl"] .game-card      { background: linear-gradient(180deg, #2E2A25 0%, #171513 100%); }
+  .game-card-wrapper[data-game-key="konane"] .game-card         { background: linear-gradient(180deg, #2A2018 0%, #120d0a 100%); }
+  .game-card-wrapper[data-game-key="latrunculi"] .game-card     { background: linear-gradient(180deg, #5F432C 0%, #302216 100%); }
+  .game-card-wrapper[data-game-key="mahjong"] .game-card        { background: linear-gradient(180deg, #17211C 0%, #0c110e 100%); }
+  .game-card-wrapper[data-game-key="morabaraba"] .game-card     { background: linear-gradient(180deg, #2E1D10 0%, #170f08 100%); }
+  .game-card-wrapper[data-game-key="mu-torere"] .game-card      { background: linear-gradient(180deg, #2A2418 0%, #12100a 100%); }
+  .game-card-wrapper[data-game-key="o-an-quan"] .game-card      { background: linear-gradient(180deg, #6e5340 0%, #372a20 100%); }
+  .game-card-wrapper[data-game-key="oware"] .game-card          { background: linear-gradient(180deg, #3a2008 0%, #1d1004 100%); }
+  .game-card-wrapper[data-game-key="pachisi"] .game-card        { background: linear-gradient(180deg, #8E2C21 0%, #471611 100%); }
+  .game-card-wrapper[data-game-key="pallanguzhi"] .game-card    { background: linear-gradient(180deg, #8C3B2A 0%, #461e15 100%); }
+  .game-card-wrapper[data-game-key="patolli"] .game-card        { background: linear-gradient(180deg, #B5532A 0%, #5a2915 100%); }
+  .game-card-wrapper[data-game-key="puluc"] .game-card          { background: linear-gradient(180deg, #2A201A 0%, #15100d 100%); }
+  .game-card-wrapper[data-game-key="scopa"] .game-card          { background: linear-gradient(180deg, #6A4528 0%, #352314 100%); }
+  .game-card-wrapper[data-game-key="senet"] .game-card          { background: linear-gradient(180deg, #211608 0%, #110b04 100%); }
+  .game-card-wrapper[data-game-key="surakarta"] .game-card      { background: linear-gradient(180deg, #241409 0%, #120a05 100%); }
+  .game-card-wrapper[data-game-key="tien-len"] .game-card       { background: linear-gradient(180deg, #2E2620 0%, #161210 100%); }
+  .game-card-wrapper[data-game-key="truc"] .game-card           { background: linear-gradient(180deg, #266048 0%, #1d4a38 100%); }
+  .game-card-wrapper[data-game-key="tsoro-yematatu"] .game-card { background: linear-gradient(180deg, #6E4A24 0%, #1E140C 100%); }
+  .game-card-wrapper[data-game-key="xinjiang-fangqi"] .game-card{ background: linear-gradient(180deg, #3B2A1E 0%, #1e150f 100%); }
+  .game-card-wrapper[data-game-key="yote"] .game-card           { background: linear-gradient(180deg, #2a1606 0%, #150b03 100%); }
+  .game-card-wrapper[data-game-key="yut-nori"] .game-card       { background: linear-gradient(180deg, #B7A878 0%, #5c5544 100%); }
 
   /* ── Diagonal light plane — faceted depth effect ─────────── */
   /* z-index: 0 — lowest layer, sits beneath everything         */
