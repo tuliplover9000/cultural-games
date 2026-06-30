@@ -499,10 +499,12 @@ body.bp-no-scroll { overflow: hidden; position: fixed; width: 100%; }
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Game card — touch-friendly, fixed height for app-store look */
+  /* Game card — touch-friendly, fixed height for app-store look.
+     Shorter (less portrait) so the WIDE board art isn't zoomed/cropped so hard by
+     object-fit:cover — a taller tile only showed ~35% of the art's width. */
   .game-card {
     touch-action: manipulation;
-    height: 220px;
+    height: 150px;
     aspect-ratio: unset;
   }
 
