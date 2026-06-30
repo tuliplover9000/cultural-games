@@ -5876,6 +5876,38 @@ html[data-theme="light"] .pu-game-wrap {
   .tu-callout { font-size: 1.8rem; }
 }
 
+/* ── Landscape phones: lay CANVAS board games out SIDE-BY-SIDE ──────────────
+   In landscape the limiting dimension is HEIGHT. A stacked column (HUD above
+   board above controls) starves the square board down to ~120px in a wide,
+   mostly-empty viewport. Switching the container to a flex ROW makes
+   mobile-zoom.js treat it as "sideBySide" (nonBoard = 0) and give the board the
+   FULL height, while the HUD + controls move into the empty side margin.
+   Scoped to :has(canvas) so DOM games (cards/tiles/pits) are untouched. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .game-container:has(canvas) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2) var(--space-4);
+    padding: var(--space-2) var(--space-3);
+  }
+  /* The board (child holding the canvas, or a direct-child canvas) leads. */
+  .game-container:has(canvas) > *:has(canvas),
+  .game-container:has(canvas) > canvas {
+    order: -1;
+    flex: 0 1 auto;
+    margin: 0;
+  }
+  /* HUD / status / controls share the side space (wrap into a narrow column). */
+  .game-container:has(canvas) > *:not(:has(canvas)):not(canvas) {
+    flex: 1 1 160px;
+    min-width: 130px;
+    max-width: 44vw;
+    margin: 0;
+  }
+}
+
 
 /* =============================================================================
    CUARENTA — Quito table reskin
@@ -7598,15 +7630,4 @@ html[data-theme="light"] .pu-game-wrap {
   .ty-status { text-align: left; min-width: 0; flex: 1 1 100%; font-size: var(--text-xs); }
   .ty-controls { flex-wrap: nowrap; gap: 4px; justify-content: center; font-size: 0.78rem; }
   .ty-mode-label { min-height: 40px; font-size: 0.78rem; gap: 4px; }
-}
-/* Short-landscape phones: cap the DISPLAYED board to the viewport height so the whole
-   board + HUD + controls stay visible without a vertical scroll. The canvas buffer is
-   unchanged (stays crisp); pointFromEvent already scales clicks by rect↔buffer ratio. */
-@media (orientation: landscape) and (max-height: 500px) {
-  .tsoro-yematatu-game-container { padding: var(--space-2); gap: var(--space-1); }
-  .ty-hud { min-height: 0; padding: 2px var(--space-2); }
-  .ty-score { font-size: var(--text-xs); gap: 6px; }
-  .ty-status { font-size: var(--text-xs); min-width: 0; }
-  .ty-controls { gap: 6px; }
-  .ty-board-wrap { max-width: min(560px, calc(100vh - 118px)); }
 }
