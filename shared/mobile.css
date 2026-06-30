@@ -887,57 +887,63 @@ canvas {
     transform: none !important;
   }
 
-  /* The banner art is a WIDE strip that only fills the top of the tall portrait
-     tile, leaving the lower half empty. Fill each card with a gradient pulled
-     from that game's OWN banner art (the tone behind the board) so the tile
-     reads as one filled piece. Colours extracted per-game from assets/banners/*.svg
-     (.claude/extract-banner-colors.js); matched by data-game-key so they're exact
-     (e.g. Durak red, not its --gold banner class). */
-  .game-card-wrapper[data-game-key="bagh-chal"] .game-card      { background: linear-gradient(180deg, #3A2616 0%, #1d130b 100%); }
-  .game-card-wrapper[data-game-key="bau-cua"] .game-card        { background: linear-gradient(180deg, #9C5A2E 0%, #4e2d17 100%); }
-  .game-card-wrapper[data-game-key="cachos"] .game-card         { background: linear-gradient(180deg, #54331E 0%, #3B2417 100%); }
-  .game-card-wrapper[data-game-key="cuarenta"] .game-card       { background: linear-gradient(180deg, #5C3A21 0%, #2e1d11 100%); }
-  .game-card-wrapper[data-game-key="dou-shou-qi"] .game-card    { background: linear-gradient(180deg, #1B3550 0%, #0e1118 100%); }
-  .game-card-wrapper[data-game-key="durak"] .game-card          { background: linear-gradient(180deg, #2a1014 0%, #15080a 100%); }
-  .game-card-wrapper[data-game-key="fanorona"] .game-card       { background: linear-gradient(180deg, #3B372F 0%, #1e1c18 100%); }
-  .game-card-wrapper[data-game-key="filipino-dama"] .game-card  { background: linear-gradient(180deg, #6E6A62 0%, #34322e 100%); }
-  .game-card-wrapper[data-game-key="ganjifa"] .game-card        { background: linear-gradient(180deg, #2A1410 0%, #150a08 100%); }
-  .game-card-wrapper[data-game-key="hnefatafl"] .game-card      { background: linear-gradient(180deg, #2E2A25 0%, #171513 100%); }
-  .game-card-wrapper[data-game-key="konane"] .game-card         { background: linear-gradient(180deg, #2A2018 0%, #120d0a 100%); }
-  .game-card-wrapper[data-game-key="latrunculi"] .game-card     { background: linear-gradient(180deg, #5F432C 0%, #302216 100%); }
-  .game-card-wrapper[data-game-key="mahjong"] .game-card        { background: linear-gradient(180deg, #17211C 0%, #0c110e 100%); }
-  .game-card-wrapper[data-game-key="morabaraba"] .game-card     { background: linear-gradient(180deg, #2E1D10 0%, #170f08 100%); }
-  .game-card-wrapper[data-game-key="mu-torere"] .game-card      { background: linear-gradient(180deg, #2A2418 0%, #12100a 100%); }
-  .game-card-wrapper[data-game-key="o-an-quan"] .game-card      { background: linear-gradient(180deg, #6e5340 0%, #372a20 100%); }
-  .game-card-wrapper[data-game-key="oware"] .game-card          { background: linear-gradient(180deg, #3a2008 0%, #1d1004 100%); }
-  .game-card-wrapper[data-game-key="pachisi"] .game-card        { background: linear-gradient(180deg, #8E2C21 0%, #471611 100%); }
-  .game-card-wrapper[data-game-key="pallanguzhi"] .game-card    { background: linear-gradient(180deg, #8C3B2A 0%, #461e15 100%); }
-  .game-card-wrapper[data-game-key="patolli"] .game-card        { background: linear-gradient(180deg, #B5532A 0%, #5a2915 100%); }
-  .game-card-wrapper[data-game-key="puluc"] .game-card          { background: linear-gradient(180deg, #2A201A 0%, #15100d 100%); }
-  .game-card-wrapper[data-game-key="scopa"] .game-card          { background: linear-gradient(180deg, #6A4528 0%, #352314 100%); }
-  .game-card-wrapper[data-game-key="senet"] .game-card          { background: linear-gradient(180deg, #211608 0%, #110b04 100%); }
-  .game-card-wrapper[data-game-key="surakarta"] .game-card      { background: linear-gradient(180deg, #241409 0%, #120a05 100%); }
-  .game-card-wrapper[data-game-key="tien-len"] .game-card       { background: linear-gradient(180deg, #2E2620 0%, #161210 100%); }
-  .game-card-wrapper[data-game-key="truc"] .game-card           { background: linear-gradient(180deg, #266048 0%, #1d4a38 100%); }
-  .game-card-wrapper[data-game-key="tsoro-yematatu"] .game-card { background: linear-gradient(180deg, #6E4A24 0%, #1E140C 100%); }
-  .game-card-wrapper[data-game-key="xinjiang-fangqi"] .game-card{ background: linear-gradient(180deg, #3B2A1E 0%, #1e150f 100%); }
-  .game-card-wrapper[data-game-key="yote"] .game-card           { background: linear-gradient(180deg, #2a1606 0%, #150b03 100%); }
-  .game-card-wrapper[data-game-key="yut-nori"] .game-card       { background: linear-gradient(180deg, #B7A878 0%, #5c5544 100%); }
+  /* Fill each tile with a blurred, zoomed copy of the game's OWN banner art, so
+     the card shows the exact colours behind its board — no per-colour guessing,
+     no hard seam, and the board stays full size. The ::before pseudo (below) is
+     the blurred backdrop; the crisp board art on top fades into it via the mask.
+     Per-game art URL set here by data-game-key. */
+  .game-card__banner-art {
+    -webkit-mask-image: linear-gradient(180deg, #000 66%, transparent 100%);
+            mask-image: linear-gradient(180deg, #000 66%, transparent 100%);
+  }
+  .game-card-wrapper[data-game-key="bagh-chal"] .game-card::before       { background-image: url(/assets/banners/bagh-chal.svg); }
+  .game-card-wrapper[data-game-key="bau-cua"] .game-card::before         { background-image: url(/assets/banners/bau-cua.svg); }
+  .game-card-wrapper[data-game-key="cachos"] .game-card::before          { background-image: url(/assets/banners/cachos.svg); }
+  .game-card-wrapper[data-game-key="cuarenta"] .game-card::before        { background-image: url(/assets/banners/cuarenta.svg); }
+  .game-card-wrapper[data-game-key="dou-shou-qi"] .game-card::before     { background-image: url(/assets/banners/dou-shou-qi.svg); }
+  .game-card-wrapper[data-game-key="durak"] .game-card::before           { background-image: url(/assets/banners/durak.svg); }
+  .game-card-wrapper[data-game-key="fanorona"] .game-card::before        { background-image: url(/assets/banners/fanorona.svg); }
+  .game-card-wrapper[data-game-key="filipino-dama"] .game-card::before   { background-image: url(/assets/banners/filipino-dama.svg); }
+  .game-card-wrapper[data-game-key="ganjifa"] .game-card::before         { background-image: url(/assets/banners/ganjifa.svg); }
+  .game-card-wrapper[data-game-key="hnefatafl"] .game-card::before       { background-image: url(/assets/banners/hnefatafl.svg); }
+  .game-card-wrapper[data-game-key="konane"] .game-card::before          { background-image: url(/assets/banners/konane.svg); }
+  .game-card-wrapper[data-game-key="latrunculi"] .game-card::before      { background-image: url(/assets/banners/latrunculi.svg); }
+  .game-card-wrapper[data-game-key="mahjong"] .game-card::before         { background-image: url(/assets/banners/mahjong.svg); }
+  .game-card-wrapper[data-game-key="morabaraba"] .game-card::before      { background-image: url(/assets/banners/morabaraba.svg); }
+  .game-card-wrapper[data-game-key="mu-torere"] .game-card::before       { background-image: url(/assets/banners/mu-torere.svg); }
+  .game-card-wrapper[data-game-key="o-an-quan"] .game-card::before       { background-image: url(/assets/banners/o-an-quan.svg); }
+  .game-card-wrapper[data-game-key="oware"] .game-card::before           { background-image: url(/assets/banners/oware.svg); }
+  .game-card-wrapper[data-game-key="pachisi"] .game-card::before         { background-image: url(/assets/banners/pachisi.svg); }
+  .game-card-wrapper[data-game-key="pallanguzhi"] .game-card::before     { background-image: url(/assets/banners/pallanguzhi.svg); }
+  .game-card-wrapper[data-game-key="patolli"] .game-card::before         { background-image: url(/assets/banners/patolli.svg); }
+  .game-card-wrapper[data-game-key="puluc"] .game-card::before           { background-image: url(/assets/banners/puluc.svg); }
+  .game-card-wrapper[data-game-key="scopa"] .game-card::before           { background-image: url(/assets/banners/scopa.svg); }
+  .game-card-wrapper[data-game-key="senet"] .game-card::before           { background-image: url(/assets/banners/senet.svg); }
+  .game-card-wrapper[data-game-key="surakarta"] .game-card::before       { background-image: url(/assets/banners/surakarta.svg); }
+  .game-card-wrapper[data-game-key="tien-len"] .game-card::before        { background-image: url(/assets/banners/tien-len.svg); }
+  .game-card-wrapper[data-game-key="truc"] .game-card::before            { background-image: url(/assets/banners/truc.svg); }
+  .game-card-wrapper[data-game-key="tsoro-yematatu"] .game-card::before  { background-image: url(/assets/banners/tsoro-yematatu.svg); }
+  .game-card-wrapper[data-game-key="xinjiang-fangqi"] .game-card::before { background-image: url(/assets/banners/xinjiang-fangqi.svg); }
+  .game-card-wrapper[data-game-key="yote"] .game-card::before            { background-image: url(/assets/banners/yote.svg); }
+  .game-card-wrapper[data-game-key="yut-nori"] .game-card::before        { background-image: url(/assets/banners/yut-nori.svg); }
 
-  /* ── Diagonal light plane — faceted depth effect ─────────── */
-  /* z-index: 0 — lowest layer, sits beneath everything         */
+  /* ── Blurred art backdrop — fills the tile with the game's own colours ──── */
+  /* z-index: 0 — lowest layer, sits beneath the dark scrim + crisp board art.
+     Per-game background-image is set above by data-game-key. Scaled up so the
+     blur doesn't reveal transparent card edges. */
   .game-card::before {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: -10%;
-    right: -10%;
-    height: 45%;
-    background: rgba(255, 255, 255, 0.07);
-    transform: skewY(-8deg) translateY(20%);
+    inset: 0;
+    background-color: transparent;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transform: scale(1.25);
+    filter: blur(15px) brightness(0.8) saturate(1.18);
     z-index: 0;
     pointer-events: none;
-    border-radius: 0 0 16px 16px;
+    border-radius: 16px;
   }
   .game-card:hover {
     box-shadow: 0 4px 16px rgba(0,0,0,0.18);
