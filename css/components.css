@@ -187,6 +187,10 @@
   color: var(--color-text-muted, rgba(255, 255, 255, 0.5));
 }
 
+/* Rooms cards are anchor targets from the Play menu (#join-room / #tournaments) —
+   offset the scroll so they don't land under the sticky header. */
+.rooms-entry-card { scroll-margin-top: 90px; }
+
 /* ── Hamburger (mobile) ── */
 .nav-hamburger {
   display: none;

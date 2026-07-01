@@ -77,40 +77,39 @@
     ['/collections/traditional-card-games/',   'Card Games'],
     ['/collections/two-player-strategy-games/','Two-Player Strategy']
   ];
+  var PLAY = [
+    ['/pages/rooms.html',             'Rooms'],
+    ['/pages/rooms.html#join-room',   'Join a Room'],
+    ['/pages/rooms.html#tournaments', 'Tournament']
+  ];
 
-  function initBrowseDropdown() {
-    var navLinks = document.querySelector('.nav-links');
-    if (!navLinks) return;
-
-    var browseLink = null;
+  function findNavLink(navLinks, hrefRe, textRe) {
+    var found = null;
     navLinks.querySelectorAll('a.nav-link').forEach(function (a) {
       var href = a.getAttribute('href') || '';
-      if (/browse\.html/.test(href) || /browse\s*games/i.test(a.textContent)) browseLink = a;
+      if (hrefRe.test(href) || textRe.test(a.textContent.trim())) found = a;
     });
-    if (!browseLink) return;
-    var li = browseLink.closest('li');
+    return found;
+  }
+
+  /* Turn a header nav link into a click/hover dropdown.
+     sections = [{ label?: string, items: [[href, text, extraClass?], ...] }] */
+  function buildNavDropdown(link, sections) {
+    var li = link.closest('li');
     if (!li || li.classList.contains('nav-dropdown')) return;
-
-    // Fold any standalone "Collections" nav item into this dropdown.
-    navLinks.querySelectorAll('a.nav-link').forEach(function (a) {
-      var href = a.getAttribute('href') || '';
-      var txt  = a.textContent.trim();
-      if ((/\/collections\/?$/.test(href) || /^collections$/i.test(txt))) {
-        var cli = a.closest('li');
-        if (cli && cli !== li) cli.remove();
-      }
-    });
-
     li.classList.add('nav-dropdown');
 
+    var html = '';
+    sections.forEach(function (sec) {
+      if (sec.label) html += '<span class="nav-dropdown__label">' + sec.label + '</span>';
+      sec.items.forEach(function (it) {
+        html += '<a class="nav-dropdown__item' + (it[2] ? ' ' + it[2] : '') +
+          '" role="menuitem" href="' + it[0] + '">' + it[1] + '</a>';
+      });
+    });
     var menu = document.createElement('div');
     menu.className = 'nav-dropdown__menu';
     menu.setAttribute('role', 'menu');
-    var html = '<a class="nav-dropdown__item nav-dropdown__item--all" role="menuitem" href="/pages/browse.html">All Games</a>' +
-               '<span class="nav-dropdown__label">Collections</span>';
-    COLLECTIONS.forEach(function (c) {
-      html += '<a class="nav-dropdown__item" role="menuitem" href="' + c[0] + '">' + c[1] + '</a>';
-    });
     menu.innerHTML = html;
     li.appendChild(menu);
 
@@ -118,29 +117,49 @@
     caret.className = 'nav-dropdown__caret';
     caret.setAttribute('aria-hidden', 'true');
     caret.textContent = '▾';
-    browseLink.appendChild(caret);
-
-    browseLink.setAttribute('aria-haspopup', 'true');
-    browseLink.setAttribute('aria-expanded', 'false');
+    link.appendChild(caret);
+    link.setAttribute('aria-haspopup', 'true');
+    link.setAttribute('aria-expanded', 'false');
 
     function setOpen(open) {
       li.classList.toggle('open', open);
-      browseLink.setAttribute('aria-expanded', String(open));
+      link.setAttribute('aria-expanded', String(open));
     }
+    // Pressing the parent opens the menu instead of navigating; the first item
+    // (e.g. "All Games" / "Rooms") goes to the page. Hover also opens it (CSS).
+    link.addEventListener('click', function (e) { e.preventDefault(); setOpen(!li.classList.contains('open')); });
+    document.addEventListener('click', function (e) { if (!li.contains(e.target)) setOpen(false); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+  }
 
-    // Pressing "Browse Games" opens the menu (rather than navigating away); the
-    // "All Games" item inside goes to the full browse page. Hover also opens it
-    // on desktop (CSS).
-    browseLink.addEventListener('click', function (e) {
-      e.preventDefault();
-      setOpen(!li.classList.contains('open'));
+  function initBrowseDropdown() {
+    var navLinks = document.querySelector('.nav-links');
+    if (!navLinks) return;
+    var browseLink = findNavLink(navLinks, /browse\.html/, /browse\s*games/i);
+    if (!browseLink) return;
+    var bLi = browseLink.closest('li');
+    // Fold any standalone "Collections" nav item into this dropdown.
+    navLinks.querySelectorAll('a.nav-link').forEach(function (a) {
+      var href = a.getAttribute('href') || '';
+      if ((/\/collections\/?$/.test(href) || /^collections$/i.test(a.textContent.trim()))) {
+        var cli = a.closest('li');
+        if (cli && cli !== bLi) cli.remove();
+      }
     });
-    document.addEventListener('click', function (e) {
-      if (!li.contains(e.target)) setOpen(false);
-    });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') setOpen(false);
-    });
+    buildNavDropdown(browseLink, [
+      { items: [['/pages/browse.html', 'All Games', 'nav-dropdown__item--all']] },
+      { label: 'Collections', items: COLLECTIONS }
+    ]);
+  }
+
+  function initPlayDropdown() {
+    var navLinks = document.querySelector('.nav-links');
+    if (!navLinks) return;
+    var roomsLink = navLinks.querySelector('a.nav-link--rooms') ||
+                    findNavLink(navLinks, /rooms\.html/, /^rooms$/i);
+    if (!roomsLink) return;
+    roomsLink.textContent = 'Play';   // rename "Rooms" -> "Play" (keeps its pill styling)
+    buildNavDropdown(roomsLink, [{ items: PLAY }]);
   }
 
   /**
@@ -150,5 +169,6 @@
     highlightActiveLink();
     initMobileMenu();
     initBrowseDropdown();
+    initPlayDropdown();
   });
 }());
