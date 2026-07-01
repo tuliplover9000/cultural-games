@@ -14,8 +14,11 @@
   var FACE_ROTATIONS = {
     1: 'rotateX(0deg) rotateY(0deg)',
     2: 'rotateX(0deg) rotateY(-90deg)',
-    3: 'rotateX(90deg) rotateY(0deg)',
-    4: 'rotateX(-90deg) rotateY(0deg)',
+    // 3 lives on the TOP face and 4 on the BOTTOM (see FACE_VALUES); the die must
+    // rotate the OPPOSITE way to bring each to the front. These two were swapped,
+    // so a real 3 showed 4 pips and a real 4 showed 3 pips on reveal.
+    3: 'rotateX(-90deg) rotateY(0deg)',
+    4: 'rotateX(90deg) rotateY(0deg)',
     5: 'rotateX(0deg) rotateY(90deg)',
     6: 'rotateX(0deg) rotateY(180deg)'
   };
@@ -1123,6 +1126,9 @@
       countDiceOnTable: countDiceOnTable,
       isValidBid:       isValidBid,
       getAIDecision:    getAIDecision,
+      createDieEl:      createDieEl,
+      FACE_ROTATIONS:   FACE_ROTATIONS,
+      FACE_VALUES:      FACE_VALUES,
       bidResolution:    function (bid, challengerId) {
         var actual  = countDiceOnTable(bid.face);
         var bidGood = actual >= bid.quantity;
