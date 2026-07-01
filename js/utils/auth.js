@@ -130,15 +130,18 @@
     } catch (e) {}
   }
 
-  // Re-persist the stored session with the current _profile.username merged in.
-  // Called after _loadUserData resolves so a later reload boots with the real name.
+  // Re-persist the stored session with the current _profile.username and coin
+  // balance merged in. Called after _loadUserData resolves (and after a coin
+  // change confirms) so a later reload boots with the real name AND the real
+  // balance — the profile page can then render coins instantly and never regress
+  // to 0 if a later read fails.
   function _persistUsername() {
     try {
       var s = JSON.parse(localStorage.getItem(SB_SESSION_KEY));
-      if (s && _profile && _profile.username) {
-        s.username = _profile.username;
-        localStorage.setItem(SB_SESSION_KEY, JSON.stringify(s));
-      }
+      if (!s) return;
+      if (_profile && _profile.username) s.username = _profile.username;
+      if (typeof _coins === 'number')    s.coins    = _coins;
+      localStorage.setItem(SB_SESSION_KEY, JSON.stringify(s));
     } catch (e) {}
   }
 
@@ -327,6 +330,7 @@
     if (d && d.success) {
       if (typeof d.new_balance === 'number') { _coins = d.new_balance; }
       if (Array.isArray(d.owned)) { _ownedItems = d.owned; }
+      _persistUsername();   // cache the confirmed balance after spending
       _emit();
       return { ok: true, already: !!d.already };
     }
@@ -379,26 +383,53 @@
     return _favorites.has(gameKey);
   }
 
+  // Read the signed-in user's own profile row, robustly. Tries the AUTHENTICATED
+  // client first: profiles has no guaranteed public read policy, so an anon read
+  // (getSB) can return zero rows under owner-only RLS — which is exactly why the
+  // profile page showed 0 coins while in-game balances (fed by the authed
+  // record_game_result RPC) were correct. Falls back through the legacy column
+  // set (pre-017 has no avatar columns) and finally the anon client. Returns the
+  // row object, or null if every attempt fails. Never throws.
+  async function _loadProfileRow(user) {
+    var enriched = 'username,created_at,coins,equipped_avatar,owned_avatar_items';
+    var legacy   = 'username,created_at,coins';
+    function client() { return _accessToken ? _authedSB() : getSB(); }
+    var attempts = [
+      function () { return client().from('profiles').select(enriched).eq('id', user.id).single(); },
+      function () { return client().from('profiles').select(legacy).eq('id', user.id).single(); },
+      function () { return getSB().from('profiles').select(legacy).eq('id', user.id).single(); },
+    ];
+    for (var i = 0; i < attempts.length; i++) {
+      try {
+        var r = await attempts[i]();
+        if (r && !r.error && r.data) return r.data;
+      } catch (e) { /* try next */ }
+    }
+    return null;
+  }
+
   /* ── Load profile + stats from DB after auth ── */
   async function _loadUserData(user) {
     _setUser(user);
     if (!user) { _profile = null; _stats = {}; _favorites = new Set(); _coins = 0; _avatar = null; _ownedItems = []; _title = null; return; }
 
-    var pRes = await getSB().from('profiles').select('username,created_at,coins,equipped_avatar,owned_avatar_items').eq('id', user.id).single();
-    // Deploy-order resilience: the avatar columns (equipped_avatar/owned_avatar_items)
-    // only exist after migration 017. If the code ships before 017 is applied, the
-    // select above errors and pRes.data is null — which would wrongly zero out coins
-    // and the username for every logged-in user. Detect that and retry with the
-    // legacy column set so existing profile/coin loading never regresses.
-    if (pRes.error || !pRes.data) {
-      pRes = await getSB().from('profiles').select('username,created_at,coins').eq('id', user.id).single();
+    var pData = await _loadProfileRow(user);
+    if (pData) {
+      _profile = pData;
+      // Only overwrite from a successful read. `coins` can legitimately be 0 for a
+      // brand-new profile, so accept any number.
+      if (typeof pData.coins === 'number') _coins = pData.coins;
+      _avatar     = pData.equipped_avatar || null;
+      _ownedItems = pData.owned_avatar_items || [];
+      // Cache the real username + balance into the stored session for instant,
+      // correct boot on the next page load.
+      _persistUsername();
+    } else {
+      // Every read attempt failed (transient network / RLS hiccup). Do NOT regress:
+      // keep whatever balance _boot seeded from the cached session so the profile
+      // page never wrongly shows 0. Only fill in a display name if we have none.
+      if (!_profile) _profile = { username: user.email.split('@')[0], created_at: user.created_at };
     }
-    _profile = pRes.data || { username: user.email.split('@')[0], created_at: user.created_at };
-    _coins   = (pRes.data && pRes.data.coins) || 0;
-    _avatar     = (pRes.data && pRes.data.equipped_avatar) || null;
-    _ownedItems = (pRes.data && pRes.data.owned_avatar_items) || [];
-    // Cache the real username into the stored session for instant correct boot.
-    if (pRes.data) _persistUsername();
 
     // equipped_title lives in migration 018; load it separately so a missing
     // column (pre-018) can never break the avatar/coins load above.
@@ -584,6 +615,7 @@
     }).then(function(data) {
       if (data && data.success && typeof data.new_balance === 'number') {
         _coins = data.new_balance;
+        _persistUsername();   // cache the confirmed balance for instant, correct boot
         _emit();
       }
     }).catch(function() { /* non-fatal - optimistic state already shown */ });
@@ -991,6 +1023,10 @@
       // Prefer the real username persisted from a prior _loadUserData; only fall
       // back to the email prefix on a first-ever boot before the profile loads.
       _profile     = { username: stored.username || stored.user.email.split('@')[0], created_at: stored.user.created_at };
+      // Seed the coin balance from the last known cached value so the profile
+      // renders the real number immediately — and a later failed profiles read
+      // can never regress the display to 0.
+      if (typeof stored.coins === 'number') _coins = stored.coins;
       _scheduleRefresh(stored);
       // Pre-load favorites from cache so UI is instant before server responds
       try {
