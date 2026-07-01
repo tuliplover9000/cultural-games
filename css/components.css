@@ -134,8 +134,10 @@
   left: 50%;
   transform: translateX(-50%) translateY(6px);
   min-width: 210px;
-  background: var(--color-surface, #1E1309);
-  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.12));
+  /* Always dark like the nav bar (--color-primary doesn't flip in light mode),
+     so the white item text stays readable in both themes. */
+  background: var(--color-primary, #1A0E06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: var(--radius-md, 8px);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
   padding: 6px;
@@ -184,7 +186,7 @@
   font-weight: var(--weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-text-muted, rgba(255, 255, 255, 0.5));
+  color: rgba(255, 255, 255, 0.5);
 }
 
 /* Rooms cards are anchor targets from the Play menu (#join-room / #tournaments) —
