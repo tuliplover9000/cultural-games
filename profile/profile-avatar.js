@@ -212,17 +212,32 @@
     // Locked → confirm purchase.
     var bal = coins();
     if (bal < item.price) return; // button shows "Need X"; ignore click
-    if (!window.confirm('Buy "' + item.label + '" for ' + item.price + ' coins?')) return;
 
-    if (!(window.Auth && Auth.buyAvatarItem)) return;
-    Auth.buyAvatarItem(id).then(function (res) {
-      if (res && res.ok) {
-        equip(id, slot);
-      } else {
-        renderPreview();
-        renderItems();
-      }
-    });
+    function doBuy() {
+      if (!(window.Auth && Auth.buyAvatarItem)) return;
+      Auth.buyAvatarItem(id).then(function (res) {
+        if (res && res.ok) {
+          equip(id, slot);
+        } else {
+          renderPreview();
+          renderItems();
+        }
+      });
+    }
+
+    // On-brand confirm dialog, falling back to the native prompt if unavailable.
+    if (window.CGDialog && CGDialog.confirm) {
+      CGDialog.confirm({
+        title: 'Buy “' + item.label + '”?',
+        message: 'Unlock this look for your avatar.',
+        coinCost: item.price,
+        balanceAfter: bal - item.price,
+        confirmText: 'Buy',
+        cancelText: 'Cancel',
+      }).then(function (ok) { if (ok) doBuy(); });
+    } else if (window.confirm('Buy "' + item.label + '" for ' + item.price + ' coins?')) {
+      doBuy();
+    }
   }
 
   function findItem(id, slot) {
