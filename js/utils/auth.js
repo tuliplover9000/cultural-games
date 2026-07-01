@@ -414,6 +414,18 @@
     if (!user) { _profile = null; _stats = {}; _favorites = new Set(); _coins = 0; _avatar = null; _ownedItems = []; _title = null; return; }
 
     var pData = await _loadProfileRow(user);
+    // Self-heal a MISSING profiles row. Accounts created while email confirmation
+    // deferred signUp's insert never got a profiles row, so record_game_result's
+    // coin UPDATE matched nothing and the profile showed 0 forever. Ask the server
+    // to create/repair the row (restoring coins from the game_results ledger), then
+    // re-read. ensure_profile is idempotent + server-authoritative; a 404 on a
+    // backend that predates migration 022 is harmless and just leaves pData null.
+    if (!pData && _accessToken) {
+      try {
+        var er = await _rpcFetch('ensure_profile', {});
+        if (er && er.ok) pData = await _loadProfileRow(user);
+      } catch (e) { /* non-fatal */ }
+    }
     if (pData) {
       _profile = pData;
       // Only overwrite from a successful read. `coins` can legitimately be 0 for a
@@ -515,9 +527,12 @@
     _scheduleRefresh(_readStoredSession());
     var userId = res.data.user.id;
 
-    // Create profile + init stats using authed client
+    // Create profile + init stats using authed client. Upsert (not insert) so it
+    // coexists with the handle_new_user trigger (migration 022): if the trigger
+    // already created a row with an email-derived name, this sets the chosen
+    // username; if there's no trigger yet, it behaves like a plain insert.
     var db = _authedSB();
-    var pRes = await db.from('profiles').insert({ id: userId, username: username });
+    var pRes = await db.from('profiles').upsert({ id: userId, username: username }, { onConflict: 'id' });
     if (pRes.error) return { ok: false, error: 'Account created but profile save failed. Try signing in.' };
 
     await db.from('stats').insert(
