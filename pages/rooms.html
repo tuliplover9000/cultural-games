@@ -75,6 +75,22 @@
           </p>
         </header>
 
+        <!-- Live activity strip — real cumulative stats + open tables -->
+        <div class="rb-activity" id="rb-activity" aria-label="Live activity">
+          <div class="rb-activity__stat">
+            <span class="rb-activity__num" id="rb-stat-games">—</span>
+            <span class="rb-activity__label">games played</span>
+          </div>
+          <div class="rb-activity__stat">
+            <span class="rb-activity__num" id="rb-stat-players">—</span>
+            <span class="rb-activity__label">players</span>
+          </div>
+          <div class="rb-activity__stat">
+            <span class="rb-activity__num" id="rb-stat-tables">—</span>
+            <span class="rb-activity__label">tables open now</span>
+          </div>
+        </div>
+
         <div class="rooms-entry-cards">
 
           <!-- Create card -->
@@ -519,6 +535,8 @@
   <script src="../shared/icons.js"></script>
   <script src="../js/utils/avatar.js"></script>
   <script src="../js/utils/room.js"></script>
+  <script src="../js/rooms/bot-rooms.js"></script>
+  <script src="../js/rooms/activity.js"></script>
   <script src="../js/rooms/entry.js"></script>
   <script src="../js/utils/tournament-data.js"></script>
   <script src="../js/rooms/bracket.js"></script>

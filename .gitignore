@@ -27,3 +27,6 @@ build/
 
 # Claude Code local config (skills, worktrees — not needed in repo)
 .claude/
+
+# Graphify knowledge-graph export (local artifact, ~8MB — not source)
+graphify-out/

@@ -572,6 +572,17 @@
       return data;
     },
 
+    // ── Public stats (Phase E) ────────────────────────────────────────────────
+    // Cumulative counts for the activity strip. Counts only — no row data.
+    // Returns { games_played, players } or null on any failure.
+    getPublicStats: async function() {
+      try {
+        var res = await db().rpc('get_public_stats');
+        if (res.error || !res.data) return null;
+        return res.data;
+      } catch (e) { return null; }
+    },
+
     getAvailableGames: async function() {
       var twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
       var res = await db().from('rooms')

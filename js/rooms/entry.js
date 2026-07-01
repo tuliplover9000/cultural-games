@@ -20,6 +20,14 @@
     'tien-len': 4, 'mahjong': 4, 'ganjifa': 4, 'pachisi': 4, 'bau-cua': 8,
   };
 
+  // Display names sourced from the full catalogue (covers every game, including
+  // ones the small map above doesn't list — used for bot tables + the filter).
+  var GD_NAMES = {};
+  (window.GAMES_DATA || []).forEach(function (g) { if (g && g.key) GD_NAMES[g.key] = g.name; });
+  function displayName(key) {
+    return GD_NAMES[key] || GAME_DISPLAY_NAMES[key] || key || 'Unknown game';
+  }
+
   var elLanding      = document.getElementById('rooms-landing');
   var elLoading      = document.getElementById('rooms-loading');
   var elLoadingMsg   = document.getElementById('rooms-loading-msg');
@@ -239,23 +247,48 @@
 
   function buildRoomCard(room) {
     var li = document.createElement('li');
-    li.className = 'rb-card';
+    li.className = 'rb-card' + (room.is_bot ? ' rb-card--bot' : '');
 
-    var gameName   = GAME_DISPLAY_NAMES[room.game_name] || (room.game_name || 'Unknown game');
+    var gameName   = room.display_name || displayName(room.game_name);
     var hostName   = (room.player_names || {})[room.host_id] || 'Unknown host';
     var playerIds  = room.player_ids || [];
     var maxP       = room.max_players || MAX_PLAYERS[room.game_name] || 4;
     var playerCount = playerIds.length + ' / ' + maxP;
+
+    var roomNameHtml = (room.room_name && room.room_name.trim())
+      ? '<span class="rb-card__name">' + escHtml(room.room_name.trim()) + '</span>'
+      : '';
+
+    // ── Bot ("vs Computer") practice table ──────────────────────────────────
+    // Clearly labelled, always joinable, and "Play" opens the real solo AI game.
+    if (room.is_bot) {
+      li.innerHTML =
+        '<div class="rb-card__main">' +
+          roomNameHtml +
+          '<span class="rb-card__game">' + escHtml(gameName) + '</span>' +
+          '<span class="rb-badge rb-badge--bot">vs Computer</span>' +
+        '</div>' +
+        '<div class="rb-card__meta">' +
+          '<span class="rb-card__players">' + escHtml(playerCount) + '</span>' +
+          '<span class="rb-card__host rb-card__host--bot">' + escHtml(hostName) + '</span>' +
+          '<span class="rb-card__time">' + escHtml(formatRelativeTime(room.created_at)) + '</span>' +
+        '</div>' +
+        '<div class="rb-card__join">' +
+          '<button class="btn btn-primary btn-sm">Play</button>' +
+        '</div>';
+      li.querySelector('.rb-card__join .btn').addEventListener('click', function () {
+        window.location.href = room.bot_path;
+      });
+      return li;
+    }
+
+    // ── Real multiplayer room ───────────────────────────────────────────────
     var isFull     = playerIds.length >= maxP;
     var isPlaying  = room.status === 'playing';
     var canJoin    = !isPlaying && !isFull;
 
     var badgeClass = isPlaying ? 'rb-badge--playing' : 'rb-badge--waiting';
     var badgeText  = isPlaying ? 'In Progress'       : 'Waiting';
-
-    var roomNameHtml = (room.room_name && room.room_name.trim())
-      ? '<span class="rb-card__name">' + escHtml(room.room_name.trim()) + '</span>'
-      : '';
 
     li.innerHTML =
       '<div class="rb-card__main">' +
@@ -304,43 +337,66 @@
     elRbEmpty.hidden   = true;
     elRbRefresh.disabled = true;
     elRbRefresh.classList.add('rb-refresh--spinning');
+
+    var filters = {
+      gameName: elRbFilterGame.value || null,
+      hasSlots: elRbFilterSlots.checked,
+    };
+
+    // Clearly-labelled "vs Computer" practice tables. Built first so they still
+    // seed the lobby even if the live-room fetch fails. Real, playable solo
+    // games — see bot-rooms.js.
+    var bots = window.BotRooms ? BotRooms.build(filters) : [];
+    var rooms = [];
+    var fetchFailed = false;
+
     try {
-      var filters = {
-        gameName: elRbFilterGame.value || null,
-        hasSlots: elRbFilterSlots.checked,
-      };
-      var rooms = await Room.fetchPublicRooms(filters);
+      rooms = await Room.fetchPublicRooms(filters);
 
-      // Populate game filter dropdown from available games
-      try {
-        var availableGames = await Room.getAvailableGames();
-        var currentVal = elRbFilterGame.value;
-        // Keep "All games" option, replace the rest
-        while (elRbFilterGame.options.length > 1) {
-          elRbFilterGame.remove(1);
-        }
-        availableGames.forEach(function(gameKey) {
-          var opt = document.createElement('option');
-          opt.value = gameKey;
-          opt.textContent = GAME_DISPLAY_NAMES[gameKey] || gameKey;
-          elRbFilterGame.appendChild(opt);
-        });
-        // Restore selection if still valid
-        if (currentVal) {
-          elRbFilterGame.value = currentVal;
-          if (elRbFilterGame.value !== currentVal) elRbFilterGame.value = '';
-        }
-      } catch (e) { /* non-fatal */ }
+      // Populate game filter dropdown: games with live rooms + every game that
+      // can have a practice table, so any of them is filterable.
+      var availableGames = await Room.getAvailableGames();
+      var botGames = window.BotRooms ? BotRooms.gameKeys() : [];
+      var seenG = {};
+      var mergedGames = availableGames.concat(botGames).filter(function (k) {
+        if (!k || seenG[k]) return false;
+        return (seenG[k] = true);
+      }).sort(function (a, b) { return displayName(a).localeCompare(displayName(b)); });
 
-      renderRoomList(rooms);
+      var currentVal = elRbFilterGame.value;
+      // Keep "All games" option, replace the rest
+      while (elRbFilterGame.options.length > 1) {
+        elRbFilterGame.remove(1);
+      }
+      mergedGames.forEach(function(gameKey) {
+        var opt = document.createElement('option');
+        opt.value = gameKey;
+        opt.textContent = displayName(gameKey);
+        elRbFilterGame.appendChild(opt);
+      });
+      // Restore selection if still valid
+      if (currentVal) {
+        elRbFilterGame.value = currentVal;
+        if (elRbFilterGame.value !== currentVal) elRbFilterGame.value = '';
+      }
     } catch (e) {
+      fetchFailed = true;
+    }
+
+    // Real rooms first, then practice tables underneath. Practice tables always
+    // render, so a fetch failure only hides live rooms — the lobby stays alive.
+    var combined = rooms.concat(bots);
+    renderRoomList(combined);
+    if (window.Activity) Activity.setTablesOpen(combined.length);
+    // Only surface an error if we have nothing at all to show.
+    if (fetchFailed && combined.length === 0) {
       elRbError.hidden = false;
       document.getElementById('rb-error-msg').textContent = 'Could not load rooms. Check your connection.';
-    } finally {
-      elRbLoading.hidden = true;
-      elRbRefresh.disabled = false;
-      elRbRefresh.classList.remove('rb-refresh--spinning');
     }
+
+    elRbLoading.hidden = true;
+    elRbRefresh.disabled = false;
+    elRbRefresh.classList.remove('rb-refresh--spinning');
   }
 
   function initBrowser() {
