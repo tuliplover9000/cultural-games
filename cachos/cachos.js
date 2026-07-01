@@ -879,17 +879,6 @@
      AI
   ════════════════════════════════════════════════════ */
 
-  function calcChallengeProbability(bid, personality) {
-    var totalDice = state.totalDiceInPlay;
-    var pPerDie   = bid.face === 1 ? 1/6 : 2/6;
-    var expected  = (totalDice * pPerDie) || 1;
-    var ratio     = bid.quantity / expected;
-    var prob      = Math.min(1, Math.max(0, (ratio - 0.8) / 1.2));
-    if (personality === 'cautious')   prob = Math.min(1, prob * 1.25);
-    if (personality === 'aggressive') prob = Math.max(0, prob * 0.75);
-    return prob;
-  }
-
   function countOwnFace(aiPlayer, face) {
     var n = 0;
     aiPlayer.dice.forEach(function (d) {
@@ -899,14 +888,49 @@
     return n;
   }
 
+  // P(X >= k) for X ~ Binomial(n, p). Used to reason about how many of a face
+  // the UNKNOWN (other players') dice are likely to hold.
+  function binomAtLeast(n, k, p) {
+    if (k <= 0) return 1;
+    if (k > n)  return 0;
+    var q = 1 - p;
+    var term = Math.pow(q, n);   // P(X = 0)
+    var cum  = 0;
+    for (var i = 0; i <= n; i++) {
+      if (i >= k) cum += term;
+      term = term * (n - i) / (i + 1) * p / q;   // advance to P(X = i+1)
+    }
+    return Math.min(1, Math.max(0, cum));
+  }
+
+  // Probability that `bid` is TRUE given what this AI can see in its own cup.
+  // Its own matching dice are known; the rest are modelled as a binomial over
+  // the other cups (each unknown die matches with prob 1/6, or 2/6 when aces are
+  // wild for a non-ace face).
+  function bidTrueProb(aiPlayer, bid) {
+    var own  = countOwnFace(aiPlayer, bid.face);
+    var need = bid.quantity - own;
+    if (need <= 0) return 1;
+    var unknown = state.totalDiceInPlay - aiPlayer.dice.length;
+    var p = bid.face === 1 ? 1 / 6 : 2 / 6;
+    return binomAtLeast(unknown, need, p);
+  }
+
+  // Open around the STATISTICALLY EXPECTED total (own dice + expected from the
+  // others), nudged by personality. This means openings are sometimes bluffs the
+  // opponent can actually catch — not just guaranteed-true claims.
   function generateOpeningBid(aiPlayer) {
-    var best = { face: 2, count: 0 };
+    var best = { face: 2, count: -1 };
     for (var f = 2; f <= 6; f++) {
       var c = countOwnFace(aiPlayer, f);
       if (c > best.count) { best.face = f; best.count = c; }
     }
-    var bluff = aiPlayer.personality === 'aggressive' ? Math.random() < 0.35 : Math.random() < 0.18;
-    var qty = Math.max(1, best.count + (bluff ? 1 : 0));
+    var unknown = state.totalDiceInPlay - aiPlayer.dice.length;
+    var honest  = best.count + unknown * (2 / 6);   // expected total of this face
+    var nudge   = aiPlayer.personality === 'aggressive' ? (0.6 + Math.random() * 1.0)
+                : aiPlayer.personality === 'cautious'   ? (-0.5 + Math.random() * 0.5)
+                : (Math.random() * 0.8);
+    var qty = Math.max(1, Math.round(honest + nudge));
     return { quantity: qty, face: best.face, playerId: aiPlayer.id };
   }
 
@@ -919,35 +943,49 @@
     return cb.quantity + 1;
   }
 
+  // Enumerate every legal raise, score by how likely it is to be true, and
+  // usually take a safe one — but bluff into a riskier raise now and then so the
+  // AI isn't perfectly predictable.
   function generateRaisedBid(aiPlayer, cb) {
-    var candidates = [];
-    // Try same face with +1
-    candidates.push({ quantity: cb.quantity + 1, face: cb.face, playerId: aiPlayer.id });
-    // Try higher faces
-    for (var f = (cb.face !== 1 ? cb.face + 1 : 2); f <= 6; f++) {
-      var minQ = getMinQtyAI(f, cb);
-      var bluff   = aiPlayer.personality === 'aggressive' ? Math.random() < 0.28 : Math.random() < 0.12;
-      var qty = minQ + (bluff ? 1 : 0);
-      candidates.push({ quantity: qty, face: f, playerId: aiPlayer.id });
+    var raw = [];
+    raw.push({ quantity: cb.quantity + 1, face: cb.face, playerId: aiPlayer.id });
+    for (var f = 2; f <= 6; f++) {
+      if (f === cb.face) continue;
+      raw.push({ quantity: getMinQtyAI(f, cb), face: f, playerId: aiPlayer.id });
     }
-    // Pick lowest-quantity valid candidate
-    var best = null;
-    candidates.forEach(function (c) {
-      if (!isValidBid(c, cb)) return;
-      if (!best || c.quantity < best.quantity) best = c;
-    });
-    return best || { quantity: cb.quantity + 1, face: cb.face, playerId: aiPlayer.id };
+    raw.push({ quantity: getMinQtyAI(1, cb), face: 1, playerId: aiPlayer.id });   // aces
+
+    var valid = raw.filter(function (c) { return isValidBid(c, cb); });
+    if (!valid.length) return null;
+    valid.forEach(function (c) { c._p = bidTrueProb(aiPlayer, c); });
+    valid.sort(function (a, b) { return b._p - a._p; });   // safest first
+
+    var bluffChance = aiPlayer.personality === 'aggressive' ? 0.5
+                    : aiPlayer.personality === 'cautious'   ? 0.15 : 0.3;
+    var pick = (Math.random() < bluffChance && valid.length > 1)
+      ? valid[Math.min(valid.length - 1, 1 + Math.floor(Math.random() * 2))]
+      : valid[0];
+    return { quantity: pick.quantity, face: pick.face, playerId: aiPlayer.id };
   }
 
   function getAIDecision(aiPlayer) {
-    if (!state.currentBid) {
-      return { action: 'bid', bid: generateOpeningBid(aiPlayer) };
-    }
-    var threshold = aiPlayer.personality === 'cautious' ? 0.55 : aiPlayer.personality === 'aggressive' ? 0.75 : 0.65;
-    if (calcChallengeProbability(state.currentBid, aiPlayer.personality) > threshold) {
-      return { action: 'challenge' };
-    }
-    return { action: 'bid', bid: generateRaisedBid(aiPlayer, state.currentBid) };
+    var cb = state.currentBid;
+    if (!cb) return { action: 'bid', bid: generateOpeningBid(aiPlayer) };
+
+    var pTrue = bidTrueProb(aiPlayer, cb);
+    // Challenge when the current bid is unlikely to be true. Cautious players
+    // doubt more readily; aggressive players prefer to keep bidding.
+    var cut = aiPlayer.personality === 'cautious'   ? 0.44
+            : aiPlayer.personality === 'aggressive' ? 0.24 : 0.34;
+    if (pTrue < 0.10) return { action: 'challenge' };   // near-impossible → always doubt
+    if (pTrue < cut)  return { action: 'challenge' };
+
+    // Otherwise raise — but if even our own best raise is a big stretch and the
+    // standing bid is already shaky, doubt instead of digging a deeper hole.
+    var raise = generateRaisedBid(aiPlayer, cb);
+    if (!raise) return { action: 'challenge' };
+    if (bidTrueProb(aiPlayer, raise) < 0.18 && pTrue < 0.60) return { action: 'challenge' };
+    return { action: 'bid', bid: raise };
   }
 
   function aiTakeTurn(aiPlayer) {
@@ -1075,6 +1113,23 @@
       highlight: false
     }
   ];
+
+  // Test seam — gated behind ?caTest=1. Lets an automated harness drive the game
+  // deterministically (set dice, force a bid, resolve a challenge) to verify rules.
+  if (new URLSearchParams(location.search).get('caTest') === '1') {
+    window.__cachosTest = {
+      getState:         function () { return state; },
+      initGame:         initGame,
+      countDiceOnTable: countDiceOnTable,
+      isValidBid:       isValidBid,
+      getAIDecision:    getAIDecision,
+      bidResolution:    function (bid, challengerId) {
+        var actual  = countDiceOnTable(bid.face);
+        var bidGood = actual >= bid.quantity;
+        return { actual: actual, bidGood: bidGood, loserId: bidGood ? challengerId : bid.playerId };
+      }
+    };
+  }
 
   document.addEventListener('DOMContentLoaded', function () {
     if (window.Achievements) Achievements.init();
