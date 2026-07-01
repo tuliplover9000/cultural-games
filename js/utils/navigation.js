@@ -64,10 +64,91 @@
   }
 
   /**
+   * Turn the "Browse Games" header link into a dropdown: All Games + Collections
+   * (with a link per collection). Built here so it applies to every page without
+   * editing each file's static nav. Desktop header nav only — on phones the header
+   * links are hidden and the bottom tab bar is used instead.
+   */
+  var COLLECTIONS = [
+    ['/collections/',                          'All collections'],
+    ['/collections/ancient-board-games/',      'Ancient Board Games'],
+    ['/collections/african-board-games/',      'African Board Games'],
+    ['/collections/asian-board-games/',        'Asian Board Games'],
+    ['/collections/traditional-card-games/',   'Card Games'],
+    ['/collections/two-player-strategy-games/','Two-Player Strategy']
+  ];
+
+  function initBrowseDropdown() {
+    var navLinks = document.querySelector('.nav-links');
+    if (!navLinks) return;
+
+    var browseLink = null;
+    navLinks.querySelectorAll('a.nav-link').forEach(function (a) {
+      var href = a.getAttribute('href') || '';
+      if (/browse\.html/.test(href) || /browse\s*games/i.test(a.textContent)) browseLink = a;
+    });
+    if (!browseLink) return;
+    var li = browseLink.closest('li');
+    if (!li || li.classList.contains('nav-dropdown')) return;
+
+    // Fold any standalone "Collections" nav item into this dropdown.
+    navLinks.querySelectorAll('a.nav-link').forEach(function (a) {
+      var href = a.getAttribute('href') || '';
+      var txt  = a.textContent.trim();
+      if ((/\/collections\/?$/.test(href) || /^collections$/i.test(txt))) {
+        var cli = a.closest('li');
+        if (cli && cli !== li) cli.remove();
+      }
+    });
+
+    li.classList.add('nav-dropdown');
+
+    var menu = document.createElement('div');
+    menu.className = 'nav-dropdown__menu';
+    menu.setAttribute('role', 'menu');
+    var html = '<a class="nav-dropdown__item nav-dropdown__item--all" role="menuitem" href="/pages/browse.html">All Games</a>' +
+               '<span class="nav-dropdown__label">Collections</span>';
+    COLLECTIONS.forEach(function (c) {
+      html += '<a class="nav-dropdown__item" role="menuitem" href="' + c[0] + '">' + c[1] + '</a>';
+    });
+    menu.innerHTML = html;
+    li.appendChild(menu);
+
+    var caret = document.createElement('span');
+    caret.className = 'nav-dropdown__caret';
+    caret.setAttribute('aria-hidden', 'true');
+    caret.textContent = '▾';
+    browseLink.appendChild(caret);
+
+    browseLink.setAttribute('aria-haspopup', 'true');
+    browseLink.setAttribute('aria-expanded', 'false');
+
+    function setOpen(open) {
+      li.classList.toggle('open', open);
+      browseLink.setAttribute('aria-expanded', String(open));
+    }
+
+    // Pressing "Browse Games" opens the menu (rather than navigating away); the
+    // "All Games" item inside goes to the full browse page. Hover also opens it
+    // on desktop (CSS).
+    browseLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      setOpen(!li.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!li.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  }
+
+  /**
    * Run everything once the DOM is ready.
    */
   document.addEventListener('DOMContentLoaded', function () {
     highlightActiveLink();
     initMobileMenu();
+    initBrowseDropdown();
   });
 }());

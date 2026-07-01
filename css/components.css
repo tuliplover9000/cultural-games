@@ -117,6 +117,76 @@
   color: white !important;
 }
 
+/* Browse Games dropdown (All Games + Collections) — built by navigation.js */
+.nav-dropdown { position: relative; }
+.nav-dropdown__caret {
+  margin-left: 4px;
+  font-size: 0.68em;
+  opacity: 0.7;
+  transition: transform var(--transition-fast);
+}
+.nav-dropdown:hover .nav-dropdown__caret,
+.nav-dropdown.open .nav-dropdown__caret { transform: rotate(180deg); }
+
+.nav-dropdown__menu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  min-width: 210px;
+  background: var(--color-surface, #1E1309);
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.12));
+  border-radius: var(--radius-md, 8px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  z-index: 1000;
+}
+/* A little hover bridge so the menu doesn't close in the gap under the link */
+.nav-dropdown__menu::before {
+  content: '';
+  position: absolute;
+  top: -8px; left: 0; right: 0; height: 8px;
+}
+.nav-dropdown:hover .nav-dropdown__menu,
+.nav-dropdown.open .nav-dropdown__menu {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(3px);
+}
+.nav-dropdown__item {
+  display: block;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm, 6px);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  text-decoration: none;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+.nav-dropdown__item:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--color-accent-gold);
+}
+.nav-dropdown__item--all { font-weight: var(--weight-semibold); }
+.nav-dropdown__label {
+  padding: 8px 12px 4px;
+  margin-top: 3px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: var(--text-xs, 0.72rem);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted, rgba(255, 255, 255, 0.5));
+}
+
 /* ── Hamburger (mobile) ── */
 .nav-hamburger {
   display: none;
