@@ -19,6 +19,7 @@
     skin:      'Skin',
     eyes:      'Eyes',
     mouth:     'Mouth',
+    hair:      'Hair',
     hat:       'Hat',
     accessory: 'Accessory'
   };

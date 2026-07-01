@@ -15,7 +15,7 @@
   'use strict';
 
   /* ── Slots ── */
-  var SLOTS = ['skin', 'eyes', 'mouth', 'hat', 'accessory'];
+  var SLOTS = ['skin', 'eyes', 'mouth', 'hair', 'hat', 'accessory'];
 
   /* ── Catalog ──
      skin = face base colour (all free); eyes/mouth always render something;
@@ -58,7 +58,12 @@
       { id: 'eyes-happy',  label: 'Happy',   price: 40 },
       { id: 'eyes-sleepy', label: 'Sleepy',  price: 40 },
       { id: 'eyes-wink',   label: 'Wink',    price: 60 },
-      { id: 'eyes-star',   label: 'Star',    price: 120 }
+      { id: 'eyes-star',   label: 'Star',    price: 120 },
+      { id: 'eyes-side',   label: 'Side-Eye', price: 40 },
+      { id: 'eyes-angry',  label: 'Fierce',  price: 60 },
+      { id: 'eyes-cute',   label: 'Sparkle', price: 80 },
+      { id: 'eyes-heart',  label: 'Hearts',  price: 150 },
+      { id: 'eyes-money',  label: 'Jackpot', price: 150 }
     ],
     mouth: [
       { id: 'mouth-smile',   label: 'Smile',     price: 0 },
@@ -66,7 +71,22 @@
       { id: 'mouth-grin',    label: 'Grin',      price: 40 },
       { id: 'mouth-open',    label: 'Open',      price: 40 },
       { id: 'mouth-cool',    label: 'Cool',      price: 60 },
-      { id: 'mouth-stache',  label: 'Moustache', price: 80 }
+      { id: 'mouth-stache',  label: 'Moustache', price: 80 },
+      { id: 'mouth-frown',   label: 'Frown',     price: 40 },
+      { id: 'mouth-o',       label: 'Whoa',      price: 40 },
+      { id: 'mouth-smirk',   label: 'Smirk',     price: 60 },
+      { id: 'mouth-tongue',  label: 'Cheeky',    price: 80 },
+      { id: 'mouth-beard',   label: 'Beard',     price: 150 }
+    ],
+    hair: [
+      { id: 'hair-none',  label: 'None',     price: 0 },
+      { id: 'hair-short', label: 'Short',    price: 0 },
+      { id: 'hair-buzz',  label: 'Buzz',     price: 40 },
+      { id: 'hair-side',  label: 'Swoop',    price: 60 },
+      { id: 'hair-bun',   label: 'Top Bun',  price: 100 },
+      { id: 'hair-curly', label: 'Curls',    price: 120 },
+      { id: 'hair-pony',  label: 'Ponytail', price: 150 },
+      { id: 'hair-long',  label: 'Long',     price: 200 }
     ],
     hat: [
       { id: 'hat-none',  label: 'None',  price: 0 },
@@ -213,6 +233,7 @@
       skin:      pickFree('skin', 's'),
       eyes:      pickFree('eyes', 'e'),
       mouth:     pickFree('mouth', 'm'),
+      hair:      'hair-none',
       hat:       'hat-none',
       accessory: 'acc-none'
     };
@@ -245,7 +266,37 @@
       '<path d="M55 47 Q61 43 67 47" fill="none" stroke="#3A2A20" stroke-width="3" stroke-linecap="round"/>',
     'eyes-star':
       '<path d="M39 40 L41 45 L46 45.5 L42 49 L43.5 54 L39 51 L34.5 54 L36 49 L32 45.5 L37 45 Z" fill="#F4B63E" stroke="#9A6E1A" stroke-width="0.8" stroke-linejoin="round"/>' +
-      '<path d="M61 40 L63 45 L68 45.5 L64 49 L65.5 54 L61 51 L56.5 54 L58 49 L54 45.5 L59 45 Z" fill="#F4B63E" stroke="#9A6E1A" stroke-width="0.8" stroke-linejoin="round"/>'
+      '<path d="M61 40 L63 45 L68 45.5 L64 49 L65.5 54 L61 51 L56.5 54 L58 49 L54 45.5 L59 45 Z" fill="#F4B63E" stroke="#9A6E1A" stroke-width="0.8" stroke-linejoin="round"/>',
+    // Looking to the side — round whites with both pupils shifted right.
+    'eyes-side':
+      '<circle cx="39" cy="46" r="6" fill="#FFFFFF" stroke="#3A2A20" stroke-width="1.5"/>' +
+      '<circle cx="61" cy="46" r="6" fill="#FFFFFF" stroke="#3A2A20" stroke-width="1.5"/>' +
+      '<circle cx="42.5" cy="46" r="2.8" fill="#3A2A20"/>' +
+      '<circle cx="64.5" cy="46" r="2.8" fill="#3A2A20"/>',
+    // Fierce — angled brows sloping down to the centre over sharp pupils.
+    'eyes-angry':
+      '<path d="M32 40.5 L46 44.5" stroke="#3A2A20" stroke-width="2.8" stroke-linecap="round"/>' +
+      '<path d="M68 40.5 L54 44.5" stroke="#3A2A20" stroke-width="2.8" stroke-linecap="round"/>' +
+      '<circle cx="39" cy="47.5" r="3.6" fill="#3A2A20"/>' +
+      '<circle cx="61" cy="47.5" r="3.6" fill="#3A2A20"/>',
+    // Sparkle — big kawaii eyes with a white glint.
+    'eyes-cute':
+      '<circle cx="39" cy="46" r="7.6" fill="#FFFFFF" stroke="#3A2A20" stroke-width="1.6"/>' +
+      '<circle cx="61" cy="46" r="7.6" fill="#FFFFFF" stroke="#3A2A20" stroke-width="1.6"/>' +
+      '<circle cx="39" cy="47" r="4.6" fill="#3A2A20"/>' +
+      '<circle cx="61" cy="47" r="4.6" fill="#3A2A20"/>' +
+      '<circle cx="41" cy="44" r="1.7" fill="#FFFFFF"/>' +
+      '<circle cx="63" cy="44" r="1.7" fill="#FFFFFF"/>',
+    // Hearts — a pair of pink heart eyes.
+    'eyes-heart':
+      '<path d="M39 50 C34 45 34 40.5 39 43 C44 40.5 44 45 39 50 Z" fill="#E8607A" stroke="#B8425C" stroke-width="0.8" stroke-linejoin="round"/>' +
+      '<path d="M61 50 C56 45 56 40.5 61 43 C66 40.5 66 45 61 50 Z" fill="#E8607A" stroke="#B8425C" stroke-width="0.8" stroke-linejoin="round"/>',
+    // Jackpot — gold-coin eyes stamped with a dollar sign (on theme with coins).
+    'eyes-money':
+      '<circle cx="39" cy="46" r="6.6" fill="#F4D335" stroke="#9A6E1A" stroke-width="1.4"/>' +
+      '<circle cx="61" cy="46" r="6.6" fill="#F4D335" stroke="#9A6E1A" stroke-width="1.4"/>' +
+      '<text x="39" y="49.4" font-family="Arial, sans-serif" font-size="8.5" font-weight="700" fill="#9A6E1A" text-anchor="middle">$</text>' +
+      '<text x="61" y="49.4" font-family="Arial, sans-serif" font-size="8.5" font-weight="700" fill="#9A6E1A" text-anchor="middle">$</text>'
   };
 
   /* ── Mouth ── */
@@ -265,7 +316,24 @@
       '<path d="M58 63 Q62 64 60 67" fill="none" stroke="#7A3B2A" stroke-width="2.4" stroke-linecap="round"/>',
     'mouth-stache':
       '<path d="M36 62 Q44 58 50 63 Q56 58 64 62 Q56 68 50 64 Q44 68 36 62 Z" fill="#4A352A"/>' +
-      '<path d="M42 69 Q50 74 58 69" fill="none" stroke="#7A3B2A" stroke-width="2.6" stroke-linecap="round"/>'
+      '<path d="M42 69 Q50 74 58 69" fill="none" stroke="#7A3B2A" stroke-width="2.6" stroke-linecap="round"/>',
+    'mouth-frown':
+      '<path d="M40 69 Q50 61 60 69" fill="none" stroke="#7A3B2A" stroke-width="3" stroke-linecap="round"/>',
+    // Whoa — a small surprised open "o".
+    'mouth-o':
+      '<ellipse cx="50" cy="66" rx="5" ry="5.5" fill="#7A3B2A"/>' +
+      '<ellipse cx="50" cy="67.4" rx="2.6" ry="2.2" fill="#E4756A"/>',
+    // Smirk — flat on one side, curling up on the other.
+    'mouth-smirk':
+      '<path d="M40 66 Q49 68.5 61 62.5" fill="none" stroke="#7A3B2A" stroke-width="3" stroke-linecap="round"/>',
+    // Cheeky — a wide smile with the tongue sticking out.
+    'mouth-tongue':
+      '<path d="M40 63 Q50 72 60 63" fill="none" stroke="#7A3B2A" stroke-width="3" stroke-linecap="round"/>' +
+      '<path d="M45.5 68 Q50 77 54.5 68 Z" fill="#E8607A" stroke="#B8425C" stroke-width="0.8" stroke-linejoin="round"/>',
+    // Beard — a full dark beard framing a soft smile.
+    'mouth-beard':
+      '<path d="M33 57 Q34 79 50 81 Q66 79 67 57 Q60 65 50 65 Q40 65 33 57 Z" fill="#4A352A"/>' +
+      '<path d="M42 66 Q50 71 58 66" fill="none" stroke="#2E2019" stroke-width="2.4" stroke-linecap="round"/>'
   };
 
   /* ── Accessory (glasses sit over eyes; drawn after eyes, before hat) ── */
@@ -712,6 +780,57 @@
       '</g>'
   };
 
+  /* ── Hair (drawn over the scalp/sides, above the face but below the features
+     and the hat; crown region ~y 10-40, must not cover eyes at y46) ── */
+  var HAIR = {
+    'hair-none': '',
+    // Short — a neat rounded cap with a soft fringe.
+    'hair-short':
+      '<path d="M20 40 Q17 15 50 14 Q83 15 80 40 Q78 28 70 29 Q62 24 50 25 Q38 24 30 29 Q22 28 20 40 Z" fill="#6E4523"/>',
+    // Buzz — very short, hugging the scalp with a low hairline.
+    'hair-buzz':
+      '<path d="M22 38 Q20 20 50 19 Q80 20 78 38 Q76 30 68 30 Q60 27 50 27.5 Q40 27 32 30 Q24 30 22 38 Z" fill="#2A211C"/>' +
+      '<path d="M28 30 Q50 24 72 30" fill="none" stroke="#4A3A30" stroke-width="1.2"/>',
+    // Swoop — side-parted with an asymmetric fringe sweeping across.
+    'hair-side':
+      '<path d="M20 40 Q17 15 50 14 Q83 15 80 40 Q79 27 68 28 Q64 20 44 24 Q30 27 26 36 Q22 30 20 40 Z" fill="#7A4A2A"/>' +
+      '<path d="M64 22 Q52 22 42 26" fill="none" stroke="#8A5632" stroke-width="1.4" stroke-linecap="round"/>',
+    // Top Bun — sleek pulled-back hair with a bun and tie on top. Brown (not
+    // near-black) + an outline so the bun reads against the dark background tile.
+    'hair-bun':
+      '<path d="M22 40 Q20 24 50 23 Q80 24 78 40 Q76 32 68 32 Q60 29 50 30 Q40 29 32 32 Q24 32 22 40 Z" fill="#6E4523"/>' +
+      '<circle cx="50" cy="14" r="7.5" fill="#6E4523" stroke="#3F2916" stroke-width="1.5"/>' +
+      '<path d="M43.5 20.5 Q50 17.5 56.5 20.5" fill="none" stroke="#3F2916" stroke-width="1.6" stroke-linecap="round"/>',
+    // Curls — a voluminous curly afro of overlapping tufts.
+    'hair-curly':
+      '<g fill="#2A211C">' +
+        '<circle cx="50" cy="19" r="10"/>' +
+        '<circle cx="34" cy="23" r="9.5"/>' +
+        '<circle cx="66" cy="23" r="9.5"/>' +
+        '<circle cx="23" cy="33" r="7.5"/>' +
+        '<circle cx="77" cy="33" r="7.5"/>' +
+        '<circle cx="42" cy="16" r="7"/>' +
+        '<circle cx="58" cy="16" r="7"/>' +
+      '</g>' +
+      '<g fill="#3E322A">' +
+        '<circle cx="44" cy="20" r="2"/>' +
+        '<circle cx="58" cy="21" r="2"/>' +
+        '<circle cx="30" cy="28" r="2"/>' +
+        '<circle cx="70" cy="28" r="2"/>' +
+      '</g>',
+    // Ponytail — pulled back with a fuller tail flowing down the right side.
+    'hair-pony':
+      '<path d="M71 29 Q93 33 91 55 Q89 68 77 64 Q88 52 77 39 Q72 33 71 29 Z" fill="#A8432E" stroke="#7E2E1E" stroke-width="1.2" stroke-linejoin="round"/>' +
+      '<path d="M22 40 Q20 21 50 20 Q80 21 78 40 Q76 31 68 31 Q60 27 50 28 Q40 27 32 31 Q24 31 22 40 Z" fill="#A8432E"/>' +
+      '<circle cx="72" cy="31" r="3" fill="#7E2E1E"/>',
+    // Long — a top cap plus two curtains framing the face down past the jaw.
+    'hair-long':
+      '<path d="M22 38 Q20 18 50 17 Q80 18 78 38 Q76 30 68 30 Q60 25 50 26 Q40 25 32 30 Q24 30 22 38 Z" fill="#C99A52"/>' +
+      '<path d="M22 34 Q13 40 15 66 Q17 73 25 70 Q22 54 29 42 Q25 36 22 34 Z" fill="#C99A52"/>' +
+      '<path d="M78 34 Q87 40 85 66 Q83 73 75 70 Q78 54 71 42 Q75 36 78 34 Z" fill="#C99A52"/>' +
+      '<path d="M50 26 Q42 27 36 31" fill="none" stroke="#B0843F" stroke-width="1.2" stroke-linecap="round"/>'
+  };
+
   /* ── render(cfg, size) → SVG string ── */
   function render(cfg, size) {
     cfg = clean(cfg);
@@ -720,6 +839,7 @@
     var skinColor = SKIN_COLORS[cfg.skin] || SKIN_COLORS['skin-light'];
     var eyes = EYES[cfg.eyes] || '';
     var mouth = MOUTH[cfg.mouth] || '';
+    var hair = HAIR[cfg.hair] || '';
     var accessory = ACCESSORY[cfg.accessory] || '';
     var hat = HAT[cfg.hat] || '';
 
@@ -732,13 +852,16 @@
       // subtle ear nubs for a friendlier silhouette
       '<circle cx="18" cy="54" r="5" fill="' + skinColor + '"/>' +
       '<circle cx="82" cy="54" r="5" fill="' + skinColor + '"/>' +
-      // (3) eyes
+      // (3) hair — sits over the scalp/sides, above the face but below the facial
+      // features (so eyes/mouth are never covered) and below the hat.
+      hair +
+      // (4) eyes
       eyes +
-      // (4) mouth
+      // (5) mouth
       mouth +
-      // (5) accessory (glasses over eyes)
+      // (6) accessory (glasses over eyes)
       accessory +
-      // (6) hat on top
+      // (7) hat on top (covers hair)
       hat +
     '</svg>';
   }
