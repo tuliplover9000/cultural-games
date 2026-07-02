@@ -201,10 +201,20 @@
      TOAST SYSTEM
   ════════════════════════════════════════════════════ */
 
+  // The toast surface is always dark (.ach-toast { background: var(--color-primary, #1A0E06) }),
+  // so use the BRIGHT --metal-* tokens (not the -text variants, which are tuned for light
+  // surfaces) — they read clearly on the dark toast in both page themes.
+  function _metalToken(name, fallback) {
+    try {
+      var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      return v || fallback;
+    } catch (e) { return fallback; }
+  }
+
   var TIER_COLORS = {
-    bronze: '#CD7F32',
-    silver: '#A8A9AD',
-    gold:   '#D4A017',
+    bronze: _metalToken('--metal-bronze', '#CD7F32'),
+    silver: _metalToken('--metal-silver', '#A8A9AD'),
+    gold:   _metalToken('--metal-gold',   '#D4A017'),
   };
 
   var TIER_LABELS = {
@@ -242,7 +252,7 @@
     toast.className = 'ach-toast ach-toast--' + ach.tier;
     toast.setAttribute('role', 'status');
     toast.innerHTML =
-      '<div class="ach-toast__icon" aria-hidden="true" style="color:' + color + '">&#127942;</div>' +
+      '<div class="ach-toast__icon" aria-hidden="true" style="color:' + color + '">' + (window.Icon ? Icon.svg('trophy', 28) : '&#127942;') + '</div>' +
       '<div class="ach-toast__body">' +
         '<p class="ach-toast__eyebrow">Achievement Unlocked &bull; <span class="ach-toast__tier" style="color:' + color + '">' + tierLabel + '</span></p>' +
         '<p class="ach-toast__title">' + _esc(ach.title) + '</p>' +

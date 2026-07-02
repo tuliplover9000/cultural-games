@@ -1048,6 +1048,6 @@ canvas {
     z-index: 4;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   }
-  .yn-badge-popular { background: #f39c12; }
-  .yn-badge-new     { background: #e74c3c; }
+  .yn-badge-popular { background: var(--color-accent-warm); }
+  .yn-badge-new     { background: var(--color-accent-verdigris); }
 }

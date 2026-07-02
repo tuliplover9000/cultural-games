@@ -347,8 +347,11 @@
       var meta    = gameMeta(s.game);
       var isOwn   = s.suggested_by === myPid;
       var canPlay = isHost && mode === 'host-pick';
+      var iconInner = meta.svg
+        ? '<img src="' + meta.svg + '" class="lobby-suggestion__icon-img" alt="" aria-hidden="true" onerror="this.style.display=\'none\';this.parentNode.textContent=\'' + meta.icon + '\'">'
+        : meta.icon;
       return '<li class="lobby-suggestion" data-idx="' + idx + '">' +
-        '<span class="lobby-suggestion__icon" aria-hidden="true">' + meta.icon + '</span>' +
+        '<span class="lobby-suggestion__icon" aria-hidden="true">' + iconInner + '</span>' +
         '<div class="lobby-suggestion__info">' +
           '<span class="lobby-suggestion__name">' + esc(meta.name) + '</span>' +
           '<span class="lobby-suggestion__by">suggested by ' + esc(s.name || 'someone') + '</span>' +

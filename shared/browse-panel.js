@@ -274,7 +274,7 @@
       btn.setAttribute('aria-label', isFav ? 'Remove from favourites' : 'Add to favourites');
       btn.classList.toggle('bp-fav-active', !!isFav);
       var svg = btn.querySelector('svg');
-      if (svg) svg.setAttribute('fill', isFav ? '#e74c3c' : 'none');
+      if (svg) svg.setAttribute('fill', isFav ? 'currentColor' : 'none');
     },
 
     bindFavourite: function () {

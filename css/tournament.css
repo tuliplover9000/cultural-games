@@ -126,10 +126,8 @@
   border-radius: 99px;
   flex-shrink: 0;
 }
-.tn-card__status--reg    { background: #e8f5e9; color: #2e7d32; }
-.tn-card__status--active { background: #e3f2fd; color: #1565c0; }
-[data-theme="dark"] .tn-card__status--reg    { background: #1b3a1e; color: #81c784; }
-[data-theme="dark"] .tn-card__status--active { background: #0d2a40; color: #64b5f6; }
+.tn-card__status--reg    { color: var(--status-open); background: color-mix(in srgb, var(--status-open) 14%, transparent); }
+.tn-card__status--active { color: var(--status-live); background: color-mix(in srgb, var(--status-live) 14%, transparent); }
 .tn-card__meta {
   display: flex;
   flex-wrap: wrap;
@@ -138,7 +136,7 @@
   color: var(--color-text-muted);
   margin-bottom: var(--space-3);
 }
-.tn-card__prize { color: var(--tn-gold); font-weight: 600; }
+.tn-card__prize { color: var(--metal-gold-text); font-weight: 600; }
 .tn-card__footer {
   display: flex;
   justify-content: space-between;
@@ -285,7 +283,7 @@
 .tn-lobby__stat > span:first-child {
   font-size: var(--text-xl);
   font-weight: 700;
-  color: var(--tn-gold);
+  color: var(--metal-gold-text);
 }
 .tn-lobby__stat > span:last-child {
   font-size: 0.72rem;
@@ -337,8 +335,7 @@
   flex-shrink: 0;
 }
 .tn-lobby__player-name { font-weight: 500; }
-.tn-lobby__player-paid { font-size: 0.72rem; color: #2e7d32; margin-left: auto; }
-[data-theme="dark"] .tn-lobby__player-paid { color: #81c784; }
+.tn-lobby__player-paid { font-size: 0.72rem; color: var(--status-open); margin-left: auto; }
 .tn-lobby__waiting {
   color: var(--color-text-muted);
   font-size: var(--text-sm);
@@ -507,7 +504,7 @@
 }
 .tn-podium__medal { font-size: 2rem; }
 .tn-podium__name  { font-weight: 700; font-size: var(--text-base); }
-.tn-podium__coins { font-size: 0.75rem; color: var(--tn-gold); font-weight: 600; }
+.tn-podium__coins { font-size: 0.75rem; color: var(--metal-gold-text); font-weight: 600; }
 .tn-completion__close { margin-top: var(--space-2); }
 
 /* ── Bracket info line ────────────────────────────────────── */
