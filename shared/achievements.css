@@ -83,7 +83,7 @@
 
 .ach-toast__title {
   margin: 0 0 2px;
-  font-family: var(--font-display, 'Playfair Display', serif);
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
   font-size: 0.95rem;
   font-weight: 700;
   color: #fff;

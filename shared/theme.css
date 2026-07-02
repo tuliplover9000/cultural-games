@@ -41,6 +41,12 @@
 
   /* Metals: --metal-bronze/silver/gold are theme-agnostic; defined once in
      global.css :root, so no override needed here. */
+
+  /* Metal TEXT variants: on dark surfaces the bright fills read fine as text,
+     so override the darkened light-mode inks back to the full metal fills. */
+  --metal-bronze-text: #B87333;
+  --metal-silver-text: #A8A9AD;
+  --metal-gold-text:   #D4A017;
 }
 
 /* ── Light-mode overrides for hero section (hardcoded dark gradient) ────────

@@ -160,7 +160,7 @@
 .prof-gsc__header {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-1-5);
   padding: var(--space-2) var(--space-3);
   background: var(--color-surface-alt);
   border-bottom: 1px solid var(--color-border);
@@ -277,7 +277,7 @@
 .ach-filter-select {
   padding: 6px 12px;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-plaque);
   background: var(--color-surface);
   color: var(--color-text);
   font-family: var(--font-body);
@@ -437,9 +437,9 @@
   margin: 0;
   line-height: 1;
 }
-.ach-card--bronze .ach-card__tier { color: var(--metal-bronze); }
-.ach-card--silver .ach-card__tier { color: var(--metal-silver); }
-.ach-card--gold   .ach-card__tier { color: var(--metal-gold); }
+.ach-card--bronze .ach-card__tier { color: var(--metal-bronze-text); }
+.ach-card--silver .ach-card__tier { color: var(--metal-silver-text); }
+.ach-card--gold   .ach-card__tier { color: var(--metal-gold-text); }
 
 /* Description */
 .ach-card__desc {
@@ -457,7 +457,7 @@
 .ach-card__check {
   font-size: 0.8rem;
   font-weight: 700;
-  color: #4caf8a;
+  color: var(--status-open);
   flex-shrink: 0;
   margin-left: auto;
   padding-left: var(--space-2);

@@ -37,6 +37,10 @@
   gap: 24px;
   align-items: start;
 }
+/* Grid items default to min-width:auto which lets them blow past their track.
+   Force both to shrink so the 1fr games column never overflows the layout. */
+#bp-games-column { min-width: 0; }
+#bp-panel { min-width: 0; }
 @media (max-width: 1100px) {
   #bp-browse-layout { grid-template-columns: 1fr 300px; }
 }
@@ -280,8 +284,8 @@
   transition: color 0.15s, background 0.15s;
   flex-shrink: 0;
 }
-#bp-favourite:hover         { color: #e74c3c; background: #fef2f2; }
-#bp-favourite.bp-fav-active { color: #e74c3c; }
+#bp-favourite:hover         { color: var(--color-accent-red); background: color-mix(in srgb, var(--color-accent-red) 12%, transparent); }
+#bp-favourite.bp-fav-active { color: var(--color-accent-red); }
 #bp-favourite svg { width: 16px; height: 16px; pointer-events: none; }
 
 /* ── Mobile bottom sheet ───────────────────────────────────────────────── */

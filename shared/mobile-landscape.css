@@ -33,7 +33,7 @@
 }
 
 .mb-land-title {
-  font-family: var(--font-display, 'Playfair Display', serif);
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--color-accent-gold, #C89B3C);
@@ -41,7 +41,7 @@
 }
 
 .mb-land-body {
-  font-family: var(--font-body, 'Outfit', sans-serif);
+  font-family: var(--font-body, 'Be Vietnam Pro', sans-serif);
   font-size: 0.9rem;
   color: rgba(240, 230, 208, 0.7);
   margin: 0;
@@ -55,7 +55,7 @@
   border: 1px solid rgba(200, 155, 60, 0.4);
   border-radius: 8px;
   color: rgba(200, 155, 60, 0.75);
-  font-family: var(--font-body, 'Outfit', sans-serif);
+  font-family: var(--font-body, 'Be Vietnam Pro', sans-serif);
   font-size: 0.85rem;
   cursor: pointer;
   touch-action: manipulation;

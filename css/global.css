@@ -34,13 +34,22 @@
 
   /* Status trio — badge foregrounds (bg pairs made via color-mix at call site) */
   --status-open: #4A6B4E;   /* waiting / open room */
-  --status-live: #8A6A1A;   /* in-progress / live */
+  --status-live: #75590F;   /* in-progress / live — darkened to clear 4.5:1 on its 14% tint */
   --status-bot:  #6B5744;   /* vs-computer */
 
   /* Metals scale — same in both themes (achievement tiers, lottery wheel, fav star) */
   --metal-bronze: #B87333;
   --metal-silver: #A8A9AD;
   --metal-gold:   #D4A017;
+
+  /* Metal TEXT variants — the bright fills above fail WCAG as text on light
+     surfaces (silver 2.35:1, gold 2.38:1, bronze 3.79:1 on white). These
+     darkened inks clear 4.5:1 on #FFFFFF (bronze 6.12:1, silver 5.02:1,
+     gold 5.16:1). Route tier TEXT here; keep bars/fills on --metal-* above.
+     theme.css overrides these back to the bright fills for dark mode. */
+  --metal-bronze-text: #8A5620;
+  --metal-silver-text: #6E6F72;
+  --metal-gold-text:   #8A6812;
 
   /* Text */
   --color-text:        #1A0E06;   /* body text */

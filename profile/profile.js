@@ -140,7 +140,19 @@
   var CATEGORY_NAMES  = { combat: 'Combat', explorer: 'Explorer', social: 'Social', milestone: 'Milestone' };
   var CATEGORY_ICONS  = { combat: 'swords', explorer: 'compass', social: 'users', milestone: 'flag' };
   var CATEGORY_ORDER  = ['combat', 'explorer', 'social', 'milestone'];
-  var TIER_COLORS     = { bronze: '#CD7F32', silver: '#A8A9AD', gold: '#D4A017' };
+  // Pull tier colours from the shared metal tokens so future token tweaks
+  // propagate; fall back to the literals if the property is empty/unset.
+  function metalToken(name, fallback) {
+    try {
+      var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      return v || fallback;
+    } catch (e) { return fallback; }
+  }
+  var TIER_COLORS     = {
+    bronze: metalToken('--metal-bronze', '#CD7F32'),
+    silver: metalToken('--metal-silver', '#A8A9AD'),
+    gold:   metalToken('--metal-gold',   '#D4A017')
+  };
 
   // Inline-icon helper (icons.js); returns '' if the icon set isn't loaded.
   function ico(name, size) { return (window.Icon && Icon.svg) ? Icon.svg(name, size) : ''; }

@@ -68,7 +68,7 @@
   border: none;
   background: none;
   color: rgba(240, 230, 208, 0.45);
-  font-family: var(--font-body, 'Outfit', sans-serif);
+  font-family: var(--font-body, 'Be Vietnam Pro', sans-serif);
   font-size: 10px;
   font-weight: 500;
   text-decoration: none;
@@ -162,7 +162,7 @@
   gap: 14px;
   padding: 14px 24px;
   color: rgba(240, 230, 208, 0.85);
-  font-family: var(--font-body, 'Outfit', sans-serif);
+  font-family: var(--font-body, 'Be Vietnam Pro', sans-serif);
   font-size: 15px;
   font-weight: 500;
   text-decoration: none;

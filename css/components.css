@@ -69,7 +69,7 @@
   font-weight: var(--weight-medium);
   color: rgba(255, 255, 255, 0.82);
   padding: 6px var(--space-2);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-plaque);
   letter-spacing: 0.01em;
   transition: color var(--transition-fast), background-color var(--transition-fast);
   white-space: nowrap;
@@ -102,7 +102,7 @@
 
 /* Rooms nav link — teal pill */
 .nav-link--rooms {
-  background-color: rgba(44, 120, 115, 0.15);
+  background-color: color-mix(in srgb, var(--color-accent-verdigris) 15%, transparent);
   color: var(--color-accent-teal) !important;
   border-radius: var(--radius-pill);
   font-weight: var(--weight-semibold);
@@ -205,7 +205,7 @@
   padding: 10px;
   background: none;
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-plaque);
   cursor: pointer;
   transition: border-color var(--transition-fast);
   flex-shrink: 0;
@@ -430,8 +430,8 @@
   border-color: var(--color-accent-teal);
 }
 .btn-teal:hover {
-  background-color: #235f5b;
-  border-color: #235f5b;
+  background-color: color-mix(in srgb, var(--color-accent-teal) 78%, black);
+  border-color: color-mix(in srgb, var(--color-accent-teal) 78%, black);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
@@ -557,9 +557,9 @@
 }
 
 .badge--board {
-  background-color: rgba(44, 120, 115, 0.1);
+  background-color: color-mix(in srgb, var(--color-accent-verdigris) 10%, transparent);
   color: var(--color-accent-teal);
-  border-color: rgba(44, 120, 115, 0.25);
+  border-color: color-mix(in srgb, var(--color-accent-verdigris) 25%, transparent);
 }
 
 .badge--card {
@@ -701,7 +701,7 @@
    HERO — Homepage hero section
 ============================================================================= */
 .hero {
-  background: radial-gradient(ellipse at 68% 50%, #0d1f3c 0%, #111009 45%, #1a0e06 100%);
+  background: radial-gradient(ellipse at 68% 50%, #2E1D0E 0%, #111009 45%, #1A0E06 100%);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -742,7 +742,7 @@
 .hero__visual {
   position: relative;
   height: 520px;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-plaque);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -821,7 +821,7 @@
 .hfc-origin {
   font-size: 0.68rem;
   font-weight: 600;
-  color: var(--color-accent-teal, #2c7873);
+  color: var(--color-accent-teal, #5C7A5E);
   text-transform: uppercase;
   letter-spacing: var(--label-tracking);
 }
@@ -1196,7 +1196,7 @@
   width: 100%;
   height: 96px;
   object-fit: cover;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-plaque);
   border: 1px solid var(--color-border);
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
 }
@@ -1525,7 +1525,7 @@
   background: linear-gradient(135deg, #4a0f0f 0%, #b83232 100%);
 }
 .game-card__banner--teal {
-  background: linear-gradient(135deg, #0f3330 0%, #2c7873 100%);
+  background: linear-gradient(135deg, #26332A 0%, #5C7A5E 100%);
 }
 .game-card__banner--gold {
   background: linear-gradient(135deg, #3d2605 0%, #c89b3c 100%);
@@ -1626,7 +1626,7 @@
   font-family: var(--font-body);
   font-size: var(--text-base);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-plaque);
   background: var(--color-surface);
   color: var(--color-text);
   outline: none;
@@ -1676,7 +1676,7 @@
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-plaque);
   background: var(--color-surface);
   color: var(--color-text);
   cursor: pointer;
@@ -1697,7 +1697,7 @@
   padding: 10px var(--space-3);
   background: linear-gradient(135deg, #2a1f0e 0%, #3d2e10 100%);
   border: 1px solid var(--color-accent-gold);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-plaque);
   color: var(--color-accent-gold);
   font-family: var(--font-body);
   font-size: var(--text-sm);
@@ -1723,12 +1723,16 @@
 
 .games-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  /* minmax(0,1fr), not bare 1fr: bare 1fr = minmax(auto,1fr), whose auto
+     minimum lets card min-content (~330px) blow the tracks past a squeezed
+     container (e.g. beside the browse side panel). 0-minimum always fits. */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-4);
 }
 
 .game-card-wrapper {
   perspective: 900px;
+  min-width: 0; /* let grid tracks shrink the card rather than overflow */
 }
 
 .game-card-wrapper[hidden] {
@@ -1737,7 +1741,7 @@
 
 @media (max-width: 900px) {
   .games-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -1784,7 +1788,7 @@
   color: var(--color-accent-teal);
   margin-bottom: var(--space-3);
   padding: 4px var(--space-2);
-  border: 1px solid rgba(44, 120, 115, 0.35);
+  border: 1px solid color-mix(in srgb, var(--color-accent-verdigris) 35%, transparent);
   border-radius: var(--radius-pill);
 }
 

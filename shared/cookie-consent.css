@@ -19,7 +19,7 @@
 
 #cookie-consent p {
   margin: 0;
-  font-family: var(--font-body, 'Outfit', sans-serif);
+  font-family: var(--font-body, 'Be Vietnam Pro', sans-serif);
   font-size: 0.875rem;
   line-height: 1.5;
   color: #c8b89a;
@@ -50,7 +50,7 @@
   border: none;
   border-radius: 6px;
   padding: 8px 22px;
-  font-family: var(--font-body, 'Outfit', sans-serif);
+  font-family: var(--font-body, 'Be Vietnam Pro', sans-serif);
   font-size: 0.875rem;
   font-weight: 700;
   cursor: pointer;
@@ -71,7 +71,7 @@
   border: 1px solid rgba(200, 155, 60, 0.45);
   border-radius: 6px;
   padding: 8px 22px;
-  font-family: var(--font-body, 'Outfit', sans-serif);
+  font-family: var(--font-body, 'Be Vietnam Pro', sans-serif);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;

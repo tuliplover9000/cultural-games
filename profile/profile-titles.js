@@ -16,10 +16,18 @@
 
   if (!window.Auth) return; // auth.js must load first
 
+  // Pull tier colours from the shared metal tokens so future token tweaks
+  // propagate; fall back to the literals if the property is empty/unset.
+  function metalToken(name, fallback) {
+    try {
+      var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      return v || fallback;
+    } catch (e) { return fallback; }
+  }
   var TIER_COLORS = {
-    bronze: '#CD7F32',
-    silver: '#A8A9AD',
-    gold:   '#D4A017'
+    bronze: metalToken('--metal-bronze', '#CD7F32'),
+    silver: metalToken('--metal-silver', '#A8A9AD'),
+    gold:   metalToken('--metal-gold',   '#D4A017')
   };
 
   function $(id) { return document.getElementById(id); }
