@@ -64,7 +64,9 @@
   50%       { box-shadow: 0 0 20px color-mix(in srgb, var(--tn-gold) 45%, transparent); }
 }
 .tn-match[data-status="in_progress"] {
-  border-color: var(--tn-match-in-progress, #2C7A7A);
+  /* --tn-match-in-progress was never defined, so the old stale-teal fallback
+     always won. Route through the live/in-progress status token instead. */
+  border-color: var(--status-live, #75590F);
 }
 .tn-match[data-status="completed"] {
   border-color: var(--color-border);
@@ -149,8 +151,11 @@
 .tn-match__watch-btn {
   display: block;
   text-align: center;
-  background: var(--tn-match-in-progress, #2C7A7A);
-  color: #fff;
+  /* status-live token (was an always-firing stale-teal fallback). Text uses
+     --color-text-inverse, which flips per theme: white on #75590F in light
+     (7.4:1), near-black on the bright gold #D4A84B in dark (~8.6:1). */
+  background: var(--status-live, #75590F);
+  color: var(--color-text-inverse, #fff);
   padding: 5px 14px;
   border-radius: var(--radius-sm);
   font-size: 0.75rem;

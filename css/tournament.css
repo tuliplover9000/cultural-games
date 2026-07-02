@@ -351,11 +351,13 @@
   margin-top: var(--space-2);
 }
 .btn--danger {
-  background: #c0392b;
+  /* Destructive action — themed festival red (no separate danger token needed;
+     accent-red is the site's red and flips per theme). */
+  background: var(--color-accent-red, #B83232);
   color: #fff;
   border: none;
 }
-.btn--danger:hover { background: #a93226; }
+.btn--danger:hover { background: color-mix(in srgb, var(--color-accent-red) 85%, black); }
 
 /* ── Auth gate ────────────────────────────────────────────── */
 .tn-auth-gate {
