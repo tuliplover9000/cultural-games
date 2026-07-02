@@ -43,7 +43,7 @@
       border:     '#DDD0B5',
       accentRed:  '#B83232',
       accentGold: '#C89B3C',
-      accentTeal: '#2C7873',
+      accentTeal: '#5C7A5E',  // verdigris (was teal) — matches CSS token
       accentWarm: '#D4663A',
     },
     dark: {
@@ -56,7 +56,7 @@
       border:     '#3D2A18',
       accentRed:  '#C94040',
       accentGold: '#D4A84B',
-      accentTeal: '#3A9990',
+      accentTeal: '#7A9B7C',  // verdigris (was teal) — matches CSS token
       accentWarm: '#E07848',
     }
   };

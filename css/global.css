@@ -20,9 +20,27 @@
 
   /* Accent palette — culturally inspired, no single culture */
   --color-accent-red:  #B83232;   /* deep festival red — primary CTA */
-  --color-accent-gold: #C89B3C;   /* rich antique gold — logo, highlights */
-  --color-accent-teal: #2C7873;   /* jade/earthy teal — tags, secondary accent */
+  --color-accent-gold: #C89B3C;   /* rich antique gold — logo, highlights, borders/icons */
+  /* Verdigris (aged-bronze green) replaces the old jade teal IN-PLACE so every
+     existing --color-accent-teal usage recolors at once. New code should use
+     the --color-accent-verdigris alias below. */
+  --color-accent-teal: #5C7A5E;   /* verdigris — tags, secondary accent (light) */
+  --color-accent-verdigris: #5C7A5E; /* alias — preferred name for new code */
   --color-accent-warm: #D4663A;   /* terracotta orange — hover glows, badges */
+
+  /* Gold TEXT ink — dark enough to clear 4.5:1 on parchment/white in light mode.
+     (Keep --color-accent-gold bright for borders/icons; route gold TEXT here.) */
+  --color-gold-text:   #7A5416;
+
+  /* Status trio — badge foregrounds (bg pairs made via color-mix at call site) */
+  --status-open: #4A6B4E;   /* waiting / open room */
+  --status-live: #8A6A1A;   /* in-progress / live */
+  --status-bot:  #6B5744;   /* vs-computer */
+
+  /* Metals scale — same in both themes (achievement tiers, lottery wheel, fav star) */
+  --metal-bronze: #B87333;
+  --metal-silver: #A8A9AD;
+  --metal-gold:   #D4A017;
 
   /* Text */
   --color-text:        #1A0E06;   /* body text */
@@ -41,9 +59,16 @@
   --color-bg-card:      var(--color-surface);
   --color-text-primary: var(--color-text);
 
-  /* ── Typography ── */
-  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
-  --font-body:    'Outfit', system-ui, -apple-system, sans-serif;
+  /* ── Typography ──
+     Fraunces (optical-size + weight variable serif) for display/headings; its
+     `opsz` is an AUTO axis, so hero/display sizes pick up higher optical sizing
+     automatically — no font-variation-settings override needed. Keep it
+     dignified: NO SOFT/WONK axis overrides. Fraunces ships a Vietnamese subset
+     (verified: the css2 response includes a vietnamese unicode-range block,
+     U+1EA0-1EF9). Be Vietnam Pro for body — full Vietnamese coverage, warm
+     humanist sans. NOTE: never nest comment markers inside this block. */
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-body:    'Be Vietnam Pro', 'Segoe UI', system-ui, -apple-system, sans-serif;
 
   /* Type scale (1.25 Major Third) */
   --text-xs:   0.75rem;    /*  12px */
@@ -56,9 +81,14 @@
   --text-4xl:  2.25rem;    /*  36px */
   --text-5xl:  3rem;       /*  48px */
 
+  --text-2xs:  0.6875rem;  /*  11px — dense badges */
+
   --leading-tight:  1.25;
   --leading-snug:   1.4;
   --leading-normal: 1.65;
+
+  /* Letter-spacing applied to ALL uppercase labels (exc. room codes) */
+  --label-tracking: 0.08em;
 
   --weight-normal:   400;
   --weight-medium:   500;
@@ -66,7 +96,9 @@
   --weight-bold:     700;
 
   /* ── Spacing (8px base unit) ── */
+  --space-0-5: 0.25rem;  /*  4px — micro spacing */
   --space-1:  0.5rem;    /*  8px */
+  --space-1-5: 0.75rem;  /* 12px — micro spacing */
   --space-2:  1rem;      /* 16px */
   --space-3:  1.5rem;    /* 24px */
   --space-4:  2rem;      /* 32px */
@@ -76,12 +108,18 @@
   --space-10: 5rem;      /* 80px */
   --space-12: 6rem;      /* 96px */
 
-  /* ── Border Radius ── */
+  /* ── Border Radius ──
+     Legacy --radius-sm/md/lg/xl/full stay defined for in-game pages.
+     New museum-plaque tiers below drive site chrome. */
   --radius-sm:   4px;
   --radius-md:   8px;
   --radius-lg:   16px;
   --radius-xl:   24px;
   --radius-full: 9999px;
+
+  --radius-plaque: 6px;    /* exhibit-plaque cards + buttons */
+  --radius-pill:   999px;  /* brass tags / status badges */
+  --radius-round:  50%;    /* avatars / medallions */
 
   /* ── Shadows ── */
   --shadow-sm: 0 1px 3px var(--color-shadow);
@@ -97,6 +135,8 @@
   /* ── Layout ── */
   --container-max:     1200px;
   --container-padding: var(--space-2);
+  --container-content: 1100px;  /* card grids (rooms, browse) */
+  --container-prose:   740px;   /* reading column (about, prose) */
 
   /* ── Nav ── */
   --nav-height: 64px;

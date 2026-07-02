@@ -245,6 +245,12 @@
     joinBtn.click();
   }
 
+  // Inline-SVG glyph via the shared Icon system. Guards window.Icon: when the
+  // icon module is unavailable we fall back to no glyph (never an emoji).
+  function glyph(name) {
+    return (window.Icon && Icon.svg) ? Icon.svg(name, 12) + ' ' : '';
+  }
+
   function buildRoomCard(room) {
     var li = document.createElement('li');
     li.className = 'rb-card' + (room.is_bot ? ' rb-card--bot' : '');
@@ -266,11 +272,11 @@
         '<div class="rb-card__main">' +
           roomNameHtml +
           '<span class="rb-card__game">' + escHtml(gameName) + '</span>' +
-          '<span class="rb-badge rb-badge--bot">vs Computer</span>' +
+          '<span class="rb-badge rb-badge--bot">' + glyph('bot') + 'vs Computer</span>' +
         '</div>' +
         '<div class="rb-card__meta">' +
-          '<span class="rb-card__players">' + escHtml(playerCount) + '</span>' +
-          '<span class="rb-card__host rb-card__host--bot">' + escHtml(hostName) + '</span>' +
+          '<span class="rb-card__players">' + glyph('people') + escHtml(playerCount) + '</span>' +
+          '<span class="rb-card__host rb-card__host--bot">' + glyph('home') + escHtml(hostName) + '</span>' +
           '<span class="rb-card__time">' + escHtml(formatRelativeTime(room.created_at)) + '</span>' +
         '</div>' +
         '<div class="rb-card__join">' +
@@ -298,8 +304,8 @@
         '<span class="rb-badge ' + badgeClass + '">' + badgeText + '</span>' +
       '</div>' +
       '<div class="rb-card__meta">' +
-        '<span class="rb-card__players">' + escHtml(playerCount) + '</span>' +
-        '<span class="rb-card__host">' + escHtml(hostName) + '</span>' +
+        '<span class="rb-card__players">' + glyph('people') + escHtml(playerCount) + '</span>' +
+        '<span class="rb-card__host">' + glyph('home') + escHtml(hostName) + '</span>' +
         '<span class="rb-card__time">' + escHtml(formatRelativeTime(room.created_at)) + '</span>' +
       '</div>' +
       '<div class="rb-card__join">' +

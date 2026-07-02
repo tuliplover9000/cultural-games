@@ -105,7 +105,30 @@
       '<path d="M22 20h.01"/>' +
       '<path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L12 12"/>' +
       '<path d="m17 6-2.89-.45c-.84-.13-1.65.36-1.94 1.16L11 11"/>' +
-      '<path d="M2 12c0-1.1.9-2 2-2 .67 0 1.26.33 1.62.84"/>'
+      '<path d="M2 12c0-1.1.9-2 2-2 .67 0 1.26.33 1.62.84"/>',
+    /* single coin with inner ring — coins ledger / price badges */
+    coin:
+      '<circle cx="12" cy="12" r="9"/>' +
+      '<circle cx="12" cy="12" r="5.5"/>',
+    /* two-person silhouette — room player counts */
+    people:
+      '<circle cx="9" cy="8" r="3.2"/>' +
+      '<path d="M3.5 20v-1a5.5 5.5 0 0 1 11 0v1"/>' +
+      '<path d="M16 5.2a3.2 3.2 0 0 1 0 5.6"/>' +
+      '<path d="M17.5 20v-1a5.5 5.5 0 0 0-2.6-4.68"/>',
+    /* simple house — room host */
+    home:
+      '<path d="M3 11.5 12 4l9 7.5"/>' +
+      '<path d="M5 10.2V20h14v-9.8"/>' +
+      '<path d="M9.5 20v-5h5v5"/>',
+    /* rounded automaton head with antenna — vs-computer */
+    bot:
+      '<path d="M12 3v3"/>' +
+      '<circle cx="12" cy="2.5" r="1"/>' +
+      '<rect x="4" y="6" width="16" height="13" rx="4"/>' +
+      '<circle cx="9" cy="12.5" r="1.2"/>' +
+      '<circle cx="15" cy="12.5" r="1.2"/>' +
+      '<path d="M9.5 16h5"/>'
   };
 
   /* ── svg(name, size, extraClass) → SVG string ── */

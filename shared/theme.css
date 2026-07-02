@@ -26,14 +26,27 @@
   /* Accents — slightly brightened for readability on dark backgrounds */
   --color-accent-red:  #C94040;
   --color-accent-gold: #D4A84B;
-  --color-accent-teal: #3A9990;
+  /* Verdigris replaces teal IN-PLACE (dark tone); alias mirrors it. */
+  --color-accent-teal: #7A9B7C;
+  --color-accent-verdigris: #7A9B7C;
   --color-accent-warm: #E07848;
+
+  /* Gold TEXT ink — bright warm gold, legible on dark surfaces */
+  --color-gold-text:   #E8C870;
+
+  /* Status trio — brighter foregrounds for dark badges */
+  --status-open: #8FB08F;
+  --status-live: #D4A84B;
+  --status-bot:  #A08D76;
+
+  /* Metals: --metal-bronze/silver/gold are theme-agnostic; defined once in
+     global.css :root, so no override needed here. */
 }
 
 /* ── Light-mode overrides for hero section (hardcoded dark gradient) ────────
    The hero background is not a CSS variable so we need explicit overrides.    */
 [data-theme="light"] .hero {
-  background: radial-gradient(ellipse at 68% 50%, #daeaf7 0%, #ede3cf 45%, #fbf5e6 100%);
+  background: radial-gradient(ellipse at 68% 50%, #F0E2C0 0%, #EDE3CF 45%, #FBF5E6 100%);
 }
 [data-theme="light"] .hero__title        { color: var(--color-text); }
 [data-theme="light"] .hero__origin-story { color: rgba(26, 14, 6, 0.65); }

@@ -5,30 +5,29 @@
 
 /* ── CSS Variables ─────────────────────────────────────────────────────── */
 :root {
-  --bp-panel-bg:       #ffffff;
-  --bp-panel-border:   #e8e0d4;
+  /* Surfaces/borders folded into the real system (both themes flip via theme.css) */
+  --bp-panel-bg:       var(--color-surface);
+  --bp-panel-border:   var(--color-border);
   --bp-panel-shadow:   0 4px 24px rgba(0,0,0,0.08);
   --bp-title-color:    var(--color-text-primary);
   --bp-meta-color:     var(--color-text-muted, #888);
   --bp-dot-filled:     #e67e22;
   --bp-dot-empty:      #ddd;
-  --bp-dyk-bg:         #fdf6e3;
+  --bp-dyk-bg:         var(--color-surface-alt);
   --bp-dyk-border:     #d4a017;
-  --bp-sheet-bg:       #ffffff;
-  --bp-map-land:       #c8d6c0;
-  --bp-map-ocean:      #dceef5;
-  --bp-map-highlight:  #e67e22;
+  --bp-sheet-bg:       var(--color-surface);
+  /* Aged expedition chart — light */
+  --bp-map-land:       #B5A176;
+  --bp-map-ocean:      #E3D9BE;
+  --bp-map-highlight:  #C96F3A;
 }
 [data-theme="dark"] {
-  --bp-panel-bg:       #1e1e2e;
-  --bp-panel-border:   #2e2e3e;
-  --bp-dyk-bg:         #2a2a1e;
   --bp-dyk-border:     #a07810;
   --bp-dot-empty:      #444;
-  --bp-sheet-bg:       #1e1e2e;
-  --bp-map-land:       #4a5e44;
-  --bp-map-ocean:      #1a3a4a;
-  --bp-map-highlight:  #f39c12;
+  /* Aged expedition chart — dark */
+  --bp-map-land:       #3D2E1A;
+  --bp-map-ocean:      #171009;
+  --bp-map-highlight:  #D4A84B;
 }
 
 /* ── Two-column browse layout ──────────────────────────────────────────── */
@@ -50,7 +49,7 @@
   display: none;
   background: var(--bp-panel-bg);
   border: 1px solid var(--bp-panel-border);
-  border-radius: 12px;
+  border-radius: var(--radius-plaque);
   box-shadow: var(--bp-panel-shadow);
   position: sticky;
   top: 80px;
@@ -93,7 +92,7 @@
 #bp-map-container {
   width: 100%;
   background: var(--bp-map-ocean);
-  border-radius: 12px 12px 0 0;
+  border-radius: var(--radius-plaque) var(--radius-plaque) 0 0;
   overflow: hidden;
   line-height: 0;
 }
@@ -139,7 +138,7 @@
   font-weight: 600;
   color: var(--bp-meta-color);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--label-tracking);
 }
 
 /* Game title */
@@ -175,7 +174,7 @@
   font-weight: 700;
   color: var(--bp-dyk-border);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--label-tracking);
   margin-bottom: 4px;
 }
 #bp-dyk-text {
@@ -246,7 +245,7 @@
   color: #1a1209;
   font-weight: 700;
   font-size: 0.82rem;
-  border-radius: 7px;
+  border-radius: var(--radius-plaque);
   text-decoration: none;
   transition: opacity 0.15s, transform 0.15s;
   min-height: 0;
@@ -261,7 +260,7 @@
   background: transparent;
   color: var(--bp-title-color);
   font-size: 0.82rem;
-  border-radius: 7px;
+  border-radius: var(--radius-plaque);
   border: 1px solid var(--bp-panel-border);
   text-decoration: none;
   transition: background 0.15s;
@@ -273,7 +272,7 @@
   padding: 0;
   background: transparent;
   border: 1px solid var(--bp-panel-border);
-  border-radius: 7px;
+  border-radius: var(--radius-plaque);
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   color: var(--bp-meta-color);
@@ -335,7 +334,7 @@
   font-size: 0.72rem;
   color: var(--bp-meta-color);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--label-tracking);
 }
 #bp-sheet-content .bp-sheet-desc {
   font-size: 0.82rem;

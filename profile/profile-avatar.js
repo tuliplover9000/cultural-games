@@ -100,7 +100,7 @@
     } else if (isOwned) {
       badge = '<span class="avatar-item__badge avatar-item__badge--owned">Owned</span>';
     } else if (canAfford) {
-      badge = '<span class="avatar-item__price">&#128176; ' + item.price + '</span>';
+      badge = '<span class="avatar-item__price">' + coinGlyph() + item.price + '</span>';
     } else {
       badge = '<span class="avatar-item__price avatar-item__price--short">Need ' + item.price + '</span>';
     }
@@ -170,6 +170,12 @@
       if (list[i].id === unlockId) return list[i].title || unlockId;
     }
     return unlockId;
+  }
+
+  // Inline coin glyph for price badges. Uses the shared Icon system when present
+  // (matches the museum chrome); no emoji fallback — degrade to a bare price.
+  function coinGlyph() {
+    return (window.Icon && Icon.svg) ? Icon.svg('coin', 12) + ' ' : '';
   }
 
   // The labels come from CATALOG (trusted), but escape defensively anyway.

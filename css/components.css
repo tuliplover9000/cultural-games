@@ -91,7 +91,7 @@
   background-color: var(--color-accent-red);
   color: var(--color-text-inverse) !important;
   padding: 6px var(--space-2);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-pill);
   font-weight: var(--weight-semibold);
 }
 
@@ -104,7 +104,7 @@
 .nav-link--rooms {
   background-color: rgba(44, 120, 115, 0.15);
   color: var(--color-accent-teal) !important;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-pill);
   font-weight: var(--weight-semibold);
 }
 .nav-link--rooms:hover {
@@ -138,7 +138,7 @@
      so the white item text stays readable in both themes. */
   background: var(--color-primary, #1A0E06);
   border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: var(--radius-md, 8px);
+  border-radius: var(--radius-plaque);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
   padding: 6px;
   display: flex;
@@ -185,7 +185,7 @@
   font-size: var(--text-xs, 0.72rem);
   font-weight: var(--weight-semibold);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--label-tracking);
   color: rgba(255, 255, 255, 0.5);
 }
 
@@ -368,7 +368,7 @@
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
   line-height: 1;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-plaque);
   border: 2px solid transparent;
   cursor: pointer;
   text-decoration: none;
@@ -445,7 +445,7 @@
 .btn-lg {
   padding: var(--space-2) var(--space-4);
   font-size: var(--text-base);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-plaque);
 }
 
 .btn:disabled,
@@ -462,17 +462,18 @@
 .game-card {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-plaque);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), var(--shadow-sm);
   transition: box-shadow var(--transition-base);
   transform-style: preserve-3d;
   will-change: transform;
 }
 
 .game-card:hover {
-  box-shadow: var(--shadow-lg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), var(--shadow-md);
 }
 
 .game-card__banner {
@@ -514,7 +515,7 @@
   font-weight: var(--weight-medium);
   color: var(--color-accent-teal);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--label-tracking);
 }
 
 .game-card__description {
@@ -543,9 +544,9 @@
   padding: 3px 10px;
   font-size: var(--text-xs);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.06em;
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-pill);
   border: 1px solid transparent;
 }
 
@@ -563,7 +564,7 @@
 
 .badge--card {
   background-color: rgba(200, 155, 60, 0.12);
-  color: var(--color-accent-gold);
+  color: var(--color-gold-text);
   border-color: rgba(200, 155, 60, 0.3);
 }
 
@@ -573,6 +574,22 @@
   color: var(--color-accent-teal);
   border-color: var(--color-border);
   font-size: var(--text-xs);
+}
+
+/* =============================================================================
+   MEDALLION — reusable brass disc (icon wells, roundels)
+   Inset radial-gradient face + top glass highlight, gold hairline ring.
+   Extracted from rooms-entry-card__icon so cards/pages can share one register.
+============================================================================= */
+.medallion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  border-radius: var(--radius-round);
+  background: radial-gradient(circle at 50% 38%, rgba(200, 155, 60, 0.18), rgba(200, 155, 60, 0.06));
+  border: 1px solid rgba(200, 155, 60, 0.30);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40);
 }
 
 /* =============================================================================
@@ -691,20 +708,15 @@
   align-items: center;
 }
 
-/* Rainbow top border */
+/* Brass hairline top border */
 .hero::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    var(--color-accent-red),
-    var(--color-accent-gold),
-    var(--color-accent-teal),
-    var(--color-accent-warm),
-    var(--color-accent-red)
-  );
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-accent-gold), transparent);
+  opacity: 0.6;
+  animation: none;
 }
 
 /* Split-screen inner: text left, visual right */
@@ -742,7 +754,7 @@
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--label-tracking);
   color: rgba(255,255,255,0.5);
   margin: 0 0 8px;
   padding: 12px 16px 0;
@@ -761,7 +773,9 @@
   inset: 0;
   display: flex;
   flex-direction: column;
-  background: var(--color-surface, #1e1a14);
+  background: var(--color-surface, #1E1309);
+  border-radius: var(--radius-plaque);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), var(--shadow-sm);
   overflow: hidden;
   opacity: 0;
   transition: opacity 0.35s ease;
@@ -809,7 +823,7 @@
   font-weight: 600;
   color: var(--color-accent-teal, #2c7873);
   text-transform: uppercase;
-  letter-spacing: 0.09em;
+  letter-spacing: var(--label-tracking);
 }
 .hfc-name {
   font-family: var(--font-display);
@@ -939,13 +953,13 @@
   display: inline-block;
   font-size: var(--text-xs);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.15em;
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
   color: var(--color-accent-gold);
   margin-bottom: var(--space-4);
   padding: 5px var(--space-2);
   border: 1px solid rgba(200, 155, 60, 0.35);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-pill);
   animation: heroFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
 }
 
@@ -960,6 +974,7 @@
 }
 
 .hero__title {
+  font-family: var(--font-display);
   font-size: clamp(2.5rem, 5vw, 5rem);
   font-weight: var(--weight-bold);
   color: white;
@@ -1001,15 +1016,30 @@
   animation: heroFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.42s both;
 }
 
-/* ── Social proof stats bar (Phase E) ── */
+/* ── Provenance rail ──────────────────────────────────────────────────
+   One museum "provenance band" that replaces the old stats-bar + tall
+   quote gap + gradient divider. Warm surface, brass hairline top & bottom,
+   display-face numerals in gold-text, small-caps labels, and the visitor
+   quote reduced to a single caption line inside the same band. */
+.prov-rail {
+  background: var(--color-surface-alt);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  padding-block: var(--space-4);
+}
+
+.prov-rail__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+
 .sp-stats-bar {
   display: flex;
   justify-content: center;
   gap: 2.5rem;
-  padding: 1.25rem 1rem;
-  background: var(--color-surface-alt, #F3EAD3);
-  border-top: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
   flex-wrap: wrap;
 }
 
@@ -1024,35 +1054,34 @@
   font-family: var(--font-display);
   font-size: var(--text-2xl);
   font-weight: 700;
-  color: var(--color-accent-gold);
+  color: var(--color-gold-text);
   line-height: 1;
 }
 
 .sp-stat__label {
   font-size: var(--text-xs);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--label-tracking);
   color: var(--color-text-muted);
 }
 
+/* Quote → single caption line inside the rail (no tall dead gap) */
 .sp-quote {
-  text-align: center;
-  padding: 1.5rem 1rem 0.5rem;
-  max-width: 560px;
+  max-width: 640px;
   margin: 0 auto;
-  min-height: 9rem;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-wrap: wrap;
+  align-items: baseline;
   justify-content: center;
+  gap: 0.4rem 0.6rem;
 }
 
 .sp-quote__text {
   font-family: var(--font-display);
   font-style: italic;
-  font-size: var(--text-lg);
+  font-size: var(--text-base);
   color: var(--color-text);
-  margin: 0 0 0.5rem;
+  margin: 0;
   line-height: 1.5;
   transition: opacity 0.35s ease;
 }
@@ -1068,26 +1097,27 @@
   display: flex;
   gap: 0.4rem;
   justify-content: center;
-  margin-top: 0.75rem;
+  flex-basis: 100%;
+  margin-top: 0.25rem;
 }
 
 .sp-quote__dot {
   width: 8px;
   height: 8px;
-  border-radius: 50%;
+  border-radius: var(--radius-round);
   border: none;
-  background: rgba(255, 255, 255, 0.25);
+  background: color-mix(in srgb, var(--color-text-muted) 45%, transparent);
   cursor: pointer;
   padding: 0;
   transition: background 0.2s, transform 0.2s;
 }
 
 .sp-quote__dot:hover {
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--color-text-muted);
 }
 
 .sp-quote__dot--active {
-  background: var(--color-accent-gold);
+  background: var(--color-gold-text);
   transform: scale(1.2);
 }
 
@@ -1109,25 +1139,12 @@
   height: 40px;
 }
 
-/* ── Gradient divider ── */
+/* ── Brass hairline divider ── */
 .gradient-divider {
-  height: 3px;
-  background: linear-gradient(90deg,
-    #1a1209,
-    #8b5e1a 20%,
-    #c89b3c 40%,
-    #e8c870 50%,
-    #c89b3c 60%,
-    #8b5e1a 80%,
-    #1a1209
-  );
-  background-size: 200% 100%;
-  animation: gradient-shift 8s ease infinite;
-}
-@keyframes gradient-shift {
-  0%   { background-position: 0% 0%; }
-  50%  { background-position: 100% 0%; }
-  100% { background-position: 0% 0%; }
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-accent-gold), transparent);
+  opacity: 0.6;
+  animation: none;
 }
 
 /* Mobile: stack, hide canvas */
@@ -1193,7 +1210,7 @@
 .mission__label {
   font-size: var(--text-xs);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.15em;
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
   color: var(--color-accent-teal);
   margin-bottom: var(--space-2);
@@ -1224,14 +1241,15 @@
 .stat {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-plaque);
   padding: var(--space-3);
   text-align: center;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), var(--shadow-sm);
   transition: box-shadow var(--transition-base), transform var(--transition-base);
 }
 
 .stat:hover {
-  box-shadow: var(--shadow-md);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), var(--shadow-md);
   transform: translateY(-2px);
 }
 
@@ -1239,7 +1257,7 @@
   font-family: var(--font-display);
   font-size: var(--text-4xl);
   font-weight: var(--weight-bold);
-  color: var(--color-accent-gold);
+  color: var(--color-gold-text);
   line-height: 1;
   margin-bottom: 4px;
 }
@@ -1281,8 +1299,8 @@
   font-size: var(--text-xs, 0.75rem);
   font-weight: var(--weight-semibold);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--color-accent, #c89b3c);
+  letter-spacing: var(--label-tracking);
+  color: var(--color-gold-text);
   margin-bottom: 4px;
 }
 
@@ -1346,7 +1364,7 @@
   font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--label-tracking);
   color: var(--color-text-muted, #888);
   margin-bottom: var(--space-2);
 }
@@ -1378,15 +1396,16 @@
   max-width: 220px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: var(--radius-plaque);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), var(--shadow-sm);
   transition: transform 0.15s, box-shadow 0.15s;
 }
 .spotlight__game-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), var(--shadow-md);
 }
 .spotlight__game-banner {
   height: 80px;
@@ -1417,7 +1436,7 @@
 .spotlight__game-culture {
   font-size: 0.67rem;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: var(--label-tracking);
   color: var(--color-text-muted, #888);
   margin: 0 0 2px;
 }
@@ -1551,13 +1570,14 @@
 .browse-hero__label {
   font-size: var(--text-xs);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.15em;
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
   color: var(--color-accent-gold);
   margin-bottom: var(--space-2);
 }
 
 .browse-hero__title {
+  font-family: var(--font-display);
   font-size: clamp(var(--text-3xl), 5vw, var(--text-4xl));
   color: white;
   margin-bottom: var(--space-2);
@@ -1742,13 +1762,10 @@
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    var(--color-accent-red),
-    var(--color-accent-gold),
-    var(--color-accent-teal)
-  );
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-accent-gold), transparent);
+  opacity: 0.6;
+  animation: none;
 }
 
 .about-hero__inner {
@@ -1762,16 +1779,17 @@
   display: inline-block;
   font-size: var(--text-xs);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.15em;
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
   color: var(--color-accent-teal);
   margin-bottom: var(--space-3);
   padding: 4px var(--space-2);
   border: 1px solid rgba(44, 120, 115, 0.35);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-pill);
 }
 
 .about-hero__title {
+  font-family: var(--font-display);
   font-size: clamp(var(--text-3xl), 5vw, var(--text-5xl));
   color: white;
   margin-bottom: var(--space-3);
@@ -1803,14 +1821,14 @@
 }
 
 .about-section__inner {
-  max-width: 740px;
+  max-width: var(--container-prose);
   margin-inline: auto;
 }
 
 .about-section__label {
   font-size: var(--text-xs);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.15em;
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
   color: var(--color-accent-red);
   margin-bottom: var(--space-2);
@@ -1826,6 +1844,7 @@
   color: var(--color-text-muted);
   font-size: var(--text-lg);
   line-height: var(--leading-normal);
+  max-width: 68ch;
   margin-bottom: var(--space-3);
 }
 
@@ -1848,13 +1867,14 @@
 .roadmap-item {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-plaque);
   padding: var(--space-3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), var(--shadow-sm);
   transition: box-shadow var(--transition-base), transform var(--transition-base);
 }
 
 .roadmap-item:hover {
-  box-shadow: var(--shadow-md);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), var(--shadow-md);
   transform: translateY(-2px);
 }
 
@@ -1894,7 +1914,7 @@
   color: #27ae60;
   background: rgba(39, 174, 96, 0.12);
   border: 1px solid rgba(39, 174, 96, 0.35);
-  border-radius: 99px;
+  border-radius: var(--radius-pill);
   padding: 1px 7px;
   vertical-align: middle;
   line-height: 1.6;
@@ -1916,7 +1936,7 @@
   color: #c9a12a;
   background: rgba(201, 161, 42, 0.12);
   border: 1px solid rgba(201, 161, 42, 0.35);
-  border-radius: 99px;
+  border-radius: var(--radius-pill);
   padding: 1px 7px;
   vertical-align: middle;
   line-height: 1.6;

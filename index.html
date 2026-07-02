@@ -173,35 +173,34 @@
     </section>
 
     <!-- ════════════════════════════════════════════════════════
-         SOCIAL PROOF - stats bar + quote (Phase E)
+         PROVENANCE RAIL - catalogue stats + visitor caption
     ════════════════════════════════════════════════════════ -->
-    <div class="sp-stats-bar" id="sp-stats-bar">
-      <div class="sp-stat">
-        <span class="sp-stat__number" id="sp-stat-games">21</span>
-        <span class="sp-stat__label">traditional games</span>
-      </div>
-      <div class="sp-stat">
-        <span class="sp-stat__number" id="sp-stat-cultures">17</span>
-        <span class="sp-stat__label">living cultures</span>
-      </div>
-      <div class="sp-stat">
-        <span class="sp-stat__number">5,000+</span>
-        <span class="sp-stat__label">years of play</span>
+    <div class="prov-rail" role="region" aria-label="Collection provenance">
+      <div class="container prov-rail__inner">
+        <div class="sp-stats-bar" id="sp-stats-bar">
+          <div class="sp-stat">
+            <span class="sp-stat__number" id="sp-stat-games">21</span>
+            <span class="sp-stat__label">traditional games</span>
+          </div>
+          <div class="sp-stat">
+            <span class="sp-stat__number" id="sp-stat-cultures">17</span>
+            <span class="sp-stat__label">living cultures</span>
+          </div>
+          <div class="sp-stat">
+            <span class="sp-stat__number">5,000+</span>
+            <span class="sp-stat__label">years of play</span>
+          </div>
+        </div>
+
+        <div class="sp-quote" id="sp-quote">
+          <blockquote class="sp-quote__text" id="sp-quote-text">
+            &ldquo;This game helped me connect with my Vietnamese heritage. I even got my grandma to play with me and I see her on the website by herself.&rdquo;
+          </blockquote>
+          <cite class="sp-quote__source" id="sp-quote-source">- Ben Nguyen</cite>
+          <div class="sp-quote__dots" id="sp-quote-dots" aria-hidden="true"></div>
+        </div>
       </div>
     </div>
-
-    <div class="sp-quote" id="sp-quote">
-      <blockquote class="sp-quote__text" id="sp-quote-text">
-        &ldquo;This game helped me connect with my Vietnamese heritage. I even got my grandma to play with me and I see her on the website by herself.&rdquo;
-      </blockquote>
-      <cite class="sp-quote__source" id="sp-quote-source">- Ben Nguyen</cite>
-      <div class="sp-quote__dots" id="sp-quote-dots" aria-hidden="true"></div>
-    </div>
-
-    <!-- ════════════════════════════════════════════════════════
-         GRADIENT DIVIDER
-    ════════════════════════════════════════════════════════ -->
-    <div class="gradient-divider" aria-hidden="true"></div>
 
     <!-- ════════════════════════════════════════════════════════
          MISSION
@@ -215,7 +214,8 @@
           <p class="mission__text" data-anim data-anim-delay="200">
             Too many traditional games that defined childhoods, bonded families,
             and carried cultural wisdom have no home online. Cultural Games exists
-            to change that - one game at a time.
+            to change that - researching the rules, drawing the boards, and putting
+            each game back where anyone can play it.
           </p>
           <p class="mission__text" data-anim data-anim-delay="300">
             Every game here is playable in your browser, free, with no account required.
@@ -263,7 +263,7 @@
     <div class="container footer-inner">
       <span class="footer-brand">Cultural Games</span>
       <p class="footer-mission">
-        Preserving cultural heritage through play - one game at a time.
+        Built so the games our families played don&rsquo;t disappear.
       </p>
       <nav aria-label="Footer navigation">
         <ul class="footer-links" role="list">
@@ -289,7 +289,7 @@
           />
           <button class="ec-footer-signup__btn" id="ec-submit-btn">Notify me</button>
         </div>
-        <p class="ec-footer-signup__small">No spam. Just new games.</p>
+        <p class="ec-footer-signup__small">We&rsquo;ll only write when there&rsquo;s something new to play.</p>
         <p class="ec-footer-signup__success" id="ec-success" hidden>
           &#10003; You&rsquo;re in! We&rsquo;ll let you know when new games drop.
         </p>

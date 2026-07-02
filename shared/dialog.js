@@ -31,17 +31,17 @@
         'transition:opacity .16s ease}' +
       '.cg-dialog-backdrop--open{opacity:1}' +
       '.cg-dialog{background:var(--color-surface,#1e1309);border:1px solid var(--color-border,rgba(255,255,255,.14));' +
-        'border-radius:var(--radius-xl,16px);padding:var(--space-6,28px);max-width:400px;width:100%;' +
+        'border-radius:var(--radius-plaque,6px);padding:var(--space-6,28px);max-width:400px;width:100%;' +
         'box-shadow:var(--shadow-xl,0 20px 60px rgba(0,0,0,.45));display:flex;flex-direction:column;' +
         'gap:var(--space-3,12px);text-align:center;transform:translateY(10px) scale(.97);' +
         'transition:transform .16s ease}' +
       '.cg-dialog-backdrop--open .cg-dialog{transform:none}' +
       '.cg-dialog__icon{font-size:34px;line-height:1}' +
-      '.cg-dialog__title{font-family:var(--font-display,Playfair Display,serif);' +
+      '.cg-dialog__title{font-family:var(--font-display,Fraunces,Georgia,serif);' +
         'font-size:var(--text-2xl,1.5rem);font-weight:var(--weight-bold,700);color:var(--color-text,#f5e9d5);margin:0}' +
       '.cg-dialog__msg{font-size:var(--text-sm,.9rem);color:var(--color-text-muted,rgba(240,230,208,.7));margin:0}' +
       '.cg-dialog__cost{display:flex;flex-direction:column;gap:2px;align-items:center;margin:var(--space-1,4px) 0}' +
-      '.cg-dialog__cost-amt{font-family:var(--font-display,Playfair Display,serif);font-size:var(--text-2xl,1.5rem);' +
+      '.cg-dialog__cost-amt{font-family:var(--font-display,Fraunces,Georgia,serif);font-size:var(--text-2xl,1.5rem);' +
         'font-weight:var(--weight-bold,700);color:var(--color-accent-gold,#C89B3C)}' +
       '.cg-dialog__cost-after{font-size:var(--text-xs,.75rem);color:var(--color-text-muted,rgba(240,230,208,.7))}' +
       '.cg-dialog__actions{display:flex;gap:var(--space-2,8px);justify-content:center;margin-top:var(--space-2,8px)}' +
@@ -60,11 +60,18 @@
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
-  var COIN = '🪙'; // 🪙 — matches the coin glyph used on price tags
+  // Coin marker for cost rows. Prefer the shared inline-SVG glyph so it matches
+  // the site's icon system; fall back to the emoji only when Icon isn't loaded.
+  // Resolved per-call (Icon.js may load after this IIFE runs).
+  function coinGlyph() {
+    if (window.Icon && Icon.svg) return Icon.svg('coin', 15);
+    return '🪙';
+  }
 
   function confirmDialog(opts) {
     opts = opts || {};
     injectStyles();
+    var COIN = coinGlyph();
 
     return new Promise(function (resolve) {
       var lastFocus = document.activeElement;

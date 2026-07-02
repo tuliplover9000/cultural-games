@@ -13,10 +13,14 @@
   z-index: 1000;
   height: calc(56px + env(safe-area-inset-bottom, 0px));
   padding-bottom: env(safe-area-inset-bottom, 0px);
-  background: rgba(26, 14, 6, 0.92);
+  /* Deliberate dark frame in both themes: the tab bar is always the gallery-at-
+     night walnut, never the light parchment. --color-primary never flips between
+     themes, so mixing over it keeps the bar dark under light mode too. */
+  background: color-mix(in srgb, var(--color-primary) 92%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-top: 1px solid rgba(200, 155, 60, 0.25);
+  /* Gold-tinted brass hairline where the bar meets the page. */
+  border-top: 1px solid color-mix(in srgb, var(--color-accent-gold) 35%, transparent);
   transition: transform 0.25s ease;
 }
 
@@ -120,8 +124,11 @@
   left: 0;
   right: 0;
   z-index: 1001;
-  background: #1E1309;
-  border-top: 1px solid rgba(200, 155, 60, 0.25);
+  /* Deliberate dark frame in both themes: the drawer stays gallery-at-night
+     walnut even under light mode (matches the tab bar it rises from). Literal
+     walnut rather than a token so it never flips with the theme. */
+  background: #241609;
+  border-top: 1px solid color-mix(in srgb, var(--color-accent-gold) 35%, transparent);
   border-radius: 16px 16px 0 0;
   padding: 12px 0 calc(8px + env(safe-area-inset-bottom, 0px));
   /* hidden by default: off screen + invisible so nothing peeks above tab bar */

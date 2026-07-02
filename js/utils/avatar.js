@@ -831,10 +831,22 @@
       '<path d="M50 26 Q42 27 36 31" fill="none" stroke="#B0843F" stroke-width="1.2" stroke-linecap="round"/>'
   };
 
-  /* ── render(cfg, size) → SVG string ── */
-  function render(cfg, size) {
+  /* ── Tile (icon backdrop) colour ──
+     Warm walnut, so the face reads as a museum plaque icon rather than a cold
+     charcoal chip. One source of truth for every place the old #2A2A2E tile hex
+     appeared. Kept at #241609 (not lifted to #2B1A0C): against the darkest hair
+     fill (#2A211C) the walnut scores WCAG 1.116 vs the old charcoal's 1.102 —
+     a marginal improvement — whereas #2B1A0C would REGRESS it to 1.061, so the
+     lift is not applied. Dark-hair-on-dark-tile is a pre-existing silhouette
+     trait of the avatar art, not introduced here. */
+  var TILE_COLOR = '#241609';
+
+  /* ── render(cfg, size, tileColor) → SVG string ──
+     tileColor overrides the backdrop tile (defaults to TILE_COLOR). */
+  function render(cfg, size, tileColor) {
     cfg = clean(cfg);
     var px = (typeof size === 'number' && size > 0) ? size : 64;
+    var tile = (typeof tileColor === 'string' && tileColor) ? tileColor : TILE_COLOR;
 
     var skinColor = SKIN_COLORS[cfg.skin] || SKIN_COLORS['skin-light'];
     var eyes = EYES[cfg.eyes] || '';
@@ -844,9 +856,9 @@
     var hat = HAT[cfg.hat] || '';
 
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="' + px + '" height="' + px + '" role="img" aria-label="Avatar">' +
-      // (1) solid background circle — a muted charcoal "tile" so the face reads
-      // as a proper icon (swap to a light value for a white icon backdrop).
-      '<circle cx="50" cy="50" r="50" fill="#2A2A2E"/>' +
+      // (1) solid background circle — a warm walnut "tile" so the face reads
+      // as a proper museum-plaque icon (pass tileColor to override).
+      '<circle cx="50" cy="50" r="50" fill="' + tile + '"/>' +
       // (2) face circle filled by skin colour
       '<circle cx="50" cy="52" r="34" fill="' + skinColor + '"/>' +
       // subtle ear nubs for a friendlier silhouette
@@ -866,10 +878,10 @@
     '</svg>';
   }
 
-  /* ── renderInto(el, cfg, size) — convenience DOM setter ── */
-  function renderInto(el, cfg, size) {
+  /* ── renderInto(el, cfg, size, tileColor) — convenience DOM setter ── */
+  function renderInto(el, cfg, size, tileColor) {
     if (!el) return;
-    el.innerHTML = render(cfg, size);
+    el.innerHTML = render(cfg, size, tileColor);
   }
 
   /* ── Public API ── */

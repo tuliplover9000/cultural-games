@@ -67,7 +67,14 @@
       <div id="rooms-landing">
 
         <header class="rooms-hero">
-          <canvas id="rooms-bg-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0.6;" aria-hidden="true"></canvas>
+          <div class="rooms-hero__icons" aria-hidden="true">
+            <img class="rooms-hero-icon" src="../assets/icons/oware.svg"     alt="" style="--rh-left:8%;  --rh-top:22%; --rh-size:60px; --rh-opacity:0.14; --rh-dur:17s; --rh-delay:0s;   --rh-shift:14px;" />
+            <img class="rooms-hero-icon" src="../assets/icons/mahjong.svg"   alt="" style="--rh-left:24%; --rh-top:58%; --rh-size:48px; --rh-opacity:0.11; --rh-dur:21s; --rh-delay:-3s;  --rh-shift:10px;" />
+            <img class="rooms-hero-icon" src="../assets/icons/senet.svg"     alt="" style="--rh-left:44%; --rh-top:16%; --rh-size:52px; --rh-opacity:0.10; --rh-dur:19s; --rh-delay:-7s;  --rh-shift:16px;" />
+            <img class="rooms-hero-icon" src="../assets/icons/fanorona.svg"  alt="" style="--rh-left:63%; --rh-top:64%; --rh-size:56px; --rh-opacity:0.13; --rh-dur:23s; --rh-delay:-2s;  --rh-shift:12px;" />
+            <img class="rooms-hero-icon" src="../assets/icons/tien-len.svg"  alt="" style="--rh-left:80%; --rh-top:30%; --rh-size:50px; --rh-opacity:0.12; --rh-dur:18s; --rh-delay:-9s;  --rh-shift:15px;" />
+            <img class="rooms-hero-icon" src="../assets/icons/hnefatafl.svg" alt="" style="--rh-left:91%; --rh-top:70%; --rh-size:46px; --rh-opacity:0.10; --rh-dur:25s; --rh-delay:-5s;  --rh-shift:9px;" />
+          </div>
           <p class="rooms-hero__label">Multiplayer</p>
           <h1 class="rooms-hero__title">Game Rooms</h1>
           <p class="rooms-hero__desc">
@@ -466,63 +473,6 @@
       </div>
     </div>
   </div>
-
-  <script src="../js/three.min.js"></script>
-  <script>
-(function () {
-  var canvas = document.getElementById('rooms-bg-canvas');
-  if (!canvas || !window.THREE) return;
-  var W = canvas.parentElement.offsetWidth;
-  var H = canvas.parentElement.offsetHeight || 280;
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-  renderer.setSize(W, H);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(55, W / H, 0.1, 100);
-  camera.position.z = 9;
-  var matGold  = new THREE.MeshBasicMaterial({ color: 0xC89B3C, transparent: true, opacity: 0.5 });
-  var matTeal  = new THREE.MeshBasicMaterial({ color: 0x4ecdc4, transparent: true, opacity: 0.5 });
-  var matFaint = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.18 });
-  var group = new THREE.Group();
-  scene.add(group);
-  var defs = [
-    { geo: new THREE.IcosahedronGeometry(1.1),         mat: matGold,  orbit: 0,   speed: 0,      angle: 0             },
-    { geo: new THREE.TorusGeometry(0.55, 0.18, 8, 16), mat: matTeal,  orbit: 2.6, speed: 0.011,  angle: 0             },
-    { geo: new THREE.OctahedronGeometry(0.75),          mat: matFaint, orbit: 1.9, speed: -0.009, angle: Math.PI / 2   },
-    { geo: new THREE.TetrahedronGeometry(0.65),         mat: matTeal,  orbit: 3.1, speed: 0.008,  angle: Math.PI       },
-    { geo: new THREE.BoxGeometry(0.65, 0.65, 0.65),    mat: matGold,  orbit: 2.2, speed: -0.013, angle: Math.PI * 1.5 },
-    { geo: new THREE.IcosahedronGeometry(0.45),         mat: matFaint, orbit: 3.6, speed: 0.015,  angle: Math.PI * 0.75},
-  ];
-  var angles  = defs.map(function (d) { return d.angle; });
-  var meshes  = defs.map(function (d) { var m = new THREE.Mesh(d.geo, d.mat); group.add(m); return m; });
-  function animate() {
-    requestAnimationFrame(animate);
-    group.rotation.y += 0.004;
-    defs.forEach(function (d, i) {
-      if (d.orbit === 0) {
-        meshes[i].rotation.x += 0.006;
-        meshes[i].rotation.y += 0.009;
-      } else {
-        angles[i] += d.speed;
-        meshes[i].position.x = Math.cos(angles[i]) * d.orbit;
-        meshes[i].position.y = Math.sin(angles[i] * 0.6) * d.orbit * 0.35;
-        meshes[i].position.z = Math.sin(angles[i]) * d.orbit * 0.5;
-        meshes[i].rotation.x += 0.01;
-        meshes[i].rotation.y += 0.008;
-      }
-    });
-    renderer.render(scene, camera);
-  }
-  animate();
-  window.addEventListener('resize', function () {
-    W = canvas.parentElement.offsetWidth;
-    H = canvas.parentElement.offsetHeight || 280;
-    camera.aspect = W / H;
-    camera.updateProjectionMatrix();
-    renderer.setSize(W, H);
-  });
-}());
-  </script>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="../shared/utils/sanitize.js"></script>
