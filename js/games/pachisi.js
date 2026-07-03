@@ -1434,6 +1434,7 @@
           redraw();
           updateHUD();
           recordSoloResult(win);
+          showEndPlaque(win);
           return;
         }
 
