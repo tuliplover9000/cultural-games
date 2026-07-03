@@ -39,6 +39,12 @@
   // Whether the player is betting with real site coins (opt-in, logged-in only)
   var useRealCoins = false;
 
+  var pendingRoll = null;   // server roll result while the spin animation plays
+  var rollWaitMs  = 0;      // guard: how long we've waited for the server result
+  var rollIsReal  = false;  // captured at rollDice() time — immune to a mid-spin
+                            // auth flip (logout) that would otherwise flip useRealCoins
+                            // and reroute finalizeDice into a phantom practice result
+
   function esc(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
@@ -320,6 +326,7 @@
       return;
     }
     if (!useRealCoins) {
+      if (vsRoom) { setStatus('Real coins are available in solo play only.'); return; }
       var balance = window.Auth && Auth.getCoins ? Auth.getCoins() : 0;
       if (balance <= 0) {
         setStatus('No coins available - earn some by playing games in rooms!');
@@ -380,6 +387,13 @@
     refresh();
     setStatus('Rolling…');
 
+    pendingRoll = null; rollWaitMs = 0;
+    rollIsReal = !!(useRealCoins && !vsRoom && window.Auth && Auth.bauCuaRoll);
+    if (rollIsReal) {
+      var betsSnapshot = Object.assign({}, state.bets);
+      Auth.bauCuaRoll(betsSnapshot).then(function (res) { pendingRoll = res; });
+    }
+
     var DURATION  = 1500;
     var FRAME_MS  = 80;
     var elapsed   = 0;
@@ -399,36 +413,72 @@
     }, FRAME_MS);
   }
 
-  function finalizeDice() {
-    // Pick final results
-    state.diceResult = [
-      SYMBOLS[Helpers.randInt(0, 5)],
-      SYMBOLS[Helpers.randInt(0, 5)],
-      SYMBOLS[Helpers.randInt(0, 5)],
-    ];
-
+  function paintDice() {
     els.dice.forEach(function (die, i) {
       die.classList.remove('rolling');
       die.classList.add('settled');
       var s = state.diceResult[i];
       die.innerHTML = '<img src="' + s.img + '" alt="' + s.en + '" />';
     });
+  }
 
-    // In group play, host syncs the result to all guests
-    if (vsRoom && roomHost) {
-      RoomBridge.sendState({
-        type:     'results',
-        diceKeys: state.diceResult.map(function(s){ return s.key; }),
-        round:    state.stats.rounds + 1,
+  function finalizeDice() {
+    if (rollIsReal) {
+      // wait for the server roll (usually already here after the 1500ms spin)
+      if (!pendingRoll) {
+        rollWaitMs += 80;
+        if (rollWaitMs < 8000) { setTimeout(finalizeDice, 80); return; }
+        return handleRollError({ ok: false, error: 'timeout' });  // gave up
+      }
+      var res = pendingRoll; pendingRoll = null;
+      if (!res.ok) return handleRollError(res);
+      // Replay/edge: server returned no dice (idempotent duplicate). Never happens in
+      // normal play (fresh session key per roll), but stay safe — just sync the balance.
+      if (!res.dice || res.dice.length !== 3) {
+        state.wallet = res.new_balance; state.phase = 'betting';
+        els.dice.forEach(function (d) { d.classList.remove('rolling','settled'); d.textContent='-'; });
+        refresh(); setStatus('Balance synced. Place your bets.');
+        return;
+      }
+      // authoritative dice from server keys
+      state.diceResult = res.dice.map(function (k) {
+        return SYMBOLS.filter(function (s) { return s.key === k; })[0];
       });
+      if (state.diceResult.some(function (s) { return !s; })) {
+        return handleRollError({ ok: false, error: 'bad_dice' });
+      }
+      paintDice();                 // extract the die-painting loop into a helper (see R5)
+      setTimeout(function () { showResults(res.new_balance); }, 400);
+      return;
     }
-
+    // ── practice / room: unchanged local RNG ──
+    state.diceResult = [ SYMBOLS[Helpers.randInt(0,5)], SYMBOLS[Helpers.randInt(0,5)], SYMBOLS[Helpers.randInt(0,5)] ];
+    paintDice();
+    if (vsRoom && roomHost) { RoomBridge.sendState({ type:'results', diceKeys: state.diceResult.map(function(s){return s.key;}), round: state.stats.rounds+1 }); }
     setTimeout(showResults, 400);
+  }
+
+  function handleRollError(res) {
+    var msg;
+    switch (res && res.error) {
+      case 'insufficient_coins': case 'insufficient_balance': msg = 'Not enough coins for that bet.'; break;
+      case 'no_profile':           msg = 'Couldn’t find your coin balance — try reloading.'; break;
+      case 'not_authenticated':    msg = 'Please sign in again to bet real coins.'; break;
+      case 'network': case 'timeout': msg = 'Couldn’t reach the table — your coins are safe. Try again.'; break;
+      default: msg = 'That roll didn’t go through — your coins are unchanged.';
+    }
+    // resync the real wallet from Auth (in case balance changed elsewhere), re-open betting
+    state.phase = 'betting';
+    state.wallet = (window.Auth && Auth.getCoins) ? Auth.getCoins() : state.wallet;
+    els.dice.forEach(function (die) { die.classList.remove('rolling','settled'); die.textContent='-'; });
+    els.results.classList.remove('visible');
+    refresh();
+    setStatus(msg);
   }
 
   // ── Results phase ──────────────────────────────────────────────────────────
 
-  function showResults() {
+  function showResults(serverBalance) {
     state.phase = 'results';
     state.stats.rounds++;
 
@@ -479,8 +529,11 @@
     });
 
     // Update wallet
-    state.wallet = Math.max(0, state.wallet + net);
-    // Local display update only — server balance is authoritative via record_game_result at game end.
+    if (typeof serverBalance === 'number') {
+      state.wallet = serverBalance;                 // authoritative (real coins)
+    } else {
+      state.wallet = Math.max(0, state.wallet + net); // local (practice/room)
+    }
     if (vsRoom) syncMyState(); // broadcast updated wallet + empty bets to leaderboard
 
     // Track stats

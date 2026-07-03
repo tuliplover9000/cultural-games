@@ -636,6 +636,31 @@
     }).catch(function() { /* non-fatal - optimistic state already shown */ });
   }
 
+  // Server-authoritative Bầu Cua wager. Sends only the bets; the server rolls the
+  // dice, computes payout, updates profiles.coins atomically, and returns the
+  // authoritative dice + new balance. Coins are mutated ONLY from the server
+  // response — the client never asserts an amount.
+  async function bauCuaRoll(bets) {
+    if (!_user || !_accessToken) return { ok: false, error: 'not_authenticated' };
+    var sessionKey = _user.id + '_bau-cua_' + Date.now().toString(36) + '_' +
+                     Math.random().toString(36).slice(2, 7);
+    try {
+      var resp = await _rpcFetch('bau_cua_roll', { p_bets: bets, p_session_key: sessionKey });
+      if (!resp.ok) return { ok: false, error: 'server_' + resp.status };
+      var data = await resp.json();
+      if (data && data.success === true && typeof data.new_balance === 'number' &&
+          Array.isArray(data.dice)) {
+        _coins = data.new_balance;
+        _persistUsername();
+        _emit();
+        return { ok: true, dice: data.dice, delta: data.delta, new_balance: data.new_balance };
+      }
+      return { ok: false, error: (data && data.error) || 'rejected' };
+    } catch (e) {
+      return { ok: false, error: 'network' };
+    }
+  }
+
   function onAuthChange(fn) { _listeners.push(fn); }
 
   /* ══════════════════════════════════════════
@@ -1081,6 +1106,7 @@
     signOut:        signOut,
     getStats:       getStats,
     recordResult:   recordResult,
+    bauCuaRoll:     bauCuaRoll,
     onAuthChange:   onAuthChange,
     openModal:      openModal,
     closeModal:     closeModal,
