@@ -88,10 +88,6 @@
       '<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>' +
       '<path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/>' +
       '<path d="M16 16h.01"/><path d="M12 12h.01"/>',
-    gamepad:
-      '<line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/>' +
-      '<line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/>' +
-      '<rect width="20" height="12" x="2" y="6" rx="2"/>',
     door:
       '<path d="M13 4h3a2 2 0 0 1 2 2v14"/>' +
       '<path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/>' +

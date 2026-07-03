@@ -622,8 +622,8 @@
       setStatus('Draw — 60 moves passed with no capture. The herd holds, the tigers cannot break through.');
     } else if (localSide === null) { // hotseat — neutral announcement
       setStatus(winner === 'tigers'
-        ? '🐯 Tigers win! Five goats devoured — Player 2 prevails.'
-        : '🐐 Goats win! Every tiger is trapped — Player 1 prevails.');
+        ? 'Tigers win! Five goats devoured — Player 2 prevails.'
+        : 'Goats win! Every tiger is trapped — Player 1 prevails.');
     } else if (winner === 'tigers') {
       setStatus(localWon
         ? 'Tigers win! Five goats devoured.'

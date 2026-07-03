@@ -1,5 +1,5 @@
 /* =============================================================================
-   CULTURAL GAMES — games.css
+   CULTURAL GAMES — games.css
    Styles specific to individual game pages and the shared game layout shell.
    Requires global.css and components.css to be loaded first.
    Each game's unique styles live in this file, organized by section.
@@ -76,7 +76,7 @@
 }
 
 /* =============================================================================
-   ACCORDION — "How to Play" and "Cultural Context" sections
+   ACCORDION — "How to Play" and "Cultural Context" sections
 ============================================================================= */
 .accordion {
   border: 1px solid var(--color-border);
@@ -154,7 +154,7 @@
 }
 
 /* =============================================================================
-   GAME CONTAINER — where the game canvas renders
+   GAME CONTAINER — where the game canvas renders
 ============================================================================= */
 .game-container {
   background-color: var(--color-surface-alt);
@@ -196,7 +196,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
 }
 
 /* =============================================================================
-   DISCLAIMER — "virtual coins only" notice
+   DISCLAIMER — "virtual coins only" notice
 ============================================================================= */
 .game-disclaimer {
   margin-top: var(--space-4);
@@ -209,7 +209,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
 }
 
 /* =============================================================================
-   Bau Cua Tom Ca — Phase 2
+   Bau Cua Tom Ca — Phase 2
 ============================================================================= */
 
 /* Outer wrapper */
@@ -225,7 +225,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   border-radius: var(--radius-xl);
 }
 
-/* —â‚¬—â‚¬ Wallet bar —â‚¬—â‚¬ */
+/* ── Wallet bar ── */
 .bc-wallet-bar {
   display: flex;
   align-items: center;
@@ -284,7 +284,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   cursor: not-allowed;
 }
 
-/* —â‚¬—â‚¬ Bet input row —â‚¬—â‚¬ */
+/* ── Bet input row ── */
 .bc-bet-row {
   display: flex;
   align-items: center;
@@ -352,7 +352,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   cursor: not-allowed;
 }
 
-/* —â‚¬—â‚¬ Betting mat —â‚¬—â‚¬ */
+/* ── Betting mat ── */
 .bc-mat {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -510,7 +510,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   pointer-events: none;
 }
 
-/* Bet chip — top-right corner of a selected zone */
+/* Bet chip — top-right corner of a selected zone */
 .bc-bet-chip {
   position: absolute;
   top: 6px;
@@ -529,7 +529,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   line-height: 1.5;
 }
 
-/* Match count chip — shown after roll */
+/* Match count chip — shown after roll */
 .bc-match-chip {
   position: absolute;
   bottom: 6px;
@@ -545,7 +545,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   line-height: 1.5;
 }
 
-/* —â‚¬—â‚¬ Dice area —â‚¬—â‚¬ */
+/* ── Dice area ── */
 .bc-dice-area {
   display: flex;
   flex-direction: column;
@@ -647,7 +647,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   100% { transform: scale(1); }
 }
 
-/* —â‚¬—â‚¬ Action buttons row —â‚¬—â‚¬ */
+/* ── Action buttons row ── */
 .bc-actions {
   display: flex;
   gap: var(--space-2);
@@ -655,7 +655,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   flex-wrap: wrap;
 }
 
-/* —â‚¬—â‚¬ Status message —â‚¬—â‚¬ */
+/* ── Status message ── */
 .bc-status {
   text-align: center;
   font-size: var(--text-sm);
@@ -664,7 +664,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   font-style: italic;
 }
 
-/* —â‚¬—â‚¬ Results panel —â‚¬—â‚¬ */
+/* ── Results panel ── */
 .bc-results {
   background: rgba(46,34,24,0.30);
   border: 1px solid rgba(245,235,216,0.18);
@@ -733,7 +733,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
 .bc-net.positive { color: #C9DDA8; }
 .bc-net.negative { color: #F0B49C; }
 
-/* —â‚¬—â‚¬ Game Over —â‚¬—â‚¬ */
+/* ── Game Over ── */
 .bc-gameover {
   text-align: center;
   padding: var(--space-6) var(--space-4);
@@ -855,7 +855,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   border: 1px solid rgba(0,0,0,0.2);
 }
 
-/* —â‚¬—â‚¬ Responsive —â‚¬—â‚¬ */
+/* ── Responsive ── */
 @media (max-width: 480px) {
   .bc-die {
     width: 68px;
@@ -1295,10 +1295,10 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
 }
 
 /* =============================================================================
-   Tien Len — Phase 4
+   Tien Len — Phase 4
 ============================================================================= */
 
-/* —â‚¬—â‚¬ Outer wrapper —â‚¬—â‚¬ */
+/* ── Outer wrapper ── */
 .tl-game {
   padding: var(--space-4);
   background: radial-gradient(ellipse at 50% 25%, #1d5c34 0%, #0a3018 100%);
@@ -1310,7 +1310,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   border-radius: 0 0 var(--radius-xl) var(--radius-xl);
 }
 
-/* —â‚¬—â‚¬ Status bar —â‚¬—â‚¬ */
+/* ── Status bar ── */
 .tl-status-bar {
   background: rgba(0,0,0,0.4);
   border: 1px solid rgba(255,255,255,0.08);
@@ -1334,7 +1334,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   color: #b4f0a0;
 }
 
-/* —â‚¬—â‚¬ AI thinking dots —â‚¬—â‚¬ */
+/* ── AI thinking dots ── */
 .tl-thinking-dots {
   display: inline-flex;
   gap: 4px;
@@ -1358,14 +1358,14 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   40%           { transform: scale(1);   opacity: 1;   }
 }
 
-/* —â‚¬—â‚¬ Table grid: top | [left | center | right] —â‚¬—â‚¬ */
+/* ── Table grid: top | [left | center | right] ── */
 .tl-table {
   display: grid;
   grid-template-columns: 88px 1fr 88px;
   gap: var(--space-2);
 }
 
-/* —â‚¬—â‚¬ Opponent zones —â‚¬—â‚¬ */
+/* ── Opponent zones ── */
 .tl-zone {
   display: flex;
   flex-direction: column;
@@ -1394,7 +1394,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   color: rgba(200,220,175,0.38);
 }
 
-/* —â‚¬—â‚¬ Card backs —â‚¬—â‚¬ */
+/* ── Card backs ── */
 .tl-card-back {
   border-radius: 5px;
   background:
@@ -1428,7 +1428,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   margin-top: -10px;
 }
 
-/* —â‚¬—â‚¬ Center play area —â‚¬—â‚¬ */
+/* ── Center play area ── */
 .tl-center {
   display: flex;
   flex-direction: column;
@@ -1472,7 +1472,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   letter-spacing: 0.08em;
 }
 
-/* —â‚¬—â‚¬ Face-up cards —â‚¬—â‚¬ */
+/* ── Face-up cards ── */
 .tl-card {
   width: 48px;
   height: 68px;
@@ -1527,7 +1527,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
 .tl-play-area .tl-card__rank   { font-size: 12px; }
 .tl-play-area .tl-card__center { font-size: 19px; }
 
-/* —â‚¬—â‚¬ Card states —â‚¬—â‚¬ */
+/* ── Card states ── */
 .tl-card.selected {
   transform: translateY(-10px);
   border-color: #58d838;
@@ -1542,7 +1542,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   box-shadow: 0 6px 16px rgba(55,200,35,0.3), inset 0 1px 0 rgba(255,255,255,0.95);
 }
 
-/* —â‚¬—â‚¬ Deal animation (first render only) —â‚¬—â‚¬ */
+/* ── Deal animation (first render only) ── */
 .tl-card.dealing {
   animation: tl-deal 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: calc(var(--deal-i, 0) * 70ms);
@@ -1553,7 +1553,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   to   { opacity: 1; transform: none; }
 }
 
-/* —â‚¬—â‚¬ Played-in animation (cards hitting the table) —â‚¬—â‚¬ */
+/* ── Played-in animation (cards hitting the table) ── */
 .tl-card.played-in {
   animation: tl-play-in 500ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
   animation-delay: calc(var(--play-i, 0) * 80ms);
@@ -1564,7 +1564,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   to   { opacity: 1; transform: rotate(var(--rot, 0deg)); }
 }
 
-/* —â‚¬—â‚¬ 2x Speed overrides —â‚¬—â‚¬ */
+/* ── 2x Speed overrides ── */
 .tl-fast .tl-card.dealing {
   animation-duration: 300ms;
   animation-delay: calc(var(--deal-i, 0) * 45ms);
@@ -1574,7 +1574,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   animation-delay: calc(var(--play-i, 0) * 55ms);
 }
 
-/* —â‚¬—â‚¬ Player hand —â‚¬—â‚¬ */
+/* ── Player hand ── */
 .tl-player-area {
   display: flex;
   flex-direction: column;
@@ -1596,7 +1596,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   align-items: flex-end;
 }
 
-/* —â‚¬—â‚¬ Hand-type hint —â‚¬—â‚¬ */
+/* ── Hand-type hint ── */
 .tl-hint {
   font-size: 11px;
   min-height: 1.6em;
@@ -1609,7 +1609,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
 .tl-hint.valid   { color: #88e058; font-style: normal; }
 .tl-hint.invalid { color: #e06060; font-style: normal; }
 
-/* —â‚¬—â‚¬ Actions —â‚¬—â‚¬ */
+/* ── Actions ── */
 .tl-actions {
   display: flex;
   flex-direction: column;
@@ -1627,7 +1627,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   gap: var(--space-2);
 }
 
-/* —â‚¬—â‚¬ Game-specific buttons (visible on dark felt) —â‚¬—â‚¬ */
+/* ── Game-specific buttons (visible on dark felt) ── */
 .tl-btn {
   display: inline-flex;
   align-items: center;
@@ -1654,7 +1654,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   transform: none;
 }
 
-/* Play — solid green */
+/* Play — solid green */
 .tl-btn--play {
   background: #2a7a3a;
   color: #fff;
@@ -1666,7 +1666,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   transform: translateY(-2px);
 }
 
-/* Pass — outlined white */
+/* Pass — outlined white */
 .tl-btn--pass {
   background: transparent;
   color: rgba(220, 240, 210, 0.9);
@@ -1678,7 +1678,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   transform: translateY(-2px);
 }
 
-/* Ghost — subtle, clearly boxed */
+/* Ghost — subtle, clearly boxed */
 .tl-btn--ghost {
   background: rgba(255, 255, 255, 0.05);
   color: rgba(210, 230, 200, 0.75);
@@ -1692,14 +1692,14 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   color: rgba(220, 240, 210, 0.95);
 }
 
-/* 2x Speed — active/on state */
+/* 2x Speed — active/on state */
 .tl-speed-btn.active {
   background: rgba(255, 210, 50, 0.15);
   border-color: rgba(255, 210, 50, 0.55);
   color: #ffd232;
 }
 
-/* —â‚¬—â‚¬ Game log —â‚¬—â‚¬ */
+/* ── Game log ── */
 .tl-log {
   background: rgba(0,0,0,0.3);
   border: 1px solid rgba(255,255,255,0.06);
@@ -1740,7 +1740,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
 .tl-log__entry.you { color: #84e84e; }
 .tl-log__entry.sys { color: rgba(210,200,120,0.55); font-style: italic; }
 
-/* —â‚¬—â‚¬ Game over —â‚¬—â‚¬ */
+/* ── Game over ── */
 .tl-gameover {
   display: none;
   flex-direction: column;
@@ -1782,7 +1782,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   margin-bottom: var(--space-5);
 }
 
-/* —â‚¬—â‚¬ Responsive —â‚¬—â‚¬ */
+/* ── Responsive ── */
 @media (max-width: 600px) {
   .tl-table { grid-template-columns: 62px 1fr 62px; }
 
@@ -1802,7 +1802,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
 }
 
 /* =============================================================================
-   Oware — Phase 5
+   Oware — Phase 5
 ============================================================================= */
 
 .ow-game {
@@ -1817,7 +1817,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   font-family: var(--font-body);
 }
 
-/* —â‚¬—â‚¬ Status bar —â‚¬—â‚¬ */
+/* ── Status bar ── */
 .ow-status {
   text-align: center;
   font-size: var(--text-sm);
@@ -1829,7 +1829,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   padding: 8px var(--space-4);
 }
 
-/* —â‚¬—â‚¬ AI thinking dots —â‚¬—â‚¬ */
+/* ── AI thinking dots ── */
 .ow-dots span {
   display: inline-block;
   width: 5px;
@@ -1848,7 +1848,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   40%           { opacity: 1;   transform: scale(1.3); }
 }
 
-/* —â‚¬—â‚¬ Board layout —â‚¬—â‚¬ */
+/* ── Board layout ── */
 .ow-board-wrap {
   display: flex;
   align-items: center;
@@ -1915,7 +1915,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   );
 }
 
-/* —â‚¬—â‚¬ Score stores —â‚¬—â‚¬ */
+/* ── Score stores ── */
 .ow-store {
   display: flex;
   flex-direction: column;
@@ -1954,7 +1954,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   letter-spacing: 0.08em;
 }
 
-/* —â‚¬—â‚¬ Pits —â‚¬—â‚¬ */
+/* ── Pits ── */
 .ow-pit {
   width: 84px;
   height: 88px;
@@ -1998,7 +1998,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   left: calc(50% + var(--x, 0px) - 6.5px);
   top:  calc(50% + var(--y, 0px) - 6.5px);
   transform: rotate(var(--rot, 0deg));
-  /* Warm dark-brown gradient — dried Ayo seed */
+  /* Warm dark-brown gradient — dried Ayo seed */
   background: radial-gradient(circle at 32% 28%, #EEF2E6 0%, #A8AF9C 18%, #99A38C 55%, #6A7160 100%);
   box-shadow: 0 2px 3px rgba(0,0,0,0.55), inset 0 -2px 3px rgba(0,0,0,0.18);
 }
@@ -2056,7 +2056,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
 }
 .ow-pit--clickable .ow-pit__count { color: rgba(242,230,206,0.9); }
 
-/* Last-sown pit — glows amber */
+/* Last-sown pit — glows amber */
 .ow-pit--lit {
   border-color: #E8B33C;
   box-shadow:
@@ -2071,7 +2071,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   100% { transform: scale(1);    }
 }
 
-/* AI-selected pit — pulsing red-orange before sowing starts */
+/* AI-selected pit — pulsing red-orange before sowing starts */
 .ow-pit--ai-select {
   border-color: #F2C14E;
   box-shadow:
@@ -2086,7 +2086,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   to   { box-shadow: inset 0 4px 14px rgba(0,0,0,0.25), 0 0 30px rgba(242,193,78,0.85); }
 }
 
-/* —â‚¬—â‚¬ Actions —â‚¬—â‚¬ */
+/* ── Actions ── */
 .ow-actions {
   display: flex;
   flex-direction: column;
@@ -2162,7 +2162,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   transform: translateY(-2px);
 }
 
-/* —â‚¬—â‚¬ Game log —â‚¬—â‚¬ */
+/* ── Game log ── */
 .ow-log {
   background: rgba(0,0,0,0.22);
   border-radius: var(--radius-md);
@@ -2186,7 +2186,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
 }
 .ow-log li:first-child { color: rgba(232,200,152,0.9); }
 
-/* —â‚¬—â‚¬ Game over —â‚¬—â‚¬ */
+/* ── Game over ── */
 .ow-gameover {
   display: flex;
   flex-direction: column;
@@ -2220,7 +2220,7 @@ html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
   margin: 0;
 }
 
-/* —â‚¬—â‚¬ Responsive —â‚¬—â‚¬ */
+/* ── Responsive ── */
 @media (max-width: 560px) {
   .ow-pit { width: 54px; height: 58px; }
   .ow-seed { width: 10px; height: 10px; left: calc(50% + var(--x, 0px) - 5px); top: calc(50% + var(--y, 0px) - 5px); }

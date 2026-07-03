@@ -567,7 +567,8 @@
     var wName = playerName(winner);
     var lName = playerName(1 - winner);
     if (winner === PLAYER) {
-      setStatus('<div class="pt-gameover"><div class="pt-gameover__title">🏆 ' + wName + ' Win' + (mode === 'vs-human' ? 's' : '') + '!</div>' +
+      var trophy = (window.Icon && Icon.svg) ? Icon.svg('trophy', 20) + ' ' : '';
+      setStatus('<div class="pt-gameover"><div class="pt-gameover__title">' + trophy + wName + ' Win' + (mode === 'vs-human' ? 's' : '') + '!</div>' +
         '<div class="pt-gameover__sub">All pieces completed the circuit · ' + p1coins + ' coins earned</div></div>');
     } else {
       setStatus('<div class="pt-gameover"><div class="pt-gameover__title">' + wName + ' Wins</div>' +
