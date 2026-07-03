@@ -488,9 +488,11 @@
   function updateScore() {
     if (!elScore) return;
     var b = countOnBoard(state.board, BLACK), w = countOnBoard(state.board, WHITE);
+    var dotBlack = '<span aria-hidden="true" style="display:inline-block;width:.62em;height:.62em;border-radius:50%;background:#1C1714;box-shadow:inset 0 0 0 1px rgba(255,255,255,.28);vertical-align:-0.02em;margin-right:.35em;"></span>';
+    var dotWhite = '<span aria-hidden="true" style="display:inline-block;width:.62em;height:.62em;border-radius:50%;background:#F2EAD8;box-shadow:inset 0 0 0 1px #B9A87E;vertical-align:-0.02em;margin-right:.35em;"></span>';
     elScore.innerHTML =
-      '<span class="kn-score__black">&#9899; Black &middot; ' + b + ' stones</span>' +
-      '<span class="kn-score__white">&#9898; White &middot; ' + w + ' stones</span>';
+      '<span class="kn-score__black">' + dotBlack + 'Black &middot; ' + b + ' stones</span>' +
+      '<span class="kn-score__white">' + dotWhite + 'White &middot; ' + w + ' stones</span>';
   }
 
   function phaseHint() {
@@ -641,12 +643,12 @@
 
     if (localSide === null) { // hotseat
       setStatus(winner === 'black'
-        ? '🏆 Black wins! White has no legal jump — last to move wins.'
-        : '🏆 White wins! Black has no legal jump — last to move wins.');
+        ? 'Black wins! White has no legal jump — last to move wins.'
+        : 'White wins! Black has no legal jump — last to move wins.');
     } else if (localWon) {
       setStatus(vsRoom
-        ? '🎉 You win! Your opponent has no legal jump left.'
-        : '🎉 You win! The computer has no legal jump left.');
+        ? 'You win! Your opponent has no legal jump left.'
+        : 'You win! The computer has no legal jump left.');
     } else {
       setStatus(vsRoom
         ? 'Your opponent wins — you have no legal jump. Last to move wins in Kōnane.'
@@ -712,7 +714,7 @@
       state.phase = 'over';
       var localWon = (state.winner === 'black' && myPlayer === BLACK) ||
                      (state.winner === 'white' && myPlayer === WHITE);
-      if (localWon) setStatus('🎉 You win! Your opponent has no legal jump left.');
+      if (localWon) setStatus('You win! Your opponent has no legal jump left.');
       else setStatus('Your opponent wins — you have no legal jump. Last to move wins in Kōnane.');
     } else {
       setStatus(turnStatus());

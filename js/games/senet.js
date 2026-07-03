@@ -606,7 +606,7 @@
       ctx.save();
       ctx.globalAlpha = 0.30;
       ctx.fillStyle = C.ink;
-      ctx.font = '600 ' + Math.max(8, Math.round(g.cell * 0.16)) + 'px Outfit, sans-serif';
+      ctx.font = '600 ' + Math.max(8, Math.round(g.cell * 0.16)) + "px 'Be Vietnam Pro', sans-serif";
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
       ctx.fillText(String(i + 1), x + g.cell * 0.07, y + g.cell * 0.06);
@@ -667,7 +667,7 @@
     // mini piece as the row label
     drawPieceAt(x0, y, g.cell * 0.16, who, 1);
     ctx.fillStyle = C.muted;
-    ctx.font = '600 ' + Math.max(9, Math.round(g.cell * 0.20)) + 'px Outfit, sans-serif';
+    ctx.font = '600 ' + Math.max(9, Math.round(g.cell * 0.20)) + "px 'Be Vietnam Pro', sans-serif";
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
     ctx.fillText(label, x0 + g.cell * 0.30, y);
@@ -733,12 +733,12 @@
     ctx.textBaseline = 'middle';
     if (tumbling) {
       ctx.fillStyle = C.muted;
-      ctx.font = '700 ' + Math.round(g.trayH * 0.42) + 'px "Playfair Display", serif';
+      ctx.font = '700 ' + Math.round(g.trayH * 0.42) + "px 'Fraunces', Georgia, serif";
       ctx.fillText('?', vx, vy);
     } else if (faces && state && state.thrw) {
       var v = state.thrw.value;
       ctx.fillStyle = C.gold;
-      ctx.font = '700 ' + Math.round(g.trayH * 0.52) + 'px "Playfair Display", serif';
+      ctx.font = '700 ' + Math.round(g.trayH * 0.52) + "px 'Fraunces', Georgia, serif";
       ctx.fillText(String(v), vx, vy - g.trayH * 0.04);
       var pr = g.cell * 0.05;
       var px0 = vx - ((v - 1) * pr * 2.6) / 2;
@@ -750,7 +750,7 @@
       }
     } else {
       ctx.fillStyle = C.muted;
-      ctx.font = '600 ' + Math.round(g.trayH * 0.30) + 'px "Playfair Display", serif';
+      ctx.font = '600 ' + Math.round(g.trayH * 0.30) + "px 'Fraunces', Georgia, serif";
       ctx.fillText('–', vx, vy);
     }
 

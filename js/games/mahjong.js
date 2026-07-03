@@ -1579,6 +1579,31 @@
       elRoomSt.textContent   = status;
     }
 
+    // Styled replacement for the native browser popup, reusing the existing .mj-overlay-card look.
+    function showMessage(msg) {
+      var existing = document.getElementById('mj-message-overlay');
+      if (existing) existing.remove();
+      var ov = document.createElement('div');
+      ov.className = 'mj-overlay';
+      ov.id = 'mj-message-overlay';
+      var card = document.createElement('div');
+      card.className = 'mj-overlay-card';
+      var p = document.createElement('p');
+      p.style.margin = '0 0 1.25rem';
+      p.style.fontSize = '1.05rem';
+      p.textContent = msg;
+      var btn = document.createElement('button');
+      btn.className = 'mj-btn';
+      btn.textContent = 'OK';
+      btn.addEventListener('click', function () { ov.remove(); });
+      card.appendChild(p);
+      card.appendChild(btn);
+      ov.appendChild(card);
+      ov.addEventListener('click', function (e) { if (e.target === ov) ov.remove(); });
+      document.body.appendChild(ov);
+      btn.focus();
+    }
+
     function startOnlineGame(role) {
       vsOnline = true;
       isHost   = (role === 'host');
@@ -1615,7 +1640,7 @@
       const result = await Multiplayer.createRoom('mahjong', {
         onReady:       room  => { showRoom(room.code, 'Opponent joined! Starting…'); startOnlineGame('host'); },
         onRemoteState: receiveOnlineState,
-        onError:       msg   => { showLobby(); alert('Error: ' + msg); },
+        onError:       msg   => { showLobby(); showMessage('Error: ' + msg); },
       });
       elCreateBtn.disabled    = false;
       elCreateBtn.textContent = 'Create Room';
@@ -1628,12 +1653,12 @@
 
     elJoinSubmit.addEventListener('click', async function () {
       const code = elCodeInput.value.trim().toUpperCase();
-      if (code.length !== 4) { alert('Enter a 4-letter room code.'); return; }
+      if (code.length !== 4) { showMessage('Enter a 4-letter room code.'); return; }
       elJoinSubmit.disabled    = true;
       elJoinSubmit.textContent = 'Joining…';
       const result = await Multiplayer.joinRoom(code, 'mahjong', {
         onRemoteState: receiveOnlineState,
-        onError:       msg => { alert('Error: ' + msg); },
+        onError:       msg => { showMessage('Error: ' + msg); },
       });
       elJoinSubmit.disabled    = false;
       elJoinSubmit.textContent = 'Join';

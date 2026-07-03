@@ -430,6 +430,33 @@
 
   function setStatus(msg) { if (elStatus) elStatus.textContent = msg; }
 
+  // Shared end-of-game plaque. Status line is the fallback; suppressed in room
+  // mode, where the room end screen handles the terminal result.
+  function showFanPlaque(winner, subtitle) {
+    if (vsRoom || !window.CGEndPlaque) return;
+    var blackWon = winner === BLACK;
+    var result = vsAI
+      ? (blackWon ? 'win' : 'loss')   // vs-AI: BLACK is the human
+      : 'win';                        // hotseat: frame from the winner's side
+    var title = vsAI
+      ? (blackWon ? 'You Win' : 'AI Wins')
+      : (blackWon ? 'Player 1 Wins' : 'Player 2 Wins');
+    var blacks = 0, whites = 0;
+    state.board.forEach(function (v) { if (v === BLACK) blacks++; else if (v === WHITE) whites++; });
+    window.CGEndPlaque.show({
+      result: result,
+      title: title,
+      subtitle: subtitle,
+      stats: [
+        { label: vsAI ? 'You' : 'Player 1', value: blacks },
+        { label: vsAI ? 'AI'  : 'Player 2', value: whites }
+      ],
+      onRematch: newGame,
+      rematchText: 'Play Again',
+      accent: '#B24A2E'
+    });
+  }
+
   function updateScore() {
     if (!elScore) return;
     var blacks = 0, whites = 0;
@@ -565,12 +592,13 @@
     if (winner !== null) {
       state.phase  = 'over';
       state.winner = winner;
-      setStatus(winner === BLACK ? '🎉 You win! All white pieces captured.' : 'AI wins. Better luck next time!');
+      setStatus(winner === BLACK ? 'You win! All white pieces captured.' : 'AI wins. Better luck next time!');
       updateScore();
       render();
       if (!vsRoom && window.Auth && Auth.isLoggedIn())
         Auth.recordResult('fanorona', winner === BLACK ? 'win' : 'loss');
       if (vsRoom) syncRoomState();
+      showFanPlaque(winner, 'All white pieces have been captured.');
       return;
     }
 
@@ -584,12 +612,13 @@
       state.phase  = 'over';
       state.winner = blockWinner;
       setStatus(blockWinner === BLACK
-        ? '🎉 You win! Opponent has no legal moves.'
+        ? 'You win! Opponent has no legal moves.'
         : 'AI wins. You have no legal moves.');
       updateScore(); render();
       if (!vsRoom && window.Auth && Auth.isLoggedIn())
         Auth.recordResult('fanorona', blockWinner === BLACK ? 'win' : 'loss');
       if (vsRoom) syncRoomState();
+      showFanPlaque(blockWinner, 'The opponent has no legal moves left.');
       return;
     }
 
@@ -802,7 +831,7 @@
     // (idempotent — deduped by the bridge) and show the end banner/score.
     if (state.phase === 'over' && state.winner !== null && state.winner !== undefined) {
       if (window.RoomBridge) RoomBridge.reportWin(state.winner === BLACK ? 0 : 1);
-      setStatus(state.winner === myFanColor ? '🎉 You win!' : 'You lose. Better luck next time!');
+      setStatus(state.winner === myFanColor ? 'You win!' : 'You lose. Better luck next time!');
       updateScore();
     }
   }

@@ -516,7 +516,15 @@
     const as      = state.scores[AI];
     const w       = state.winner;
     const vsHuman = mode === 'vs-human';
-    const icon    = w === PLAYER ? '🏆' : w === AI ? '🟤' : '🤝';
+    const iconName = w === PLAYER ? 'trophy' : w === AI ? 'scales' : 'handshake';
+    // Emoji fallback (only if icons.js hasn't loaded) uses code-point escapes
+    // so the raw glyphs never appear in source.
+    const iconEmoji = w === PLAYER ? '\uD83C\uDFC6' /* trophy */
+                    : w === AI     ? '\uD83D\uDD34' /* red circle */
+                    :                '\uD83E\uDD1D' /* handshake */;
+    const icon = (window.Icon && Icon.svg && Icon.has && Icon.has(iconName))
+      ? Icon.svg(iconName, 34)
+      : iconEmoji;
     const title   = w === PLAYER
       ? (vsHuman ? 'Player 1 Wins!' : 'You Win!')
       : w === AI

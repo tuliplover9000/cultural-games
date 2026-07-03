@@ -596,9 +596,11 @@
   function updateScore() {
     if (!elScore) return;
     var lo = countOnBoard(state.board, LIGHT), dk = countOnBoard(state.board, DARK);
+    var dotLight = '<span aria-hidden="true" style="display:inline-block;width:.62em;height:.62em;border-radius:50%;background:#F4E9CE;box-shadow:inset 0 0 0 1px #B89A63;vertical-align:-0.02em;margin-right:.35em;"></span>';
+    var dotDark  = '<span aria-hidden="true" style="display:inline-block;width:.62em;height:.62em;border-radius:50%;background:#3A2516;box-shadow:inset 0 0 0 1px rgba(255,255,255,.28);vertical-align:-0.02em;margin-right:.35em;"></span>';
     elScore.innerHTML =
-      '<span class="sk-score__light">&#9899; Light &middot; ' + lo + ' pieces</span>' +
-      '<span class="sk-score__dark">&#9898; Dark &middot; ' + dk + ' pieces</span>';
+      '<span class="sk-score__light">' + dotLight + 'Light &middot; ' + lo + ' pieces</span>' +
+      '<span class="sk-score__dark">' + dotDark + 'Dark &middot; ' + dk + ' pieces</span>';
   }
 
   function phaseHint() {
@@ -715,10 +717,10 @@
       setStatus('Draw — the loop war stalled with the pieces level (' + lo + '–' + dk + ').');
     } else if (localSide === null) { // hotseat
       setStatus(winner === 'light'
-        ? '🏆 Light wins! Player 1 has cleared (or out-pieced) Dark.'
-        : '🏆 Dark wins! Player 2 has cleared (or out-pieced) Light.');
+        ? 'Light wins! Player 1 has cleared (or out-pieced) Dark.'
+        : 'Dark wins! Player 2 has cleared (or out-pieced) Light.');
     } else if (localWon) {
-      setStatus('🎉 You win! Your loops broke the opponent.');
+      setStatus('You win! Your loops broke the opponent.');
     } else {
       setStatus(vsRoom
         ? 'Your opponent wins — their loops broke through. A rematch?'
@@ -789,7 +791,7 @@
       if (state.winner === 'draw') {
         setStatus('Draw — the loop war stalled with the pieces level (' + lo + '–' + dk + ').');
       } else if (localWon) {
-        setStatus('🎉 You win! Your loops broke the opponent.');
+        setStatus('You win! Your loops broke the opponent.');
       } else {
         setStatus('Your opponent wins — their loops broke through. A rematch?');
       }

@@ -573,10 +573,13 @@
   }
 
   function buildGameOverHTML(p1Score, p2Score) {
-    let winner, icon;
-    if (p1Score > p2Score) { winner = 'Player 1 wins!'; icon = '🎉'; }
-    else if (p2Score > p1Score) { winner = 'Player 2 wins!'; icon = '🎉'; }
-    else { winner = "It's a draw!"; icon = '🤝'; }
+    let winner, iconName, iconEmoji;
+    if (p1Score > p2Score) { winner = 'Player 1 wins!'; iconName = 'trophy'; iconEmoji = '\uD83C\uDF89'; }
+    else if (p2Score > p1Score) { winner = 'Player 2 wins!'; iconName = 'trophy'; iconEmoji = '\uD83C\uDF89'; }
+    else { winner = "It's a draw!"; iconName = 'handshake'; iconEmoji = '\uD83E\uDD1D'; }
+    const icon = (window.Icon && Icon.svg && Icon.has && Icon.has(iconName))
+      ? Icon.svg(iconName, 34)
+      : iconEmoji;
 
     return `
       <div class="oaq-gameover ${state.phase === 'gameover' ? 'visible' : ''}" aria-live="assertive">
@@ -605,10 +608,14 @@
     const board = container.querySelector('.oaq-board');
     if (board) {
       board.innerHTML = buildBoardHTML();
-      // Re-wire clicks
+      // Re-wire clicks (mirror the full-render seat guard so online players
+      // cannot sow out of turn during a partial board re-render).
       container.querySelectorAll('.oaq-pit.clickable').forEach(el => {
         const idx = parseInt(el.dataset.pit, 10);
-        el.addEventListener('click', () => sow(idx));
+        el.addEventListener('click', () => {
+          if (vsRoom && state.currentPlayer !== myRoomSeat + 1) return;
+          sow(idx);
+        });
       });
     }
 

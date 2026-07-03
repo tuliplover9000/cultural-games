@@ -626,11 +626,11 @@
         : '🐐 Goats win! Every tiger is trapped — Player 1 prevails.');
     } else if (winner === 'tigers') {
       setStatus(localWon
-        ? '🎉 Tigers win! Five goats devoured.'
+        ? 'Tigers win! Five goats devoured.'
         : 'Tigers win — five goats were captured. Try walling them in sooner.');
     } else { // goats
       setStatus(localWon
-        ? '🎉 Goats win! Every tiger is trapped — strength in numbers.'
+        ? 'Goats win! Every tiger is trapped — strength in numbers.'
         : 'Goats win — the tigers are all trapped.');
     }
     // Only vs-AI records to the player's account; hotseat is local, and online
@@ -641,6 +641,35 @@
     if (vsAI && window.Achievements && Achievements.evaluate) {
       Achievements.evaluate({ gameId: 'bagh-chal',
         result: winner === 'draw' ? 'draw' : (localWon ? 'win' : 'loss') });
+    }
+
+    // Shared end-of-game plaque. Status line above is the fallback. Suppressed
+    // in room mode — the room end screen records/announces the result per seat.
+    if (!vsRoom && window.CGEndPlaque) {
+      var _plaqueResult = winner === 'draw'
+        ? 'draw'
+        : (localSide === null ? 'win' : (localWon ? 'win' : 'loss'));
+      var _title = winner === 'draw'
+        ? 'A Draw'
+        : localSide === null
+          ? (winner === 'tigers' ? 'Tigers Win' : 'Goats Win')
+          : (localWon ? 'You Win' : 'You Lose');
+      var _sub = winner === 'draw'
+        ? 'Sixty moves passed with no capture.'
+        : winner === 'tigers'
+          ? 'Five goats were devoured.'
+          : 'Every tiger is trapped.';
+      window.CGEndPlaque.show({
+        result: _plaqueResult,
+        title: _title,
+        subtitle: _sub,
+        stats: [
+          { label: 'Goats Taken', value: state.goatsCaptured }
+        ],
+        onRematch: newGame,
+        rematchText: 'Play Again',
+        accent: '#C98A3C'
+      });
     }
   }
 

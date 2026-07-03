@@ -201,6 +201,24 @@
     Auth.recordResult('pachisi', humanWon ? 'win' : 'loss');
   }
 
+  // Shared end-of-game plaque. The status line ("… wins!") is the fallback;
+  // suppressed in room mode, where the room end screen handles the result.
+  function showEndPlaque(win) {
+    if (!win || !window.CGEndPlaque) return;
+    if (state && state.humanSeat !== undefined && state.humanSeat !== null) return; // room mode
+    var humanWon = (state.mode === '2player') ? win === 'yellow'
+                 : /* 4-player */               win === 'Team A';
+    var label = win.charAt(0).toUpperCase() + win.slice(1);
+    window.CGEndPlaque.show({
+      result: humanWon ? 'win' : 'loss',
+      title: label + ' Wins',
+      subtitle: 'All four pieces are home.',
+      onRematch: newGame,
+      rematchText: 'Play Again',
+      accent: '#B23A2E'
+    });
+  }
+
   function makePieces(owner) {
     var arr = [];
     for (var i = 0; i < 4; i++) {
@@ -1301,6 +1319,7 @@
       redraw();
       updateHUD();
       recordSoloResult(win);
+      showEndPlaque(win);
       return;
     }
 

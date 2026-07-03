@@ -1,5 +1,5 @@
 /* =============================================================================
-   CULTURAL GAMES Ã¢â‚¬â€ games.css
+   CULTURAL GAMES — games.css
    Styles specific to individual game pages and the shared game layout shell.
    Requires global.css and components.css to be loaded first.
    Each game's unique styles live in this file, organized by section.
@@ -24,11 +24,12 @@
   text-align: center;
   padding: var(--space-6) var(--space-4);
   background: linear-gradient(135deg, var(--color-primary) 0%, #2d1810 100%);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-plaque);
   margin-bottom: var(--space-6);
   color: var(--color-text-inverse);
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
 .game-header::before {
@@ -55,7 +56,7 @@
 .game-header__origin {
   font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.65);
-  letter-spacing: 0.1em;
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
   font-weight: var(--weight-medium);
 }
@@ -75,14 +76,15 @@
 }
 
 /* =============================================================================
-   ACCORDION Ã¢â‚¬â€ "How to Play" and "Cultural Context" sections
+   ACCORDION — "How to Play" and "Cultural Context" sections
 ============================================================================= */
 .accordion {
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-plaque);
   overflow: hidden;
   background-color: var(--color-surface);
   margin-bottom: var(--space-3);
+  box-shadow: var(--shadow-sm);
 }
 
 .accordion__trigger {
@@ -152,7 +154,7 @@
 }
 
 /* =============================================================================
-   GAME CONTAINER Ã¢â‚¬â€ where the game canvas renders
+   GAME CONTAINER — where the game canvas renders
 ============================================================================= */
 .game-container {
   background-color: var(--color-surface-alt);
@@ -168,21 +170,46 @@
   padding: var(--space-4);
 }
 
+/* Vitrine frame — in LIGHT MODE ONLY, the (usually hardcoded-dark) board reads
+   as a lit artifact in a display case. box-shadow + border-radius ONLY: zero
+   layout impact, because shared/mobile-zoom.js measures #game-container and any
+   box change (padding/margin/width/border) would break the fit engine. */
+html[data-theme="light"] .game-container {
+  box-shadow:
+    0 0 0 1px var(--color-border),
+    0 0 0 4px color-mix(in srgb, var(--color-accent-gold) 22%, transparent),
+    0 18px 44px rgba(26, 14, 6, 0.18);
+  border-radius: var(--radius-plaque);
+}
+
+/* Phones and fullscreen are full-bleed — no vitrine ring there. */
+@media (max-width: 767px) {
+  html[data-theme="light"] .game-container {
+    box-shadow: none;
+    border-radius: var(--radius-plaque);
+  }
+}
+
+html[data-theme="light"] .fs-game-wrap:fullscreen .game-container,
+html[data-theme="light"] .fs-game-wrap:-webkit-full-screen .game-container {
+  box-shadow: none;
+}
+
 /* =============================================================================
-   DISCLAIMER Ã¢â‚¬â€ "virtual coins only" notice
+   DISCLAIMER — "virtual coins only" notice
 ============================================================================= */
 .game-disclaimer {
   margin-top: var(--space-4);
   padding: var(--space-2) var(--space-3);
   background-color: var(--color-surface-alt);
   border-left: 3px solid var(--color-accent-gold);
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  border-radius: 0 var(--radius-plaque) var(--radius-plaque) 0;
   font-size: var(--text-sm);
   color: var(--color-text-muted);
 }
 
 /* =============================================================================
-   BÃ¡ÂºÂ§u Cua TÃƒÂ´m CÃƒÂ¡ Ã¢â‚¬â€ Phase 2
+   Bau Cua Tom Ca — Phase 2
 ============================================================================= */
 
 /* Outer wrapper */
@@ -330,18 +357,30 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-2);
-  background: linear-gradient(160deg, #FBF6E9 0%, #F5EBD8 60%, #EFE2C8 100%);
+  /* Richer red-lacquer mat: gold corner medallions + a woven-mat weave over a
+     deep vermilion lacquer ground. LOUDER, not muted (blueprint A5). */
+  background:
+    radial-gradient(circle at 14px 14px, rgba(232,184,60,0.9) 0 3.5px, rgba(232,184,60,0) 4.5px),
+    radial-gradient(circle at calc(100% - 14px) 14px, rgba(232,184,60,0.9) 0 3.5px, rgba(232,184,60,0) 4.5px),
+    radial-gradient(circle at 14px calc(100% - 14px), rgba(232,184,60,0.9) 0 3.5px, rgba(232,184,60,0) 4.5px),
+    radial-gradient(circle at calc(100% - 14px) calc(100% - 14px), rgba(232,184,60,0.9) 0 3.5px, rgba(232,184,60,0) 4.5px),
+    repeating-linear-gradient(45deg, rgba(255,240,200,0.05) 0 6px, rgba(120,20,14,0.10) 6px 12px),
+    repeating-linear-gradient(-45deg, rgba(255,240,200,0.05) 0 6px, rgba(120,20,14,0.10) 6px 12px),
+    radial-gradient(ellipse at 50% 28%, #C0301F 0%, #A11A12 55%, #7C1109 100%);
   padding: var(--space-3);
   border-radius: 6px;
-  border: 3px solid #C8281E;
+  /* Gold rope double border: brass rim, then a lacquer channel, then gold rope */
+  border: 2px solid #E8B83C;
   box-shadow:
-    0 0 0 6px #F5EBD8,
-    0 0 0 7.5px #C8281E,
-    0 8px 22px rgba(46,34,24,0.45);
+    0 0 0 2px #8C1310,
+    0 0 0 4px #E6B83C,
+    inset 0 0 0 1px rgba(232,184,60,0.55),
+    inset 0 2px 18px rgba(0,0,0,0.4),
+    0 10px 26px rgba(46,34,24,0.5);
   position: relative;
 }
 
-/* worn vertical fold crease down the paper */
+/* worn vertical fold crease down the lacquer */
 .bc-mat::before {
   content: '';
   position: absolute;
@@ -349,7 +388,7 @@
   top: 0;
   bottom: 0;
   width: 1px;
-  background: rgba(46,34,24,0.08);
+  background: rgba(255,240,200,0.06);
   pointer-events: none;
 }
 
@@ -369,12 +408,25 @@
   user-select: none;
   -webkit-user-select: none;
   font-family: inherit;
+  /* gold-plate frame glinting behind the ivory symbol cell */
+  box-shadow: 0 0 0 3px rgba(232,184,60,0.85), 0 3px 10px rgba(60,10,6,0.45);
+}
+
+/* gilt bevel ring sitting just inside the cell edge — a shrine frame */
+.bc-symbol-zone::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 2px;
+  border: 1px solid rgba(232,184,60,0.55);
+  pointer-events: none;
 }
 
 .bc-symbol-zone:hover:not(:disabled) {
   background: #FFF8EC;
   border-color: #E6B83C;
   transform: scale(1.03);
+  box-shadow: 0 0 0 3px rgba(232,184,60,1), 0 5px 16px rgba(60,10,6,0.5);
 }
 
 .bc-symbol-zone:disabled {
@@ -458,7 +510,7 @@
   pointer-events: none;
 }
 
-/* Bet chip Ã¢â‚¬â€ top-right corner of a selected zone */
+/* Bet chip — top-right corner of a selected zone */
 .bc-bet-chip {
   position: absolute;
   top: 6px;
@@ -477,7 +529,7 @@
   line-height: 1.5;
 }
 
-/* Match count chip Ã¢â‚¬â€ shown after roll */
+/* Match count chip — shown after roll */
 .bc-match-chip {
   position: absolute;
   bottom: 6px;
@@ -1243,7 +1295,7 @@
 }
 
 /* =============================================================================
-   TiÃ¡ÂºÂ¿n LÃƒÂªn Ã¢â‚¬â€ Phase 4
+   Tien Len — Phase 4
 ============================================================================= */
 
 /* Ã¢â€â‚¬Ã¢â€â‚¬ Outer wrapper Ã¢â€â‚¬Ã¢â€â‚¬ */
@@ -1512,7 +1564,7 @@
   to   { opacity: 1; transform: rotate(var(--rot, 0deg)); }
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ 2Ãƒâ€” Speed overrides Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ 2x Speed overrides Ã¢â€â‚¬Ã¢â€â‚¬ */
 .tl-fast .tl-card.dealing {
   animation-duration: 300ms;
   animation-delay: calc(var(--deal-i, 0) * 45ms);
@@ -1602,7 +1654,7 @@
   transform: none;
 }
 
-/* Play Ã¢â‚¬â€ solid green */
+/* Play — solid green */
 .tl-btn--play {
   background: #2a7a3a;
   color: #fff;
@@ -1614,7 +1666,7 @@
   transform: translateY(-2px);
 }
 
-/* Pass Ã¢â‚¬â€ outlined white */
+/* Pass — outlined white */
 .tl-btn--pass {
   background: transparent;
   color: rgba(220, 240, 210, 0.9);
@@ -1626,7 +1678,7 @@
   transform: translateY(-2px);
 }
 
-/* Ghost Ã¢â‚¬â€ subtle, clearly boxed */
+/* Ghost — subtle, clearly boxed */
 .tl-btn--ghost {
   background: rgba(255, 255, 255, 0.05);
   color: rgba(210, 230, 200, 0.75);
@@ -1640,7 +1692,7 @@
   color: rgba(220, 240, 210, 0.95);
 }
 
-/* 2Ãƒâ€” Speed Ã¢â‚¬â€ active/on state */
+/* 2x Speed — active/on state */
 .tl-speed-btn.active {
   background: rgba(255, 210, 50, 0.15);
   border-color: rgba(255, 210, 50, 0.55);
@@ -1750,7 +1802,7 @@
 }
 
 /* =============================================================================
-   Oware Ã¢â‚¬â€ Phase 5
+   Oware — Phase 5
 ============================================================================= */
 
 .ow-game {
@@ -1946,7 +1998,7 @@
   left: calc(50% + var(--x, 0px) - 6.5px);
   top:  calc(50% + var(--y, 0px) - 6.5px);
   transform: rotate(var(--rot, 0deg));
-  /* Warm dark-brown gradient Ã¢â‚¬â€ dried Ayo seed */
+  /* Warm dark-brown gradient — dried Ayo seed */
   background: radial-gradient(circle at 32% 28%, #EEF2E6 0%, #A8AF9C 18%, #99A38C 55%, #6A7160 100%);
   box-shadow: 0 2px 3px rgba(0,0,0,0.55), inset 0 -2px 3px rgba(0,0,0,0.18);
 }
@@ -2004,7 +2056,7 @@
 }
 .ow-pit--clickable .ow-pit__count { color: rgba(242,230,206,0.9); }
 
-/* Last-sown pit Ã¢â‚¬â€ glows amber */
+/* Last-sown pit — glows amber */
 .ow-pit--lit {
   border-color: #E8B33C;
   box-shadow:
@@ -2019,7 +2071,7 @@
   100% { transform: scale(1);    }
 }
 
-/* AI-selected pit Ã¢â‚¬â€ pulsing red-orange before sowing starts */
+/* AI-selected pit — pulsing red-orange before sowing starts */
 .ow-pit--ai-select {
   border-color: #F2C14E;
   box-shadow:
@@ -3434,6 +3486,7 @@ html[data-theme="light"] .pu-game-wrap {
   bottom: 3px;
   left: 0; right: 0;
   text-align: center;
+  font-family: var(--font-display);
   font-size: 0.65rem;
   font-weight: 600;
   color: rgba(242,232,213,0.55);
@@ -3589,6 +3642,7 @@ html[data-theme="light"] .pu-game-wrap {
   text-align: center;
 }
 .pg-store__val {
+  font-family: var(--font-display);
   font-size: 2rem;
   font-weight: 700;
   color: var(--pg-gold);
@@ -3600,6 +3654,37 @@ html[data-theme="light"] .pu-game-wrap {
   color: var(--pg-text-dim);
   text-transform: uppercase;
   letter-spacing: 0.06em;
+}
+
+/* -- Game over plaque (cloned from the oware pattern; Phase C wires the JS) -- */
+.pg-gameover {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-height: 360px;
+  text-align: center;
+}
+.pg-gameover__icon {
+  font-size: 4.5rem;
+  color: var(--pg-gold);
+  animation: pg-pop 420ms cubic-bezier(0.34, 1.56, 0.64, 1) 200ms both;
+}
+@keyframes pg-pop {
+  from { transform: scale(0.1); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+.pg-gameover h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  color: var(--pg-gold);
+  margin: 0;
+}
+.pg-gameover p {
+  font-size: var(--text-sm);
+  color: var(--pg-text-dim);
+  margin: 0;
 }
 
 /* -- Log -- */
@@ -4124,7 +4209,7 @@ html[data-theme="light"] .pu-game-wrap {
    Online Multiplayer Panel (shared across games)
 ============================================================================= */
 .mp-panel {
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-plaque);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   padding: var(--space-3) var(--space-4);
@@ -4132,6 +4217,7 @@ html[data-theme="light"] .pu-game-wrap {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  box-shadow: var(--shadow-sm);
 }
 .mp-row {
   display: flex;
@@ -7630,4 +7716,320 @@ html[data-theme="light"] .pu-game-wrap {
   .ty-status { text-align: left; min-width: 0; flex: 1 1 100%; font-size: var(--text-xs); }
   .ty-controls { flex-wrap: nowrap; gap: 4px; justify-content: center; font-size: 0.78rem; }
   .ty-mode-label { min-height: 40px; font-size: 0.78rem; gap: 4px; }
+}
+
+/* =============================================================================
+   LATRUNCULI — Roman aesthetic (rehomed from the page's inline <style>)
+   Art values preserved exactly (stone slab, tinted-glass pieces). Cinzel is
+   loaded by the page and stays; the page's unloaded sans stack now resolves to
+   the site body face (Be Vietnam Pro).
+   The old .ll-btn / .ll-mode-btn action buttons now use the shared .btn family
+   (see latrunculi.html); .ll-mode-btn remains as a lobby-card art layer on .btn.
+============================================================================= */
+.ll-lobby {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem 4rem;
+  text-align: center;
+  min-height: 60vh;
+  background: radial-gradient(ellipse at center, #3A332A 0%, #26211A 70%);
+}
+
+.ll-lobby__title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-weight: 700;
+  color: #E0A04E;
+  margin: 0 0 0.4rem;
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 12px rgba(224,160,78,0.35);
+}
+
+.ll-lobby__subtitle {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  color: #A89A7F;
+  margin: 0 0 1.2rem;
+  letter-spacing: 0.06em;
+}
+
+.ll-lobby__teaser {
+  color: #C4B69C;
+  max-width: 480px;
+  margin: 0 0 2.5rem;
+  line-height: 1.7;
+  font-size: 1.05rem;
+}
+
+.ll-lobby__modes {
+  display: flex;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Lobby mode cards — Roman art layered on the shared .btn base */
+.ll-mode-btn {
+  background: linear-gradient(135deg, #2E2820 0%, #3A332A 100%);
+  border: 2px solid #5F432C;
+  border-radius: 12px;
+  color: #C4B69C;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.4rem 2rem;
+  text-align: center;
+  transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+  min-width: 180px;
+  white-space: normal;
+}
+
+.ll-mode-btn:hover {
+  border-color: #E0A04E;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(224,160,78,0.25);
+}
+
+.ll-mode-btn strong {
+  font-family: 'Cinzel', serif;
+  font-size: 1.05rem;
+  color: #E0A04E;
+  letter-spacing: 0.03em;
+}
+
+.ll-mode-btn span {
+  font-size: 0.85rem;
+  color: #A89A7F;
+}
+
+/* ── Game container layout ── */
+.ll-game-container {
+  display: flex;
+  flex-direction: row;
+  gap: 1.2rem;
+  align-items: flex-start;
+  background: #26211A;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.ll-canvas-wrap {
+  flex: 1 1 auto;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+#ll-board {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* ── Sidebar ── */
+.ll-sidebar {
+  flex: 0 0 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  background: #2E2820;
+  border: 1px solid #5F432C;
+  border-radius: 10px;
+  padding: 1rem 0.9rem;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+.ll-sidebar__title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  color: #E0A04E;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.ll-turn-indicator {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e8d5b0;
+  padding: 0.5rem 0.6rem;
+  border-radius: 6px;
+  background: rgba(224,160,78,0.08);
+  border-left: 3px solid #E0A04E;
+  text-align: center;
+}
+
+.ll-turn-indicator.white-turn {
+  border-color: #E6EBE0;
+  background: rgba(230,235,224,0.08);
+}
+
+.ll-turn-indicator.black-turn {
+  border-color: #2E7F85;
+  background: rgba(46,127,133,0.15);
+}
+
+.ll-stat {
+  font-size: 0.85rem;
+  color: #C4B69C;
+}
+
+.ll-stat span {
+  color: #E0A04E;
+  font-weight: 600;
+}
+
+.ll-ai-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #C4B69C;
+  cursor: pointer;
+}
+
+.ll-ai-label input[type="checkbox"] {
+  accent-color: #E0A04E;
+}
+
+.ll-divider {
+  height: 1px;
+  background: rgba(95,67,44,0.5);
+  margin: 0.2rem 0;
+}
+
+/* Sidebar actions use the shared .btn family; keep them full-width in the
+   column and give the forfeit button a Roman-red accent. */
+.ll-sidebar #ll-new-btn,
+.ll-sidebar #ll-forfeit-btn {
+  width: 100%;
+}
+
+.ll-btn--forfeit {
+  color: #B05A48;
+  border-color: #6B4434;
+}
+
+.ll-btn--forfeit:hover {
+  border-color: #B05A48;
+  background: rgba(158,59,43,0.12);
+  color: #B05A48;
+}
+
+.ll-landscape-hint {
+  display: none;
+  font-size: 0.8rem;
+  color: #A89A7F;
+  text-align: center;
+  margin-top: 0.4rem;
+}
+
+/* ── Cultural details ── */
+.ll-culture-details {
+  margin-top: 1.5rem;
+}
+
+.ll-culture-details summary {
+  font-family: 'Cinzel', serif;
+  color: #E0A04E;
+  cursor: pointer;
+  padding: 0.6rem 0;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  list-style: none;
+}
+
+.ll-culture-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.ll-culture-details summary::before {
+  content: '+ ';
+}
+
+.ll-culture-details[open] summary::before {
+  content: '- ';
+}
+
+.ll-culture-details p {
+  color: #C4B69C;
+  line-height: 1.7;
+  margin: 0.6rem 0;
+  font-size: 0.9rem;
+}
+
+/* ── Game over overlay ── */
+.ll-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(38,33,26,0.85);
+  border-radius: 4px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s;
+}
+
+.ll-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ll-overlay__title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.8rem;
+  color: #E0A04E;
+  margin: 0 0 0.4rem;
+  text-shadow: 0 2px 12px rgba(224,160,78,0.5);
+}
+
+.ll-overlay__sub {
+  font-size: 1rem;
+  color: #E6EBE0;
+  margin: 0 0 1.2rem;
+}
+
+/* ── Mobile responsive ── */
+@media (max-width: 680px) {
+  .ll-game-container {
+    flex-direction: column;
+  }
+
+  .ll-sidebar {
+    flex: none;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .ll-sidebar__title {
+    width: 100%;
+  }
+
+  .ll-turn-indicator {
+    flex: 1 1 auto;
+  }
+
+  .ll-stat {
+    flex: 1 1 auto;
+  }
+
+  .ll-landscape-hint {
+    display: block;
+  }
+}
+
+@media (max-width: 400px) {
+  .ll-lobby__modes {
+    flex-direction: column;
+    align-items: center;
+  }
 }

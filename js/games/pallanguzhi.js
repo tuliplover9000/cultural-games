@@ -515,16 +515,43 @@
     var an = mode === 'vs-human' ? 'Player 2' : 'AI';
 
     if (ps > as) {
-      state.endMsg = '\uD83C\uDFC6 ' + pn + (mode === 'vs-human' ? ' wins' : ' win') + '! ' + ps + ' \u2013 ' + as;
+      state.endMsg = pn + (mode === 'vs-human' ? ' wins' : ' win') + '! ' + ps + ' \u2013 ' + as;
       addLog(pn + ' wins ' + ps + '\u2013' + as + '!');
     } else if (as > ps) {
-      state.endMsg = '\uD83C\uDFC6 ' + an + ' wins! ' + as + ' \u2013 ' + ps;
+      state.endMsg = an + ' wins! ' + as + ' \u2013 ' + ps;
       addLog(an + ' wins ' + as + '\u2013' + ps + '!');
     } else {
       state.endMsg = 'Draw \u2014 both have ' + ps + ' shells.';
       addLog('Draw! ' + ps + '\u2013' + as);
     }
     render();
+    // Shared end-of-game plaque (celebratory frame). Status line above is the
+    // fallback. Suppressed in room mode \u2014 the room end screen handles that.
+    if (!vsRoom && window.CGEndPlaque) {
+      var _result = ps > as ? 'win' : as > ps ? 'loss' : 'draw';
+      // In vs-human, the human at seat P1 always views from P1's side, so a
+      // P1 win is a 'win' and a P2 win is framed neutrally as the P2 result.
+      var _plaqueResult = mode === 'vs-human'
+        ? (ps === as ? 'draw' : 'win')
+        : _result;
+      var _title = ps > as
+        ? (mode === 'vs-human' ? 'Player 1 Wins' : 'You Win')
+        : as > ps
+        ? (mode === 'vs-human' ? 'Player 2 Wins' : 'AI Wins')
+        : 'A Draw';
+      window.CGEndPlaque.show({
+        result: _plaqueResult,
+        title: _title,
+        subtitle: 'All shells have been gathered.',
+        stats: [
+          { label: p1Name(), value: ps },
+          { label: p2Name(), value: as }
+        ],
+        onRematch: newGame,
+        rematchText: 'Play Again',
+        accent: '#C9822E'
+      });
+    }
     return true;
   }
 

@@ -225,11 +225,33 @@
     if (!vsRoom && window.Auth && Auth.isLoggedIn())
       Auth.recordResult('puluc', winner === PLAYER ? 'win' : 'loss');
     elRollBtn.disabled = true;
-    setStatus('🎉 ' + playerName(winner) + ' wins! All ' + PIECES + ' sticks reached the field.');
+    setStatus(playerName(winner) + ' wins! All ' + PIECES + ' sticks reached the field.');
     addLog('─── ' + playerName(winner) + ' wins! ───');
     renderScore();
     render();
-    if (vsRoom) syncRoomState();
+    if (vsRoom) { syncRoomState(); return; }
+    // Shared end-of-game plaque. Status line above is the fallback; suppressed
+    // in room mode (the room end screen handles that case).
+    if (window.CGEndPlaque) {
+      var _plaqueResult = mode === 'vs-human'
+        ? 'win'
+        : (winner === PLAYER ? 'win' : 'loss');
+      var _title = mode === 'vs-human'
+        ? playerName(winner) + ' Wins'
+        : (winner === PLAYER ? 'You Win' : 'AI Wins');
+      window.CGEndPlaque.show({
+        result: _plaqueResult,
+        title: _title,
+        subtitle: 'All ' + PIECES + ' sticks reached the field.',
+        stats: [
+          { label: p1Name(), value: state.captured[PLAYER] },
+          { label: p2Name(), value: state.captured[AI] }
+        ],
+        onRematch: newGame,
+        rematchText: 'Play Again',
+        accent: '#C98A3C'
+      });
+    }
   }
 
   // ── End turn ──────────────────────────────────────────────────────────

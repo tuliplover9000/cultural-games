@@ -899,7 +899,7 @@
         ctx.lineWidth = 0.8;
         ctx.stroke();
       }
-      ctx.font = isActive ? 'bold 10px Cinzel, serif' : '10px Cinzel, serif';
+      ctx.font = isActive ? 'bold 10px Fraunces, Georgia, serif' : '10px Fraunces, Georgia, serif';
       ctx.fillStyle = isActive ? '#D4A437' : 'rgba(242,232,206,0.5)';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText(SEAT_LABELS[d.seat], d.x, d.y);
@@ -946,7 +946,7 @@
     // Led suit label
     if (state.ledSuit) {
       var suit = SUIT_MAP[state.ledSuit];
-      ctx.font = 'bold 11px Cinzel, serif';
+      ctx.font = 'bold 11px Fraunces, Georgia, serif';
       ctx.fillStyle = 'rgba(242,232,206,0.7)';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText('Led: ' + suit.name, CX, CY);
@@ -1066,7 +1066,7 @@
     ctx.lineWidth = 1.2;
     ctx.stroke();
 
-    ctx.font = 'bold 11px Cinzel, serif';
+    ctx.font = 'bold 11px Fraunces, Georgia, serif';
     ctx.fillStyle = '#D4A437';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
@@ -1079,7 +1079,7 @@
     ctx.lineWidth = 0.7;
     ctx.stroke();
 
-    ctx.font = '11px Outfit, sans-serif';
+    ctx.font = '11px "Be Vietnam Pro", sans-serif';
     SEATS.forEach(function (seat, i) {
       var label = SEAT_LABELS[seat];
       var score = state.scores[seat];
@@ -1094,7 +1094,7 @@
     ctx.strokeStyle = '#C9952C';
     ctx.lineWidth = 1.2;
     ctx.stroke();
-    ctx.font = '11px Cinzel, serif';
+    ctx.font = '11px Fraunces, Georgia, serif';
     ctx.fillStyle = '#D4A437';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
@@ -1110,7 +1110,7 @@
     ctx.lineWidth = 1.2;
     ctx.stroke();
 
-    ctx.font = 'bold 11px Cinzel, serif';
+    ctx.font = 'bold 11px Fraunces, Georgia, serif';
     ctx.fillStyle = '#D4A437';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
@@ -1123,7 +1123,7 @@
     ctx.lineWidth = 0.7;
     ctx.stroke();
 
-    ctx.font = '11px Outfit, sans-serif';
+    ctx.font = '11px "Be Vietnam Pro", sans-serif';
     SEATS.forEach(function (seat, i) {
       ctx.fillStyle = seat === 'south' ? '#D4A437' : '#F2E8CE';
       ctx.fillText(SEAT_LABELS[seat] + ': ' + state.tricksWon[seat], tpX + 10, tpY + 26 + i * 18);
@@ -1144,13 +1144,13 @@
       ctx.lineWidth = 1.2;
       ctx.stroke();
 
-      ctx.font = 'bold 11px Cinzel, serif';
+      ctx.font = 'bold 11px Fraunces, Georgia, serif';
       ctx.fillStyle = '#D4A437';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
       ctx.fillText('TRUMP', tX + 10, tY + 8);
 
-      ctx.font = 'bold 14px Cinzel, serif';
+      ctx.font = 'bold 14px Fraunces, Georgia, serif';
       ctx.fillStyle = '#F2E8CE';
       ctx.fillText(suit.name, tX + 10, tY + 26);
 
@@ -1174,7 +1174,7 @@
       }
     }
     if (turnText) {
-      ctx.font = 'bold 13px Cinzel, serif';
+      ctx.font = 'bold 13px Fraunces, Georgia, serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillStyle = 'rgba(242,232,206,0.9)';
@@ -1192,7 +1192,7 @@
     ctx.stroke();
 
     // Header
-    ctx.font = 'bold 10px Cinzel, serif';
+    ctx.font = 'bold 10px Fraunces, Georgia, serif';
     ctx.fillStyle = '#D4A437';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
@@ -1210,7 +1210,7 @@
     var maxRows = Math.floor((h - 24) / rowH);
 
     if (history.length === 0) {
-      ctx.font = '10px Outfit, sans-serif';
+      ctx.font = '10px "Be Vietnam Pro", sans-serif';
       ctx.fillStyle = 'rgba(242,232,206,0.35)';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -1243,18 +1243,18 @@
       ctx.fill();
 
       // Trick # and suit name
-      ctx.font = 'bold 9px Cinzel, serif';
+      ctx.font = 'bold 9px Fraunces, Georgia, serif';
       ctx.fillStyle = '#D4A437';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
       ctx.fillText('#' + trickNum, x + 28, ry + 2);
 
-      ctx.font = '9px Outfit, sans-serif';
+      ctx.font = '9px "Be Vietnam Pro", sans-serif';
       ctx.fillStyle = '#F2E8CE';
       ctx.fillText(suit ? suit.name : '?', x + 28, ry + 13);
 
       // Winner
-      ctx.font = '10px Outfit, sans-serif';
+      ctx.font = '10px "Be Vietnam Pro", sans-serif';
       ctx.fillStyle = entry.winner === 'south' ? '#D4A437' : 'rgba(242,232,206,0.8)';
       ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';
@@ -1271,32 +1271,32 @@
     ctx.textBaseline = 'middle';
 
     if (state.phase === 'game-over') {
-      ctx.font = 'bold 32px Cinzel, serif';
+      ctx.font = 'bold 32px Fraunces, Georgia, serif';
       ctx.fillStyle = '#D4A437';
       ctx.fillText('Game Over', CX, CY - 80);
 
-      ctx.font = 'bold 20px Cinzel, serif';
+      ctx.font = 'bold 20px Fraunces, Georgia, serif';
       ctx.fillStyle = '#F2E8CE';
       var winLabel = state.winner === 'south' ? 'You win!' : SEAT_LABELS[state.winner] + ' wins!';
       ctx.fillText(winLabel, CX, CY - 44);
 
-      ctx.font = '14px Outfit, sans-serif';
+      ctx.font = '14px "Be Vietnam Pro", sans-serif';
       SEATS.forEach(function (seat, i) {
         ctx.fillStyle = seat === state.winner ? '#D4A437' : '#F2E8CE';
         ctx.fillText(SEAT_LABELS[seat] + ': ' + state.scores[seat] + ' pts', CX, CY - 8 + i * 22);
       });
 
-      ctx.font = '13px Outfit, sans-serif';
+      ctx.font = '13px "Be Vietnam Pro", sans-serif';
       ctx.fillStyle = 'rgba(242,232,206,0.65)';
       ctx.fillText('Click to play again', CX, CY + 110);
 
     } else if (state.phase === 'round-end') {
-      ctx.font = 'bold 26px Cinzel, serif';
+      ctx.font = 'bold 26px Fraunces, Georgia, serif';
       ctx.fillStyle = '#D4A437';
       ctx.fillText('Round ' + state.round + ' Complete', CX, CY - 90);
 
       // Tricks per seat
-      ctx.font = '13px Outfit, sans-serif';
+      ctx.font = '13px "Be Vietnam Pro", sans-serif';
       ctx.fillStyle = '#F2E8CE';
       SEATS.forEach(function (seat, i) {
         ctx.fillText(SEAT_LABELS[seat] + ': ' + state.tricksWon[seat] + ' tricks', CX, CY - 58 + i * 20);
@@ -1308,22 +1308,22 @@
         if (state.tricksWon[seat] === 24) slamSeat = seat;
       });
       if (slamSeat) {
-        ctx.font = 'bold 14px Cinzel, serif';
+        ctx.font = 'bold 14px Fraunces, Georgia, serif';
         ctx.fillStyle = '#D4A437';
         ctx.fillText('SLAM! +5 bonus for ' + SEAT_LABELS[slamSeat], CX, CY + 20);
       }
 
       // Scores
-      ctx.font = 'bold 13px Cinzel, serif';
+      ctx.font = 'bold 13px Fraunces, Georgia, serif';
       ctx.fillStyle = '#D4A437';
       ctx.fillText('Cumulative Scores', CX, CY + 44);
-      ctx.font = '13px Outfit, sans-serif';
+      ctx.font = '13px "Be Vietnam Pro", sans-serif';
       ctx.fillStyle = '#F2E8CE';
       SEATS.forEach(function (seat, i) {
         ctx.fillText(SEAT_LABELS[seat] + ': ' + state.scores[seat], CX, CY + 64 + i * 18);
       });
 
-      ctx.font = '13px Outfit, sans-serif';
+      ctx.font = '13px "Be Vietnam Pro", sans-serif';
       ctx.fillStyle = 'rgba(242,232,206,0.65)';
       ctx.fillText('Click anywhere to continue', CX, CY + 150);
     }

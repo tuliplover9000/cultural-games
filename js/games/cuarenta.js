@@ -734,7 +734,11 @@
 
     var newBtn = el.querySelector('#cu-new-btn');
     if (newBtn) newBtn.addEventListener('click', function () {
-      if (confirm('Start a new game?')) newGame();
+      if (window.CGDialog) {
+        CGDialog.confirm({ title: 'Start a new game?', confirmText: 'New Game' }).then(function (ok) { if (ok) newGame(); });
+      } else if (confirm('Start a new game?')) {
+        newGame();
+      }
     });
   }
 

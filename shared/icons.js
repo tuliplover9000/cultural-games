@@ -128,7 +128,22 @@
       '<rect x="4" y="6" width="16" height="13" rx="4"/>' +
       '<circle cx="9" cy="12.5" r="1.2"/>' +
       '<circle cx="15" cy="12.5" r="1.2"/>' +
-      '<path d="M9.5 16h5"/>'
+      '<path d="M9.5 16h5"/>',
+    /* balance scales — loss / defeat plaque medallion */
+    scales:
+      '<path d="M12 3v18"/>' +
+      '<path d="M7 21h10"/>' +
+      '<path d="M4 7h16"/>' +
+      '<path d="M7 4.5 5 7l-2.5 5a3 3 0 0 0 5 0L5 7"/>' +
+      '<path d="M17 4.5 19 7l2.5 5a3 3 0 0 1-5 0L19 7"/>' +
+      '<path d="M7 4.5 12 3l5 1.5"/>',
+    /* clasped hands — draw / stalemate plaque medallion */
+    handshake:
+      '<path d="m11 17 2 2a1 1 0 1 0 3-3"/>' +
+      '<path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/>' +
+      '<path d="m21 3 1 11h-2"/>' +
+      '<path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/>' +
+      '<path d="M3 4h8"/>'
   };
 
   /* ── svg(name, size, extraClass) → SVG string ── */

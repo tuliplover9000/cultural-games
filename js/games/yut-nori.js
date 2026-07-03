@@ -1218,7 +1218,7 @@
 
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = 'bold ' + Math.floor(h * 0.072) + 'px "Playfair Display",serif';
+    ctx.font = 'bold ' + Math.floor(h * 0.072) + "px 'Fraunces', Georgia, serif";
     ctx.fillStyle = cssVar('--color-accent-gold', '#C89B3C');
     ctx.fillText(ko, w / 2, h / 2 - h * 0.055);
 

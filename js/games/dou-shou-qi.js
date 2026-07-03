@@ -605,9 +605,9 @@
     ctx.fillStyle = C.pieceText;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = 'bold ' + (r * 0.92).toFixed(0) + 'px Outfit, sans-serif';
+    ctx.font = 'bold ' + (r * 0.92).toFixed(0) + "px 'Be Vietnam Pro', sans-serif";
     ctx.fillText(ANIMAL_LETTER[piece.rank], x, y - r * 0.18);
-    ctx.font = 'bold ' + (r * 0.62).toFixed(0) + 'px Outfit, sans-serif';
+    ctx.font = 'bold ' + (r * 0.62).toFixed(0) + "px 'Be Vietnam Pro', sans-serif";
     ctx.fillText(String(piece.rank), x, y + r * 0.42);
 
     if (sel) {
@@ -801,11 +801,11 @@
 
     if (localSide === null) { // hotseat
       setStatus(winSide === BOTTOM
-        ? '🏆 Blue wins! Player 1 has broken through to the den.'
-        : '🏆 Red wins! Player 2 has broken through to the den.');
+        ? 'Blue wins! Player 1 has broken through to the den.'
+        : 'Red wins! Player 2 has broken through to the den.');
     } else if (localWon) {
-      setStatus(vsRoom ? '🎉 You win! You stormed the enemy den.'
-                       : '🎉 You win! You stormed the computer’s den.');
+      setStatus(vsRoom ? 'You win! You stormed the enemy den.'
+                       : 'You win! You stormed the computer’s den.');
     } else {
       setStatus(vsRoom ? 'Your opponent reached your den or trapped your animals.'
                        : 'The computer wins — it reached your den or trapped your animals.');
@@ -877,7 +877,7 @@
       if (state.winner === 'draw') {
         setStatus('Draw — many moves passed with no capture, and neither side could break through.');
       } else if (winSide === myPlayer) {
-        setStatus('🎉 You win! You stormed the enemy den.');
+        setStatus('You win! You stormed the enemy den.');
       } else {
         setStatus('Your opponent reached your den or trapped your animals.');
       }

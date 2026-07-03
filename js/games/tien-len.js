@@ -817,6 +817,14 @@
     return `<div class="tl-card__corner tl-card__corner--tl"><div class="tl-card__rank">${c.rank}</div><div class="tl-card__suit-s">${c.suit}</div></div><div class="tl-card__center">${c.suit}</div><div class="tl-card__corner tl-card__corner--br"><div class="tl-card__rank">${c.rank}</div><div class="tl-card__suit-s">${c.suit}</div></div>`;
   }
 
+  // Victory glyph for the game-over card: crafted trophy icon when icons.js is
+  // loaded, else the celebratory emoji fallback.
+  function tlWinGlyph() {
+    return (window.Icon && Icon.svg && Icon.has && Icon.has('trophy'))
+      ? Icon.svg('trophy', 34)
+      : '\uD83C\uDFC6';
+  }
+
   function renderGameOver(el) {
     const w   = state.winner;
     const isP = w === myPS();
@@ -826,7 +834,7 @@
 
     el.innerHTML = `<div class="tl-game${VN_SKIN ? ' tl-vn' : ''}">
   <div class="tl-gameover visible">
-    <div class="tl-gameover__icon">${isP ? '🏆' : '🃏'}</div>
+    <div class="tl-gameover__icon">${isP ? tlWinGlyph() : '🃏'}</div>
     <h2>${isP ? 'Tiến Lên!' : `${pName(w)} Wins!`}</h2>
     ${VN_SKIN ? '<p class="tl-vn-flavor">Tới rồi!</p>' : ''}
     <p>${isP ? 'You emptied your hand first. Go forward!' : `${pName(w)} played all their cards first.`}</p>

@@ -43,6 +43,19 @@
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
+  // ── UI glyph helpers (icons.js when present; graceful text fallback) ─────────
+  // Returns an inline SVG string for a named UI glyph, sized in px, or a small
+  // styled text fallback so the UI never shows a raw emoji or an empty gap.
+  function glyph(name, size, fallback) {
+    if (window.Icon && Icon.has && Icon.has(name)) return Icon.svg(name, size || 16);
+    return '<span aria-hidden="true">' + (fallback || '') + '</span>';
+  }
+  // A gilt coin glyph used everywhere a coin count is shown.
+  function coinGlyph(size) {
+    return '<span aria-hidden="true" style="color:var(--color-accent-gold,#E0A04E);display:inline-flex;vertical-align:-0.16em;margin-right:.28em;">' +
+      glyph('coin', size || 16, '') + '</span>';
+  }
+
   // ── Room / group-play mode ──────────────────────────────────────────────────
   var vsRoom      = !!(window.RoomBridge && window.RoomBridge.isActive());
   var roomHost    = vsRoom && window.RoomBridge.isRoomHost();
@@ -104,10 +117,10 @@
       '  <div class="bc-wallet-bar">',
       '    <div>',
       '      <div class="bc-wallet-bar__label" id="bc-wallet-label">Wallet</div>',
-      '      <div class="bc-wallet-amount" id="bc-wallet">🪙 100</div>',
+      '      <div class="bc-wallet-amount" id="bc-wallet">' + coinGlyph(20) + '100</div>',
       '    </div>',
       '    <div id="bc-coin-mode-wrap" class="bc-coin-mode-wrap" style="display:none">',
-      '      <button id="bc-mode-btn" class="bc-mode-btn" type="button">💰 Use Real Coins</button>',
+      '      <button id="bc-mode-btn" class="bc-mode-btn" type="button">' + coinGlyph(15) + 'Use Real Coins</button>',
       '    </div>',
       '    <div style="text-align:right;">',
       '      <div class="bc-wallet-bar__label">Round</div>',
@@ -146,7 +159,7 @@
       '  <div class="bc-actions">',
       '    <button id="bc-clear-btn" class="btn btn-ghost" disabled>Clear Bets</button>',
       '    <button id="bc-place-btn" class="btn btn-secondary" disabled>Place Bet →</button>',
-      '    <button id="bc-roll-btn"  class="btn btn-primary"  disabled>Roll Dice 🎲</button>',
+      '    <button id="bc-roll-btn"  class="btn btn-primary"  disabled>Roll Dice ' + glyph('dice', 16, '') + '</button>',
       '  </div>',
 
       // Status
@@ -168,18 +181,18 @@
       '    <ul class="bc-results-list" id="bc-results-list"></ul>',
       '    <div class="bc-net" id="bc-net"></div>',
       '    <div class="bc-actions">',
-      '      <button id="bc-again-btn" class="btn btn-primary btn-lg">Roll Again 🎲</button>',
+      '      <button id="bc-again-btn" class="btn btn-primary btn-lg">Roll Again ' + glyph('dice', 18, '') + '</button>',
       '    </div>',
       '  </div>',
 
       // Game Over panel (hidden until wallet = 0)
       '  <div class="bc-gameover" id="bc-gameover">',
-      '    <div class="bc-gameover__emoji" aria-hidden="true">😔</div>',
+      '    <div class="bc-gameover__emoji" aria-hidden="true">' + glyph('scales', 40, '') + '</div>',
       '    <h2>Out of coins!</h2>',
       '    <p>Better luck next time.</p>',
       '    <div class="bc-stats" id="bc-stats"></div>',
       '    <div class="bc-actions">',
-      '      <button id="bc-restart-btn" class="btn btn-primary btn-lg">Play Again (100 🪙)</button>',
+      '      <button id="bc-restart-btn" class="btn btn-primary btn-lg">Play Again (100 ' + glyph('coin', 15, '') + ')</button>',
       '      <a href="../browse.html" class="btn btn-ghost btn-lg">Back to Browse</a>',
       '    </div>',
       '  </div>',
@@ -475,7 +488,9 @@
     if (net < state.stats.biggestLoss) state.stats.biggestLoss = net;
 
     // Render results panel
-    els.resultsTitle.textContent = net >= 0 ? '🎉 You won!' : '💸 You lost.';
+    els.resultsTitle.innerHTML = net >= 0
+      ? '<span style="color:var(--color-accent-gold,#E0A04E);display:inline-flex;vertical-align:-0.14em;margin-right:.3em;">' + glyph('trophy', 20, '') + '</span>You won!'
+      : '<span style="color:var(--color-accent-red,#B4442E);display:inline-flex;vertical-align:-0.14em;margin-right:.3em;">' + glyph('coin', 20, '') + '</span>You lost.';
 
     els.resultsList.innerHTML = rows.map(function (row) {
       return '<li class="bc-result-item ' + (row.win ? 'win' : 'loss') + '">'
@@ -553,6 +568,27 @@
       '  <div class="bc-stat__label">Biggest Loss</div>',
       '</div>',
     ].join('');
+
+    // Shared end-of-game plaque (solo only — room play keeps the leaderboard flow).
+    // Guarded so the game runs fine if game-over.js isn't loaded; the in-page
+    // .bc-gameover panel stays as the always-present fallback + restart controls.
+    if (!vsRoom && window.CGEndPlaque) {
+      CGEndPlaque.show({
+        result:   'loss',
+        title:    'Out of Coins',
+        subtitle: 'Your wallet ran dry — but the table keeps its luck. Play again?',
+        accent:   '#E0A04E',
+        stats: [
+          { label: 'Rounds',      value: state.stats.rounds },
+          { label: 'Biggest Win', value: '+' + state.stats.biggestWin },
+          { label: 'Biggest Loss', value: state.stats.biggestLoss }
+        ],
+        rematchText: 'Play Again',
+        onRematch: function () { restartGame(); },
+        menuText: 'Back to Browse',
+        onMenu:  function () { window.location.href = '../browse.html'; }
+      });
+    }
   }
 
   function restartGame() {
@@ -600,7 +636,7 @@
     var hasBets   = Object.keys(state.bets).length > 0;
 
     // Wallet + round counter
-    els.wallet.textContent = (useRealCoins ? '💰 ' : '🪙 ') + state.wallet;
+    els.wallet.innerHTML = coinGlyph(20) + state.wallet;
     els.round.textContent  = state.stats.rounds + 1;
 
     // Coin mode label + toggle button
@@ -608,7 +644,9 @@
       els.walletLabel.textContent = useRealCoins ? 'Real Coins' : 'Wallet';
     }
     if (els.modeBtn) {
-      els.modeBtn.textContent = useRealCoins ? '🎮 Switch to Practice' : '💰 Use Real Coins';
+      els.modeBtn.innerHTML = useRealCoins
+        ? glyph('gamepad', 15, '') + ' Switch to Practice'
+        : coinGlyph(15) + 'Use Real Coins';
       els.modeBtn.classList.toggle('bc-mode-btn--active', useRealCoins);
       els.modeBtn.disabled = (state.phase !== 'betting');
     }
@@ -654,7 +692,9 @@
       var lb = document.createElement('div');
       lb.className = 'bc-leaderboard';
       lb.id = 'bc-leaderboard';
-      lb.innerHTML = '<h4 class="bc-leaderboard__title">🏆 Leaderboard</h4><ul id="bc-lb-list" class="bc-lb-list"></ul>';
+      lb.innerHTML = '<h4 class="bc-leaderboard__title">' +
+        '<span style="color:var(--color-accent-gold,#E0A04E);display:inline-flex;vertical-align:-0.14em;margin-right:.32em;">' + glyph('trophy', 17, '') + '</span>' +
+        'Leaderboard</h4><ul id="bc-lb-list" class="bc-lb-list"></ul>';
       walletBar.parentNode.insertBefore(lb, walletBar.nextSibling);
     }
 
@@ -729,17 +769,19 @@
     });
     entries.sort(function(a, b) { return b.wallet - a.wallet; });
 
-    var medals = ['🥇', '🥈', '🥉'];
+    // Rank badges: gold/silver/bronze tinted numerals (no emoji medals).
+    var medalTint = ['#E0A04E', '#C7CBD1', '#C08457'];
     lbList.innerHTML = entries.map(function(e, i) {
       var color   = SEAT_COLORS[e.seat % SEAT_COLORS.length];
       var initial = e.name[0].toUpperCase();
-      var rank    = medals[i] || ('#' + (i + 1));
+      var rank    = '#' + (i + 1);
+      var rankStyle = (i < 3) ? ' style="color:' + medalTint[i] + ';font-weight:700;"' : '';
       var isMe    = e.seat === mySeat;
       return '<li class="bc-lb-item' + (isMe ? ' bc-lb-item--me' : '') + '">' +
-        '<span class="bc-lb-rank">' + rank + '</span>' +
+        '<span class="bc-lb-rank"' + rankStyle + '>' + rank + '</span>' +
         '<span class="bc-lb-avatar" style="background:' + color + '">' + initial + '</span>' +
         '<span class="bc-lb-name">' + esc(e.name) + (isMe ? ' <em style="font-weight:400;opacity:.6">(you)</em>' : '') + '</span>' +
-        '<span class="bc-lb-coins">🪙 ' + e.wallet + '</span>' +
+        '<span class="bc-lb-coins">' + coinGlyph(14) + e.wallet + '</span>' +
       '</li>';
     }).join('');
   }

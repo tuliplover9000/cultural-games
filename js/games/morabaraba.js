@@ -805,10 +805,10 @@
       setStatus('Draw — 10 moves passed with no cow taken. Neither herd can break through.');
     } else if (localSide === null) { // hotseat
       setStatus(winner === 'light'
-        ? '🏆 Light wins! Player 1 has broken the herd — Dark cannot continue.'
-        : '🏆 Dark wins! Player 2 has broken the herd — Light cannot continue.');
+        ? 'Light wins! Player 1 has broken the herd — Dark cannot continue.'
+        : 'Dark wins! Player 2 has broken the herd — Light cannot continue.');
     } else if (localWon) {
-      setStatus('🎉 You win! The opponent’s herd is broken.');
+      setStatus('You win! The opponent’s herd is broken.');
     } else {
       setStatus('The computer wins — your herd is broken. Try guarding your mills.');
     }
@@ -819,6 +819,30 @@
     }
     if (vsAI && window.Achievements && Achievements.evaluate) {
       Achievements.evaluate({ gameId: 'morabaraba', result: result });
+    }
+
+    // Shared end-of-game plaque. Status line above is the fallback. Morabaraba
+    // has no online mode, so no room suppression is needed.
+    if (window.CGEndPlaque) {
+      var _plaqueResult = winner === 'draw'
+        ? 'draw'
+        : (localSide === null ? 'win' : (localWon ? 'win' : 'loss'));
+      var _title = winner === 'draw'
+        ? 'A Draw'
+        : localSide === null
+          ? (winner === 'light' ? 'Light Wins' : 'Dark Wins')
+          : (localWon ? 'You Win' : 'The Computer Wins');
+      var _sub = winner === 'draw'
+        ? 'Ten moves passed with no capture.'
+        : 'The losing herd can no longer break through.';
+      window.CGEndPlaque.show({
+        result: _plaqueResult,
+        title: _title,
+        subtitle: _sub,
+        onRematch: newGame,
+        rematchText: 'Play Again',
+        accent: '#C98A3C'
+      });
     }
   }
 

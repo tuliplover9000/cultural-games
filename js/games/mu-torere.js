@@ -424,15 +424,17 @@
 
   function updateScore() {
     if (!elScore) return;
+    var dotBlack = '<span aria-hidden="true" style="display:inline-block;width:.62em;height:.62em;border-radius:50%;background:#1B1714;box-shadow:inset 0 0 0 1px rgba(255,255,255,.28);vertical-align:-0.02em;margin-right:.35em;"></span>';
+    var dotWhite = '<span aria-hidden="true" style="display:inline-block;width:.62em;height:.62em;border-radius:50%;background:#F2EAD6;box-shadow:inset 0 0 0 1px #B7A579;vertical-align:-0.02em;margin-right:.35em;"></span>';
     if (vsRoom) {
       elScore.innerHTML =
-        '<span class="mt-score__black">&#9899; Black &middot; ' + (myPlayer === BLACK ? 'you' : 'opponent') + '</span>' +
-        '<span class="mt-score__white">&#9898; White &middot; ' + (myPlayer === WHITE ? 'you' : 'opponent') + '</span>';
+        '<span class="mt-score__black">' + dotBlack + 'Black &middot; ' + (myPlayer === BLACK ? 'you' : 'opponent') + '</span>' +
+        '<span class="mt-score__white">' + dotWhite + 'White &middot; ' + (myPlayer === WHITE ? 'you' : 'opponent') + '</span>';
       return;
     }
     elScore.innerHTML =
-      '<span class="mt-score__black">&#9899; Black &middot; you move first</span>' +
-      '<span class="mt-score__white">&#9898; White' + (vsAI ? ' &middot; computer' : ' &middot; Player 2') + '</span>';
+      '<span class="mt-score__black">' + dotBlack + 'Black &middot; you move first</span>' +
+      '<span class="mt-score__white">' + dotWhite + 'White' + (vsAI ? ' &middot; computer' : ' &middot; Player 2') + '</span>';
   }
 
   function phaseHint() {
@@ -555,12 +557,12 @@
       setStatus('Draw — neither side can be trapped. A perfectly played Mū tōrere is a draw.');
     } else if (localSide === null) { // hotseat
       setStatus(winner === 'black'
-        ? '🏆 Black wins! White has no legal move — trapped.'
-        : '🏆 White wins! Black has no legal move — trapped.');
+        ? 'Black wins! White has no legal move — trapped.'
+        : 'White wins! Black has no legal move — trapped.');
     } else if (localWon) {
       setStatus(vsRoom
-        ? '🎉 You win! Your opponent has no legal move — trapped.'
-        : '🎉 You win! The computer is trapped with no legal move.');
+        ? 'You win! Your opponent has no legal move — trapped.'
+        : 'You win! The computer is trapped with no legal move.');
     } else {
       setStatus(vsRoom
         ? 'Your opponent wins — you have no legal move. Try blocking their pieces instead.'
@@ -635,7 +637,7 @@
       if (state.winner === 'draw') {
         setStatus('Draw — neither side can be trapped. A perfectly played Mū tōrere is a draw.');
       } else if (localWon) {
-        setStatus('🎉 You win! Your opponent has no legal move — trapped.');
+        setStatus('You win! Your opponent has no legal move — trapped.');
       } else {
         setStatus('Your opponent wins — you have no legal move. Try blocking their pieces instead.');
       }

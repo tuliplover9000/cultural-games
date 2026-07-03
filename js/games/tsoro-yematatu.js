@@ -344,10 +344,12 @@
 
   function updateScore() {
     if (!elScore) return;
+    var dotBlack = '<span aria-hidden="true" style="display:inline-block;width:.62em;height:.62em;border-radius:50%;background:#3A2616;box-shadow:inset 0 0 0 1px rgba(255,255,255,.28);vertical-align:-0.02em;margin-right:.35em;"></span>';
+    var dotWhite = '<span aria-hidden="true" style="display:inline-block;width:.62em;height:.62em;border-radius:50%;background:#F0E5CC;box-shadow:inset 0 0 0 1px #B49B66;vertical-align:-0.02em;margin-right:.35em;"></span>';
     elScore.innerHTML =
-      '<span class="ty-score__black">&#9899; Black &middot; ' + countOnBoard(state.board, BLACK) +
+      '<span class="ty-score__black">' + dotBlack + 'Black &middot; ' + countOnBoard(state.board, BLACK) +
         ' down' + (state.inHand[BLACK] ? ' / ' + state.inHand[BLACK] + ' in hand' : '') + '</span>' +
-      '<span class="ty-score__white">&#9898; White &middot; ' + countOnBoard(state.board, WHITE) +
+      '<span class="ty-score__white">' + dotWhite + 'White &middot; ' + countOnBoard(state.board, WHITE) +
         ' down' + (state.inHand[WHITE] ? ' / ' + state.inHand[WHITE] + ' in hand' : '') + '</span>';
   }
 
@@ -438,9 +440,9 @@
     if (winner === 'draw') {
       setStatus('Draw — neither side can line up three. A fresh game?');
     } else if (localSide === null) {
-      setStatus(winner === 'black' ? '🏆 Black wins — three in a row! (Player 1)' : '🏆 White wins — three in a row! (Player 2)');
+      setStatus(winner === 'black' ? 'Black wins — three in a row! (Player 1)' : 'White wins — three in a row! (Player 2)');
     } else if (localWon) {
-      setStatus('🎉 You win — three in a row!');
+      setStatus('You win — three in a row!');
     } else {
       setStatus(vsRoom ? 'Your opponent lines up three and wins.' : 'The computer lines up three and wins. Watch its threats!');
     }
@@ -490,7 +492,7 @@
       state.phase = 'over';
       var localWon = (state.winner === 'black' && mySide === BLACK) || (state.winner === 'white' && mySide === WHITE);
       if (state.winner === 'draw') setStatus('Draw — neither side can line up three.');
-      else if (localWon) setStatus('🎉 You win — three in a row!');
+      else if (localWon) setStatus('You win — three in a row!');
       else setStatus('Your opponent lines up three and wins.');
     } else {
       setStatus(turnStatus());
