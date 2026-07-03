@@ -641,7 +641,7 @@
     var rs = G.roundScores || { player: 0, ai: 0 };
     el.innerHTML = '<div class="tl-game cu-game">'
       + '<div class="tl-gameover visible">'
-      + '<div class="tl-gameover__icon">🃏</div>'
+      + '<div class="tl-gameover__icon">' + ((window.Icon && Icon.svg) ? Icon.svg('cards', 44) : '🃏') + '</div>'
       + '<h2>Round Over</h2>'
       + '<p>You +' + rs.player + ' pts &nbsp;·&nbsp; CPU +' + rs.ai + ' pts</p>'
       + '<p style="font-size:var(--text-sm);color:var(--color-text-muted);margin-top:0.25rem">Score — You: ' + G.playerScore + ' &nbsp;·&nbsp; CPU: ' + G.aiScore + ' &nbsp;·&nbsp; Goal: ' + TARGET + '</p>'
@@ -679,7 +679,7 @@
       : (G.playerScore < 10 ? '¡Zapatero! Shut out under 10 points.' : 'Better luck next time.');
     el.innerHTML = '<div class="tl-game cu-game">'
       + '<div class="tl-gameover visible">'
-      + '<div class="tl-gameover__icon">' + (won ? '🏆' : '🃏') + '</div>'
+      + '<div class="tl-gameover__icon">' + ((window.Icon && Icon.svg) ? Icon.svg(won ? 'trophy' : 'scales', 44) : (won ? '🏆' : '🃏')) + '</div>'
       + '<h2>' + (won ? 'You win!' : oppWord + ' wins') + '</h2>'
       + '<p class="cu-win-phrase">' + phrase + '</p>'
       + '<p>You: ' + G.playerScore + ' pts &nbsp;·&nbsp; ' + oppWord + ': ' + G.aiScore + ' pts</p>'

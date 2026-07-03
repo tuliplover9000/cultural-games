@@ -825,6 +825,12 @@
       : '\uD83C\uDFC6';
   }
 
+  function tlLossGlyph() {
+    return (window.Icon && Icon.svg && Icon.has && Icon.has('scales'))
+      ? Icon.svg('scales', 34)
+      : '\uD83C\uDCCF';
+  }
+
   function renderGameOver(el) {
     const w   = state.winner;
     const isP = w === myPS();
@@ -834,7 +840,7 @@
 
     el.innerHTML = `<div class="tl-game${VN_SKIN ? ' tl-vn' : ''}">
   <div class="tl-gameover visible">
-    <div class="tl-gameover__icon">${isP ? tlWinGlyph() : '🃏'}</div>
+    <div class="tl-gameover__icon">${isP ? tlWinGlyph() : tlLossGlyph()}</div>
     <h2>${isP ? 'Tiến Lên!' : `${pName(w)} Wins!`}</h2>
     ${VN_SKIN ? '<p class="tl-vn-flavor">Tới rồi!</p>' : ''}
     <p>${isP ? 'You emptied your hand first. Go forward!' : `${pName(w)} played all their cards first.`}</p>

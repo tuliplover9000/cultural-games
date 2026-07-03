@@ -88,6 +88,9 @@
       '<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>' +
       '<path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/>' +
       '<path d="M16 16h.01"/><path d="M12 12h.01"/>',
+    cards:
+      '<rect x="3" y="6" width="11" height="15" rx="2" transform="rotate(-10 8.5 13.5)"/>' +
+      '<rect x="10" y="4" width="11" height="15" rx="2" transform="rotate(9 15.5 11.5)"/>',
     door:
       '<path d="M13 4h3a2 2 0 0 1 2 2v14"/>' +
       '<path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/>' +
