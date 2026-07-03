@@ -532,6 +532,10 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-1);
+  /* Cards can shrink since the grid tracks became minmax(0,1fr) — wrap the
+     footer instead of clipping the Play button off the card edge. */
+  flex-wrap: wrap;
+  row-gap: var(--space-1);
 }
 
 /* =============================================================================
