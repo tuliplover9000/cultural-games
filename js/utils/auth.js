@@ -558,6 +558,27 @@
     _emit();
   }
 
+  // Permanently delete the caller's own account. The delete_account RPC keys
+  // everything off auth.uid() (no parameters), so a user can only ever delete
+  // themselves; the auth.users delete cascades to all personal data server-side.
+  async function deleteAccount() {
+    if (!_user || !_accessToken) return { ok: false, error: 'not_authenticated' };
+    try {
+      var resp = await _rpcFetch('delete_account', {});
+      if (!resp.ok) return { ok: false, error: 'server_' + resp.status };
+      var data = await resp.json();
+      if (data && data.success === true) {
+        // Server side is gone — clear all local state. signOut tolerates the
+        // now-dead session (its /logout call is wrapped in try/catch).
+        try { await signOut(); } catch (e) {}
+        return { ok: true };
+      }
+      return { ok: false, error: (data && data.error) || 'rejected' };
+    } catch (e) {
+      return { ok: false, error: 'network' };
+    }
+  }
+
   function getStats(gameId) {
     return _stats[gameId] || { wins: 0, losses: 0, played: 0 };
   }
@@ -1104,6 +1125,7 @@
     signIn:         signIn,
     signUp:         signUp,
     signOut:        signOut,
+    deleteAccount:  deleteAccount,
     getStats:       getStats,
     recordResult:   recordResult,
     bauCuaRoll:     bauCuaRoll,

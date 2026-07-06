@@ -100,6 +100,40 @@
   }
   .acc-signout-btn:hover { color: #fff; border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.06); }
 
+  /* Danger zone — account deletion */
+  .acc-danger {
+    max-width: 560px;
+    margin: var(--space-10) auto var(--space-8);
+    padding: var(--space-5) var(--space-6);
+    border: 1px solid color-mix(in srgb, var(--color-accent-red, #B4442E) 35%, transparent);
+    border-radius: var(--radius-plaque, 6px);
+    text-align: center;
+  }
+  .acc-danger__title {
+    font-size: var(--text-sm);
+    letter-spacing: var(--label-tracking, 0.08em);
+    text-transform: uppercase;
+    color: var(--color-accent-red, #B4442E);
+    margin: 0 0 var(--space-2);
+  }
+  .acc-danger__desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin: 0 0 var(--space-4);
+  }
+  .acc-danger__btn {
+    font-size: var(--text-sm);
+    color: var(--color-accent-red, #B4442E);
+    background: transparent;
+    border: 1px solid color-mix(in srgb, var(--color-accent-red, #B4442E) 55%, transparent);
+    border-radius: var(--radius-pill, 999px);
+    padding: 0.5rem 1.4rem;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .acc-danger__btn:hover:not(:disabled) { background: var(--color-accent-red, #B4442E); color: #fff; }
+  .acc-danger__btn:disabled { opacity: 0.55; cursor: wait; }
+
   /* Summary stats bar */
   .acc-summary {
     display: grid;
@@ -470,6 +504,15 @@
         </div>
       </section>
 
+      <section class="acc-danger" aria-label="Delete account">
+        <h2 class="acc-danger__title">Danger Zone</h2>
+        <p class="acc-danger__desc">
+          Permanently delete your account, including your coins, stats, achievements,
+          avatar, and favorites. This cannot be undone.
+        </p>
+        <button class="acc-danger__btn" id="acc-delete" type="button">Delete Account</button>
+      </section>
+
     </div><!-- /#account-dashboard -->
 
   </main>
@@ -678,6 +721,30 @@
 
       var signoutBtn = document.getElementById('acc-signout');
       if (signoutBtn) signoutBtn.addEventListener('click', async function () { await Auth.signOut(); });
+
+      var deleteBtn = document.getElementById('acc-delete');
+      if (deleteBtn) deleteBtn.addEventListener('click', async function () {
+        var typed = prompt(
+          'This permanently deletes your account — coins, stats, achievements, ' +
+          'avatar, and favorites. This cannot be undone.\n\nType DELETE to confirm:'
+        );
+        if (typed === null) return;                                   // cancelled
+        if (typed.trim().toUpperCase() !== 'DELETE') {
+          alert('Account not deleted — the confirmation text did not match.');
+          return;
+        }
+        deleteBtn.disabled = true;
+        deleteBtn.textContent = 'Deleting…';
+        var res = await Auth.deleteAccount();
+        if (res && res.ok) {
+          alert('Your account and personal data have been deleted.');
+          window.location.href = '../index.html';
+        } else {
+          deleteBtn.disabled = false;
+          deleteBtn.textContent = 'Delete Account';
+          alert('Deletion failed — please try again in a moment.');
+        }
+      });
 
       var pSignin = document.getElementById('placeholder-signin-btn');
       var pSignup = document.getElementById('placeholder-signup-btn');
