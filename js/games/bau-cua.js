@@ -44,6 +44,8 @@
   var rollIsReal  = false;  // captured at rollDice() time — immune to a mid-spin
                             // auth flip (logout) that would otherwise flip useRealCoins
                             // and reroute finalizeDice into a phantom practice result
+  var rollGen     = 0;      // per-roll generation; a late response from a superseded
+                            // roll is ignored so it can't be shown as the next roll's result
 
   function esc(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -390,8 +392,11 @@
     pendingRoll = null; rollWaitMs = 0;
     rollIsReal = !!(useRealCoins && !vsRoom && window.Auth && Auth.bauCuaRoll);
     if (rollIsReal) {
+      var myGen = ++rollGen;
       var betsSnapshot = Object.assign({}, state.bets);
-      Auth.bauCuaRoll(betsSnapshot).then(function (res) { pendingRoll = res; });
+      Auth.bauCuaRoll(betsSnapshot).then(function (res) {
+        if (myGen === rollGen) pendingRoll = res;   // ignore a superseded roll's late response
+      });
     }
 
     var DURATION  = 1500;
@@ -427,7 +432,9 @@
       // wait for the server roll (usually already here after the 1500ms spin)
       if (!pendingRoll) {
         rollWaitMs += 80;
-        if (rollWaitMs < 8000) { setTimeout(finalizeDice, 80); return; }
+        // Wait a touch longer than bauCuaRoll's own 15s abort so the request's
+        // resolution (success OR a clean {ok:false,error:'timeout'}) always wins.
+        if (rollWaitMs < 16000) { setTimeout(finalizeDice, 80); return; }
         return handleRollError({ ok: false, error: 'timeout' });  // gave up
       }
       var res = pendingRoll; pendingRoll = null;
@@ -462,15 +469,29 @@
     var msg;
     switch (res && res.error) {
       case 'insufficient_coins': case 'insufficient_balance': msg = 'Not enough coins for that bet.'; break;
-      case 'no_profile':           msg = 'Couldn’t find your coin balance — try reloading.'; break;
-      case 'not_authenticated':    msg = 'Please sign in again to bet real coins.'; break;
-      case 'network': case 'timeout': msg = 'Couldn’t reach the table — your coins are safe. Try again.'; break;
-      default: msg = 'That roll didn’t go through — your coins are unchanged.';
+      case 'no_profile':        msg = 'Couldn’t find your coin balance — try reloading.'; break;
+      case 'not_authenticated': msg = 'Please sign in again to bet real coins.'; break;
+      case 'rate_limited':      msg = 'One roll at a time — wait a few seconds and try again.'; break;
+      case 'timeout':           msg = 'The table didn’t respond in time — check your balance before rolling again.'; break;
+      case 'network':           msg = 'Couldn’t reach the table. Check your connection and try again.'; break;
+      default:                  msg = 'That roll didn’t go through — your coins are unchanged.';
     }
-    // resync the real wallet from Auth (in case balance changed elsewhere), re-open betting
     state.phase = 'betting';
-    state.wallet = (window.Auth && Auth.getCoins) ? Auth.getCoins() : state.wallet;
-    els.dice.forEach(function (die) { die.classList.remove('rolling','settled'); die.textContent='-'; });
+    // Resync the wallet: prefer the authoritative balance the failure carried
+    // (e.g. insufficient_coins returns new_balance), else the local Auth cache;
+    // fall back to the practice default if real-coin mode was flipped off
+    // mid-roll (logout would make Auth.getCoins() 0 and dead-lock betting).
+    if (useRealCoins) {
+      state.wallet = (res && typeof res.new_balance === 'number')
+        ? res.new_balance
+        : ((window.Auth && Auth.getCoins) ? Auth.getCoins() : state.wallet);
+    } else {
+      state.wallet = 100;
+    }
+    // Drop bets that no longer fit the resynced wallet so a retry isn't a
+    // guaranteed rejection.
+    if (totalBets() > state.wallet) { state.bets = {}; renderChips(); }
+    els.dice.forEach(function (die) { die.classList.remove('rolling','settled'); die.textContent = '-'; });
     els.results.classList.remove('visible');
     refresh();
     setStatus(msg);

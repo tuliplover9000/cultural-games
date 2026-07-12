@@ -49,6 +49,9 @@
     var origin = header.querySelector('.game-header__origin');
     if (origin && origin.parentNode) origin.parentNode.insertBefore(el, origin.nextSibling);
     else header.appendChild(el);
+    // The counter arrives after the mobile fitter's initial pass and grows the
+    // header above #game-container, so re-fit the board or its bottom can clip.
+    if (window.cgMobileRefit) window.cgMobileRefit();
   }
 
   function bump() {

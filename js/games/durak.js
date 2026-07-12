@@ -836,15 +836,15 @@
   function renderGameEnd(el) {
     var w = G.winner;
     var icon, head, phrase, youWon = (w === 'player');
-    var hasIcon = (window.Icon && Icon.svg);
+    var hasIcon = (window.Icon && Icon.svgOr);
     if (w === 'draw') {
-      icon = hasIcon ? Icon.svg('handshake', 44) : '🤝'; head = "It's a draw!";
+      icon = hasIcon ? Icon.svgOr('handshake', 44, '🤝') : '🤝'; head = "It's a draw!";
       phrase = 'Both hands empty at once — nobody is the fool today.';
     } else if (youWon) {
-      icon = hasIcon ? Icon.svg('trophy', 44) : '🏆'; head = 'You win!';
+      icon = hasIcon ? Icon.svgOr('trophy', 44, '🏆') : '🏆'; head = 'You win!';
       phrase = 'You shed your last card — the ' + oppWord().toLowerCase() + ' is the durak.';
     } else {
-      icon = hasIcon ? Icon.svg('scales', 44) : '🃏'; head = 'You are the durak';
+      icon = hasIcon ? Icon.svgOr('scales', 44, '🃏') : '🃏'; head = 'You are the durak';
       phrase = 'Left holding the cards — the gentle shame of the fool.';
     }
     el.innerHTML = '<div class="tl-game dk-game">'

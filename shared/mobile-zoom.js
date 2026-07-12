@@ -324,6 +324,12 @@
     debounceTimer = setTimeout(fit, 90);
   }
 
+  // Public re-fit hook: content inserted ABOVE #game-container after the initial
+  // fit (e.g. play-count.js's async header counter) shifts the board down without
+  // changing the container's own size, so neither observer fires. Callers nudge a
+  // re-fit here. No-op cost on desktop (fit early-returns when zoom is inactive).
+  window.cgMobileRefit = schedule;
+
   /* ── Manual nudge button ── */
   function injectButton() {
     if (document.getElementById('mobile-zoom-btn')) return null;

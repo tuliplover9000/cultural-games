@@ -826,7 +826,7 @@
     var bd = G.roundBreakdown;
     el.innerHTML = '<div class="tl-game sc-game">'
       + '<div class="tl-gameover visible">'
-      + '<div class="tl-gameover__icon">' + ((window.Icon && Icon.svg) ? Icon.svg('cards', 44) : '🃏') + '</div>'
+      + '<div class="tl-gameover__icon">' + ((window.Icon && Icon.svgOr) ? Icon.svgOr('cards', 44, '🃏') : '🃏') + '</div>'
       + '<h2>Deal Over</h2>'
       + (bd ? breakdownRows(bd) : '')
       + '<p style="font-size:var(--text-sm);color:var(--color-text-muted);margin-top:0.75rem">Game score — You: ' + G.playerScore + ' &nbsp;·&nbsp; CPU: ' + G.aiScore + ' &nbsp;·&nbsp; Goal: ' + TARGET + '</p>'
@@ -856,8 +856,8 @@
       won = G.playerScore >= TARGET;
     }
     var bd = G.roundBreakdown;
-    var icon  = (window.Icon && Icon.svg)
-      ? Icon.svg(draw ? 'handshake' : won ? 'trophy' : 'scales', 44)
+    var icon  = (window.Icon && Icon.svgOr)
+      ? Icon.svgOr(draw ? 'handshake' : won ? 'trophy' : 'scales', 44, draw ? '🤝' : won ? '🏆' : '🃏')
       : (draw ? '🤝' : won ? '🏆' : '🃏');
     var head  = draw ? "It's a draw!" : (won ? 'You win!' : 'CPU wins');
     var phrase = draw ? 'Dead heat — an even sweep.'

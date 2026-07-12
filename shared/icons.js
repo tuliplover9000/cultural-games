@@ -165,6 +165,14 @@
 
   function has(name) { return !!ICONS[name]; }
 
+  /* ── svgOr(name, size, fallback) → glyph SVG, or the fallback (usually an
+     emoji) when `name` isn't in THIS build. Lets a stale-cached icons.js that
+     predates a newly-added glyph degrade to the fallback instead of rendering
+     a blank slot (svg() returns '' for unknown names). ── */
+  function svgOr(name, size, fallback) {
+    return has(name) ? svg(name, size) : (fallback || '');
+  }
+
   /* ── Hydrate <span data-icon="name" [data-icon-size="22"]> placeholders ── */
   function hydrate(root) {
     var scope = root || document;
@@ -178,7 +186,7 @@
     }
   }
 
-  window.Icon = { svg: svg, has: has, hydrate: hydrate };
+  window.Icon = { svg: svg, svgOr: svgOr, has: has, hydrate: hydrate };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () { hydrate(); });

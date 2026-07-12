@@ -260,10 +260,11 @@
 
   // RPC call helper - used for SECURITY DEFINER server-side functions.
   // Does NOT set Prefer:return=minimal so the response JSON is returned.
-  function _rpcFetch(fnName, params) {
+  function _rpcFetch(fnName, params, signal) {
     return fetch(SB_URL + '/rest/v1/rpc/' + fnName, {
       method:    'POST',
       keepalive: true,
+      signal:    signal || undefined,
       headers: {
         'apikey':        SB_KEY,
         'Authorization': 'Bearer ' + _accessToken,
@@ -665,20 +666,32 @@
     if (!_user || !_accessToken) return { ok: false, error: 'not_authenticated' };
     var sessionKey = _user.id + '_bau-cua_' + Date.now().toString(36) + '_' +
                      Math.random().toString(36).slice(2, 7);
+    var ctrl  = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 15000) : null;
     try {
-      var resp = await _rpcFetch('bau_cua_roll', { p_bets: bets, p_session_key: sessionKey });
-      if (!resp.ok) return { ok: false, error: 'server_' + resp.status };
-      var data = await resp.json();
-      if (data && data.success === true && typeof data.new_balance === 'number' &&
+      var resp = await _rpcFetch('bau_cua_roll', { p_bets: bets, p_session_key: sessionKey }, ctrl && ctrl.signal);
+      if (timer) { clearTimeout(timer); timer = null; }
+      var data = null;
+      try { data = await resp.json(); } catch (e) { /* non-JSON error body */ }
+      if (resp.ok && data && data.success === true && typeof data.new_balance === 'number' &&
           Array.isArray(data.dice)) {
         _coins = data.new_balance;
         _persistUsername();
         _emit();
         return { ok: true, dice: data.dice, delta: data.delta, new_balance: data.new_balance };
       }
-      return { ok: false, error: (data && data.error) || 'rejected' };
+      // Failure: if the server sent an authoritative balance (e.g. insufficient_coins
+      // returns new_balance), adopt it so a stale-high cache self-corrects. Surface
+      // the real error code — a RETURNed {error} or a RAISEd PostgREST {message}.
+      if (data && typeof data.new_balance === 'number') { _coins = data.new_balance; _emit(); }
+      return {
+        ok: false,
+        error: (data && (data.error || data.message)) || ('server_' + resp.status),
+        new_balance: (data && typeof data.new_balance === 'number') ? data.new_balance : undefined
+      };
     } catch (e) {
-      return { ok: false, error: 'network' };
+      if (timer) clearTimeout(timer);
+      return { ok: false, error: (e && e.name === 'AbortError') ? 'timeout' : 'network' };
     }
   }
 
