@@ -1,0 +1,22 @@
+-- 032_fix_dead_coin_guard_trigger.sql
+-- Applied to prod via MCP on 2026-07-06.
+--
+-- FIX (xhigh code review finding 5): _prevent_direct_coin_update was SECURITY
+-- DEFINER owned by postgres, so inside it current_user is ALWAYS 'postgres' and
+-- its guard `current_user NOT IN ('postgres','supabase_admin','service_role')`
+-- was permanently false — the trigger never blocked anything (dead defense-in-
+-- depth; only the RLS coin-freeze actually protected coins).
+--
+-- Making it SECURITY INVOKER lets current_user reflect the real execution
+-- context: a direct client UPDATE runs as 'authenticated'/'anon' → guard true →
+-- blocked; a legitimate coin RPC runs inside a SECURITY DEFINER function owned
+-- by postgres → current_user='postgres' → exempt. Verified that ALL 7
+-- coin-writing functions (record_game_result, buy_avatar_item, bau_cua_roll,
+-- create/register/cancel_tournament, _tn_finalize_match) are SECURITY DEFINER
+-- owned by postgres, so no legitimate path is affected.
+--
+-- Verified against prod with a synthetic user: bau_cua_roll still moves coins
+-- (510), and a direct authenticated UPDATE of profiles.coins is now blocked by
+-- the trigger itself (P0002 'direct_coin_update'), not merely by RLS. Idempotent.
+
+alter function public._prevent_direct_coin_update() security invoker;
