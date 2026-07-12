@@ -329,6 +329,13 @@
     }
     if (!useRealCoins) {
       if (vsRoom) { setStatus('Real coins are available in solo play only.'); return; }
+      // Hard-fail if the server wager RPC is unavailable (e.g. a stale-cached
+      // auth.js predating this feature) rather than silently simulating with
+      // the real balance shown — otherwise wins/losses would be phantom.
+      if (!(window.Auth && Auth.bauCuaRoll)) {
+        setStatus('Real-coin play is updating — please reload the page.');
+        return;
+      }
       var balance = window.Auth && Auth.getCoins ? Auth.getCoins() : 0;
       if (balance <= 0) {
         setStatus('No coins available - earn some by playing games in rooms!');
