@@ -14,8 +14,8 @@ jobs:
         with:
           node-version: 20
       - name: JS syntax (node --check, all first-party files)
-        run: node .claude/ci-syntax.js
+        run: node ci/ci-syntax.js
       - name: Structured data (every JSON-LD block parses)
-        run: node .claude/ci-jsonld.js
+        run: node ci/ci-jsonld.js
       - name: UI regression sweep (emoji / fonts / mojibake / dialogs / include order)
-        run: node .claude/ci-sweep.js
+        run: node ci/ci-sweep.js
