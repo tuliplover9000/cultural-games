@@ -285,40 +285,22 @@
       if (r.status === 'finished') {
         return err('That room has ended. Ask the host to create a new one.');
       }
-      var ids = Array.isArray(r.player_ids) ? r.player_ids.slice() : [];
-      if (ids.length >= (r.max_players || 4) && !ids.includes(pid)) {
-        return err('That room is full (' + (r.max_players || 4) + ' players max).');
+      // Race-free atomic append (migration 035): the roster is appended against
+      // the LIVE row under a row lock, so two players joining at once can't drop
+      // each other or overfill capacity (the old client read-modify-write was
+      // last-write-wins). Capacity + started/ended checks happen server-side.
+      var rpc = await authDb().rpc('room_add_player', {
+        p_room_id: r.id, p_pid: pid, p_name: name,
+        p_avatar: avatar, p_title: title, p_role: 'player'
+      });
+      if (rpc.error || !rpc.data) return err('Failed to join. Please try again.');
+      if (!rpc.data.success) {
+        if (rpc.data.error === 'room_full')  return err('That room is full (' + (r.max_players || 4) + ' players max).');
+        if (rpc.data.error === 'room_ended') return err('That room has ended. Ask the host to create a new one.');
+        return err('Failed to join. Please try again.');
       }
 
-      // Add this player
-      if (!ids.includes(pid)) ids.push(pid);
-      var names   = Object.assign({}, r.player_names   || {});
-      var avatars = Object.assign({}, r.player_avatars || {});
-      var titles  = Object.assign({}, r.player_titles  || {});
-      var wins    = Object.assign({}, r.player_wins    || {});
-      var roles   = Object.assign({}, r.player_roles   || {});
-      var rdyMap  = Object.assign({}, r.player_ready   || {});
-      names[pid]  = name;
-      if (avatar) avatars[pid] = avatar;   // guests (null) keep any existing entry
-      if (title)  titles[pid]  = title;    // guests (null) keep any existing entry
-      if (!wins[pid])   wins[pid]   = 0;
-      if (!roles[pid])  roles[pid]  = 'player';
-      if (rdyMap[pid] === undefined) rdyMap[pid] = false;
-
-      var res2 = await authDb().from('rooms').update({
-        player_ids:   ids,
-        player_names: names,
-        player_avatars: avatars,
-        player_titles: titles,
-        player_wins:  wins,
-        player_roles: roles,
-        player_ready: rdyMap,
-        guest_id:     pid,                           // legacy field
-        status:       'lobby',
-      }).eq('id', r.id).select().single();
-      if (res2.error) return err('Failed to join. Please try again.');
-
-      _room = res2.data;
+      _room = rpc.data.room;
       subscribe(r.id);
       return { code: c, roomId: r.id, role: 'guest' };
     },
@@ -326,21 +308,11 @@
     // ── leaveRoom ────────────────────────────────────────────────────────────
     leaveRoom: async function () {
       if (!_room) return;
-      var pid  = getPlayerId();
-      var ids  = (_room.player_ids || []).filter(function(p){ return p !== pid; });
-
-      // If the host leaves: hand the room to the next remaining player (host
-      // migration) rather than killing an in-progress room for everyone. Only
-      // close the room when the host was the last one out.
-      if (_room.host_id === pid) {
-        if (ids.length > 0) {
-          await authDb().from('rooms').update({ host_id: ids[0], player_ids: ids }).eq('id', _room.id);
-        } else {
-          await authDb().from('rooms').update({ status: 'finished', player_ids: ids }).eq('id', _room.id);
-        }
-      } else {
-        await authDb().from('rooms').update({ player_ids: ids }).eq('id', _room.id);
-      }
+      var pid = getPlayerId();
+      // Atomic removal + host migration against the LIVE row (migration 035):
+      // the host is handed to the next remaining player, or the room is closed
+      // when the host is the last one out — without clobbering a concurrent join.
+      try { await authDb().rpc('room_remove_player', { p_room_id: _room.id, p_pid: pid }); } catch (e) { /* best effort */ }
 
       if (_channel) { db().removeChannel(_channel); _channel = null; }
       _room = null;
@@ -504,33 +476,21 @@
       // If this player is not in the room's player list, add them.
       // This handles: authenticated users whose PID drifted, direct URL navigation,
       // and any edge case where createRoom/joinRoom didn't persist the player entry.
-      var pid   = getPlayerId();
-      var ids   = Array.isArray(_room.player_ids) ? _room.player_ids.slice() : [];
-      if (!ids.includes(pid)) {
-        // Enforce max_players — rejoinRoom previously skipped this check
-        if (ids.length >= (_room.max_players || 4)) return err('Room is full.');
-        var name    = getPlayerName() || 'Player';
-        var avatar  = getPlayerAvatar();
-        var title   = getPlayerTitle();
-        var names   = Object.assign({}, _room.player_names   || {}, { [pid]: name });
-        var avatars = Object.assign({}, _room.player_avatars || {});
-        if (avatar) avatars[pid] = avatar;   // guests (null) leave the map untouched
-        var titles  = Object.assign({}, _room.player_titles  || {});
-        if (title)  titles[pid]  = title;    // guests (null) leave the map untouched
-        var wins    = Object.assign({}, _room.player_wins    || {}, { [pid]: 0 });
-        var roles   = Object.assign({}, _room.player_roles   || {}, { [pid]: 'player' });
-        var rdyMap  = Object.assign({}, _room.player_ready   || {}, { [pid]: false });
-        ids.push(pid);
-        var res2 = await authDb().from('rooms').update({
-          player_ids:   ids,
-          player_names: names,
-          player_avatars: avatars,
-          player_titles: titles,
-          player_wins:  wins,
-          player_roles: roles,
-          player_ready: rdyMap,
-        }).eq('id', roomIdParam).select().single();
-        if (!res2.error && res2.data) _room = res2.data;
+      var pid = getPlayerId();
+      var ids = Array.isArray(_room.player_ids) ? _room.player_ids : [];
+      // Add via the atomic RPC if we're not already in the room (direct URL nav,
+      // PID drift, or a join that didn't persist). A finished room is view-only.
+      if (!ids.includes(pid) && _room.status !== 'finished') {
+        var rpc = await authDb().rpc('room_add_player', {
+          p_room_id: roomIdParam, p_pid: pid, p_name: getPlayerName() || 'Player',
+          p_avatar: getPlayerAvatar(), p_title: getPlayerTitle(), p_role: 'player'
+        });
+        if (!rpc.error && rpc.data && rpc.data.success) {
+          _room = rpc.data.room;
+        } else if (!rpc.error && rpc.data && rpc.data.error === 'room_full') {
+          return err('Room is full.');
+        }
+        // any other failure → fall through and view the fetched room
       }
 
       subscribe(roomIdParam);
