@@ -55,6 +55,8 @@
   var userIndex   = 0;
 
   var fitting       = false;  // re-entrancy guard (fit() mutates the DOM)
+  var lastObsW      = 0;      // last container size seen by the ResizeObserver —
+  var lastObsH      = 0;      // used to ignore height-only (address-bar) changes
   var debounceTimer = null;
   var releaseTimer  = null;
   var resizeObs     = null;
@@ -128,8 +130,11 @@
     var padY = (parseFloat(cs.paddingTop)  || 0) + (parseFloat(cs.paddingBottom) || 0);
     // In force-landscape, getBoundingClientRect().top is rotated/meaningless;
     // c.offsetTop is layout-space (rotation-invariant) and reserves the header.
+    // Otherwise use the container's DOCUMENT-space top (rect.top + scrollY), which
+    // is scroll-INVARIANT — rect.top alone changes with scroll position, so a
+    // refit fired mid-scroll would compute a different height and shift the board.
     var top = lsActive() ? Math.max(c.offsetTop || 0, 0)
-                         : Math.max(c.getBoundingClientRect().top, 0);
+                         : Math.max(c.getBoundingClientRect().top + (window.scrollY || window.pageYOffset || 0), 0);
     // Cap to the viewport: some containers report a clientWidth wider than the
     // screen (content that overflows horizontally), which would size the board
     // off-screen. The game must never be wider than the viewport. In
@@ -365,9 +370,24 @@
       });
     }
 
-    // Re-fit when the container's size changes (viewport, fonts settling…).
+    // Re-fit when the container's WIDTH changes (real resize, rotation, fonts
+    // settling). A height-only change is ignored: on phones the address bar
+    // hiding/showing on scroll resizes the container's height, and re-fitting
+    // then visibly resized/jumped the whole board on every scroll. The window
+    // 'resize' listener already ignores height-only changes, but the container's
+    // box still changed via layout (e.g. a viewport-height ancestor), so the
+    // ResizeObserver was the unguarded path — this closes it. Genuine content
+    // growth (a new hand, AI move) still refits via the MutationObserver.
     if ('ResizeObserver' in window) {
-      resizeObs = new ResizeObserver(function () { if (!fitting) schedule(); });
+      resizeObs = new ResizeObserver(function (entries) {
+        if (fitting) return;
+        var cr = entries && entries[0] && entries[0].contentRect;
+        var w = cr ? Math.round(cr.width)  : c.clientWidth;
+        var h = cr ? Math.round(cr.height) : c.clientHeight;
+        if (w === lastObsW && h !== lastObsH) { lastObsH = h; return; }  // height-only → ignore
+        lastObsW = w; lastObsH = h;
+        schedule();
+      });
       resizeObs.observe(c);
     }
 

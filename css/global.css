@@ -173,7 +173,11 @@ body {
   line-height: var(--leading-normal);
   color: var(--color-text);
   background-color: var(--color-bg);
-  min-height: 100dvh;
+  /* svh (stable, address-bar-SHOWN height), not dvh: dvh changes as the mobile
+     address bar hides/shows on scroll, which resized the body and — via the
+     game-container ResizeObserver — refit and jumped the board on every scroll. */
+  min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
