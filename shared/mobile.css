@@ -66,10 +66,12 @@ canvas {
     max-width: 100%;
   }
 
-  /* Keep game container off the screen edges on all mobile/tablet. */
+  /* Keep game container just off the screen edges on all mobile/tablet. Kept
+     tight (was 14px) so wide/aspect-locked boards get more WIDTH — the width is
+     the ceiling on cell size, so trimming here makes pieces bigger everywhere. */
   .game-container,
   [class*="game-container"] {
-    margin-inline: max(14px, env(safe-area-inset-left), env(safe-area-inset-right));
+    margin-inline: max(6px, env(safe-area-inset-left), env(safe-area-inset-right));
   }
 
   /* Reclaim wasted whitespace: on phones the desktop padding (~32px) and gap
@@ -79,8 +81,8 @@ canvas {
      whose container uses id="pc-game-container" (class .game-container). */
   #game-container,
   .game-container[id$="game-container"] {
-    padding: 14px;
-    gap: 12px;
+    padding: 12px 6px;   /* less HORIZONTAL padding → more board width (bigger cells) */
+    gap: 10px;
   }
 }
 
@@ -543,10 +545,26 @@ canvas {
     font-size: var(--text-xs);
   }
 
-  /* Game container: keep gold border away from screen edges */
+  /* Game container: keep gold border just off the screen edges (tight — 6px —
+     so aspect-locked boards get more WIDTH → bigger cells). */
   .game-container,
   [class*="game-container"] {
-    margin-inline: max(14px, env(safe-area-inset-left), env(safe-area-inset-right));
+    margin-inline: max(6px, env(safe-area-inset-left), env(safe-area-inset-right));
+  }
+
+  /* The .container wrapper's 16px side padding cost the board ~32px of width.
+     Trim it on game pages so the board runs closer to the edges. */
+  .game-page .container {
+    padding-inline: 8px;
+  }
+
+  /* The game-header ate ~116px of height (icon + title + origin + play-count),
+     which forced aspect-locked boards to shrink on short viewports. Hide the
+     non-essential origin/play-count lines on mobile GAME pages so the board
+     gets that height back — the title stays for context. */
+  .game-page .game-header__origin,
+  .game-page .game-header .game-plays {
+    display: none;
   }
 
   /* Accordion: How to Play closed on mobile by default (JS adds [open] on desktop) */

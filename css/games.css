@@ -5520,9 +5520,23 @@ html[data-theme="light"] .pu-game-wrap {
   color: #e8c87a;
 }
 
-@media (max-width: 480px) {
-  .se-hud    { flex-direction: column; align-items: flex-start; }
-  .se-status { text-align: left; }
+@media (max-width: 600px) {
+  /* The Senet board is aspect-locked and HEIGHT-bound on phones (the chrome
+     above/below eats the vertical space, so the board shrinks below full width
+     and leaves wasted side gaps). Every px trimmed here gives the board more
+     height → it flips to filling the full WIDTH → bigger, more tappable cells. */
+  .se-hud {
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: 0;
+    padding: 4px var(--space-2);
+    gap: 2px;
+  }
+  .se-score  { font-size: var(--text-sm); gap: var(--space-3); }
+  .se-status { text-align: left; font-size: var(--text-xs); }
+  .se-controls { gap: var(--space-2); }
+  /* Let the board run closer to the screen edges — more width = bigger cells. */
+  .se-game-container { padding-inline: 6px; }
 }
 
 /* =============================================================================
