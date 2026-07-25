@@ -5539,6 +5539,51 @@ html[data-theme="light"] .pu-game-wrap {
   .se-game-container { padding-inline: 6px; }
 }
 
+/* LANDSCAPE PHONE — side-by-side: board fills the height on the left, HUD and
+   controls stack in a narrow right column. Stacked vertically the 2:1 board is
+   height-starved and shrinks to a thin strip with big wasted side margins; giving
+   it its own full-height column makes it far bigger and more tappable.
+   `display:grid` is also the hook mobile-zoom.js looks for (sideBySide) — it then
+   stops subtracting the HUD height from the board's available space. */
+@media (orientation: landscape) and (max-height: 600px) {
+  .se-game-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(130px, 28%, 230px);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "board hud"
+      "board controls";
+    align-items: start;
+    gap: 8px 10px;
+  }
+  .se-board-wrap { grid-area: board; align-self: center; min-width: 0; }
+  .se-hud {
+    grid-area: hud;
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+    padding: 6px 8px;
+    gap: 2px;
+  }
+  /* The help (?) button is pinned top-right, which is exactly where the HUD
+     column now lives — move it to the top-LEFT (empty space above the board)
+     so it stops covering the score. */
+  .se-game-container .tt-trigger,
+  body:has(.se-game-container) .tt-trigger {
+    right: auto;
+    left: 12px;
+  }
+  .se-score  { flex-direction: column; gap: 0; font-size: var(--text-sm); }
+  .se-status { text-align: left; font-size: var(--text-xs); }
+  .se-controls {
+    grid-area: controls;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+  }
+  .se-controls .btn { width: 100%; }
+}
+
 /* =============================================================================
    TRUC — tu- namespace (Catalonia)
    Catalan bar-table look: deep felt green, wooden edge, Spanish-deck cards.

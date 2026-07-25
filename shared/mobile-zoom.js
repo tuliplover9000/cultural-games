@@ -178,7 +178,14 @@
     // sit beside it / scroll — otherwise the stacked HUD starves the board.
     var nonBoard = (sideBySide || lsActive()) ? 0 : Math.max(0, c.scrollHeight - canvas.offsetHeight);
     var availBoardH = Math.max(120, (rect.h - nonBoard - EDGE_PAD) * userScale);
-    var availBoardW = rect.w * userScale;
+    // Width available to the BOARD, not the whole container: in a side-by-side
+    // (grid/row) layout the board sits in its own column, so sizing it to the
+    // full container width would overflow that column. The canvas's host element
+    // is the truth. In a normal stacked layout host ≈ container, so this is a
+    // no-op there.
+    var host  = canvas.parentElement;
+    var hostW = host ? host.clientWidth : 0;
+    var availBoardW = (hostW > 40 ? Math.min(rect.w, hostW) : rect.w) * userScale;
 
     // Fit a box of the board's aspect into the available board area, so the
     // board grows to fill one dimension instead of floating in a wide letterbox.
