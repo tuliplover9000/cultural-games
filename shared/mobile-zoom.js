@@ -35,6 +35,14 @@
   var MAX_SCALE    = 2.2;     // how far a small DOM layout may grow
   var EDGE_PAD     = 14;      // breathing room (px) at the bottom edge
 
+  /* On a SHORT landscape phone every vertical px is board size, and the mobile
+     tab bar is hidden there — so the usual 14px breathing room (charged twice:
+     once in bottomReserve, once in fitCanvas) costs ~28px of board height, i.e.
+     ~55px of board WIDTH on a 2:1 board. Use a minimal pad in that case. */
+  function edgePad() {
+    return (window.innerHeight <= 500 && window.innerWidth > window.innerHeight) ? 4 : EDGE_PAD;
+  }
+
   /* Run on phones in EITHER orientation. A big phone in LANDSCAPE can be wider
      than 900px (e.g. iPhone Pro Max ≈ 932px), but it's always SHORT (≤ ~500px
      tall) — so a short viewport counts as mobile regardless of width. Without
@@ -118,7 +126,7 @@
       // would return a rotated box under force-landscape.
       h = nav.offsetHeight || nav.getBoundingClientRect().height || 0;
     }
-    return h + EDGE_PAD;
+    return h + edgePad();
   }
 
   /* The CONTENT rectangle the game may occupy, in CSS px. We subtract the
@@ -177,7 +185,7 @@
     // HEIGHT is the constraint, so give the board the full height and let the HUD
     // sit beside it / scroll — otherwise the stacked HUD starves the board.
     var nonBoard = (sideBySide || lsActive()) ? 0 : Math.max(0, c.scrollHeight - canvas.offsetHeight);
-    var availBoardH = Math.max(120, (rect.h - nonBoard - EDGE_PAD) * userScale);
+    var availBoardH = Math.max(120, (rect.h - nonBoard - edgePad()) * userScale);
     // Width available to the BOARD, not the whole container: in a side-by-side
     // (grid/row) layout the board sits in its own column, so sizing it to the
     // full container width would overflow that column. The canvas's host element

@@ -84,6 +84,23 @@ canvas {
     padding: 12px 6px;   /* less HORIZONTAL padding → more board width (bigger cells) */
     gap: 10px;
   }
+
+  /* The .container wrapper's 16px side padding cost the board ~32px of width.
+     Trim it on game pages so the board runs closer to the edges. */
+  .game-page .container {
+    padding-inline: 8px;
+  }
+
+  /* The game-header ate ~116px of height (icon + title + origin + play-count),
+     forcing aspect-locked boards to shrink on short viewports. Drop the
+     non-essential origin + play-count lines on mobile GAME pages so the board
+     gets that height back; the title stays for context.
+     NOTE: this must live in THIS ≤768px block — landscape phones are ~740-820px
+     wide, so a ≤430px block (where these first landed) never applied to them. */
+  .game-page .game-header__origin,
+  .game-page .game-header .game-plays {
+    display: none;
+  }
 }
 
 /* Landscape phones are vertically tight — tighten further so the board fills
@@ -550,21 +567,6 @@ canvas {
   .game-container,
   [class*="game-container"] {
     margin-inline: max(6px, env(safe-area-inset-left), env(safe-area-inset-right));
-  }
-
-  /* The .container wrapper's 16px side padding cost the board ~32px of width.
-     Trim it on game pages so the board runs closer to the edges. */
-  .game-page .container {
-    padding-inline: 8px;
-  }
-
-  /* The game-header ate ~116px of height (icon + title + origin + play-count),
-     which forced aspect-locked boards to shrink on short viewports. Hide the
-     non-essential origin/play-count lines on mobile GAME pages so the board
-     gets that height back — the title stays for context. */
-  .game-page .game-header__origin,
-  .game-page .game-header .game-plays {
-    display: none;
   }
 
   /* Accordion: How to Play closed on mobile by default (JS adds [open] on desktop) */

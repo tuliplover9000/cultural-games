@@ -5546,17 +5546,45 @@ html[data-theme="light"] .pu-game-wrap {
    `display:grid` is also the hook mobile-zoom.js looks for (sideBySide) — it then
    stops subtracting the HUD height from the board's available space. */
 @media (orientation: landscape) and (max-height: 600px) {
-  .se-game-container {
+  /* NOTE the #game-container prefix: shared/mobile.css sets
+     `#game-container { display:flex }` at ≤768px (ID specificity), which beats a
+     plain .se-game-container class rule — so without the ID this grid silently
+     did NOT apply at real phone landscape widths (≤768px). Same convention the
+     other landscape grids use (#game-container.ht-game-container etc). */
+  /* Landscape is height-starved and the board is the whole point — give it the
+     header's height back (matches the target mockup: board + controls fill the
+     screen; the game title is redundant mid-game). */
+  /* !important is required: shared/mobile.css sets
+     `.game-header { display: flex !important }` at ≤768px, which no amount of
+     specificity can beat. */
+  .game-page > .container > .game-header,
+  .game-page > .container > .game-nav-bar {
+    display: none !important;
+  }
+
+  /* ...and reclaim the page/container top padding above the board (~29px), which
+     is pure waste in landscape and directly caps how big the board can get. */
+  .game-page { padding-block: 0 !important; }
+  .game-page > .container { padding-block: 0 !important; }
+
+  #game-container.se-game-container {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) clamp(130px, 28%, 230px);
+    grid-template-columns: minmax(0, 1fr) clamp(120px, 26%, 210px);
     grid-template-rows: auto 1fr;
     grid-template-areas:
       "board hud"
       "board controls";
     align-items: start;
-    gap: 8px 10px;
+    gap: 6px 10px;
+    /* every vertical px here becomes board size (the board is height-bound in
+       landscape), so spend none of it vertically */
+    padding: 0 6px;
+    margin-block: 0 !important;
   }
   .se-board-wrap { grid-area: board; align-self: center; min-width: 0; }
+  /* Flush-LEFT instead of centred: when the board is height-bound it can't fill
+     the column, and centring split the leftover into two dead side gaps. */
+  #game-container.se-game-container #se-canvas { margin-inline: 0; }
   .se-hud {
     grid-area: hud;
     flex-direction: column;
@@ -5565,14 +5593,11 @@ html[data-theme="light"] .pu-game-wrap {
     padding: 6px 8px;
     gap: 2px;
   }
-  /* The help (?) button is pinned top-right, which is exactly where the HUD
-     column now lives — move it to the top-LEFT (empty space above the board)
-     so it stops covering the score. */
-  .se-game-container .tt-trigger,
-  body:has(.se-game-container) .tt-trigger {
-    right: auto;
-    left: 12px;
-  }
+  /* No room for the floating help (?) button in landscape — top-right is the HUD
+     column, top-left and the bottom strip are the board. It covered board cells
+     wherever it went, so hide it here; How to Play is still one tap away in the
+     accordion below the game (and the button returns in portrait). */
+  body:has(.se-game-container) .tt-trigger { display: none; }
   .se-score  { flex-direction: column; gap: 0; font-size: var(--text-sm); }
   .se-status { text-align: left; font-size: var(--text-xs); }
   .se-controls {
