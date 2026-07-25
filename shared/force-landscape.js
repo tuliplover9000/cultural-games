@@ -20,16 +20,16 @@
 
   var MAX_MIN_SIDE = 900;  // only phones / small tablets
 
-  /* OPT-IN GATE (testing phase): only active when ?ls=1 is in the URL or
-     localStorage 'cg_ls' is set, so we can validate the feel on a real device
-     before enabling it for everyone. Once confirmed, remove this gate so it is
-     always on for phones. */
+  /* Opt-in is now PER PAGE: a game rotates simply by including this script
+     (wide-board games where a portrait phone can only render a thin strip).
+     `?ls=0` remains an escape hatch to disable it for a session (and `?ls=1`
+     re-enables), which is handy for testing on a real device. */
   function enabled() {
     try {
-      if (/[?&]ls=1\b/.test(location.search)) { localStorage.setItem('cg_ls', '1'); return true; }
-      if (/[?&]ls=0\b/.test(location.search)) { localStorage.removeItem('cg_ls'); return false; }
-      return localStorage.getItem('cg_ls') === '1';
-    } catch (e) { return /[?&]ls=1\b/.test(location.search); }
+      if (/[?&]ls=1\b/.test(location.search)) { localStorage.removeItem('cg_ls_off'); return true; }
+      if (/[?&]ls=0\b/.test(location.search)) { localStorage.setItem('cg_ls_off', '1'); return false; }
+      return localStorage.getItem('cg_ls_off') !== '1';
+    } catch (e) { return !/[?&]ls=0\b/.test(location.search); }
   }
 
   function shouldRotate() {

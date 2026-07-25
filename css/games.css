@@ -5582,6 +5582,20 @@ html[data-theme="light"] .pu-game-wrap {
     gap: var(--space-2);
   }
   .se-controls .btn { width: 100%; }
+
+  /* Floating buttons sit bottom-RIGHT at bottom:80px to clear the mobile tab
+     bar — but that bar is hidden in landscape, so they landed on top of the
+     controls column. Drop the zoom button to the true bottom edge and move the
+     fullscreen toggle to the bottom-LEFT (empty space under the board). */
+  body:has(.se-game-container) #mobile-zoom-btn {
+    bottom: 10px;
+    right: 10px;
+  }
+  .se-game-container ~ .fs-toggle,
+  body:has(.se-game-container) .fs-toggle {
+    right: auto;
+    left: 10px;
+  }
 }
 
 /* =============================================================================
