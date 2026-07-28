@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Offline — Cultural Games</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png">
+  <script src="/shared/theme.js"></script>
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="stylesheet" href="/shared/theme.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <style>
+    .off { min-height: 70vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: var(--space-6); }
+    .off__inner { max-width: 420px; }
+    .off__mark { width: 72px; height: 72px; margin: 0 auto var(--space-5); opacity: 0.9; }
+    .off__title { font-family: var(--font-display); font-size: var(--text-2xl); margin: 0 0 var(--space-3); }
+    .off__body { color: var(--color-text-muted); line-height: 1.7; margin: 0 0 var(--space-5); }
+    .off__list { list-style: none; padding: 0; margin: 0 0 var(--space-5); display: flex; flex-wrap: wrap; gap: var(--space-2); justify-content: center; }
+    .off__list a { display: inline-block; padding: 0.45rem 0.9rem; border: 1px solid var(--color-border); border-radius: var(--radius-pill, 999px); color: var(--color-text); text-decoration: none; font-size: var(--text-sm); }
+    .off__list a:hover { border-color: var(--color-accent-gold); color: var(--color-accent-gold); }
+  </style>
+</head>
+<body>
+  <main class="off">
+    <div class="off__inner">
+      <img class="off__mark" src="/favicon.svg" alt="" aria-hidden="true">
+      <h1 class="off__title">You're offline</h1>
+      <p class="off__body">
+        No connection right now. Games you've already opened still work —
+        they're saved on your device. Everything else will come back when
+        you're online.
+      </p>
+      <ul class="off__list" id="off-links">
+        <li><a href="/index.html">Home</a></li>
+        <li><a href="/pages/browse.html">Browse games</a></li>
+      </ul>
+      <button class="btn btn-primary" type="button" onclick="location.reload()">Try again</button>
+    </div>
+  </main>
+</body>
+</html>
