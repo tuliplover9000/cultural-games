@@ -339,7 +339,22 @@
     }
   }
 
+  /* `cg-wide` = the game is PRESENTED in landscape — either the viewport is a
+     short landscape one, or force-landscape.js rotated the page 90° for an
+     upright / rotation-locked phone. Layout CSS keys off this instead of an
+     `@media (orientation: landscape)` query, because after a rotation the
+     viewport still reports PORTRAIT and a media query would miss it.
+     Owned here (mobile-zoom.js is on every game page) so EVERY game can use the
+     side-by-side landscape layout, not just the ones that opt into rotation. */
+  function syncWideClass() {
+    var html = document.documentElement;
+    var wide = lsActive() ||
+               (window.innerWidth > window.innerHeight && window.innerHeight <= 600);
+    html.classList.toggle('cg-wide', wide);
+  }
+
   function schedule() {
+    syncWideClass();
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(fit, 90);
   }
@@ -422,7 +437,10 @@
   // assets like fonts/images may have changed the layout).
   function remeasure() { domDirty = true; }
 
+  syncWideClass();   // set before first paint where possible
+
   document.addEventListener('DOMContentLoaded', function () {
+    syncWideClass();
     init();
     // A few passes as fonts/images/canvases settle after first paint.
     schedule();
@@ -441,6 +459,7 @@
   // height, so it still fits when the bar hides and more height appears.
   var lastViewportW = window.innerWidth;
   window.addEventListener('resize', function () {
+    syncWideClass();   // orientation can change without a width change (rotation)
     if (window.innerWidth === lastViewportW) return;   // height-only → ignore
     lastViewportW = window.innerWidth;
     userIndex = 0; init(); remeasure(); schedule();

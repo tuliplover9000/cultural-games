@@ -5558,6 +5558,71 @@ html[data-theme="light"] .pu-game-wrap {
    NOT apply at real phone landscape widths. Same convention the other landscape
    grids use (#game-container.ht-game-container etc). */
 
+/* ── GENERIC landscape side-by-side for the remaining BOARD games ───────────
+   Same treatment Senet gets, applied structurally instead of per-game: the
+   board (canvas, or a *board* wrapper) takes the left column at full height,
+   and every other direct child stacks in a narrow right column. That avoids
+   hand-writing a layout for each game's bespoke class names.
+
+   Listed explicitly rather than applied to every #game-container because the
+   card/dice/tile games (Tiến Lên, Bầu Cua, Mahjong, Scopa…) have their own
+   table layouts, and yote/fanorona/hnefatafl/xinjiang-fangqi/filipino-dama
+   already ship bespoke landscape grids in shared/mobile.css. */
+html.cg-wide #game-container:is(
+  .ll-game-container, .yn-game-container, .bg-game-container,
+  .morabaraba-game-container, .konane-game-container, .surakarta-game-container,
+  .mu-torere-game-container, .dou-shou-qi-game-container, .tsoro-yematatu-game-container
+) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(120px, 26%, 210px);
+  align-items: start;
+  gap: 6px 10px;
+  padding: 0 6px;
+  margin-block: 0 !important;
+}
+/* Board → left column, spanning every row, vertically centred.
+   These child rules MUST repeat the container list: unscoped, they leaked into
+   every game and overrode the bespoke landscape grids that fanorona/hnefatafl/
+   yote/xinjiang-fangqi/filipino-dama already ship in shared/mobile.css. */
+html.cg-wide #game-container:is(
+  .ll-game-container, .yn-game-container, .bg-game-container,
+  .morabaraba-game-container, .konane-game-container, .surakarta-game-container,
+  .mu-torere-game-container, .dou-shou-qi-game-container, .tsoro-yematatu-game-container
+) > :is(canvas, [class*="board-wrap"], [class*="canvas-wrap"]) {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  align-self: center;
+  /* Centre in the column: these boards are SQUARE, so on a wide-but-short
+     landscape viewport they're height-bound and can never fill the column.
+     Left-aligning them (right for Senet's wide board) left all the slack piled
+     on one side, which read as broken; splitting it looks deliberate. */
+  justify-self: center;
+  min-width: 0;
+}
+/* Everything else (HUD, status, controls) → right column. The floating help
+   button lives inside the container on some pages but is position-fixed, so it
+   must not be treated as a grid item. */
+html.cg-wide #game-container:is(
+  .ll-game-container, .yn-game-container, .bg-game-container,
+  .morabaraba-game-container, .konane-game-container, .surakarta-game-container,
+  .mu-torere-game-container, .dou-shou-qi-game-container, .tsoro-yematatu-game-container
+) > *:not(canvas):not([class*="board-wrap"]):not([class*="canvas-wrap"]):not(.tt-trigger) {
+  grid-column: 2;
+  min-width: 0;
+}
+html.cg-wide #game-container:is(
+  .ll-game-container, .yn-game-container, .bg-game-container,
+  .morabaraba-game-container, .konane-game-container, .surakarta-game-container,
+  .mu-torere-game-container, .dou-shou-qi-game-container, .tsoro-yematatu-game-container
+) .btn { width: 100%; }
+
+/* NOTE — the mancala trio (o-an-quan, oware, pallanguzhi) is deliberately NOT
+   in that list. Their #game-container holds a SINGLE wrapper (.oaq-game /
+   .ow-game / .pg-game) containing board + HUD + controls together, so a
+   two-column split just squeezes that whole wrapper into the narrow column
+   (measured: 182px wide — far worse than stacked). Their win comes from the
+   portrait auto-rotation added to those three pages instead. */
+
 /* Give the board the header's height back (matches the target mockup: board +
    controls fill the screen; the game title is redundant mid-game).
    !important is required: shared/mobile.css sets

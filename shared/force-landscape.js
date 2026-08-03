@@ -43,15 +43,10 @@
     var on   = shouldRotate();
     var was  = html.classList.contains('cg-landscape');
 
-    /* `cg-wide` = the game is PRESENTED in landscape, either because we rotated
-       the page (phone held upright, or rotation locked) or because the viewport
-       is already a short landscape one. Layout CSS keys off this class instead
-       of an `@media (orientation: landscape)` query, because a media query still
-       reports PORTRAIT after we rotate — so the rotated view would otherwise
-       fall back to the stacked layout. */
-    html.classList.toggle('cg-wide',
-      on || (window.innerWidth > window.innerHeight && window.innerHeight <= 600));
-
+    // NOTE: the `cg-wide` layout class is owned by shared/mobile-zoom.js (which
+    // every game page loads, so every game gets the side-by-side landscape
+    // layout — not just the ones that opt into rotation). Toggling cg-landscape
+    // below dispatches a resize, which makes mobile-zoom re-sync it.
     if (on === was) return;
     html.classList.toggle('cg-landscape', on);
     // Let the fit engine (and any orientation-aware game) re-measure.
