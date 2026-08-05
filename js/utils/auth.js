@@ -597,12 +597,51 @@
   // Resets on page load, so it only slows down console abuse, not real gameplay.
   var _lastResultTs = {};
 
+  // Anonymous-inclusive finish counter.
+  //
+  // Everything below recordResult's `if (!_user || !_accessToken) return` only
+  // runs for signed-in players, and most visitors never sign in — so a finish
+  // by a logged-out player left no trace anywhere. That is what made "24 of 30
+  // games have never been finished" read as mass abandonment: for a game nobody
+  // signs in to play, the finish count could only ever be zero.
+  //
+  // Deliberately NOT game_results: that table carries identity, coins and the
+  // anti-replay UNIQUE(user_id, session_key), none of which an anon finish has,
+  // and migration 030's 30 s rate-limit trigger sits on it. This is the open
+  // counter from migration 037 — UPDATE-only over a seeded whitelist.
+  //
+  // Uses the public anon key directly rather than _rpcFetch, which sends
+  // `Bearer _accessToken` and would send "Bearer null" when logged out. Kept as
+  // its own call so no existing authenticated RPC path changes. Fail-soft: a
+  // rejected or offline request must never disturb the end-of-game flow.
+  function _bumpFinish(gameId, outcome) {
+    if (!gameId || (outcome !== 'win' && outcome !== 'loss' && outcome !== 'draw')) return;
+    try {
+      fetch(SB_URL + '/rest/v1/rpc/bump_game_finish', {
+        method:    'POST',
+        keepalive: true,   // the tab often closes right after a game ends
+        headers: {
+          'apikey':        SB_KEY,
+          'Authorization': 'Bearer ' + SB_KEY,
+          'Content-Type':  'application/json',
+          'Accept':        'application/json',
+        },
+        body: JSON.stringify({ p_game_id: gameId, p_outcome: outcome }),
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
   function recordResult(gameId, outcome, roomId) {
     var now = Date.now();
     // Throttle only the duplicate server write — local stats/coins/streak still
     // update so legitimately fast rounds are never silently dropped.
     var throttled = !!(_lastResultTs[gameId] && now - _lastResultTs[gameId] < 2000);
     _lastResultTs[gameId] = now;
+
+    // Counted for EVERY player, signed in or not — above the auth guard below.
+    // Shares the same throttle so console spam can't inflate it faster than a
+    // real game can end.
+    if (!throttled) _bumpFinish(gameId, outcome);
 
     // ── Optimistic local update (immediate UI feedback) ────────────────────
     if (!_stats[gameId]) _stats[gameId] = { wins: 0, losses: 0, played: 0 };

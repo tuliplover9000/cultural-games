@@ -54,9 +54,53 @@
     if (window.cgMobileRefit) window.cgMobileRefit();
   }
 
+  // Only real visits move the number. Local dev and file:// opens would
+  // otherwise inflate it — every page a developer opens while working counts.
+  function countingEnabled() {
+    var h = location.hostname;
+    if (location.protocol === 'file:') return false;
+    if (h === 'localhost' || h === '127.0.0.1' || h === '::1' || h === '') return false;
+    if (/\.local$/i.test(h)) return false;
+    return true;
+  }
+
+  // One count per game per browser session. Without this a reload, or bouncing
+  // between two games, re-counted the same visit — so "opens" drifted away from
+  // "people who opened it", which is the number it is meant to stand for.
+  // Fails open if sessionStorage is unavailable (private mode): better to
+  // over-count slightly than to lose real visits entirely.
+  function alreadyCounted(id) {
+    try {
+      var k = 'cg-played-' + id;
+      if (sessionStorage.getItem(k)) return true;
+      sessionStorage.setItem(k, '1');
+      return false;
+    } catch (e) { return false; }
+  }
+
+  // Show the current total without touching it (game_plays is publicly
+  // readable), so the counter still renders in dev and on a revisit.
+  function showOnly(id) {
+    fetch(SB_URL + '/rest/v1/game_plays?select=plays&game_id=eq.' + encodeURIComponent(id), {
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer ' + SB_KEY,
+        'Accept': 'application/json'
+      }
+    })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (rows) {
+        if (rows && rows[0] && rows[0].plays !== null && rows[0].plays !== undefined) {
+          render(Number(rows[0].plays));
+        }
+      })
+      .catch(function () { /* fail-soft */ });
+  }
+
   function bump() {
     var id = gameId();
     if (!id) return;
+    if (!countingEnabled() || alreadyCounted(id)) { showOnly(id); return; }
     fetch(SB_URL + '/rest/v1/rpc/bump_game_play', {
       method: 'POST',
       keepalive: true,
