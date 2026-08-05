@@ -1090,9 +1090,12 @@
   window.cgMobileResize = function () {
     var scale = window.CGMobileScale || 1;
     var wrap = document.getElementById('ll-canvas-wrap');
-    var containerW = wrap ? wrap.clientWidth : (window.innerWidth - 32);
-    var availW = Math.min(containerW, 800) * scale;
-    var availH = (window.innerHeight - 56) * scale;
+    // Floor both: GameResize clamps the cell size but assigns availW/availH
+    // straight to canvas.width/height, so an unlaid-out wrap produced a 0x0
+    // canvas and a blank board.
+    var containerW = (wrap && wrap.clientWidth) || (window.innerWidth - 32) || 480;
+    var availW = Math.max(Math.min(containerW, 800), 280) * scale;
+    var availH = Math.max((window.innerHeight - 56) * scale, 240);
     window.GameResize(availW, availH);
   };
 

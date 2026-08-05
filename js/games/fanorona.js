@@ -785,7 +785,13 @@
     var wrap = document.getElementById('fn-board-wrap');
     if (!wrap) return;
     var scale = window.CGMobileScale || 1;
-    var w = Math.round(wrap.clientWidth * scale);
+    // clientWidth is 0 whenever the wrap has not been laid out: a hidden
+    // ancestor, a zero-width room iframe, or a resize fired mid fullscreen swap.
+    // A 0-wide canvas makes cellSize() negative ((0 - PAD*2) / 8 = -11), so the
+    // first ctx.arc() gets a negative radius and throws IndexSizeError. This
+    // runs INSIDE init(), so that throw aborted everything after it — including
+    // initRoomMode(), which silently killed online play on this page.
+    var w = Math.round(Math.max(wrap.clientWidth || 480, 280) * scale);
     cnv.width  = w;
     cnv.height = Math.round(w * (ROWS - 1) / (COLS - 1)) + PAD * 2;
     render();

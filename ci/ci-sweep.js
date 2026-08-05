@@ -131,6 +131,24 @@ gameJs.forEach(function (f) {
   }
 });
 
+// 9. Container measurements must be floored.
+//    An element that is not laid out yet (hidden ancestor, zero-width room
+//    iframe, a resize fired mid fullscreen swap) reports clientWidth 0. Sizing a
+//    canvas from that gives a 0-wide board; in fanorona it made the piece radius
+//    negative, so ctx.arc() threw IndexSizeError from inside init() and aborted
+//    the rest of init — initRoomMode() included, killing online play silently.
+//    The clamp is often on a following line, so scan a small window.
+gameJs.forEach(function (f) {
+  var lines = read(f).split(/\r?\n/);
+  lines.forEach(function (l, i) {
+    if (!/\.client(Width|Height)\b/.test(l)) return;
+    var win = lines.slice(i, i + 3).join('\n');
+    // A clamp is Math.max(...) or a `|| fallback` on the read itself.
+    if (/Math\.max\s*\(/.test(win) || /client(Width|Height)\s*\)?\s*\|\|/.test(win)) return;
+    problems.push('UNFLOORED SIZE ' + f + ':' + (i + 1) + ' ' + l.trim().slice(0, 64));
+  });
+});
+
 var units = gameJs.length + gamePages.length + standalonePages.length + gameCss.length;
 if (problems.length === 0) {
   console.log('sweep: CLEAN across ' + units + ' files (' + gameJs.length + ' JS, ' +

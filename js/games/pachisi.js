@@ -161,8 +161,10 @@
   function recalcSize() {
     var scale = window.CGMobileScale || 1;
     var wrap = document.querySelector('.pc-board-wrap');
-    var containerW = wrap ? wrap.clientWidth : (window.innerWidth - 32);
-    var avail = Math.min(containerW, 630) * scale;
+    // Floor the measurement: an unlaid-out wrap reports clientWidth 0, which
+    // collapsed CELL and the canvas to 0 and rendered a blank board.
+    var containerW = (wrap && wrap.clientWidth) || (window.innerWidth - 32) || 480;
+    var avail = Math.max(Math.min(containerW, 630), 280) * scale;
     CELL = Math.floor(avail / GRID);
     CANVAS_SIZE = CELL * GRID;
     if (canvas) {

@@ -1454,11 +1454,15 @@
 
   document.addEventListener('fs-enter', function () {
     var wrap = document.getElementById('yn-board-wrap');
-    if (wrap) window.GameResize(wrap.clientWidth, wrap.clientHeight);
+    // Floored at the call site: mid fullscreen swap the wrap can still measure
+    // 0. GameResize clamps too, but don't rely on the callee to fix bad input.
+    if (wrap) window.GameResize(wrap.clientWidth || 480, wrap.clientHeight || 480);
   });
   document.addEventListener('fs-exit', function () {
     var wrap = document.getElementById('yn-board-wrap');
-    if (wrap) window.GameResize(wrap.clientWidth, wrap.clientHeight);
+    // Floored at the call site: mid fullscreen swap the wrap can still measure
+    // 0. GameResize clamps too, but don't rely on the callee to fix bad input.
+    if (wrap) window.GameResize(wrap.clientWidth || 480, wrap.clientHeight || 480);
   });
 
   /* Toast animation keyframe (injected once) */
