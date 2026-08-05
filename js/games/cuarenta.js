@@ -334,7 +334,7 @@
         anim.callout  = '¡CAÍDA!';
         anim.flashMsg = '⚡ Caída! +1 bonus';
         addLog(who, '⚡ Caída! ' + name + ' scored +1 bonus');
-        if (who === 'player') { G.playerMesas++; if (!vsRoom && window.Achievements) Achievements.track('cu_caida'); }
+        if (who === 'player') { G.playerMesas++; if (!vsRoom && window.Achievements) Achievements.checkAction('cu_caida'); }
         else G.aiMesas++;
       }
       if (G.table.length === 0) {
@@ -343,7 +343,7 @@
         addLog(who, '✓ Table cleared! ' + name + ' scored +1 mesa');
         if (who === 'player') {
           G.playerMesas++;
-          if (G.playerMesas >= 3 && !vsRoom && window.Achievements) Achievements.track('cu_triple_mesa');
+          if (G.playerMesas >= 3 && !vsRoom && window.Achievements) Achievements.checkAction('cu_triple_mesa');
         } else {
           G.aiMesas++;
         }
@@ -698,9 +698,13 @@
       return;
     }
 
-    if (won && window.Achievements) {
-      Achievements.track('cu_first_win');
-      Achievements.increment('cuarenta', 'wins');
+    // Record the solo result. This was `Achievements.track/increment`, neither of
+    // which exists on the Achievements API — it threw, so Cuarenta could never
+    // record a finish (and this was the ONLY place it would have). recordResult
+    // also updates stats/coins and runs Achievements.evaluate for win-count
+    // achievements like cu_first_win.
+    if (window.Auth && Auth.recordResult) {
+      Auth.recordResult('cuarenta', won ? 'win' : 'loss');
     }
   }
 

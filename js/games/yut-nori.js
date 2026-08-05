@@ -552,8 +552,8 @@
       }
       if (window.Achievements) {
         window.Achievements.evaluate({ gameId: 'yut-nori', result: winner === 'a' ? 'win' : 'loss', isOnline: !!window.currentRoomId });
-        if (state.captureCount[winner] >= 4 && window.Achievements.trigger) {
-          window.Achievements.trigger('yn_clean_sweep');
+        if (state.captureCount[winner] >= 4 && window.Achievements.checkAction) {
+          window.Achievements.checkAction('yn_clean_sweep');
         }
       }
     }
@@ -567,8 +567,8 @@
   }
 
   function checkMoAchievement() {
-    if (state.moCount >= 3 && window.Achievements && window.Achievements.trigger) {
-      window.Achievements.trigger('yn_triple_mo');
+    if (state.moCount >= 3 && window.Achievements && window.Achievements.checkAction) {
+      window.Achievements.checkAction('yn_triple_mo');
     }
   }
 

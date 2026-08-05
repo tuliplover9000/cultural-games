@@ -323,7 +323,7 @@
       anim.callout  = 'SCOPA!';
       anim.flashMsg = '✦ Scopa! ' + name + ' swept the table (+1)';
       addLog(who, '✦ Scopa! ' + name + ' swept the table (+1)');
-      if (who === 'player' && !vsRoom && window.Achievements) Achievements.track('sc_scopa');
+      if (who === 'player' && !vsRoom && window.Achievements) Achievements.checkAction('sc_scopa');
     }
   }
 
@@ -883,9 +883,11 @@
       return;
     }
 
-    if (won && window.Achievements) {
-      Achievements.track('sc_first_win');
-      Achievements.increment('scopa', 'wins');
+    // See cuarenta.js — this was Achievements.track/increment, which don't exist
+    // and threw, so Scopa (10th most-opened game) could never record a finish.
+    // Draws aren't recorded: game_results only accepts 'win' | 'loss'.
+    if (!draw && window.Auth && Auth.recordResult) {
+      Auth.recordResult('scopa', won ? 'win' : 'loss');
     }
   }
 

@@ -94,6 +94,43 @@ gamePages.concat(standalonePages).forEach(function (p) {
   });
 });
 
+// 7. Calls into shared modules must MATCH THE MODULE'S ACTUAL EXPORTS.
+//    cuarenta/durak/scopa/yut-nori shipped calls to Achievements.track /
+//    .increment / .trigger — none of which exist — so they threw at runtime and
+//    three games could never record a finish. It lived in prod for weeks because
+//    nothing checks that a call site resolves to a real function.
+function exportsOf(file, globalName) {
+  var src = read(file);
+  var m = src.match(new RegExp('window\\.' + globalName + '\\s*=\\s*\\{([\\s\\S]*?)\\n\\s*\\};'));
+  if (!m) return null;
+  var names = [];
+  m[1].replace(/(^|\n)\s*([A-Za-z_$][\w$]*)\s*:/g, function (_, __, n) { names.push(n); return ''; });
+  return names;
+}
+[['shared/achievements.js', 'Achievements'], ['js/utils/auth.js', 'Auth']].forEach(function (mod) {
+  var api = exportsOf(mod[0], mod[1]);
+  if (!api) { problems.push('CI: could not parse exports of ' + mod[1]); return; }
+  gameJs.forEach(function (f) {
+    var src = read(f);
+    var re = new RegExp('\\b' + mod[1] + '\\.([A-Za-z_$][\\w$]*)\\s*\\(', 'g'), m2;
+    while ((m2 = re.exec(src))) {
+      if (api.indexOf(m2[1]) < 0) {
+        problems.push('UNDEFINED API ' + f + ': ' + mod[1] + '.' + m2[1] + '() is not exported by ' + mod[0]);
+      }
+    }
+  });
+});
+
+// 8. Every game must be able to RECORD a finish, or it is invisible in the data.
+gameJs.forEach(function (f) {
+  var src = read(f);
+  // Must be a real CALL — matching the bare word would let a code comment
+  // mentioning recordResult satisfy the check.
+  if (!/\.recordResult\s*\(/.test(src)) {
+    problems.push('NO recordResult: ' + f + ' can never record a completed game');
+  }
+});
+
 var units = gameJs.length + gamePages.length + standalonePages.length + gameCss.length;
 if (problems.length === 0) {
   console.log('sweep: CLEAN across ' + units + ' files (' + gameJs.length + ' JS, ' +

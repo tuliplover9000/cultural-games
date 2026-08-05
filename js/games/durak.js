@@ -866,9 +866,11 @@
       return;
     }
 
-    if (youWon && window.Achievements) {
-      Achievements.track('dk_first_win');
-      Achievements.increment('durak', 'wins');
+    // See cuarenta.js — this was Achievements.track/increment, which don't exist
+    // and threw, so Durak could never record a finish. Draws aren't recorded:
+    // game_results only accepts 'win' | 'loss'.
+    if (w !== 'draw' && window.Auth && Auth.recordResult) {
+      Auth.recordResult('durak', youWon ? 'win' : 'loss');
     }
   }
 
