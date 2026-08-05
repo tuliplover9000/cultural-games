@@ -1042,12 +1042,67 @@ canvas {
     padding: 0;
   }
 
-  /* ── Hide desktop-only card content ──────────────────────── */
+  /* ── Compact cards on mobile ─────────────────────────────────
+     The footer used to be `display: none` here — but it holds the card's ONLY
+     two <a> elements (How to Play / Play), and the card has no wrapping anchor
+     and no click handler. So every game card on this page was completely
+     UNTAPPABLE on a phone, while "Browse All Games" is the mobile homepage's
+     primary CTA. (Verified at 390px: 30 cards, 0 tappable links; a tap in the
+     card centre landed on the banner <img>.)
+
+     Fix: keep the footer in the layout but collapsed, hide its chrome, and
+     stretch the real "Play" anchor over the whole card. That keeps a genuine,
+     crawlable, screen-reader-addressable link instead of bolting on a JS
+     click handler — and it applies to the 5 collections pages too, which use
+     the same .btn-secondary / .btn-primary markup. */
   .game-card__description,
-  .game-card__origin,
-  .game-card__footer {
+  .game-card__origin {
     display: none;
   }
+
+  /* Height + positioning context for the tap overlay below.
+     The 150px lived ONLY in browse-panel.css, which only browse.html loads —
+     so on the 5 collections/ landing pages the mobile banner (position:absolute,
+     out of flow) left the card with NO in-flow height at all and every card
+     rendered 0px tall, i.e. invisible. Same-value duplicate of the
+     browse-panel.css rule; it belongs here where every page gets it. */
+  .game-card {
+    position: relative;
+    height: 150px;
+  }
+
+  .game-card__footer {
+    display: block;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+  }
+  /* Badge, star and the secondary "How to Play" button stay hidden on mobile. */
+  .game-card__footer .badge,
+  .game-card__footer .fav-btn,
+  .game-card__footer .btn-secondary {
+    display: none;
+  }
+  /* The "Play" link becomes an invisible full-card hit area. */
+  .game-card__footer .btn-primary {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: block;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    /* keep the accessible name, hide the glyph */
+    text-indent: -9999px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  /* Badges/stickers must stay above the overlay so they remain readable. */
+  .yn-badge-popular,
+  .yn-badge-new { z-index: 4; }
 
   /* ── Badge stickers (Most Popular / New) ─────────────────── */
   /* z-index: 4 — topmost layer, above title text              */

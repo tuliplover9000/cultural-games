@@ -1267,7 +1267,11 @@
     /* Inject a star button into every game card footer */
     grid.querySelectorAll('.game-card').forEach(function (card) {
       var footer   = card.querySelector('.game-card__footer');
-      var playLink = card.querySelector('.game-card__footer a');
+      // .btn-primary, NOT the first <a>: the first anchor in the footer is the
+      // "How to Play" link, so this was deriving gameKey from
+      // "../how-to-play/oware/" and saving favourites under a mangled key that
+      // never matched the real one used everywhere else.
+      var playLink = card.querySelector('.game-card__footer a.btn-primary');
       if (!footer || !playLink) return;
       var href    = playLink.getAttribute('href') || '';
       var gameKey = href.replace('games/', '').replace('.html', '');
