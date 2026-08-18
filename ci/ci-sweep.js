@@ -99,12 +99,36 @@ gamePages.concat(standalonePages).forEach(function (p) {
 //    .increment / .trigger — none of which exist — so they threw at runtime and
 //    three games could never record a finish. It lived in prod for weeks because
 //    nothing checks that a call site resolves to a real function.
+// Brace-matched, NOT a non-greedy regex. `[\s\S]*?\n\s*\};` stops at the first
+// line that looks like a close, so the moment anyone adds a multi-line function
+// value to window.Auth the parse truncates there and every export after it is
+// reported as UNDEFINED API - CI failing on correct code, blaming the wrong file.
 function exportsOf(file, globalName) {
   var src = read(file);
-  var m = src.match(new RegExp('window\\.' + globalName + '\\s*=\\s*\\{([\\s\\S]*?)\\n\\s*\\};'));
-  if (!m) return null;
-  var names = [];
-  m[1].replace(/(^|\n)\s*([A-Za-z_$][\w$]*)\s*:/g, function (_, __, n) { names.push(n); return ''; });
+  // Located with indexOf, not a regex: the pattern needs escaped dots and
+  // braces, and those escapes are easy to lose when this file is edited.
+  var start = src.indexOf('window.' + globalName + ' =');
+  if (start < 0) return null;
+  var open = src.indexOf('{', start);
+  var depth = 0, end = -1;
+  for (var i = open; i < src.length; i++) {
+    if (src[i] === '{') depth++;
+    else if (src[i] === '}') { depth--; if (depth === 0) { end = i; break; } }
+  }
+  if (end < 0) return null;
+  var body = src.slice(open + 1, end);
+  // Only keys at depth 0 of THIS object are exports; skip anything nested.
+  var names = [], d = 0;
+  body.split(/\r?\n/).forEach(function (line) {
+    if (d === 0) {
+      var m = line.match(/^\s*([A-Za-z_$][\w$]*)\s*:/);
+      if (m) names.push(m[1]);
+    }
+    for (var k = 0; k < line.length; k++) {
+      if ('{(['.indexOf(line[k]) > -1) d++;
+      else if ('})]'.indexOf(line[k]) > -1) d--;
+    }
+  });
   return names;
 }
 [['shared/achievements.js', 'Achievements'], ['js/utils/auth.js', 'Auth']].forEach(function (mod) {
@@ -128,7 +152,21 @@ gameJs.forEach(function (f) {
   // mentioning recordResult satisfy the check.
   if (!/\.recordResult\s*\(/.test(src)) {
     problems.push('NO recordResult: ' + f + ' can never record a completed game');
+    return;
   }
+  // ...and it must not sit behind an isLoggedIn() gate. 17 games did exactly
+  // that: the call existed, so a "does this file call recordResult" check passed,
+  // but it was unreachable for logged-out players — most of the traffic — so
+  // their finishes were never counted and the games looked abandoned.
+  var lines = src.split(/\r?\n/);
+  lines.forEach(function (l, i) {
+    if (!/\.recordResult\s*\(/.test(l)) return;
+    var win = lines.slice(Math.max(0, i - 3), i + 1).join('\n');
+    if (/isLoggedIn/.test(win)) {
+      problems.push('GATED recordResult: ' + f + ':' + (i + 1) +
+        ' is behind isLoggedIn() - anonymous finishes will not be counted');
+    }
+  });
 });
 
 // 9. Container measurements must be floored.

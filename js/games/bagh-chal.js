@@ -635,7 +635,7 @@
     }
     // Only vs-AI records to the player's account; hotseat is local, and online
     // results are recorded per-seat by the room end screen.
-    if (vsAI && window.Auth && Auth.isLoggedIn && Auth.isLoggedIn()) {
+    if (vsAI && window.Auth && Auth.recordResult) {
       Auth.recordResult('bagh-chal', winner === 'draw' ? 'draw' : (localWon ? 'win' : 'loss'));
     }
     if (vsAI && window.Achievements && Achievements.evaluate) {

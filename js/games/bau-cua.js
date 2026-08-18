@@ -631,7 +631,7 @@
 
   function showGameOver() {
     state.phase = 'gameover';
-    if (!vsRoom && window.Auth && Auth.isLoggedIn()) Auth.recordResult('bau-cua', 'loss');
+    if (!vsRoom && window.Auth && Auth.recordResult) Auth.recordResult('bau-cua', 'loss');
     refresh();
     els.gameover.classList.add('visible');
 

@@ -222,7 +222,7 @@
 
   function gameOver(winner) {
     state.phase = 'over';
-    if (!vsRoom && window.Auth && Auth.isLoggedIn())
+    if (!vsRoom && window.Auth && Auth.recordResult)
       Auth.recordResult('puluc', winner === PLAYER ? 'win' : 'loss');
     elRollBtn.disabled = true;
     setStatus(playerName(winner) + ' wins! All ' + PIECES + ' sticks reached the field.');

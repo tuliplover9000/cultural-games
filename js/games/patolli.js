@@ -560,7 +560,7 @@
 
   function gameOver(winner) {
     state.phase = 'over';
-    if (!vsRoom && window.Auth && Auth.isLoggedIn())
+    if (!vsRoom && window.Auth && Auth.recordResult)
       Auth.recordResult('patolli', winner === PLAYER ? 'win' : 'loss');
     elRollBtn.disabled = true;
     var p1coins = state.coins[PLAYER], p2coins = state.coins[AI];

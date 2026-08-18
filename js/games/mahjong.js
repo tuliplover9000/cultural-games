@@ -1257,7 +1257,7 @@
 
     addLog(`${seatName(winningSeat)} wins! ${fan} fan → ${payout}pt.`);
 
-    if (!vsOnline && window.Auth && Auth.isLoggedIn())
+    if (!vsOnline && window.Auth && Auth.recordResult)
       Auth.recordResult('mahjong', winningSeat === myPS() ? 'win' : 'loss');
 
     // Build the hand display for overlay

@@ -58,6 +58,13 @@
     } catch (e) { /* fetch unavailable — give up silently */ }
   }
 
+  // Exposed so other modules can report a FAILED-BUT-SILENT condition that no
+  // window.onerror will ever see - e.g. an RPC that returns a non-2xx and is
+  // swallowed by a .catch(). Those are the failures that look like "no data"
+  // instead of "broken", which is how the unapplied migration 018 stayed
+  // invisible in production for two weeks.
+  window.CGError = { report: report };
+
   window.addEventListener('error', function (e) {
     // Resource-load errors (img/script tags) have no message — skip those;
     // runtime errors carry message + (usually) an Error object with a stack.

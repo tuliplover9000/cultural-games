@@ -277,7 +277,7 @@
     // Record result (vs-AI only — human plays White; online results are recorded
     // per-seat by the room end screen, so skip the solo write there).
     var isWinner = winner === 'white';
-    if (!vsRoom && window.Auth && Auth.isLoggedIn()) {
+    if (!vsRoom && window.Auth && Auth.recordResult) {
       Auth.recordResult('latrunculi', isWinner ? 'win' : 'loss');
     }
     if (!vsRoom && window.Achievements) {

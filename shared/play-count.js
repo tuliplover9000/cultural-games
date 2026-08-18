@@ -69,13 +69,17 @@
   // "people who opened it", which is the number it is meant to stand for.
   // Fails open if sessionStorage is unavailable (private mode): better to
   // over-count slightly than to lose real visits entirely.
+  //
+  // Read-only on purpose. Marking the session BEFORE the request means a bump
+  // that never lands (offline, and the PWA still serves the page from cache)
+  // permanently loses that visit — every later open in the session takes the
+  // already-counted path. markCounted() runs only on a confirmed 2xx.
   function alreadyCounted(id) {
-    try {
-      var k = 'cg-played-' + id;
-      if (sessionStorage.getItem(k)) return true;
-      sessionStorage.setItem(k, '1');
-      return false;
-    } catch (e) { return false; }
+    try { return !!sessionStorage.getItem('cg-played-' + id); }
+    catch (e) { return false; }
+  }
+  function markCounted(id) {
+    try { sessionStorage.setItem('cg-played-' + id, '1'); } catch (e) {}
   }
 
   // Show the current total without touching it (game_plays is publicly
@@ -112,12 +116,16 @@
       },
       body: JSON.stringify({ p_game_id: id })
     })
-      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (r) {
+        if (!r.ok) return null;
+        markCounted(id);      // only now is the visit actually recorded
+        return r.json();
+      })
       .then(function (n) {
         var num = Number(n);
         if (n !== null && n !== undefined && !isNaN(num) && num >= 0) render(num);
       })
-      .catch(function () { /* fail-soft: no counter shown */ });
+      .catch(function () { /* fail-soft: not marked, so a later open retries */ });
   }
 
   if (document.readyState === 'loading') {

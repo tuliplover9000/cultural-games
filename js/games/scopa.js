@@ -181,7 +181,12 @@
   }
 
   // ── New game ─────────────────────────────────────────────────────────────────
+  // Set once the finished game has been recorded, so a repeat render of the
+  // end screen cannot record it twice. Cleared on every new game.
+  var _recorded = false;
+
   function newGame() {
+    _recorded = false;
     if (aiThinkTimer) { clearTimeout(aiThinkTimer); aiThinkTimer = null; }
     winReported = false;
     roomEnded   = false;
@@ -883,11 +888,17 @@
       return;
     }
 
-    // See cuarenta.js — this was Achievements.track/increment, which don't exist
-    // and threw, so Scopa (10th most-opened game) could never record a finish.
-    // Draws aren't recorded: game_results only accepts 'win' | 'loss'.
-    if (!draw && window.Auth && Auth.recordResult) {
-      Auth.recordResult('scopa', won ? 'win' : 'loss');
+    // Recorded from a RENDER function, so it must be idempotent: render()
+    // re-dispatches here on every call while G.phase === 'game-end', and a
+    // second pass would re-credit coins and re-count the finish. _recorded is
+    // cleared in newGame().
+    //
+    // Draws ARE passed through now. recordResult counts them in the finish
+    // counter and skips the server write itself (record_game_result only
+    // accepts win|loss) — dropping them here made a drawn game look abandoned.
+    if (!_recorded && window.Auth && Auth.recordResult) {
+      _recorded = true;
+      Auth.recordResult('scopa', draw ? 'draw' : (won ? 'win' : 'loss'));
     }
   }
 

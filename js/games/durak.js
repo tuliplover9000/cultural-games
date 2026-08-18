@@ -179,7 +179,12 @@
   }
 
   // ── New game ─────────────────────────────────────────────────────────────────
+  // Set once the finished game has been recorded, so a repeat render of the
+  // end screen cannot record it twice. Cleared on every new game.
+  var _recorded = false;
+
   function newGame() {
+    _recorded = false;
     if (aiThinkTimer) { clearTimeout(aiThinkTimer); aiThinkTimer = null; }
     gameLog = [];
     winReported = false;
@@ -866,11 +871,12 @@
       return;
     }
 
-    // See cuarenta.js — this was Achievements.track/increment, which don't exist
-    // and threw, so Durak could never record a finish. Draws aren't recorded:
-    // game_results only accepts 'win' | 'loss'.
-    if (w !== 'draw' && window.Auth && Auth.recordResult) {
-      Auth.recordResult('durak', youWon ? 'win' : 'loss');
+    // Idempotent: this runs from a render path that can fire more than once
+    // for the same finished game. Draws are passed through — recordResult
+    // counts them and skips the server write (which only accepts win|loss).
+    if (!_recorded && window.Auth && Auth.recordResult) {
+      _recorded = true;
+      Auth.recordResult('durak', w === 'draw' ? 'draw' : (youWon ? 'win' : 'loss'));
     }
   }
 

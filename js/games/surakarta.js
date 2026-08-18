@@ -736,7 +736,7 @@
       }
       return;
     }
-    if (vsAI && window.Auth && Auth.isLoggedIn && Auth.isLoggedIn()) {
+    if (vsAI && window.Auth && Auth.recordResult) {
       Auth.recordResult('surakarta', result);
     }
     if (vsAI && window.Achievements && Achievements.evaluate) {

@@ -599,23 +599,53 @@
 
   // Anonymous-inclusive finish counter.
   //
-  // Everything below recordResult's `if (!_user || !_accessToken) return` only
-  // runs for signed-in players, and most visitors never sign in — so a finish
-  // by a logged-out player left no trace anywhere. That is what made "24 of 30
-  // games have never been finished" read as mass abandonment: for a game nobody
-  // signs in to play, the finish count could only ever be zero.
+  // recordResult's server write is gated on `_user && _accessToken`, and most
+  // visitors never sign in — so a finish by a logged-out player left no trace
+  // anywhere. That is what made "24 of 30 games have never been finished" read
+  // as mass abandonment: for a game nobody signs in to play, the finish count
+  // could only ever be zero.
   //
   // Deliberately NOT game_results: that table carries identity, coins and the
   // anti-replay UNIQUE(user_id, session_key), none of which an anon finish has,
   // and migration 030's 30 s rate-limit trigger sits on it. This is the open
-  // counter from migration 037 — UPDATE-only over a seeded whitelist.
+  // counter from migrations 037/038 - UPDATE-only over a seeded whitelist.
   //
   // Uses the public anon key directly rather than _rpcFetch, which sends
   // `Bearer _accessToken` and would send "Bearer null" when logged out. Kept as
-  // its own call so no existing authenticated RPC path changes. Fail-soft: a
-  // rejected or offline request must never disturb the end-of-game flow.
+  // its own call so no existing authenticated RPC path changes.
+
+  // Local dev must never move production counters. play-count.js has the same
+  // guard for `plays`; without it here, every playtest win inflated `finishes`
+  // while `plays` was correctly suppressed - skewing the ratio upward using
+  // exactly the traffic that is not real.
+  function _countingEnabled() {
+    try {
+      var h = location.hostname;
+      if (location.protocol === 'file:') return false;
+      if (h === 'localhost' || h === '127.0.0.1' || h === '::1' || h === '') return false;
+      if (/\.local$/i.test(h)) return false;
+      return true;
+    } catch (e) { return false; }
+  }
+
+  // `finishes` counts every completed game, but `plays` counts unique sessions,
+  // so finishes/plays is not a rate and can exceed 100%. finish_sessions counts
+  // sessions with at least one finish, making finish_sessions/plays a real
+  // completion rate. This reports whether THIS session has finished this game
+  // before. Flag is written only after the server confirms, so a dropped
+  // request does not silently lose the session.
+  function _isNewFinishSession(gameId) {
+    try { return !sessionStorage.getItem('cg-finished-' + gameId); }
+    catch (e) { return false; }   // no sessionStorage: never claim a new session
+  }
+  function _markFinishSession(gameId) {
+    try { sessionStorage.setItem('cg-finished-' + gameId, '1'); } catch (e) {}
+  }
+
   function _bumpFinish(gameId, outcome) {
     if (!gameId || (outcome !== 'win' && outcome !== 'loss' && outcome !== 'draw')) return;
+    if (!_countingEnabled()) return;
+    var isNew = _isNewFinishSession(gameId);
     try {
       fetch(SB_URL + '/rest/v1/rpc/bump_game_finish', {
         method:    'POST',
@@ -626,8 +656,19 @@
           'Content-Type':  'application/json',
           'Accept':        'application/json',
         },
-        body: JSON.stringify({ p_game_id: gameId, p_outcome: outcome }),
-      }).catch(function () {});
+        body: JSON.stringify({
+          p_game_id: gameId, p_outcome: outcome, p_new_session: isNew,
+        }),
+      }).then(function (r) {
+        if (r && r.ok) { if (isNew) _markFinishSession(gameId); return; }
+        // A silent failure here is indistinguishable from "nobody finishes
+        // games" - the exact false conclusion this counter exists to prevent,
+        // and how the unapplied migration 018 stayed invisible for two weeks.
+        if (window.CGError && CGError.report) {
+          CGError.report('bump_game_finish failed: HTTP ' + (r && r.status),
+                         { gameId: gameId, outcome: outcome });
+        }
+      }).catch(function () { /* offline: fail-soft, session flag not set */ });
     } catch (e) {}
   }
 
@@ -649,10 +690,17 @@
     if (outcome === 'win')  _stats[gameId].wins++;
     if (outcome === 'loss') _stats[gameId].losses++;
 
-    var rewards   = COIN_REWARDS[gameId] || { win: 100, loss: 0 };
-    var coinDelta = outcome === 'win'  ? rewards.win
-                  : outcome === 'loss' ? rewards.loss : 0;
-    if (coinDelta > 0) { _coins = Math.max(0, _coins + coinDelta); _emit(); }
+    // Coins are an ACCOUNT balance, so only credit them optimistically when
+    // there is an account. Without this check a logged-out player who wins is
+    // shown a balance that was never banked and vanishes on reload - and since
+    // the isLoggedIn() gates were removed from the game call sites, every game
+    // now reaches this line while signed out.
+    if (_user && _accessToken) {
+      var rewards   = COIN_REWARDS[gameId] || { win: 100, loss: 0 };
+      var coinDelta = outcome === 'win'  ? rewards.win
+                    : outcome === 'loss' ? rewards.loss : 0;
+      if (coinDelta > 0) { _coins = Math.max(0, _coins + coinDelta); _emit(); }
+    }
 
     // Win streak (localStorage)
     var streakKey = 'cg-streak';
@@ -677,7 +725,10 @@
     // Validates the result, upserts stats, resolves any room bet, and updates
     // profiles.coins - all in one atomic DB function. Coins from the server
     // response overwrite the optimistic local value once confirmed.
-    if (!_user || !_accessToken || throttled) return;
+    // Draws are counted by _bumpFinish above but never written to
+    // game_results: record_game_result validates p_result IN ('win','loss')
+    // and would reject the row, so sending one is a guaranteed-failed request.
+    if (!_user || !_accessToken || throttled || outcome === 'draw') return;
     var sessionKey = _user.id + '_' + gameId + '_' +
                      Date.now().toString(36) + '_' +
                      Math.random().toString(36).slice(2, 7);

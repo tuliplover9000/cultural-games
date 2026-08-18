@@ -814,7 +814,7 @@
     }
 
     var result = winner === 'draw' ? 'draw' : (localWon ? 'win' : 'loss');
-    if (vsAI && window.Auth && Auth.isLoggedIn && Auth.isLoggedIn()) {
+    if (vsAI && window.Auth && Auth.recordResult) {
       Auth.recordResult('morabaraba', result);
     }
     if (vsAI && window.Achievements && Achievements.evaluate) {

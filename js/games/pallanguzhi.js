@@ -506,7 +506,7 @@
     for (var b = 7; b < 14; b++) { state.stores[PLAYER] += state.cups[b]; state.cups[b] = 0; }
 
     state.phase = 'over';
-    if (!vsRoom && window.Auth && Auth.isLoggedIn()) {
+    if (!vsRoom && window.Auth && Auth.recordResult) {
       var _ps = state.stores[PLAYER], _as = state.stores[AI];
       Auth.recordResult('pallanguzhi', _ps > _as ? 'win' : _as > _ps ? 'loss' : 'draw');
     }

@@ -322,10 +322,15 @@
           isHost: !!(window.RoomBridge && RoomBridge.isRoomHost && RoomBridge.isRoomHost()),
         });
       }
-    } else if (outcome === 'draw') {
-      if (window.Achievements) Achievements.evaluate({ gameId: 'yote', result: 'draw' });
     } else if (window.Auth && Auth.recordResult) {
+      // Draws go through recordResult too. They used to take a separate branch
+      // that only evaluated achievements, so a drawn game was never counted and
+      // looked identical to an abandoned one. recordResult counts the draw and
+      // skips the server write itself (record_game_result only accepts
+      // win|loss), and still runs Achievements.evaluate.
       Auth.recordResult('yote', outcome);   // guest-safe; updates local stats too
+    } else if (outcome === 'draw' && window.Achievements) {
+      Achievements.evaluate({ gameId: 'yote', result: 'draw' });
     }
 
     showOverlay(winner, reason);

@@ -890,7 +890,12 @@ canvas {
   /* height and aspect-ratio are also set in browse-panel.css (last loaded)
      to guarantee they win. Rules here cover the card's visual styling.     */
   .game-card {
-    position: relative;
+    position: relative;   /* containing block for the full-card tap overlay */
+    /* The 150px lived ONLY in browse-panel.css, which only browse.html loads,
+       so on the collections/ pages the absolutely-positioned banner left the
+       card with no in-flow height and every card rendered 0px tall. Kept here,
+       with the rest of the card's mobile geometry, so the two cannot drift. */
+    height: 150px;
     overflow: hidden;
     border-radius: var(--radius-plaque);
     aspect-ratio: unset;
@@ -1060,17 +1065,6 @@ canvas {
     display: none;
   }
 
-  /* Height + positioning context for the tap overlay below.
-     The 150px lived ONLY in browse-panel.css, which only browse.html loads —
-     so on the 5 collections/ landing pages the mobile banner (position:absolute,
-     out of flow) left the card with NO in-flow height at all and every card
-     rendered 0px tall, i.e. invisible. Same-value duplicate of the
-     browse-panel.css rule; it belongs here where every page gets it. */
-  .game-card {
-    position: relative;
-    height: 150px;
-  }
-
   .game-card__footer {
     display: block;
     height: 0;
@@ -1078,14 +1072,23 @@ canvas {
     margin: 0;
     overflow: visible;
   }
-  /* Badge, star and the secondary "How to Play" button stay hidden on mobile. */
-  .game-card__footer .badge,
-  .game-card__footer .fav-btn,
-  .game-card__footer .btn-secondary {
+  /* Badge, star and the secondary "How to Play" button stay hidden on mobile.
+     Written with the extra .game-card so this outranks page-level rules that
+     load LATER at equal specificity — browse.html's inline
+     `.auth-ready .fav-btn { display: inline-block }` was re-showing the star
+     inside the height:0 footer for signed-in visitors, where it was laid out
+     but unreachable underneath the tap overlay. */
+  .game-card .game-card__footer .badge,
+  .game-card .game-card__footer .fav-btn,
+  .game-card .game-card__footer .btn-secondary {
     display: none;
   }
-  /* The "Play" link becomes an invisible full-card hit area. */
-  .game-card__footer .btn-primary {
+  /* The "Play" link becomes an invisible full-card hit area.
+     Also .game-card-qualified: browse.html loads browse-panel.css AFTER this
+     file, and its `.game-card__footer .btn-primary { display:flex;
+     margin-top:6px }` won on source order — putting a 6px dead strip across
+     the top of every card on the one page this fix exists for. */
+  .game-card .game-card__footer .btn-primary {
     position: absolute;
     inset: 0;
     z-index: 3;
@@ -1101,8 +1104,12 @@ canvas {
     white-space: nowrap;
   }
   /* Badges/stickers must stay above the overlay so they remain readable. */
+  /* Raised above the tap overlay so the sticker stays readable, but made
+     transparent to input: a normal span at z-index 4 sitting over the overlay
+     swallows every tap that lands on it, putting a dead patch on exactly the
+     cards the badge marks as most worth tapping. */
   .yn-badge-popular,
-  .yn-badge-new { z-index: 4; }
+  .yn-badge-new { z-index: 4; pointer-events: none; }
 
   /* ── Badge stickers (Most Popular / New) ─────────────────── */
   /* z-index: 4 — topmost layer, above title text              */

@@ -595,7 +595,7 @@
       setStatus(winner === BLACK ? 'You win! All white pieces captured.' : 'AI wins. Better luck next time!');
       updateScore();
       render();
-      if (!vsRoom && window.Auth && Auth.isLoggedIn())
+      if (!vsRoom && window.Auth && Auth.recordResult)
         Auth.recordResult('fanorona', winner === BLACK ? 'win' : 'loss');
       if (vsRoom) syncRoomState();
       showFanPlaque(winner, 'All white pieces have been captured.');
@@ -615,7 +615,7 @@
         ? 'You win! Opponent has no legal moves.'
         : 'AI wins. You have no legal moves.');
       updateScore(); render();
-      if (!vsRoom && window.Auth && Auth.isLoggedIn())
+      if (!vsRoom && window.Auth && Auth.recordResult)
         Auth.recordResult('fanorona', blockWinner === BLACK ? 'win' : 'loss');
       if (vsRoom) syncRoomState();
       showFanPlaque(blockWinner, 'The opponent has no legal moves left.');

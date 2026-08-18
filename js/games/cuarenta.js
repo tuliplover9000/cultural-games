@@ -204,7 +204,12 @@
   }
 
   // ── New game ─────────────────────────────────────────────────────────────────
+  // Set once the finished game has been recorded, so a repeat render of the
+  // end screen cannot record it twice. Cleared on every new game.
+  var _recorded = false;
+
   function newGame() {
+    _recorded = false;
     if (aiThinkTimer) clearTimeout(aiThinkTimer);
     winReported = false;
     roomEnded   = false;
@@ -703,7 +708,10 @@
     // record a finish (and this was the ONLY place it would have). recordResult
     // also updates stats/coins and runs Achievements.evaluate for win-count
     // achievements like cu_first_win.
-    if (window.Auth && Auth.recordResult) {
+    // Idempotent: this runs from a render path that can fire more than once
+    // for the same finished game, which would re-credit coins and double-count.
+    if (!_recorded && window.Auth && Auth.recordResult) {
+      _recorded = true;
       Auth.recordResult('cuarenta', won ? 'win' : 'loss');
     }
   }

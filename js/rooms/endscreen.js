@@ -136,7 +136,17 @@
 
     // ── Coin rewards + bet resolution (once per unique game result) ──────────
     var hash = _instanceHash(room.game_instances);
-    if (hash && hash !== _lastAwardedHash && window.Auth && Auth.isLoggedIn()) {
+    // NOT gated on being signed in. Anonymous players finish online games too,
+    // and gating here meant those finishes were invisible in exactly the same
+    // way the solo ones were. Everything account-specific below already has its
+    // own guard: recordResult skips its server write without a session, and
+    // bracket advancement requires a non-null myUid.
+    //
+    // Both seats reach this, so a finished 2-player game records two
+    // player-finishes. That is the documented meaning of game_plays.finishes
+    // (see migration 038) and it matches solo play, where one player finishing
+    // is one. Use finish_sessions/plays for a per-visitor completion rate.
+    if (hash && hash !== _lastAwardedHash && window.Auth && Auth.recordResult) {
       _lastAwardedHash = hash;
       var myPid  = Room.getPlayerId();
       var gameId = room.selected_game || 'unknown';

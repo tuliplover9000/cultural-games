@@ -455,7 +455,7 @@
       }
       return;
     }
-    if (vsAI && window.Auth && Auth.isLoggedIn && Auth.isLoggedIn()) Auth.recordResult('tsoro-yematatu', result);
+    if (vsAI && window.Auth && Auth.recordResult) Auth.recordResult('tsoro-yematatu', result);
     if (vsAI && window.Achievements && Achievements.evaluate) Achievements.evaluate({ gameId: 'tsoro-yematatu', result: result });
   }
 
