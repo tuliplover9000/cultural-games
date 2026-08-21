@@ -175,6 +175,11 @@
     var vsHuman = mode === 'vs-human';
     var you     = vsHuman ? 'Player 1' : 'You';
     var opp     = vsHuman ? 'Player 2' : 'AI';
+    // Possessive forms. "You" is a pronoun, so the row label read "You's cups"
+    // while the AI row correctly read "AI's cups". Only the second-person
+    // pronoun is irregular; a real name takes a normal apostrophe-s.
+    var youPos  = (you === 'You') ? 'Your' : you + '’s';
+    var oppPos  = opp + '’s';
     var isIdle  = state.phase === 'idle';
 
     var clickablePlayer = [];
@@ -252,11 +257,11 @@
           + '<div class="pg-store__sub">captured</div>'
         + '</div>'
         + '<div class="pg-board">'
-          + '<div class="pg-row-label pg-row-label--ai">' + (flip ? you : opp) + '\u2019s cups</div>'
+          + '<div class="pg-row-label pg-row-label--ai">' + (flip ? youPos : oppPos) + ' cups</div>'
           + '<div class="pg-row pg-row--ai">' + (flip ? playerRow : aiRow) + '</div>'
           + '<div class="pg-divider"></div>'
           + '<div class="pg-row pg-row--player">' + (flip ? aiRow : playerRow) + '</div>'
-          + '<div class="pg-row-label pg-row-label--player">' + (flip ? opp : you) + '\u2019s cups</div>'
+          + '<div class="pg-row-label pg-row-label--player">' + (flip ? oppPos : youPos) + ' cups</div>'
         + '</div>'
         + '<div class="pg-store pg-store--player">'
           + '<div class="pg-store__label">' + you + '</div>'

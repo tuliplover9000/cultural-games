@@ -173,6 +173,13 @@
     return ['You', 'Right', 'Across', 'Left'][(seatIdx - mySeat + 4) % 4];
   }
 
+  // "You" needs a second-person verb. Every log template was written for the
+  // third-person seat names ("Left", "Across"), so the local player's own lines
+  // read "You discards b4." and "You deals."
+  function sv(seatIdx, second, third) {
+    return seatName(seatIdx) === 'You' ? second : third;
+  }
+
   // Returns absolute seat for screen position (0=bottom, 1=right, 2=top, 3=left)
   function viewSeat(pos) { return (mySeat + pos) % 4; }
 
@@ -1011,7 +1018,7 @@
     // Dealer draws 1 extra → starts with 14, must discard first
     state.hands[state.dealer].push(state.wall.pop());
 
-    addLog(`Round ${state.round} · ${state.roundWind} Wind · ${seatName(state.dealer)} deals.`);
+    addLog(`Round ${state.round} · ${state.roundWind} Wind · ${seatName(state.dealer)} ${sv(state.dealer, 'deal', 'deals')}.`);
 
     if (state.dealer === myPS()) {
       state.turnIdx = myPS();
@@ -1070,7 +1077,7 @@
     state.lastDiscard     = { tile, fromSeat: seatIdx };
     state.drawnTileUid    = null;
     state.selectedTileUid = null;
-    addLog(`${seatName(seatIdx)} discards ${tile.id}.`);
+    addLog(`${seatName(seatIdx)} ${sv(seatIdx, 'discard', 'discards')} ${tile.name}.`);
     render();
 
     if (vsOnline) {
@@ -1183,7 +1190,7 @@
     if (di !== -1) dp.splice(di, 1);
 
     state.turnIdx = claimingSeat;
-    addLog(`${seatName(claimingSeat)} claims - ${actionType}.`);
+    addLog(`${seatName(claimingSeat)} ${sv(claimingSeat, 'claim', 'claims')} - ${actionType}.`);
 
     if (actionType === 'win') {
       state.hands[claimingSeat].push(tile);
@@ -1255,7 +1262,7 @@
       state.scores[winningSeat]     += payout * 3;
     }
 
-    addLog(`${seatName(winningSeat)} wins! ${fan} fan → ${payout}pt.`);
+    addLog(`${seatName(winningSeat)} ${sv(winningSeat, 'win', 'wins')}! ${fan} fan → ${payout}pt.`);
 
     if (!vsOnline && window.Auth && Auth.recordResult)
       Auth.recordResult('mahjong', winningSeat === myPS() ? 'win' : 'loss');

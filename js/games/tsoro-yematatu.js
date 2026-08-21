@@ -662,7 +662,17 @@
   }
 
   function layout(availW, availH) {
-    var boardW = Math.min(availW, availH) - PAD * 2;
+    // The margin has to clear a PIECE, not just the board. Pieces sit ON the
+    // outer nodes — apex at y=0, bottom corners at x=0 and x=1 — so anything
+    // less than the piece radius gets sliced flat by the canvas edge. Radius is
+    // boardW * 0.09 (cell = boardW*0.30, piece = cell*0.30) and
+    // boardW = size - 2*pad, so pad >= 0.09*(size - 2*pad), i.e. pad >= 0.0763*size.
+    // 0.085 leaves a little air. A flat PAD of 30 was fine at 260px and cut 15px
+    // off every outer piece at 560px, which is why only placed pieces looked
+    // wrong while empty points (a much smaller dot) looked fine.
+    var size   = Math.min(availW, availH);
+    var pad    = Math.max(PAD, Math.ceil(size * 0.085));
+    var boardW = size - pad * 2;
     if (boardW < 120) boardW = 120;
     state.padX = Math.round((availW - boardW) / 2);
     state.padY = Math.round((availH - boardW) / 2);

@@ -910,6 +910,16 @@
   }
 
   // ── Init / resize ──────────────────────────────────────────────────────────
+
+  // Margin needed for a given canvas size. It has to clear the board PLATE,
+  // which render() draws cs*0.6 beyond the outer points, and the tiger sprites
+  // drawn at pr*1.12 = cs*0.336. A flat PAD of 44 was fine around 300px and
+  // left the plate and all four corner tigers sliced flat by the canvas edge as
+  // the board grew (at 560px the plate started 34px off-canvas). Solving
+  // pad >= 0.6*cs with cs = (size - 2*pad)/4 gives pad >= 0.115*size; 0.12
+  // leaves a little air.
+  function padFor(size) { return Math.max(PAD, Math.ceil(size * 0.12)); }
+
   function sizeToWrap() {
     if (window.FSMode && window.FSMode.isActive && window.FSMode.isActive()) return;
     var wrap = document.getElementById('bg-board-wrap');
@@ -917,9 +927,10 @@
     var w = Math.max(280, Math.min(wrap.clientWidth, 620));
     cnv.width  = w;
     cnv.height = w; // square board
-    state.cellSize = (w - PAD * 2) / (COLS - 1);
-    state.padX = PAD;
-    state.padY = PAD;
+    var pad = padFor(w);
+    state.cellSize = (w - pad * 2) / (COLS - 1);
+    state.padX = pad;
+    state.padY = pad;
     render();
   }
 
@@ -1036,12 +1047,13 @@
   window.GameResize = function (availW, availH) {
     if (!cnv || !ctx) return;
     var size = Math.min(availW, availH);
-    var newCell = Math.floor((size - PAD * 2) / (COLS - 1));
+    var pad = padFor(size);
+    var newCell = Math.floor((size - pad * 2) / (COLS - 1));
     if (newCell < 30) newCell = 30;
     state.cellSize = newCell;
     var boardPx = (COLS - 1) * newCell;
-    state.padX = Math.max(PAD, Math.round((availW - boardPx) / 2));
-    state.padY = Math.max(PAD, Math.round((availH - boardPx) / 2));
+    state.padX = Math.max(pad, Math.round((availW - boardPx) / 2));
+    state.padY = Math.max(pad, Math.round((availH - boardPx) / 2));
     cnv.width  = availW;
     cnv.height = availH;
     render();

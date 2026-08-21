@@ -617,11 +617,11 @@
     return '<div class="cu-score-strip">'
       + '<span class="cu-score-side">You: <strong>' + G.playerScore + '</strong> pts'
       + scoreMinis(G.playerScore)
-      + '<span class="cu-score-sub">' + G.playerCaptured.length + ' cap · ' + G.playerMesas + ' clears</span></span>'
+      + '<span class="cu-score-sub">' + G.playerCaptured.length + ' cap · ' + G.playerMesas + ' clear' + (G.playerMesas === 1 ? '' : 's') + '</span></span>'
       + '<span class="cu-score-mid">Deck: ' + G.deck.length + ' &nbsp;·&nbsp; Goal: ' + TARGET + '</span>'
       + '<span class="cu-score-side cu-score-side--cpu">CPU: <strong>' + G.aiScore + '</strong> pts'
       + scoreMinis(G.aiScore)
-      + '<span class="cu-score-sub">' + G.aiCaptured.length + ' cap · ' + G.aiMesas + ' clears</span></span>'
+      + '<span class="cu-score-sub">' + G.aiCaptured.length + ' cap · ' + G.aiMesas + ' clear' + (G.aiMesas === 1 ? '' : 's') + '</span></span>'
       + '</div>';
   }
 

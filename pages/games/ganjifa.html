@@ -103,6 +103,7 @@
   <script src="../../shared/theme.js"></script>
   <script src="../../shared/pwa.js"></script>
   <script src="../../shared/error-beacon.js"></script>
+  <script src="../../shared/status-announce.js"></script>
   <script src="../../shared/play-count.js"></script>
   <script src="../../js/rooms/room-mode.js"></script>
   <link rel="stylesheet" href="../../css/global.css" />
@@ -178,7 +179,13 @@
       <div class="fs-sr-only" id="fs-announce" aria-live="polite"></div>
       <div class="game-container" id="game-container" style="padding:0; background:#2A1410; border-radius:12px; overflow:hidden; position:relative;">
         <canvas id="gj-canvas" width="900" height="660" style="display:block; width:100%; height:auto;" aria-label="Ganjifa card game table"></canvas>
-        <div id="gj-controls" style="position:absolute; top:8px; right:8px; z-index:10;">
+        <!-- right:56px, not 8px: the shared tutorial button (.tt-trigger) is
+             absolutely positioned at top:12px/right:12px with z-index:10 inside
+             this same .game-container, and being later in the DOM it won the
+             stacking tie. It covered the right end of "New Game", so the label
+             read "New Ga" and a click near that edge opened Help instead of
+             starting a game. 36px trigger + 12px offset + 8px gap. -->
+        <div id="gj-controls" style="position:absolute; top:8px; right:56px; z-index:10;">
           <button id="gj-new-game-btn" class="btn btn-ghost btn-sm" style="background:rgba(0,0,0,0.4); color:#D4A017; border-color:rgba(212,160,23,0.4);">New Game</button>
         </div>
         <div id="gj-aria-live" aria-live="polite" style="position:absolute; left:-9999px; top:-9999px;"></div>

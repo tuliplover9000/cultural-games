@@ -724,10 +724,10 @@
     var pCoins = countCoins(G.playerPile), aCoins = countCoins(G.aiPile);
     return '<div class="sc-score-strip">'
       + '<span class="sc-score-side">You: <strong>' + G.playerScore + '</strong> pts'
-      + '<span class="sc-score-sub">' + G.playerPile.length + ' cap · ' + pCoins + ' coins · ' + G.playerScope + ' scopa</span></span>'
+      + '<span class="sc-score-sub">' + G.playerPile.length + ' cap · ' + pCoins + ' coin' + (pCoins === 1 ? '' : 's') + ' · ' + G.playerScope + ' scopa</span></span>'
       + '<span class="sc-score-mid">Deck: ' + G.deck.length + ' &nbsp;·&nbsp; Goal: ' + TARGET + '</span>'
       + '<span class="sc-score-side sc-score-side--cpu">CPU: <strong>' + G.aiScore + '</strong> pts'
-      + '<span class="sc-score-sub">' + G.aiPile.length + ' cap · ' + aCoins + ' coins · ' + G.aiScope + ' scopa</span></span>'
+      + '<span class="sc-score-sub">' + G.aiPile.length + ' cap · ' + aCoins + ' coin' + (aCoins === 1 ? '' : 's') + ' · ' + G.aiScope + ' scopa</span></span>'
       + '</div>';
   }
 

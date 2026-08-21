@@ -89,7 +89,7 @@ standalonePages.forEach(function (p) {
 // 6. shared-module wiring on every game page
 gamePages.concat(standalonePages).forEach(function (p) {
   var html = read(p);
-  ['shared/play-count.js', 'shared/error-beacon.js'].forEach(function (mod) {
+  ['shared/play-count.js', 'shared/error-beacon.js', 'shared/status-announce.js'].forEach(function (mod) {
     if (html.indexOf(mod) < 0) problems.push('MODULE MISSING ' + mod + ' on ' + p);
   });
 });
