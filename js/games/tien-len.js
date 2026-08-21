@@ -897,7 +897,23 @@
         showHint('✗ First play must include the 3♠'); return;
       }
       if (state.pileType && !beats(info, state.pileType)) {
-        showHint('✗ Doesn\'t beat current play - try higher or pass'); return;
+        // Say WHICH rule was broken. A single blanket "try higher or pass"
+        // implied a bigger card would work, when playing a pair onto a single
+        // fails on the hand TYPE and no rank could ever beat it.
+        var TYPE_NAME = {
+          single: 'a single', pair: 'a pair', triple: 'a triple',
+          quad: 'four of a kind', seq: 'a run', seqpair: 'consecutive pairs'
+        };
+        var want = TYPE_NAME[state.pileType.type] || state.pileType.type;
+        if (info.type !== state.pileType.type) {
+          showHint('✗ You must play ' + want + ' to match the current play');
+        } else if ((info.type === 'seq' || info.type === 'seqpair') && info.len !== state.pileType.len) {
+          showHint('✗ ' + want.charAt(0).toUpperCase() + want.slice(1) +
+                   ' of ' + state.pileType.len + ' cards - yours has ' + info.len);
+        } else {
+          showHint('✗ Too low - play a higher ' + want.replace(/^an? /, '') + ' or pass');
+        }
+        return;
       }
 
       selected.clear();

@@ -6330,6 +6330,12 @@ html.cg-wide body:has(.se-game-container) .fs-toggle {
   color: rgba(238, 222, 190, 0.38);
   white-space: nowrap;
 }
+/* Points not yet banked — brighter than the rest of the sub-line so it reads as
+   live feedback for a caída or mesa, without being mistaken for the total. */
+.cu-score-pending {
+  color: var(--color-accent-gold, #C89B3C);
+  font-weight: 600;
+}
 .cu-minis {
   display: inline-flex;
   align-items: center;

@@ -101,7 +101,12 @@
     if (window.Auth && Auth.onAuthChange) {
       Auth.onAuthChange(function () {
         if (!els.modeWrap) return;
-        els.modeWrap.style.display = Auth.isLoggedIn() ? 'flex' : 'none';
+        // Kept VISIBLE when signed out and disabled with a reason, instead of
+        // hidden. Hiding it meant a logged-out player never learned that
+        // playing with account coins was possible, and the control appeared to
+        // do nothing. refresh() owns the disabled state and the tooltip.
+        els.modeWrap.style.display = 'flex';
+        refresh();
         // If user logged out mid-game while using real coins, revert to practice
         if (!Auth.isLoggedIn() && useRealCoins) {
           useRealCoins = false;
@@ -127,7 +132,7 @@
       '      <div class="bc-wallet-bar__label" id="bc-wallet-label">Wallet</div>',
       '      <div class="bc-wallet-amount" id="bc-wallet">' + coinGlyph(20) + '100</div>',
       '    </div>',
-      '    <div id="bc-coin-mode-wrap" class="bc-coin-mode-wrap" style="display:none">',
+      '    <div id="bc-coin-mode-wrap" class="bc-coin-mode-wrap">',
       '      <button id="bc-mode-btn" class="bc-mode-btn" type="button">' + coinGlyph(15) + 'Use Real Coins</button>',
       '    </div>',
       '    <div style="text-align:right;">',
@@ -641,12 +646,12 @@
       '  <div class="bc-stat__label">Rounds Played</div>',
       '</div>',
       '<div class="bc-stat">',
-      '  <div class="bc-stat__num" style="color:#4ade80;">+' + state.stats.biggestWin + '</div>',
-      '  <div class="bc-stat__label">Biggest Win</div>',
+      '  <div class="bc-stat__num" style="color:#4ade80;">' + (state.stats.biggestWin > 0 ? '+' : '') + state.stats.biggestWin + '</div>',
+      '  <div class="bc-stat__label">Best Round</div>',
       '</div>',
       '<div class="bc-stat">',
       '  <div class="bc-stat__num" style="color:var(--color-accent-red);">' + state.stats.biggestLoss + '</div>',
-      '  <div class="bc-stat__label">Biggest Loss</div>',
+      '  <div class="bc-stat__label">Worst Round</div>',
       '</div>',
     ].join('');
 
@@ -661,8 +666,8 @@
         accent:   '#E0A04E',
         stats: [
           { label: 'Rounds',      value: state.stats.rounds },
-          { label: 'Biggest Win', value: '+' + state.stats.biggestWin },
-          { label: 'Biggest Loss', value: state.stats.biggestLoss }
+          { label: 'Best Round', value: (state.stats.biggestWin > 0 ? '+' : '') + state.stats.biggestWin },
+          { label: 'Worst Round', value: state.stats.biggestLoss }
         ],
         rematchText: 'Play Again',
         onRematch: function () { restartGame(); },
@@ -729,7 +734,12 @@
         ? glyph('gamepad', 15, '') + ' Switch to Practice'
         : coinGlyph(15) + 'Use Real Coins';
       els.modeBtn.classList.toggle('bc-mode-btn--active', useRealCoins);
-      els.modeBtn.disabled = (state.phase !== 'betting');
+      var signedIn = !!(window.Auth && Auth.isLoggedIn && Auth.isLoggedIn());
+      els.modeBtn.disabled = (state.phase !== 'betting') || !signedIn;
+      els.modeBtn.title = !signedIn
+        ? 'Sign in to bet with the coins on your account'
+        : (state.phase !== 'betting' ? 'You can only switch between rounds' : '');
+      els.modeBtn.setAttribute('aria-disabled', String(els.modeBtn.disabled));
     }
 
     // Bet input cap

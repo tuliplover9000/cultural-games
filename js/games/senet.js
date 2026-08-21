@@ -1119,7 +1119,12 @@
 
     startMoveAnim(info, function () { afterMoveSettled(p, info); });
     updateControls();
-    setStatus(playerLabel(p) + (info.off ? ' bears a piece off…' : ' moves…'));
+    // playerLabel returns the pronoun "You" for the local player, so the
+    // third-person template read "You moves…" / "You bears a piece off…".
+    var you = playerLabel(p) === 'You';
+    setStatus(playerLabel(p) + (info.off
+      ? (you ? ' bear a piece off…' : ' bears a piece off…')
+      : (you ? ' move…' : ' moves…')));
   }
 
   function afterMoveSettled(p, info) {

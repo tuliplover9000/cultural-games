@@ -466,7 +466,17 @@
     var side = state.turn, b = state.board;
 
     if (state.selected == null) {
-      if (b[node] === side && hasMoveFrom(node)) { state.selected = node; render(); }
+      if (b[node] === side && hasMoveFrom(node)) { state.selected = node; render(); return; }
+      // Tapping a piece that cannot legally move did nothing at all — no
+      // message, no highlight — which reads as an unresponsive board rather
+      // than an illegal choice. Mū tōrere's whole subtlety is that a piece
+      // whose two ring-neighbours are both friendly is stuck, so this is the
+      // single most common thing a new player tries.
+      if (b[node] === side) {
+        setStatus('That piece has nowhere to go — it needs an empty neighbouring point, or the centre if a neighbour is an opponent.');
+      } else if (b[node]) {
+        setStatus('That is your opponent’s piece. Tap one of yours.');
+      }
       return;
     }
     if (node === state.selected) { state.selected = null; render(); return; }

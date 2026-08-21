@@ -653,9 +653,23 @@
     var el = document.getElementById('yo-score');
     if (!el || !state) return;
     var me = myPlayer, opp = other(myPlayer);
-    el.innerHTML =
-      '<span class="yo-score__you">You: ' + state.hand[me] + ' in hand</span>' +
-      '<span class="yo-score__ai">' + opponentWord() + ': ' + state.hand[opp] + ' in hand</span>';
+    // "in hand" alone told you nothing about who was winning: Yote is decided by
+    // captures, and a player can hold 0 in hand while dominating the board. Show
+    // board presence and captures too. Each side starts with 12, so
+    // captured = 12 - (in hand) - (on board).
+    function onBoard(p) {
+      var n = 0;
+      for (var i = 0; i < state.board.length; i++) if (state.board[i] === p) n++;
+      return n;
+    }
+    function line(label, p, cls) {
+      var b = onBoard(p), h = state.hand[p];
+      var lost = Math.max(0, HAND_START - h - b);
+      return '<span class="' + cls + '">' + label + ': ' + b + ' on board · ' +
+             h + ' in hand · ' + lost + ' lost</span>';
+    }
+    el.innerHTML = line('You', me, 'yo-score__you') +
+                   line(opponentWord(), opp, 'yo-score__ai');
   }
   function setStatus(msg) {
     var el = document.getElementById('yo-status');

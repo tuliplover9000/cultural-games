@@ -614,14 +614,23 @@
   }
 
   function scoreStrip() {
+    // Points are BANKED at the end of a round, so both totals correctly sat at
+    // "0 pts" while caídas and mesas were being logged — which read as a broken
+    // scoreboard. Project the round-so-far with the same pure scoring function
+    // the round end uses, clearly labelled as pending. Nothing here changes what
+    // is actually scored.
+    var pend = scoreRound();
+    function pending(n) {
+      return n ? ' · <span class="cu-score-pending">+' + n + ' this round</span>' : '';
+    }
     return '<div class="cu-score-strip">'
       + '<span class="cu-score-side">You: <strong>' + G.playerScore + '</strong> pts'
       + scoreMinis(G.playerScore)
-      + '<span class="cu-score-sub">' + G.playerCaptured.length + ' cap · ' + G.playerMesas + ' clear' + (G.playerMesas === 1 ? '' : 's') + '</span></span>'
+      + '<span class="cu-score-sub">' + G.playerCaptured.length + ' cap · ' + G.playerMesas + ' clear' + (G.playerMesas === 1 ? '' : 's') + pending(pend.player) + '</span></span>'
       + '<span class="cu-score-mid">Deck: ' + G.deck.length + ' &nbsp;·&nbsp; Goal: ' + TARGET + '</span>'
       + '<span class="cu-score-side cu-score-side--cpu">CPU: <strong>' + G.aiScore + '</strong> pts'
       + scoreMinis(G.aiScore)
-      + '<span class="cu-score-sub">' + G.aiCaptured.length + ' cap · ' + G.aiMesas + ' clear' + (G.aiMesas === 1 ? '' : 's') + '</span></span>'
+      + '<span class="cu-score-sub">' + G.aiCaptured.length + ' cap · ' + G.aiMesas + ' clear' + (G.aiMesas === 1 ? '' : 's') + pending(pend.ai) + '</span></span>'
       + '</div>';
   }
 

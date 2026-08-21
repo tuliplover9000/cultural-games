@@ -200,13 +200,10 @@
   }
 
   function renderScore() {
-    // Don't show score until the game has actually started
-    if (state.phase === 'idle' && !state.roll && !state.rollDetail.length
-        && state.coins[PLAYER] === 0 && state.coins[AI] === 0
-        && state.pieces[PLAYER].every(function (p) { return p === null; })
-        && state.pieces[AI].every(function (p) { return p === null; })) {
-      return;
-    }
+    // Always renders, including the 0/6 · 0 coins opening state. This used to
+    // bail out entirely until the first roll, which left the score row blank on
+    // load — the player saw no score at all and had no idea one existed. The
+    // zero state is information, not nothing.
     var pDone = state.pieces[PLAYER].filter(function (p) { return p === TRACK_LENGTH; }).length;
     var aDone = state.pieces[AI].filter(function (p) { return p === TRACK_LENGTH; }).length;
     elScore.innerHTML =
@@ -403,7 +400,16 @@
 
     state.phase = 'choosingPiece';
     elRollBtn.disabled = true;
-    setStatus('Choose a piece to move ' + result.value + ' space' + (result.value !== 1 ? 's' : '') + '.');
+    // "Choose a piece to move N spaces" was shown even when every piece was
+    // still off the board, where the only legal action is entering one at the
+    // START cell — so the prompt described something the player could not do.
+    var sp = result.value + ' space' + (result.value !== 1 ? 's' : '');
+    var anyOnTrack = state.pieces[state.turn].some(function (pp) {
+      return pp !== null && pp !== TRACK_LENGTH;
+    });
+    setStatus(anyOnTrack
+      ? 'Choose a piece to move ' + sp + '.'
+      : 'Tap the START cell to enter a piece (' + sp + ').');
     if (vsRoom) syncRoomState();
     render();
   }
