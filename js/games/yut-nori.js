@@ -1318,10 +1318,17 @@
   }
 
   function updateStatus() {
-    var t = state.currentTeam === 'a' ? '\ud300 A' : '\ud300 B';
+    // The opening line (startGame) carries an English gloss \u2014 "\ud300 A\uc758 \ucc28\ub840
+    // (Team A's turn)" \u2014 but every turn after it came through here, which had
+    // Korean only. A player who read the first line then lost the translation
+    // for the rest of the game. Gloss both states the same way.
+    var t  = state.currentTeam === 'a' ? '\ud300 A' : '\ud300 B';
+    var en = state.currentTeam === 'a' ? 'Team A' : 'Team B';
+    var turn = t + '\uc758 \ucc28\ub840 (' + en + '\u2019s turn)';
+    var n = state.pendingMoves[0] ? ' (' + state.pendingMoves[0] + ')' : '';
     var msgs = {
-      throw: t + '\uc758 \ucc28\ub840 \u2014 \uc737 \ub358\uc9c0\uae30!',
-      move:  t + '\uc758 \ucc28\ub840 \u2014 \ub9d0 \uc120\ud0dd ' + (state.pendingMoves[0] ? '(' + state.pendingMoves[0] + ')' : ''),
+      throw: turn + ' \u2014 \uc737 \ub358\uc9c0\uae30! (throw the sticks)',
+      move:  turn + ' \u2014 \ub9d0 \uc120\ud0dd (choose a piece)' + n,
     };
     setStatus(msgs[state.phase] || '');
   }
@@ -1426,7 +1433,11 @@
     if (vsRoom) broadcastState();
 
     updateHUD();
-    setStatus('\ud300 A\uc758 \ucc28\ub840 (Team A\u2019s turn) \u2014 \uc737 \ub358\uc9c0\uae30!');
+    // updateStatus(), not a second hardcoded copy of the same sentence. Having
+    // the opening line written out here is exactly how it drifted from the
+    // per-turn line: this one carried the English gloss and updateStatus's did
+    // not, so the translation vanished after the first turn.
+    updateStatus();
     setThrowBtnActive(myRoomTurn());
     if (elThrowRes) elThrowRes.innerHTML = '';
     renderPendingMoves();
