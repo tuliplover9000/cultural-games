@@ -1384,7 +1384,13 @@
   ══════════════════════════════════════════════════════════════════ */
 
   window.GameResize = function (availW, availH) {
-    var size = Math.min(Math.max(availW || 280, 200), 440);
+    // Ceiling raised 440 -> 620, matching konane/surakarta/bagh-chal. At 440 the
+    // board stayed a postage stamp inside a 1168px desktop panel with ~768px of
+    // empty column beside it, and never scaled up however much room it had.
+    // availH is deliberately NOT folded in: cgMobileResize passes the wrap WIDTH
+    // for both arguments, so dividing by the 1.18 aspect would shrink every
+    // mobile board by 18%. Callers already pass the extent they mean.
+    var size = Math.min(Math.max(availW || 280, 200), 620);
     canvas.width  = size;
     canvas.height = size + Math.round(size * 0.18); /* small strip for pieces + sticks */
     state.boardSize = size;

@@ -56,6 +56,16 @@
   --color-text-muted:  #6B5744;   /* secondary / caption text */
   --color-text-inverse: #FFFFFF;  /* text on dark backgrounds */
 
+  /* Text on the permanently-dark surfaces (nav, footer, .game-header plaque).
+     Those keep --color-primary in BOTH themes, so text on them must NOT use
+     --color-text / --color-text-muted / --color-text-inverse: every one of
+     those flips with the theme and lands dark-on-dark in one of them. The
+     "Played N times" counter used --color-text and computed to #1A0E06 in light
+     mode — the exact gradient start, a 1.00:1 contrast ratio. Deliberately not
+     overridden in theme.css, mirroring --color-primary. */
+  --color-on-plaque:       #F0E6D0;  /* warm parchment — primary text on dark plaques */
+  --color-on-plaque-muted: #B09070;  /* warm medium — captions on dark plaques */
+
   /* Borders & Shadows */
   --color-border:      #DDD0B5;
   --color-shadow:      rgba(26, 14, 6, 0.14);

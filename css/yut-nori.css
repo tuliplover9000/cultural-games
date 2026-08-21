@@ -13,7 +13,13 @@
   border-radius: var(--radius-xl);
   padding: var(--space-4);
   display: grid;
-  grid-template-columns: auto 1fr;
+  /* The board column was `auto`, so it sized itself to the canvas's own
+     intrinsic width — and the canvas is sized FROM the wrap. That circular
+     dependency pinned the board at its initial 300px no matter how much room
+     the panel had, leaving ~768px of near-empty column beside it. Giving the
+     board a real share breaks the loop: the wrap now has a width of its own,
+     which the JS then reads to size the canvas buffer. */
+  grid-template-columns: minmax(0, 1fr) clamp(200px, 26%, 320px);
   grid-template-areas:
     "board hud"
     "board throw"
@@ -29,6 +35,12 @@
 
 .yn-board-wrap {
   grid-area: board;
+  /* Matches GameResize's 620 ceiling. Without it a very wide column would
+     stretch the 620px canvas buffer with CSS and render it soft. */
+  /* No justify-self here: the default `stretch` is what makes the wrap fill its
+     column. `start` would shrink-wrap it back to the canvas's own width and
+     restore the very 300px pin this is meant to remove. */
+  max-width: 620px;
   line-height: 0;
   border-radius: var(--radius-lg);
   box-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 0 1px rgba(244,220,74,0.22);

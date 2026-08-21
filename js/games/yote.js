@@ -408,6 +408,12 @@
   function aiTurn() {
     if (!state || state.winner || state.turn !== AI_PLAYER) return;
     var p = AI_PLAYER;
+    // Cleared at the start of every AI turn, set below when it captures, and
+    // shown by refreshStatus for the whole of the player's next turn - which is
+    // exactly when they need to read it. Yote captures can remove TWO pieces
+    // (the jump plus the bonus removal) and were previously silent: the status
+    // line still read the generic "drop a piece" prompt.
+    state.captureNote = '';
     var actions = genActions(p);
 
     // 1) Always take a capture if available (capture-two is strong in Yoté).
@@ -420,7 +426,10 @@
         if (exp < bestExp) { bestExp = exp; cap = j; }
       }
       doCapture(cap.from, cap.jump);
-      if (state.awaitingBonusRemoval) doBonusRemoval(chooseBonusTarget(p));
+      var removed = 1;
+      if (state.awaitingBonusRemoval) { doBonusRemoval(chooseBonusTarget(p)); removed = 2; }
+      state.captureNote = 'AI captured ' + removed + ' of your pieces. ';
+      refreshStatus();
       return;
     }
 
@@ -656,12 +665,13 @@
     if (!state) return;
     if (state.winner) return;
     var p = state.turn;
+    var note = state.captureNote || '';
     if (state.awaitingBonusRemoval) {
       setStatus('Capture! Tap any enemy piece to remove it (capture-two).');
     } else if (state.hand[p] > 0) {
-      setStatus(playerLabel(p) + ' — drop a piece, or tap one of your pieces to move it.');
+      setStatus(note + playerLabel(p) + ' — drop a piece, or tap one of your pieces to move it.');
     } else {
-      setStatus(playerLabel(p) + ' — tap one of your pieces to move or capture.');
+      setStatus(note + playerLabel(p) + ' — tap one of your pieces to move or capture.');
     }
   }
   function updateHud() { updateScore(); refreshStatus(); }

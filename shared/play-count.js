@@ -39,12 +39,16 @@
     var el = document.createElement('p');
     el.className = 'game-plays';
     el.setAttribute('aria-label', 'Times played');
+    // --color-on-plaque*, NOT --color-text*. The .game-header plaque keeps
+    // --color-primary in both themes, but --color-text flips: in light mode it
+    // is #1A0E06, the exact gradient start, so the number rendered at a 1.00:1
+    // contrast ratio — invisible. The on-plaque tokens do not flip.
     el.style.cssText =
       'margin:0.45rem 0 0;font-size:var(--text-sm,0.82rem);letter-spacing:0.06em;' +
-      'text-transform:uppercase;color:var(--color-text-muted,#8a7d68);';
+      'text-transform:uppercase;color:var(--color-on-plaque-muted,#B09070);';
     el.innerHTML =
       '<span aria-hidden="true" style="color:var(--color-accent-gold,#C89B3C);margin-right:0.35em;">◈</span>' +
-      'Played <strong style="color:var(--color-text,inherit);font-variant-numeric:tabular-nums;font-weight:600;">' +
+      'Played <strong style="color:var(--color-on-plaque,#F0E6D0);font-variant-numeric:tabular-nums;font-weight:600;">' +
       fmt(count) + '</strong> time' + (Number(count) === 1 ? '' : 's');
     var origin = header.querySelector('.game-header__origin');
     if (origin && origin.parentNode) origin.parentNode.insertBefore(el, origin.nextSibling);

@@ -541,6 +541,12 @@
 
   function executeMove(move, inSequence) {
     if (!inSequence) {
+      // Captures were completely silent: one AI move can remove up to four
+      // pieces at once (a whole line), and the status bar still read the
+      // generic "Your turn", so players had no idea what had just happened.
+      // Tally the whole turn - a capture SEQUENCE keeps executing moves - and
+      // report the total in endTurn().
+      state.turnCaptures = 0;
       // Save undo snapshot at the start of a full turn
       var snap = {
         board: state.board.slice(),
@@ -554,6 +560,7 @@
     state.selected = null;
 
     if (move.captures.length > 0) {
+      state.turnCaptures = (state.turnCaptures || 0) + move.captures.length;
       state.visitedThisTurn.push(move.from);
       state.lastCapDir = { dc: move.dc, dr: move.dr };
       state.capturing  = move.to;
@@ -624,12 +631,15 @@
 
     updateScore(); render();
 
+    var took = state.turnCaptures || 0;
+    var mover = state.turn === BLACK ? 'AI' : 'You';   // turn has already flipped
+    var note  = took ? mover + ' captured ' + took + ' piece' + (took === 1 ? '' : 's') + '. ' : '';
     if (vsAI && state.turn === WHITE) {
       state.aiThinking = true;
-      setStatus('AI is thinking…');
+      setStatus(note + 'AI is thinking…');
       scheduleAIMove();
     } else {
-      setStatus(state.turn === BLACK ? 'Your turn - select a piece.' : 'Player 2 - select a piece.');
+      setStatus(note + (state.turn === BLACK ? 'Your turn - select a piece.' : 'Player 2 - select a piece.'));
     }
     if (vsRoom) syncRoomState();
   }

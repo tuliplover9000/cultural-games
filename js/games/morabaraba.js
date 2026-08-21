@@ -310,10 +310,18 @@
 
   // Apply a shoot (remove opponent cow at index `target`). Resets draw counter.
   function applyShoot(st, target) {
+    // Who owned the cow BEFORE it is cleared - that identifies the victim.
+    var victim = st.board[target];
     st.board[target] = EMPTY;
     st.pendingShoot = false;
     st.lastShot = target;
     st.drawCounter = 0; // a shoot always resets the no-progress draw clock
+    // Shooting was silent: a cow simply vanished while the status line still
+    // read the generic turn prompt. turnStatus() surfaces this. Harmless on the
+    // AI's scratch `sim` states - nothing reads captureNote off those.
+    st.captureNote = (victim === humanSide)
+      ? 'The computer shot one of your cows. '
+      : 'You shot an opponent cow. ';
   }
 
   // Advance the draw counter: only ticks while someone is at ≤ FLY_AT cows and
@@ -649,10 +657,11 @@
   function turnStatus() {
     var sn = sideName(state.turn);
     var hint = phaseHint();
+    var note = state.captureNote || '';
     if (!vsAI) { // hotseat
-      return (state.turn === LIGHT ? 'Light’s turn (Player 1). ' : 'Dark’s turn (Player 2). ') + hint;
+      return note + (state.turn === LIGHT ? 'Light’s turn (Player 1). ' : 'Dark’s turn (Player 2). ') + hint;
     }
-    return (state.turn === humanSide ? 'Your turn. ' : 'Computer’s turn (Dark). ') + hint;
+    return note + (state.turn === humanSide ? 'Your turn. ' : 'Computer’s turn (Dark). ') + hint;
   }
 
   // ── Human interaction ──────────────────────────────────────────────────────
@@ -1035,6 +1044,11 @@
     setTimeout(function () {
       if (ver !== gameVersion || state.winner || state.phase === 'over') return;
       if (window.CGTutorial && CGTutorial.isActive) return;
+      // Clear last turn's capture note here, so a note set during this AI turn
+      // stays visible for the whole of the player's next turn — when they need
+      // to read it — and is gone by the AI's following move. Without a clear it
+      // would stick to the status line for the rest of the game.
+      state.captureNote = '';
       var action = getBestAction(state);
       if (!action) {
         // AI has no move → AI loses.

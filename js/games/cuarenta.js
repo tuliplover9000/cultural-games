@@ -262,8 +262,17 @@
     if (G.handsDealt === 0) {
       for (var i = 0; i < 5 && G.deck.length; i++) G.table.push(G.deck.pop());
     }
-    for (var i = 0; i < 10 && G.deck.length; i++) G.playerHand.push(G.deck.pop());
-    for (var i = 0; i < 10 && G.deck.length; i++) G.aiHand.push(G.deck.pop());
+    // Deal the SAME number to both hands. Dealing "up to 10" to the player and
+    // then "up to 10" to the AI let the AI receive fewer whenever the deck ran
+    // short: with the 40-card deck, hand 2 gave the player 10 and the AI only 5.
+    // The AI then emptied first while the player still held cards, the turn
+    // still passed to it, and aiChoose() over an empty hand returned index 0 —
+    // playCard spliced `undefined` off the empty array and findSequence threw
+    // "Cannot read properties of undefined (reading 'rank')", freezing the game
+    // on "CPU is thinking" for good. That desync is CU-2; the freeze is CU-1.
+    var n = Math.min(10, Math.floor(G.deck.length / 2));
+    for (var i = 0; i < n; i++) G.playerHand.push(G.deck.pop());
+    for (var i = 0; i < n; i++) G.aiHand.push(G.deck.pop());
     G.handsDealt++;
     selectedIdx = null;
     anim.dealHand = true;
@@ -316,6 +325,10 @@
   function playCard(who, handIdx) {
     var hand = who === 'player' ? G.playerHand : G.aiHand;
     var card = hand.splice(handIdx, 1)[0];
+    // splice past the end yields undefined, and every capture helper below
+    // dereferences card.rank immediately. Bail rather than throw — a thrown
+    // error here kills the AI turn timer and the game never recovers.
+    if (!card) return;
     var pile = who === 'player' ? G.playerCaptured : G.aiCaptured;
     var cap  = findCaptures(card);
     var caida = isCaida(card, who);
@@ -367,7 +380,9 @@
 
   function checkProgress() {
     if (G.playerHand.length || G.aiHand.length) return false;
-    if (G.deck.length > 0) {
+    // >= 2, not > 0: a single card cannot be split evenly, and dealing it to one
+    // side would recreate the desync above.
+    if (G.deck.length >= 2) {
       dealHand();
       G.turn = 'player';
       // New hand: clear the last-play marker so a caida cannot reference a card
@@ -376,7 +391,9 @@
       addLog('system', 'New hand dealt (' + G.deck.length + ' cards left in deck)');
       return false;
     }
-    // Round ends
+    // Round ends. Any odd card left undealt goes to the table so the round-end
+    // sweep awards it and all 40 cards stay accounted for.
+    while (G.deck.length) G.table.push(G.deck.pop());
     if (G.table.length && G.lastCapture) {
       var pile = G.lastCapture.who === 'player' ? G.playerCaptured : G.aiCaptured;
       G.table.forEach(function (c) { pile.push(c); });
@@ -440,10 +457,31 @@
     if (aiThinkTimer) clearTimeout(aiThinkTimer);
     aiThinkTimer = setTimeout(function () {
       if (G.phase !== 'playing' || G.turn !== 'ai') return;
+      // Never call playCard with an empty hand. aiChoose() returns its `best`
+      // seed of 0 when there is nothing to iterate, so an empty hand used to
+      // produce a real-looking index 0 and crash inside findSequence. If the AI
+      // has run dry, hand out is hand over: go straight to progression.
+      if (!G.aiHand.length) {
+        if (!checkProgress()) G.turn = 'player';
+        render();
+        return;
+      }
       var idx = aiChoose();
       playCard('ai', idx);
       var done = checkProgress();
-      if (!done) G.turn = 'player';
+      if (!done) {
+        // checkProgress() only reports "done" when BOTH hands are empty, so
+        // handing the turn back unconditionally strands the game whenever the
+        // player has run out first: an empty-handed player cannot act, nothing
+        // reschedules, and it deadlocks in silence with no error to show for it.
+        // Keep playing out the AI's remaining cards instead.
+        if (!G.playerHand.length && G.aiHand.length) {
+          render();
+          scheduleAI();
+          return;
+        }
+        G.turn = 'player';
+      }
       render();
     }, 1000);
   }

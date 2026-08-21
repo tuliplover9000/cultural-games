@@ -558,24 +558,33 @@
       lastMove:      state.lastMove,
     });
     if (state.history.length > 30) state.history.shift();
+    // Captures were silent: a tiger jump just made a goat vanish while the
+    // status line still read the generic turn prompt. Note it here (the only
+    // place a move is committed) and let turnStatus surface it.
+    var moverWasTiger = state.turn === TIGER;
+    var capsBefore    = state.goatsCaptured;
     applyMoveToState(state, move);
+    state.captureNote = (state.goatsCaptured > capsBefore)
+      ? (moverWasTiger ? 'A tiger took a goat. ' : 'A goat was captured. ')
+      : '';
     state.selected = null;
     afterMove();
   }
 
   // Status line for the side to move, adapted to the mode.
   function turnStatus() {
+    var note = state.captureNote || '';
     var sideName = state.turn === GOAT ? 'Goats' : 'Tigers';
     var hint = state.turn === GOAT ? phaseHint() : 'Tap a tiger, then a point to move or jump.';
     if (vsRoom) {
-      return state.turn === mySide()
+      return note + (state.turn === mySide()
         ? 'Your turn (' + sideName + '). ' + hint
-        : 'Opponent’s turn (' + sideName + ')…';
+        : 'Opponent’s turn (' + sideName + ')…');
     }
     if (!vsAI) { // hotseat
-      return (state.turn === GOAT ? 'Goats’ turn (Player 1). ' : 'Tigers’ turn (Player 2). ') + hint;
+      return note + (state.turn === GOAT ? 'Goats’ turn (Player 1). ' : 'Tigers’ turn (Player 2). ') + hint;
     }
-    return (state.turn === GOAT ? 'Your turn. ' : 'Your turn (Tigers). ') + hint;
+    return note + (state.turn === GOAT ? 'Your turn. ' : 'Your turn (Tigers). ') + hint;
   }
 
   function afterMove() {
