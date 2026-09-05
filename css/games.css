@@ -8499,3 +8499,26 @@ html.cg-wide #game-container .mj-controls { margin-right: 38px; }
 /* 1px between tiles rather than 2: the hand was 17px over after the shift,
    and losing a pixel of gap is invisible where losing tile width is not. */
 html.cg-wide #game-container .mj-player-hand { gap: 1px; }
+
+/* The discard square GROWS as tiles are discarded, and nothing bounded it: nine
+   turns in, the table was 654px tall in a 396px viewport and had pushed the
+   player's own hand (y 557-624) and every control below the fold. Measuring
+   only a freshly-dealt board hid this completely.
+
+   Bound the centre and let the discards scroll inside it. Discards are reference
+   information — you read them, you never tap them — so scrolling them is far
+   cheaper than losing sight of your hand. */
+html.cg-wide #game-container .mj-table-center { max-height: 170px; }
+html.cg-wide #game-container .mj-wall-ring    { max-height: 100%; min-height: 0; }
+html.cg-wide #game-container .mj-discard-square {
+  min-height: 0;
+  max-height: 124px;
+  overflow-y: auto;
+  /* overflow-x stays scrollable, NOT hidden. Hiding it to lose the scrollbar
+     clipped 12 discard tiles out of view in testing, and discards are
+     information you play off — a thin scrollbar is the cheaper trade. */
+  overflow-x: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+html.cg-wide #game-container .mj-ds-middle { min-height: 0; }
