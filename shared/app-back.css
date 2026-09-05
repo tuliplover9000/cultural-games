@@ -1,0 +1,52 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   shared/app-back.css — back button for installed-app (standalone) mode.
+   Injected by shared/app-back.js, which only adds it when there is no browser
+   chrome to provide one. See that file for why it is fixed rather than in the
+   nav.
+   ───────────────────────────────────────────────────────────────────────── */
+
+#cg-app-back {
+  position: fixed;
+  /* Inside the safe area: on an iPhone in standalone the status bar and the
+     rounded corner both intrude on the top-left, which is exactly where this
+     sits. */
+  top: calc(env(safe-area-inset-top, 0px) + 8px);
+  left: calc(env(safe-area-inset-left, 0px) + 8px);
+  z-index: 1200;          /* over the nav (and its hide transition) */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;           /* >= 44px target with the padding ring below */
+  padding: 0;
+  border-radius: var(--radius-full, 999px);
+  border: 1.5px solid var(--color-border, #3D2A18);
+  background: var(--color-surface, #1E1309);
+  color: var(--color-accent-gold, #C89B3C);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Grow the touch target past the visual size without moving the button. */
+#cg-app-back::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+}
+
+#cg-app-back:active { transform: scale(0.94); }
+#cg-app-back:focus-visible {
+  outline: 2px solid var(--color-accent-gold, #C89B3C);
+  outline-offset: 2px;
+}
+
+/* Keep the nav's own content clear of the button while the nav is on screen.
+   The class is set by app-back.js, so nothing shifts in a normal browser tab. */
+.cg-standalone .nav-inner { padding-left: 56px; }
+
+@media (min-width: 900px) {
+  .cg-standalone .nav-inner { padding-left: 60px; }
+}
