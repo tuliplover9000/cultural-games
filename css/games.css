@@ -8342,3 +8342,160 @@ html.cg-wide #game-container.tu-game-container .tu-opp-label {
     align-items: center;
   }
 }
+
+/* ── Mahjong landscape (cg-wide): fill the width, controls beside the hand ──
+   .mj-wrap is in mobile-zoom.js's DOM_SELECTOR, so the fitter scales the whole
+   table down until it fits. Its natural size was about 920x830 in a 396px-tall
+   viewport, and 789/920 is 0.857 while 396/830 is 0.477 — HEIGHT was binding,
+   so everything rendered at 48% and the table used 439px of 856 with the rest
+   of the screen empty.
+
+   Nothing here shrinks the tiles; it removes the height that was forcing the
+   fitter to shrink them. The biggest single win is the one the mockup shows:
+   the controls move BESIDE the hand instead of stacking under it, which drops
+   a whole row out of the natural height. */
+html.cg-wide #game-container .mj-wrap {
+  max-width: none;          /* the 920px was scaled to fit anyway — this makes
+                               the layout match the container instead */
+  width: 100%;
+  padding: 5px 8px;
+  gap: 4px;
+  border-width: 2px;
+}
+
+html.cg-wide #game-container .mj-middle-row { gap: 6px; }
+html.cg-wide #game-container .mj-table-center {
+  min-height: 0;
+  padding: 5px;
+}
+
+/* Bottom row: hand on the left, controls stacked on the right. */
+html.cg-wide #game-container .mj-player-area {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "melds controls"
+    "hand  controls"
+    "info  controls";
+  align-items: center;
+  gap: 3px 10px;
+  padding: 4px 6px;
+}
+html.cg-wide #game-container .mj-player-melds { grid-area: melds; }
+/* nowrap + scroll, NOT wrap. Wrapping to a second row adds height, the fitter
+   then scales the whole table down to compensate, and the tiles come out
+   SMALLER than they were — measured 44px on one row vs 38px wrapped at the same
+   viewport. Scrolling costs no height, so the tiles stay full size and a
+   narrower phone just pans the hand. */
+html.cg-wide #game-container .mj-player-hand  {
+  grid-area: hand;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+html.cg-wide #game-container .mj-player-hand::-webkit-scrollbar { display: none; }
+html.cg-wide #game-container .mj-player-info  { grid-area: info; }
+html.cg-wide #game-container .mj-controls {
+  grid-area: controls;
+  flex-wrap: wrap;
+  max-width: 200px;
+  justify-content: flex-end;
+}
+
+/* No room for the running log on a landscape phone, and the status line in the
+   middle of the wall already says whose turn it is and what to do. */
+html.cg-wide #game-container .mj-log { display: none; }
+
+/* The wall ring is built from FULL-SIZE .mj-tile backs (3rem x 4.1rem), which
+   made the ring 355px tall on its own and was the single biggest reason the
+   fitter had to shrink the whole table. Shrinking the WALL tiles keeps the ring
+   made of real tiles — as the mockup wants — while giving the height back to
+   the hand, which is what actually has to be tappable. */
+html.cg-wide #game-container .mj-wall-tile {
+  width: 1.4rem;
+  height: 1.9rem;
+}
+html.cg-wide #game-container .mj-wall-slot--hz { width: 1.4rem; height: 1rem; }
+html.cg-wide #game-container .mj-wall-slot--vt { width: 1rem;   height: 1.4rem; }
+html.cg-wide #game-container .mj-wall-ring       { gap: 2px; }
+html.cg-wide #game-container .mj-wall-middle-row { gap: 2px; }
+
+/* Opponent hands are face-down backs — they only need to convey "how many",
+   so they can be small and give their height to the player's hand. */
+html.cg-wide #game-container .mj-opponent .mj-tile { width: 1rem; height: 1.35rem; }
+html.cg-wide #game-container .mj-opponent .mj-tile--hz { width: 1.35rem; height: 1rem; }
+html.cg-wide #game-container .mj-opp-hand { gap: 2px; }
+html.cg-wide #game-container .mj-opp-info { font-size: 0.62rem; }
+
+/* The discard square in the middle of the ring is the last thing forcing the
+   fitter to shrink: it sizes to its four discard rows, which use full tiles.
+   Discards are reference information — you read them, you never tap them — so
+   they shrink and the height goes to the hand instead. */
+html.cg-wide #game-container .mj-discard-square .mj-tile {
+  width: 1.15rem;
+  height: 1.55rem;
+}
+html.cg-wide #game-container .mj-discard-square .mj-tile--hz {
+  width: 1.55rem;
+  height: 1.15rem;
+}
+html.cg-wide #game-container .mj-ds-top,
+html.cg-wide #game-container .mj-ds-bottom,
+html.cg-wide #game-container .mj-ds-left,
+html.cg-wide #game-container .mj-ds-right { gap: 1px; }
+
+/* The discard rows reserve 2.6rem of height EACH even while empty, sized for
+   full tiles. With the smaller landscape discard tiles above, that reserve is
+   most of the centre's height for nothing. */
+html.cg-wide #game-container .mj-ds-top,
+html.cg-wide #game-container .mj-ds-bottom { min-height: 1.7rem; }
+html.cg-wide #game-container .mj-ds-left,
+html.cg-wide #game-container .mj-ds-right  { min-height: 0; min-width: 1.7rem; }
+
+/* The centre text block (tile count, round, status, claim buttons) is the last
+   thing padding the middle out. It is read, not tapped, so it compresses. */
+html.cg-wide #game-container .mj-ds-info {
+  gap: 1px;
+  padding: 2px 4px;
+}
+html.cg-wide #game-container .mj-wall-count,
+html.cg-wide #game-container .mj-round-info { font-size: 0.6rem; line-height: 1.25; }
+html.cg-wide #game-container .mj-status     { font-size: 0.72rem; line-height: 1.3; margin: 0; }
+
+/* Opponent strips and the player's own info row: label-sized, not tile-sized. */
+html.cg-wide #game-container .mj-opponent      { gap: 2px; }
+html.cg-wide #game-container .mj-opp-melds     { min-height: 0; }
+html.cg-wide #game-container .mj-player-info   { font-size: 0.68rem; }
+html.cg-wide #game-container .mj-player-melds  { min-height: 0; }
+html.cg-wide #game-container .mj-btn           { padding: 0.3rem 0.6rem; font-size: 0.75rem; }
+
+/* The hand is the ONLY thing here you actually touch, so it gets the height
+   everything else just gave back — sized so it still clears 44px after the
+   fitter's remaining scale. */
+html.cg-wide #game-container .mj-player-hand { min-height: 0; gap: 2px; }
+html.cg-wide #game-container .mj-player-hand .mj-tile {
+  /* 3.12rem is the widest that fits 14 tiles beside the controls at this
+     viewport and still renders over 44px after the fitter's scale. */
+  width: 3.12rem;
+  height: 4.3rem;
+}
+
+/* A mahjong hand is 13-14 tiles and they all have to be visible AND tappable,
+   so the row needs every pixel: 14 x 44px is 616px of tiles before gaps or
+   controls. Reclaim the page padding the wrap was giving away (it was using
+   only 90% of the viewport) rather than shrinking the tiles back down. */
+html.cg-wide .game-page > .container:has(.mj-wrap),
+html.cg-wide #game-container:has(.mj-wrap) { padding-inline: 0; }
+html.cg-wide #game-container .mj-wrap { padding-inline: 4px; }
+html.cg-wide #game-container .mj-controls { max-width: 132px; gap: 4px; }
+
+/* The floating fullscreen toggle sits at the viewport's bottom-right, which is
+   exactly where the controls column ends — it covered the right end of "New
+   Game", so a tap there opened fullscreen instead of starting a game (the same
+   collision Ganjifa had). Shift the column clear of it; the hand row has the
+   spare width to absorb this without shrinking a tile. */
+html.cg-wide #game-container .mj-controls { margin-right: 38px; }
+/* 1px between tiles rather than 2: the hand was 17px over after the shift,
+   and losing a pixel of gap is invisible where losing tile width is not. */
+html.cg-wide #game-container .mj-player-hand { gap: 1px; }
