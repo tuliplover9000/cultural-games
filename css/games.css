@@ -6169,6 +6169,102 @@ html.cg-wide body:has(.se-game-container) .fs-toggle {
   .tu-callout { font-size: 1.8rem; }
 }
 
+/* ── Truc landscape: score left · table centre · controls right ─────────────
+   Stacked landscape put HUD, table and controls in one tall column. The column
+   was TALLER than a landscape phone, so mobile-zoom.js shrank the whole
+   container (measured zoom: 0.59) and the cards came out 33x50 — well under the
+   44px tap target — while ~600px of table width sat empty either side of them.
+   The status line also ran full-width along the top and was clipped by the "?"
+   help button pinned in that corner.
+
+   Three columns fix the cause rather than the symptom: far less height is
+   needed, so the fitter barely has to zoom out and the cards keep their real
+   size. Status moves to a full-width row along the BOTTOM, clear of the help
+   button.
+
+   display:contents on .tu-hud lets its two children (.tu-score and .tu-status)
+   be placed in different grid areas — they are locked together in one bar
+   otherwise. .tu-table stays a single grid item because the overlay, raise
+   modal and callout are absolutely positioned against it. */
+html.cg-wide #game-container.tu-game-container {
+  display: grid;
+  grid-template-columns: clamp(88px, 14%, 140px) minmax(0, 1fr) clamp(104px, 17%, 165px);
+  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "score  table controls"
+    "status status status";
+  align-items: center;
+  gap: 3px 8px;
+  padding: 3px 8px;
+  min-height: 0;
+  margin-block: 0;
+  /* The 6px table edge costs 12px of height on its own — the last thing
+     standing between the layout and fitting a 316px-tall viewport outright. */
+  border-width: 3px;
+}
+html.cg-wide #game-container.tu-game-container .tu-hud { display: contents; }
+
+html.cg-wide #game-container.tu-game-container .tu-score {
+  grid-area: score;
+  flex-direction: column;   /* was a horizontal row — too wide for this column */
+  align-items: flex-start;
+  gap: 4px;
+  /* Small enough that "Player 2 (AI): 0" stays on one line in this column
+     rather than breaking after the colon. */
+  font-size: var(--text-xs);
+  line-height: 1.35;
+}
+html.cg-wide #game-container.tu-game-container .tu-table {
+  grid-area: table;
+  align-self: stretch;
+}
+html.cg-wide #game-container.tu-game-container .tu-controls {
+  grid-area: controls;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 5px;
+  flex-wrap: nowrap;
+}
+html.cg-wide #game-container.tu-game-container .tu-controls .btn { width: 100%; }
+html.cg-wide #game-container.tu-game-container .tu-ai-label { justify-content: center; }
+
+/* Full-width strip along the bottom. Keeps its own bar styling because
+   display:contents on .tu-hud drops that element's background. */
+html.cg-wide #game-container.tu-game-container .tu-status {
+  grid-area: status;
+  text-align: center;
+  flex: none;
+  padding: 3px var(--space-3);
+  background: rgba(0, 0, 0, 0.32);
+  border-radius: var(--radius-md);
+}
+
+/* Height is the scarce dimension here, and it is what decides card size: the
+   fitter zooms the whole container out until it fits, so every pixel the table
+   gives back comes straight off that zoom. The desktop gaps (24px between table
+   rows, 16px inside them) and the 90px play area alone cost ~110px — enough to
+   push a 56px card down to 33px. Budget at 316px tall: 8 padding + 26 status +
+   4 gap leaves ~278 for the table. */
+html.cg-wide #game-container.tu-game-container .tu-table   { gap: 6px; }
+html.cg-wide #game-container.tu-game-container .tu-center   { gap: 4px; }
+html.cg-wide #game-container.tu-game-container .tu-opp-row  { gap: 2px; }
+html.cg-wide #game-container.tu-game-container .tu-you-row  { margin: 0; }
+html.cg-wide #game-container.tu-game-container .tu-play-area {
+  min-height: 48px;
+  gap: 10px;
+}
+html.cg-wide #game-container.tu-game-container .tu-stake {
+  padding: 1px 10px;
+  font-size: var(--text-xs);
+}
+/* The score column already names both players, so this label only needs to mark
+   which row is theirs. */
+html.cg-wide #game-container.tu-game-container .tu-opp-label {
+  font-size: 0.62rem;
+  margin: 0;
+  line-height: 1.2;
+}
+
 /* ── Landscape phones: lay CANVAS board games out SIDE-BY-SIDE ──────────────
    In landscape the limiting dimension is HEIGHT. A stacked column (HUD above
    board above controls) starves the square board down to ~120px in a wide,
