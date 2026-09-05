@@ -113,9 +113,26 @@
     /* Play + More tabs → open the drawer filled with their own menu */
     function fillDrawer(items) {
       els.drawer.innerHTML = '<div class="mb-nav-drawer-handle"></div>' + items.map(function (d) {
+        // Action items run JS instead of navigating (currently just Install).
+        if (d.action) {
+          return '<button type="button" class="mb-nav-drawer-item" data-action="' +
+                 d.action + '">' + d.icon + d.label + '</button>';
+        }
         var target = d.href.indexOf('http') === 0 ? ' target="_blank" rel="noopener"' : '';
         return '<a class="mb-nav-drawer-item" href="' + d.href + '"' + target + '>' + d.icon + d.label + '</a>';
       }).join('');
+    }
+
+    // Built fresh on every open, because whether installing is even possible
+    // changes at runtime: on Android the browser's install event can arrive
+    // after the menu was first constructed, and once the app IS installed the
+    // entry should disappear. CGInstall.offer() owns that decision.
+    function itemsFor(key) {
+      var items = els.menus[key].slice();
+      if (key === 'more' && window.CGInstall && CGInstall.offer()) {
+        items.unshift({ label: 'Install app', icon: ICONS.home, action: 'install' });
+      }
+      return items;
     }
     function openMenu(key) {
       var isOpen = els.drawer.classList.contains('mb-nav-drawer-open');
@@ -123,7 +140,7 @@
         closeDrawer(els.drawer, els.overlay);
         return;
       }
-      fillDrawer(els.menus[key]);
+      fillDrawer(itemsFor(key));
       els.drawer.setAttribute('data-menu', key);
       els.drawer.classList.add('mb-nav-drawer-open');
       els.overlay.classList.add('mb-nav-drawer-open');
@@ -135,7 +152,14 @@
 
     /* Close the drawer when a menu item is tapped (covers same-page #anchors) */
     els.drawer.addEventListener('click', function (e) {
-      if (e.target.closest('.mb-nav-drawer-item')) closeDrawer(els.drawer, els.overlay);
+      var item = e.target.closest('.mb-nav-drawer-item');
+      if (!item) return;
+      var action = item.getAttribute('data-action');
+      closeDrawer(els.drawer, els.overlay);
+      if (action === 'install' && window.CGInstall) {
+        // Slight delay so the drawer's close animation doesn't fight the sheet.
+        setTimeout(function () { CGInstall.open(); }, 180);
+      }
     });
 
     /* Overlay click → close drawer */

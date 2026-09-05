@@ -19,7 +19,7 @@
  *
  * Bump VERSION to invalidate every cache after a deploy.
  */
-var VERSION = 'cg-v11';   // bump on every deploy that changes CSS/JS
+var VERSION = 'cg-v12';   // bump on every deploy that changes CSS/JS
 var SHELL   = VERSION + '-shell';
 var RUNTIME = VERSION + '-runtime';
 

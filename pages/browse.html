@@ -996,6 +996,13 @@
   if (!canvas) return;
   var ctx = canvas.getContext('2d');
   canvas.style.pointerEvents = 'auto';
+  /* shared/mobile.css sets `canvas { touch-action: none }` — correct for game
+     boards, where a drag must never scroll the page, but wrong for this
+     decorative hero: it told the browser it may never scroll from the globe at
+     all. In landscape the globe fills most of the screen, so the page became
+     unscrollable. pan-y gives vertical gestures back to the browser and keeps
+     horizontal ones for the spin, which is all this globe uses. */
+  canvas.style.touchAction = 'pan-y';
 
   var CULTURES = [
     { lat: 16,  lon: 106 }, { lat: 8,   lon: -2  },
@@ -1049,16 +1056,46 @@
   });
   window.addEventListener('mouseup', function () { isDragging = false; canvas.style.cursor = ''; });
 
+  /* Axis lock. The old code claimed the gesture on touchstart — isDragging=true
+     plus preventDefault() — before it could possibly know which way the finger
+     was going, and that cancels the browser's scroll for the WHOLE gesture. The
+     globe only ever spins on X (it reads clientX and ignores clientY), so every
+     vertical swipe was being blocked to do nothing. Decide on the first real
+     movement instead: horizontal spins the globe, vertical scrolls the page. */
+  var touchOnGlobe = false, touchDecided = false, touchStartX = 0, touchStartY = 0;
+
   canvas.addEventListener('touchstart', function (e) {
     var t = e.touches[0];
-    if (!inGlobe(t.clientX, t.clientY)) return;
-    isDragging = true; lastX = t.clientX; spinVel = 0; e.preventDefault();
-  }, { passive: false });
+    touchOnGlobe = !!t && inGlobe(t.clientX, t.clientY);
+    touchDecided = false;
+    isDragging   = false;
+    if (!touchOnGlobe) return;
+    touchStartX = t.clientX; touchStartY = t.clientY;
+    lastX = t.clientX; spinVel = 0;
+    /* No preventDefault here — passive, so the browser can still scroll. */
+  }, { passive: true });
+
   window.addEventListener('touchmove', function (e) {
+    if (!touchOnGlobe) return;
+    var t = e.touches[0];
+    if (!t) return;
+    if (!touchDecided) {
+      var dx = Math.abs(t.clientX - touchStartX);
+      var dy = Math.abs(t.clientY - touchStartY);
+      if (dx < 6 && dy < 6) return;      /* too small to tell yet */
+      touchDecided = true;
+      isDragging   = dx > dy;            /* horizontal → ours; vertical → scroll */
+      if (!isDragging) { touchOnGlobe = false; return; }
+      lastX = t.clientX;                 /* re-baseline so the spin doesn't jump */
+    }
     if (!isDragging) return;
-    var t = e.touches[0]; spinVel = -(t.clientX - lastX) * 0.35; lon0 += spinVel; lastX = t.clientX; e.preventDefault();
+    spinVel = -(t.clientX - lastX) * 0.35; lon0 += spinVel; lastX = t.clientX;
+    if (e.cancelable) e.preventDefault();
   }, { passive: false });
-  window.addEventListener('touchend', function () { isDragging = false; });
+
+  window.addEventListener('touchend', function () {
+    isDragging = false; touchOnGlobe = false; touchDecided = false;
+  });
 
   function resize() {
     canvas.width  = canvas.parentElement.offsetWidth;

@@ -74,10 +74,16 @@
            (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
   }
 
-  function show(mode) {                       // mode: 'prompt' | 'ios'
-    if (shown || alreadyPrompted() || isStandalone() || !document.body) return;
+  // userAsked = the visitor tapped "Install app" themselves. That bypasses the
+  // once-only gate: the automatic sheet appears once and is then suppressed
+  // forever, which is right for something uninvited but left anyone who
+  // dismissed it with no way back to it — and on iOS this sheet is the ONLY
+  // route to installing, since Safari has no install API at all.
+  function show(mode, userAsked) {            // mode: 'prompt' | 'ios'
+    if (isStandalone() || !document.body) return false;
+    if (!userAsked && (shown || alreadyPrompted())) return false;
     shown = true;
-    markPrompted();                           // once means once, even if ignored
+    if (!userAsked) markPrompted();           // once means once, even if ignored
 
     var wrap = document.createElement('div');
     wrap.id = 'cg-install-sheet';
@@ -129,6 +135,7 @@
     function close() {
       wrap.remove();
       document.removeEventListener('keydown', onKey);
+      shown = false;      // so "Install app" can open it again later
     }
     function onKey(e) { if (e.key === 'Escape') close(); }
 
@@ -168,4 +175,21 @@
     var s = document.getElementById('cg-install-sheet');
     if (s) s.remove();
   });
+
+  /* Public API so the app can be installed on purpose rather than only when the
+     automatic sheet happens to fire. Menus use `offer()` to decide whether to
+     show an "Install app" entry at all. */
+  window.CGInstall = {
+    isInstalled: isStandalone,
+    // Worth offering? Not once it is already installed, and not on desktop,
+    // where "add to your phone" is the wrong pitch.
+    offer: function () { return !isStandalone() && isPhoneish(); },
+    // True when the browser gives us a real one-tap install dialog. iOS Safari
+    // never does — no install API exists there — so it gets the Share →
+    // "Add to Home Screen" instructions instead. That is the ceiling on iOS.
+    canPromptNatively: function () { return !!deferred; },
+    open: function () {
+      return show(deferred ? 'prompt' : (isIOS() ? 'ios' : 'prompt'), true);
+    }
+  };
 }());
