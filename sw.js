@@ -19,7 +19,7 @@
  *
  * Bump VERSION to invalidate every cache after a deploy.
  */
-var VERSION = 'cg-v12';   // bump on every deploy that changes CSS/JS
+var VERSION = 'cg-v13';   // bump on every deploy that changes CSS/JS
 var SHELL   = VERSION + '-shell';
 var RUNTIME = VERSION + '-runtime';
 
@@ -67,8 +67,19 @@ self.addEventListener('activate', function (e) {
   );
 });
 
-function isStaticAsset(url) {
-  return /\.(css|js|svg|png|jpg|jpeg|webp|woff2?|ttf)$/i.test(url.pathname);
+// Code has to MATCH the HTML that references it. Navigations are network-first,
+// so serving js/css stale-while-revalidate guaranteed exactly one broken load
+// after every deploy: the new HTML paired with the PREVIOUS version's JS and
+// CSS, silently corrected only on the visit after that. That is why a change
+// could look like it had not shipped.
+function isCodeAsset(url) {
+  return /\.(css|js)$/i.test(url.pathname);
+}
+
+// Media is safe a version behind, and it is most of the bytes — it keeps the
+// instant cache-first response.
+function isMediaAsset(url) {
+  return /\.(svg|png|jpg|jpeg|webp|woff2?|ttf)$/i.test(url.pathname);
 }
 
 self.addEventListener('fetch', function (e) {
@@ -95,8 +106,27 @@ self.addEventListener('fetch', function (e) {
     return;
   }
 
-  // Static assets: stale-while-revalidate.
-  if (isStaticAsset(url)) {
+  // Code: network-first, cache only as the offline fallback. Costs one
+  // same-origin round trip for js/css; buys never running a mismatched pair.
+  if (isCodeAsset(url)) {
+    e.respondWith(
+      fetch(req).then(function (res) {
+        if (res && res.status === 200) {
+          var copy = res.clone();
+          caches.open(RUNTIME).then(function (c) { c.put(req, copy); }).catch(function () {});
+        }
+        return res;
+      }).catch(function () {
+        return caches.match(req).then(function (hit) {
+          return hit || Response.error();
+        });
+      })
+    );
+    return;
+  }
+
+  // Media: stale-while-revalidate.
+  if (isMediaAsset(url)) {
     e.respondWith(
       caches.match(req).then(function (hit) {
         var net = fetch(req).then(function (res) {

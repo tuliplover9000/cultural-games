@@ -10,6 +10,22 @@
 
   /* ── 1. Register the service worker ───────────────────────────────────── */
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    // If a NEW worker takes over mid-session, whatever this page already loaded
+    // came from the previous version — so the page is now running a mismatched
+    // set and has to refresh itself. Without this, activating the new worker
+    // fixed the *next* visit but left the current one stale, which is what made
+    // a deploy look like it had not landed.
+    var hadController = !!navigator.serviceWorker.controller;
+    var refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      // On a first-ever install the worker claims a page that was loaded from
+      // the network anyway — nothing is stale, so reloading would just be a
+      // pointless flash (and, unguarded, a loop).
+      if (!hadController || refreshing) return;
+      refreshing = true;
+      location.reload();
+    });
+
     window.addEventListener('load', function () {
       navigator.serviceWorker.register('/sw.js').then(function (reg) {
         // If an updated worker is waiting, activate it on the next navigation
