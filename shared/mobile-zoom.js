@@ -57,11 +57,6 @@
     '.tl-game, .oaq-game, .ow-game, .pg-game, ' +
     '.pt-game-wrap, .pu-game-wrap, .mj-wrap, .bc-game, .cu-game';
 
-  // User nudge levels applied on top of the auto fit.
-  var USER_LEVELS = [1, 0.85, 0.7, 1.15];
-  var USER_LABELS = ['1×', '0.85×', '0.7×', '1.15×'];
-  var userIndex   = 0;
-
   var fitting       = false;  // re-entrancy guard (fit() mutates the DOM)
   var lastObsW      = 0;      // last container size seen by the ResizeObserver —
   var lastObsH      = 0;      // used to ignore height-only (address-bar) changes
@@ -322,7 +317,10 @@
     fitting = true;
     try {
       var rect = availRect(c);
-      var userScale = USER_LEVELS[userIndex] || 1;
+      // The board is sized purely by the automatic fit. The manual zoom nudge
+      // button that used to multiply this was removed; kept as an explicit 1 so
+      // the fit maths below is unchanged.
+      var userScale = 1;
       if (isCanvasGame(c)) {
         var canvas = c.querySelector('canvas');
         fitCanvas(c, canvas, rect, userScale);
@@ -365,40 +363,12 @@
   // re-fit here. No-op cost on desktop (fit early-returns when zoom is inactive).
   window.cgMobileRefit = schedule;
 
-  /* ── Manual nudge button ── */
-  function injectButton() {
-    if (document.getElementById('mobile-zoom-btn')) return null;
-    var btn = document.createElement('button');
-    btn.id = 'mobile-zoom-btn';
-    btn.setAttribute('aria-label', 'Adjust zoom');
-    btn.innerHTML =
-      '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">' +
-        '<circle cx="11" cy="11" r="8"/>' +
-        '<line x1="8" y1="11" x2="14" y2="11"/>' +
-        '<line x1="21" y1="21" x2="16.65" y2="16.65"/>' +
-      '</svg>' +
-      '<span id="mobile-zoom-label">1×</span>';
-    document.body.appendChild(btn);
-    return btn;
-  }
-
   function init() {
     if (!isMobileViewport()) return;
     var c = getContainer();
     if (!c) return;
     // Idempotent: if observers are already installed, don't double-attach.
-    // (injectButton already self-guards on its element id.)
     if (resizeObs || mutationObs) return;
-
-    var btn = injectButton();
-    if (btn) {
-      btn.addEventListener('click', function () {
-        userIndex = (userIndex + 1) % USER_LEVELS.length;
-        var label = document.getElementById('mobile-zoom-label');
-        if (label) label.textContent = USER_LABELS[userIndex];
-        fit();
-      });
-    }
 
     // Re-fit when the container's WIDTH changes (real resize, rotation, fonts
     // settling). A height-only change is ignored: on phones the address bar
@@ -462,10 +432,9 @@
     syncWideClass();   // orientation can change without a width change (rotation)
     if (window.innerWidth === lastViewportW) return;   // height-only → ignore
     lastViewportW = window.innerWidth;
-    userIndex = 0; init(); remeasure(); schedule();
+    init(); remeasure(); schedule();
   });
   window.addEventListener('orientationchange', function () {
-    userIndex = 0;
     setTimeout(function () { lastViewportW = window.innerWidth; remeasure(); fit(); }, 250);
   });
 

@@ -134,7 +134,7 @@
     if (!t || !t.closest) return;
     var area = t.closest('#fs-game-wrap, #game-container, [class*="game-container"], .games-grid');
     if (!area) return;
-    if (t.closest('#sfx-mute-btn, #mobile-zoom-btn, .fs-toggle')) return; // their own sounds/none
+    if (t.closest('#sfx-mute-btn, .fs-toggle')) return; // their own sounds/none
     var hit = t.closest('button, a, [role="button"], canvas, label, select, input,' +
       '[class*="card"], [class*="pit"], [class*="cup"], [class*="cell"], [class*="zone"],' +
       '[class*="symbol"], [class*="tile"], [class*="seed"], [class*="node"], [class*="chip"], [class*="space"]');
