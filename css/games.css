@@ -8475,10 +8475,16 @@ html.cg-wide #game-container .mj-btn           { padding: 0.3rem 0.6rem; font-si
    fitter's remaining scale. */
 html.cg-wide #game-container .mj-player-hand { min-height: 0; gap: 2px; }
 html.cg-wide #game-container .mj-player-hand .mj-tile {
-  /* 3.12rem is the widest that fits 14 tiles beside the controls at this
-     viewport and still renders over 44px after the fitter's scale. */
+  /* 3.12rem is the IDEAL width, not a fixed one. .mj-tile is flex: 0 0 auto, so
+     at a fixed width the row simply ran off the end: 14 tiles needed 669px in a
+     611px hand on an iPhone 15 landscape and the last 2 were cut off — you
+     cannot play a hand you cannot see. Allowing them to shrink trades tile size
+     for the guarantee that every tile is on screen, which for a 13-14 tile hand
+     is the right way round. */
   width: 3.12rem;
   height: 4.3rem;
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
 /* A mahjong hand is 13-14 tiles and they all have to be visible AND tappable,
