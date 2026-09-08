@@ -8514,11 +8514,15 @@ html.cg-wide #game-container .mj-player-hand { gap: 1px; }
    Bound the centre and let the discards scroll inside it. Discards are reference
    information — you read them, you never tap them — so scrolling them is far
    cheaper than losing sight of your hand. */
-html.cg-wide #game-container .mj-table-center { max-height: 170px; }
+/* Scales with the viewport instead of a fixed 170px. At 393px tall that cap was
+   fine, but on a 640x360 phone with a loaded board it left no room: the controls
+   dropped below the fold and no hand tile was reachable. min() keeps the ceiling
+   on big phones and yields on small ones. */
+html.cg-wide #game-container .mj-table-center { max-height: min(170px, 38vh); }
 html.cg-wide #game-container .mj-wall-ring    { max-height: 100%; min-height: 0; }
 html.cg-wide #game-container .mj-discard-square {
   min-height: 0;
-  max-height: 124px;
+  max-height: min(124px, 30vh);
   overflow-y: auto;
   /* overflow-x stays scrollable, NOT hidden. Hiding it to lose the scrollbar
      clipped 12 discard tiles out of view in testing, and discards are
