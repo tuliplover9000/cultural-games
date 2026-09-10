@@ -6289,7 +6289,12 @@ html.cg-wide #game-container.tu-game-container .tu-opp-label {
     margin: 0;
   }
   /* HUD / status / controls share the side space (wrap into a narrow column). */
-  .game-container:has(canvas) > *:not(:has(canvas)):not(canvas) {
+  /* The floating help and fullscreen buttons are direct children of
+     #game-container on many pages, so this "HUD panels share the side space"
+     rule was inflating them to a 130px min-width — which is why the 36px help
+     button measured 130 and reached back over the status panel even after being
+     moved into its own gutter. They are overlays, not side panels. */
+  .game-container:has(canvas) > *:not(:has(canvas)):not(canvas):not(.tt-trigger):not(.fs-toggle) {
     flex: 1 1 160px;
     min-width: 130px;
     max-width: 44vw;
@@ -8532,3 +8537,36 @@ html.cg-wide #game-container .mj-discard-square {
   scrollbar-width: thin;
 }
 html.cg-wide #game-container .mj-ds-middle { min-height: 0; }
+
+/* ── Landscape: give the floating buttons their own gutter ──────────────────
+   .tt-trigger (help) and .fs-toggle (fullscreen) are absolutely positioned over
+   the game. Measured across the 17 games with a landscape layout, the help
+   button sat on the first player-status line in ELEVEN of them (Kōnane's
+   "Black · 32 stones", Bagh-Chal's "Tigers · 4 on board", Fanorona's whole
+   status line…) and the fullscreen toggle covered a real control in NINE —
+   Undo on five games, plus Forfeit, New Game, Play Again and the Difficulty
+   select. Fixing those one game at a time is how this was missed twice already,
+   so reserve a strip on the right that game content never enters and put both
+   buttons in it. Costs ~46px of width and makes overlap structurally
+   impossible. */
+html.cg-wide .game-page > .container { padding-right: 46px; }
+
+/* position: FIXED, not absolute. .tt-trigger is a <body> child on some pages
+   and lives inside #game-container on others, so `absolute` resolved against a
+   different box per game — on Kōnane it pinned to the game container's right
+   edge (784px) and landed straight back on the status panel. Fixed resolves
+   against the viewport everywhere, so one rule puts it in the gutter on all of
+   them. */
+html.cg-wide .tt-trigger {
+  position: fixed;
+  top: 8px;
+  right: 5px;
+  width: 36px;
+  height: 36px;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+/* .fs-toggle resolves against .fs-game-wrap, which the padding above has just
+   narrowed, so it needs to be pushed OUT of that box to reach the gutter. */
+html.cg-wide .fs-toggle { right: -41px; bottom: 8px; }
