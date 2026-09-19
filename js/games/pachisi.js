@@ -1514,11 +1514,13 @@
     var vsAI = true; // always vs AI for local play
     state = freshState(mode, vsAI);
 
-    // Show game, hide lobby (use style.display - CSS display:flex overrides [hidden])
+    // Show game, hide lobby. Toggle the hidden ATTRIBUTE (games.css has
+    // .pc-game[hidden] / .pc-lobby[hidden] rules for it): an inline
+    // display:flex would override the landscape grid the CSS gives .pc-game.
     var lobby = document.getElementById('pc-lobby');
     var game  = document.getElementById('pc-game');
-    if (lobby) lobby.style.display = 'none';
-    if (game)  game.style.display  = 'flex';
+    if (lobby) lobby.hidden = true;
+    if (game)  game.hidden  = false;
 
     var teamsPanel = document.getElementById('pc-teams-panel');
     if (teamsPanel) teamsPanel.hidden = (mode !== '4player');
@@ -1587,11 +1589,11 @@
     state.humanSeat = seat;
     state.aiSeats   = aiSeatsList;
 
-    // Skip the pre-game lobby (use style.display - CSS display:flex overrides [hidden])
+    // Skip the pre-game lobby (hidden attribute — see startGame).
     var lobbyEl = document.getElementById('pc-lobby');
     var gameEl  = document.getElementById('pc-game');
-    if (lobbyEl) lobbyEl.style.display = 'none';
-    if (gameEl)  gameEl.style.display  = 'flex';
+    if (lobbyEl) lobbyEl.hidden = true;
+    if (gameEl)  gameEl.hidden  = false;
 
     var teamsPanel = document.getElementById('pc-teams-panel');
     if (teamsPanel) teamsPanel.style.display = (mode === '4player') ? '' : 'none';

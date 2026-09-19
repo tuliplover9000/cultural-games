@@ -5088,6 +5088,115 @@ html[data-theme="light"] .pu-game-wrap {
   display: flex;
   flex-direction: column;
 }
+/* The markup ships #pc-game with the hidden attribute until a mode is picked,
+   but any author display rule beats the UA's [hidden] { display: none } — so
+   the un-started board rendered UNDER the lobby on every load (and on a
+   landscape phone the two together were ~1200px tall, which the fit engine
+   zoomed to 0.4: a thumbnail board behind a mode picker). pachisi.js reveals
+   the game with an inline style, which still wins over this. */
+.pc-game[hidden],
+.pc-lobby[hidden],
+.pc-roll-result[hidden] { display: none; }
+
+/* ── Pachisi landscape: board left · HUD + sidebar stacked right ──────────
+   Not in the generic list above: its board and sidebar live one level down
+   inside .pc-layout, so the container-level split can't reach them. Lift them
+   out with display:contents and lay #pc-game itself out as the two-column
+   grid; the HUD bar, which cost ~40px of board height across the top, joins
+   the sidebar column. The container itself becomes a flex ROW so that
+   mobile-zoom.js's fitCanvas() sees a side-by-side layout and gives the board
+   the full height instead of subtracting the sidebar's height from it.
+   The sidebar's desktop min-height (500px) and the lobby's (420px) are what
+   made each screen overflow a 393px-tall phone and get zoomed down. */
+html.cg-wide #pc-game-container {
+  display: flex;
+  padding: 0 6px;
+  margin-block: 0 !important;
+  min-height: 0;
+}
+html.cg-wide #pc-game-container .pc-lobby {
+  flex: 1 1 auto;
+  /* The legacy landscape rule caps non-board children of a canvas container
+     at 44vw (it means HUD panels); at 375px the two mode cards stacked. */
+  max-width: none;
+  min-height: 0;
+  padding: 12px;
+  gap: 10px;
+}
+html.cg-wide #pc-game-container .pc-lobby__title    { font-size: 1.4rem; }
+html.cg-wide #pc-game-container .pc-lobby__subtitle { margin: 0; }
+html.cg-wide #pc-game-container .pc-lobby__btns { width: 100%; flex-direction: row; gap: 12px; }
+/* The phone stylesheet makes the mode cards full-width, which stacks the two
+   of them 125px tall each — taller than the phone, so the lobby was zoomed. */
+html.cg-wide #pc-game-container .pc-mode-btn {
+  width: auto;
+  flex: 0 1 220px;
+  min-width: 0;
+  padding: 10px 16px;
+}
+html.cg-wide #pc-game-container .pc-game:not([hidden]) {
+  display: grid;
+  flex: 1 1 auto;
+  min-width: 0;
+  /* Side column takes the slack a height-bound square board can't use. */
+  grid-template-columns: minmax(0, 1fr) clamp(190px, 34%, 280px);
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    "board hud"
+    "board side";
+  align-items: start;
+  column-gap: 8px;
+}
+html.cg-wide #pc-game-container .pc-layout { display: contents; }
+html.cg-wide #pc-game-container .pc-hud {
+  grid-area: hud;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 12px;
+  padding: 3px 8px;
+  margin-top: 4px;
+  border-bottom: 0;
+  border-radius: var(--radius-lg);
+}
+html.cg-wide #pc-game-container .pc-hud__label { font-size: 0.6rem; }
+html.cg-wide #pc-game-container .pc-hud__val   { font-size: 1rem; }
+html.cg-wide #pc-game-container .pc-status {
+  flex-basis: 100%;
+  order: 1;
+  font-size: 0.72rem;
+  line-height: 1.25;
+  padding: 0;
+}
+html.cg-wide #pc-game-container .pc-board-wrap {
+  grid-area: board;
+  align-self: center;
+  padding: 0;
+  min-width: 0;
+}
+html.cg-wide #pc-game-container .pc-sidebar {
+  grid-area: side;
+  width: auto;
+  min-height: 0;
+  padding: 6px 0 4px;
+  gap: 6px;
+  border-left: 0;
+  background: none;
+}
+html.cg-wide #pc-game-container .pc-cowrie-panel,
+html.cg-wide #pc-game-container .pc-score-panel { padding: 4px 8px; }
+html.cg-wide #pc-game-container .pc-cowrie-label,
+html.cg-wide #pc-game-container .pc-score-label { margin-bottom: 3px; }
+html.cg-wide #pc-game-container .pc-cowries { padding: 5px 4px; gap: 3px; }
+html.cg-wide #pc-game-container .pc-roll-result { margin-top: 3px; padding-top: 3px; }
+html.cg-wide #pc-game-container .pc-roll-result__num { font-size: 1.4rem; }
+html.cg-wide #pc-game-container .pc-controls { flex-direction: row; gap: 6px; }
+html.cg-wide #pc-game-container .pc-roll-btn { flex: 1 1 auto; width: auto; font-size: 0.85rem; padding: 6px 8px; }
+html.cg-wide #pc-game-container .pc-new-btn  { flex: 0 0 auto; width: auto; }
+html.cg-wide #pc-game-container .pc-scores {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 10px;
+}
 
 /* HUD bar */
 .pc-hud {
@@ -5574,9 +5683,27 @@ html.cg-wide #game-container:is(
   .mu-torere-game-container, .dou-shou-qi-game-container, .tsoro-yematatu-game-container
 ) {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) clamp(120px, 26%, 210px);
+  /* Side column as wide as the slack allows: these boards are square and
+     height-bound (≤ ~385px on a phone), so the board column has ~150px it
+     cannot use, while a narrow side column wrapped the status text into five
+     lines and grew TALLER than the viewport — which the fit engine answered
+     by zooming everything, board included, down to 0.87–0.98. */
+  grid-template-columns: minmax(0, 1fr) clamp(150px, 30%, 250px);
+  /* EXPLICIT rows, because the board below is placed with "grid-row: 1 / -1"
+     and -1 counts from the end of the EXPLICIT grid. With no template rows
+     that line is line 1, so the board spanned only row 1: the HUD shared that
+     row, the controls dropped into row 2 UNDER the board, the container grew
+     ~130px past the viewport and the fit engine's safety net zoomed the whole
+     thing to ~0.74 — a 385px board rendered at 287px in every one of these
+     games. Eight rows is more side panels than any of them has. The unused
+     rows must be minmax(0, auto), NOT auto: Chrome hands a slice of the
+     spanning board's height to every auto-min row it crosses, so plain auto
+     gave each empty row ~18px (measured) and the container was tall again.
+     With a 0 minimum they stay 0px, and row-gap is 0 so they cost no gutters
+     either (the side panels carry their own spacing as margin instead). */
+  grid-template-rows: repeat(8, minmax(0, auto));
   align-items: start;
-  gap: 6px 10px;
+  gap: 0 10px;
   padding: 0 6px;
   margin-block: 0 !important;
 }
@@ -5598,6 +5725,25 @@ html.cg-wide #game-container:is(
      on one side, which read as broken; splitting it looks deliberate. */
   justify-self: center;
   min-width: 0;
+  /* The wrappers are width:100% blocks, so a height-bound square board sat
+     flush-left inside a column-wide wrapper. They must STAY column-wide —
+     mobile-zoom.js sizes the board from the host's clientWidth, and a
+     shrink-wrapped host reports the board's current size and freezes it
+     there (measured: stuck at the 300px default buffer) — so centre the
+     canvas inside instead, and move the frame ring from the wrapper onto the
+     canvas so it hugs the board rather than the empty column. */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: none;
+}
+html.cg-wide #game-container:is(
+  .ll-game-container, .yn-game-container, .bg-game-container,
+  .morabaraba-game-container, .konane-game-container, .surakarta-game-container,
+  .mu-torere-game-container, .dou-shou-qi-game-container, .tsoro-yematatu-game-container
+) > :is([class*="board-wrap"], [class*="canvas-wrap"]) > canvas {
+  border-radius: var(--radius-lg);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.40), 0 0 0 2px rgba(224, 184, 112, 0.36);
 }
 /* Everything else (HUD, status, controls) → right column. The floating help
    button lives inside the container on some pages but is position-fixed, so it
@@ -5609,6 +5755,28 @@ html.cg-wide #game-container:is(
 ) > *:not(canvas):not([class*="board-wrap"]):not([class*="canvas-wrap"]):not(.tt-trigger) {
   grid-column: 2;
   min-width: 0;
+  margin: 0;         /* the grid's row-gap is 0; see grid-template-rows above */
+}
+html.cg-wide #game-container:is(
+  .ll-game-container, .yn-game-container, .bg-game-container,
+  .morabaraba-game-container, .konane-game-container, .surakarta-game-container,
+  .mu-torere-game-container, .dou-shou-qi-game-container, .tsoro-yematatu-game-container
+) > *:not(canvas):not([class*="board-wrap"]):not([class*="canvas-wrap"]):not(.tt-trigger):not(:first-child) {
+  margin-top: 6px;   /* spacing between stacked side panels, none after the last */
+}
+/* The side column is now what limits the board: when the stacked HUD +
+   controls run taller than the phone, the fit engine zooms the whole grid
+   (board included) to make them fit. The HUDs ship desktop padding and a
+   12px gap between rows; trimming both is worth ~16px of column height, which
+   on a 667×375 phone is the difference between zoom 0.86 and zoom 1. */
+html.cg-wide #game-container:is(
+  .ll-game-container, .yn-game-container, .bg-game-container,
+  .morabaraba-game-container, .konane-game-container, .surakarta-game-container,
+  .mu-torere-game-container, .dou-shou-qi-game-container, .tsoro-yematatu-game-container
+) > [class*="-hud"] {
+  gap: 5px 10px;
+  padding: 6px 8px;
+  min-height: 0;
 }
 html.cg-wide #game-container:is(
   .ll-game-container, .yn-game-container, .bg-game-container,
