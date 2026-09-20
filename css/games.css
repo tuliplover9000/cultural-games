@@ -5877,10 +5877,11 @@ html.cg-wide .se-hud {
   padding: 6px 8px;
   gap: 2px;
 }
-/* No room for the floating help (?) button here — top-right is the HUD column,
-   top-left and the bottom strip are the board. It covered board cells wherever
-   it went, so hide it; How to Play is still one tap away in the accordion. */
-html.cg-wide body:has(.se-game-container) .tt-trigger { display: none; }
+/* The help (?) and fullscreen buttons used to be hidden / parked bottom-left
+   here because they had nowhere to go — top-right was the HUD column. Since
+   b12b7b7 every landscape page reserves a 46px right-hand gutter for exactly
+   those two buttons, so Senet now uses the shared placement like every other
+   game (the bottom-left toggle had ended up sitting on the board frame). */
 html.cg-wide .se-score  { flex-direction: column; gap: 0; font-size: var(--text-sm); }
 html.cg-wide .se-status { text-align: left; font-size: var(--text-xs); }
 html.cg-wide .se-controls {
@@ -5891,14 +5892,6 @@ html.cg-wide .se-controls {
 }
 html.cg-wide .se-controls .btn { width: 100%; }
 
-/* Floating buttons sit bottom-RIGHT at bottom:80px to clear the mobile tab bar —
-   but that bar is hidden here, so they landed on top of the controls column.
-   Move the fullscreen toggle to the bottom-LEFT (empty space under the board).
-   The zoom button that also sat here has been removed. */
-html.cg-wide body:has(.se-game-container) .fs-toggle {
-  right: auto;
-  left: 10px;
-}
 
 /* =============================================================================
    TRUC — tu- namespace (Catalonia)
@@ -8735,6 +8728,14 @@ html.cg-wide .tt-trigger {
   padding: 0;
 }
 
-/* .fs-toggle resolves against .fs-game-wrap, which the padding above has just
-   narrowed, so it needs to be pushed OUT of that box to reach the gutter. */
-html.cg-wide .fs-toggle { right: -41px; bottom: 8px; }
+/* position: FIXED for the same reason as .tt-trigger above. It used to be
+   absolute against .fs-game-wrap and pushed out by -41px to reach the gutter —
+   which only works when the wrap IS narrowed by that padding. Mahjong removes
+   the padding (its 14-tile hand needs the width), so there the toggle landed
+   at x=857 on an 852px screen: off the edge, untappable. Fixed against the
+   viewport puts it in the gutter's bottom corner on every page regardless. */
+html.cg-wide .fs-toggle {
+  position: fixed;
+  right: 5px;
+  bottom: 8px;
+}
